@@ -1,0 +1,59 @@
+<measure>
+  <schema_version>3.0</schema_version>
+  <name>variables_cte</name>
+  <uid>1adcd9ca-53a5-427e-9662-424d35b7de33</uid>
+  <version_id>2930aa75-302a-4769-bc2d-add983f77cd8</version_id>
+  <version_modified>20160601T160519Z</version_modified>
+  <xml_checksum>9E530B22</xml_checksum>
+  <class_name>VariablesCTE</class_name>
+  <display_name>Variables CTE</display_name>
+  <description>Esta medida aNade las variables necesarias para tomar los datos de cumplimento del CTE</description>
+  <modeler_description>Simplemente pasa una cadena con el numobre del meter sin validarlo. Para ver si es vAlido hay que consultar el fichero .mdd de una simulaciOn previa.&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;
+</modeler_description>
+  <arguments/>
+  <provenances/>
+  <tags>
+    <tag>Reporting.QAQC</tag>
+  </tags>
+  <attributes>
+    <attribute>
+      <name>Measure Function</name>
+      <value>Measure</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Requires EnergyPlus Results</name>
+      <value>false</value>
+      <datatype>boolean</datatype>
+    </attribute>
+    <attribute>
+      <name>Uses SketchUp API</name>
+      <value>false</value>
+      <datatype>boolean</datatype>
+    </attribute>
+    <attribute>
+      <name>Measure Type</name>
+      <value>ModelMeasure</value>
+      <datatype>string</datatype>
+    </attribute>
+  </attributes>
+  <files>
+    <file>
+      <filename>AddMeter_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>6011DD0E</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.0.0</identifier>
+        <min_compatible>1.0.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>FF7571C1</checksum>
+    </file>
+  </files>
+</measure>

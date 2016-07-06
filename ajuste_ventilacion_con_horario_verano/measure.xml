@@ -1,0 +1,135 @@
+<measure>
+  <schema_version>3.0</schema_version>
+  <name>ajuste_ventilacion_con_horario_verano</name>
+  <uid>21018e38-33dc-4586-8c49-bc3fad5cdddd</uid>
+  <version_id>48d32f5e-add9-4447-845b-517dd583c6bf</version_id>
+  <version_modified>20160401T143043Z</version_modified>
+  <xml_checksum>7D31CA80</xml_checksum>
+  <class_name>AjusteVentilacionConHorarioVerano</class_name>
+  <display_name> Ajuste ventilacion con horario verano</display_name>
+  <description>Esta medida ajusta los horarios para que las ventilaciones de las zonas habitables tengan un nivel de ventilacion de 4 en las noches de verano y el valor indicado el resto del horario.
+
+Unicamente hay que indicar cual es el valor de renovaciones hora del edificio.</description>
+  <modeler_description>Esta medida debe recalcular todos horarios de ventilacion para mantener a 4 las renovaciones en verano y variar el resto. Se aplica a todas las zonas habitables. De momento unicamente para residencial.</modeler_description>
+  <arguments>
+    <argument>
+      <name>design_flow_rate</name>
+      <display_name>Renovaciones hora del edificio</display_name>
+      <type>Double</type>
+      <units>ren./h</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+  </arguments>
+  <provenances/>
+  <tags>
+    <tag>HVAC.Ventilation</tag>
+  </tags>
+  <attributes>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>Apply Measure Now</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>OpenStudio Application</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>Parametric Analysis Tool</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>Analysis Spreadsheet</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Use Case</name>
+      <value>Model Articulation</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>Apply Measure Now</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>OpenStudio Application</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>Parametric Analysis Tool</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>Analysis Spreadsheet</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Use Case</name>
+      <value>Model Articulation</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Measure Type</name>
+      <value>ModelMeasure</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>Apply Measure Now</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>OpenStudio Application</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>Parametric Analysis Tool</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>Analysis Spreadsheet</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Use Case</name>
+      <value>Model Articulation</value>
+      <datatype>string</datatype>
+    </attribute>
+  </attributes>
+  <files>
+    <file>
+      <filename>example_model.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>2492F353</checksum>
+    </file>
+    <file>
+      <filename>ajuste_ventilacion_con_horario_verano_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>51E628FF</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.8.4</identifier>
+        <min_compatible>1.8.4</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>AB2A333A</checksum>
+    </file>
+  </files>
+</measure>
