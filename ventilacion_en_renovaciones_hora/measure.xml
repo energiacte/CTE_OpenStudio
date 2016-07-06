@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>ventilacion_en_renovaciones_hora</name>
   <uid>1b347b78-934b-49a6-b40d-fe49a392c3e6</uid>
-  <version_id>65bdc9f3-5333-4723-8282-0848668bc259</version_id>
-  <version_modified>20160429T143910Z</version_modified>
+  <version_id>a2695479-bf8d-47b5-9080-94c8fa6e77ae</version_id>
+  <version_modified>20160706T133537Z</version_modified>
   <xml_checksum>9AC5AFB7</xml_checksum>
   <class_name>VentilacionEnRenovacionesHora</class_name>
   <display_name> Ventilacion en renovaciones hora</display_name>
@@ -93,7 +93,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>51F9E17A</checksum>
+      <checksum>49CE6A77</checksum>
     </file>
   </files>
 </measure>

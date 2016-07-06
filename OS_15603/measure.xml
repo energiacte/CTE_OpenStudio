@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>open_studio_results_copy</name>
   <uid>6d91a3a6-5fcd-4f37-bcd7-9080493a5799</uid>
-  <version_id>b3297774-6362-4459-9e4f-7ff6cd09471a</version_id>
-  <version_modified>20160629T101119Z</version_modified>
+  <version_id>f87ddad0-7e66-42d9-a385-76066dc54ff2</version_id>
+  <version_modified>20160706T133537Z</version_modified>
   <xml_checksum>69BA4D91</xml_checksum>
   <class_name>OpenStudioResultsCopy</class_name>
   <display_name>Informe 15603</display_name>
@@ -30,7 +30,7 @@
     </argument>
     <argument>
       <name>variables_de_inspeccion</name>
-      <display_name>Inspección de variables</display_name>
+      <display_name>Inspecci?n de variables</display_name>
       <type>Boolean</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -495,12 +495,6 @@
       <checksum>E5BE828A</checksum>
     </file>
     <file>
-      <filename>os_lib_reporting_SI.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>09965258</checksum>
-    </file>
-    <file>
       <filename>cubito+garaje_eplusoutZAB.sql</filename>
       <filetype>sql</filetype>
       <usage_type>test</usage_type>
@@ -524,10 +518,28 @@
       <checksum>60A59F6E</checksum>
     </file>
     <file>
+      <filename>os_lib_reporting_SI.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>96824A66</checksum>
+    </file>
+    <file>
       <filename>ctelib.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>E51B9CED</checksum>
+      <checksum>AB8F8D85</checksum>
+    </file>
+    <file>
+      <filename>comun.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>AC7BA514</checksum>
+    </file>
+    <file>
+      <filename>ctegeometria.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>C3A5E48D</checksum>
     </file>
   </files>
 </measure>
