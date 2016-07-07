@@ -59,6 +59,9 @@ runnrel:
 create:
 	docker build -t openstudio:1.12 .
 
+pullnrel:
+	docker pull nrel/openstudio
+
 exportimage:
 	docker save -o openstudioimg.tgz openstudio:1.12
 
