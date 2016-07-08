@@ -1,3 +1,20 @@
+runnrel:
+	xhost local:root && \
+		docker run -it \
+		--rm \
+		--net=host \
+		-e DISPLAY \
+		-e QT_GRAPHICSSYSTEM='native' \
+		-e QT_X11_NO_MITSHM=1 \
+		--device=/dev/dri/card0 \
+		-v /tmp/X11-unix:/tmp/X11-unix:ro \
+		-v /etc/machine-id:/etc/machine-id:ro \
+		-v /var/run/dbus:/var/run/dbus \
+		-v ${HOME}/openstudio:/var/simdata/openstudio \
+		-v ${HOME}/openstudio/Measures:/root/OpenStudio/Measures \
+		nrel/openstudio \
+		bash
+
 # Hay artefactos de dibujado en QT5 con docker por funcionar como root. Se solucionan ejecutando QT_GRAPHICSSYSTEM=native OpenStudio
 # aunque por alguna razón no funciona al pasarlo en el entorno...
 run:
@@ -42,22 +59,6 @@ runbash:
 		openstudio:1.12 \
 		bash
 
-runnrel:
-	xhost local:root && \
-		docker run -it \
-		--rm \
-		--net=host \
-		-e DISPLAY \
-		-e QT_GRAPHICSSYSTEM='native' \
-		-e QT_X11_NO_MITSHM=1 \
-		--device=/dev/dri/card0 \
-		-v /tmp/X11-unix:/tmp/X11-unix:ro \
-		-v /etc/machine-id:/etc/machine-id:ro \
-		-v /var/run/dbus:/var/run/dbus \
-		-v ${HOME}/openstudio:/var/simdata/openstudio \
-		-v ${HOME}/openstudio/Measures:/root/OpenStudio/Measures \
-		nrel/openstudio \
-		bash
 create:
 	docker build -t openstudio:1.12 .
 
