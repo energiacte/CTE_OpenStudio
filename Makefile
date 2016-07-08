@@ -54,6 +54,8 @@ runnrel:
 		-v /tmp/X11-unix:/tmp/X11-unix:ro \
 		-v /etc/machine-id:/etc/machine-id:ro \
 		-v /var/run/dbus:/var/run/dbus \
+		-v ${HOME}/openstudio:/var/simdata/openstudio \
+		-v ${HOME}/openstudio/Measures:/root/OpenStudio/Measures \
 		nrel/openstudio \
 		bash
 create:
