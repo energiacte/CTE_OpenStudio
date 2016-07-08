@@ -7,8 +7,7 @@ require "#{File.dirname(__FILE__)}/../measure.rb"
 require 'test/unit'
 
 class VariablesCTE_Test < Test::Unit::TestCase
-
-  def test_VariablesCTE_BadInput
+  def test_VariablesCTE_GoodInputNew
 
     # create an instance of the measure
     measure = VariablesCTE.new
@@ -19,21 +18,15 @@ class VariablesCTE_Test < Test::Unit::TestCase
     # make an empty model
     model = OpenStudio::Model::Model.new
 
-    # get arguments and test that they are what we are expecting
-    arguments = measure.arguments(model)
-    assert_equal(2, arguments.size)
-    assert_equal("meter_name", arguments[0].name)
-    assert_equal("reporting_frequency", arguments[1].name)
-
-    # set argument values to bad values and run the measure
-    argument_map = OpenStudio::Ruleset::OSArgumentMap.new
-    meter_name = arguments[0].clone
-    assert(meter_name.setValue(""))
-    argument_map["meter_name"] = meter_name
+    # set argument values to good values and run the measure on model with spaces
+    argument_map = OpenStudio::Ruleset::OSArgumentMap.new # no arguments
     measure.run(model, runner, argument_map)
     result = runner.result
-    assert(result.value.valueName == "Fail")
-
+    show_output(result)
+    assert(result.value.valueName == "Success")
+    assert(result.warnings.size == 0)
+    assert(result.errors.size == 0)
+    assert(result.info.size == 39)
   end
 
   def test_VariablesCTE_GoodInput
@@ -45,34 +38,17 @@ class VariablesCTE_Test < Test::Unit::TestCase
     runner = OpenStudio::Ruleset::OSRunner.new
 
     # make an empty model
-    model = OpenStudio::Model::Model.new
-
-    # get arguments and test that they are what we are expecting
-    arguments = measure.arguments(model)
+    model = OpenStudio::Model::exampleModel
 
     # set argument values to good values and run the measure on model with spaces
-    argument_map = OpenStudio::Ruleset::OSArgumentMap.new
-    meter_name = arguments[0].clone
-    assert(meter_name.setValue("JustATest"))
-    argument_map["meter_name"] = meter_name
-    reporting_frequency = arguments[1].clone
-    assert(reporting_frequency.setValue("hourly"))
-    argument_map["reporting_frequency"] = reporting_frequency
+    argument_map = OpenStudio::Ruleset::OSArgumentMap.new # no arguments
     measure.run(model, runner, argument_map)
     result = runner.result
     show_output(result)
     assert(result.value.valueName == "Success")
     assert(result.warnings.size == 0)
-    assert(result.info.size == 1)
-
-    #attempt to add a second meter
-    measure.run(model, runner, argument_map)
-    result = runner.result
-    show_output(result)
-    assert(result.value.valueName == "Success")
-    assert(result.warnings.size == 1)
-    assert(result.info.size == 0)
-
+    assert(result.errors.size == 0)
+    #assert(result.info.size == 2) #
   end
 
 end

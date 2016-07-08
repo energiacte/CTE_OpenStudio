@@ -7,150 +7,108 @@
 #start the measure
 class VariablesCTE < OpenStudio::Ruleset::ModelUserScript
 
-  #define the name that a user will see, this method may be deprecated as
-  #the display name in PAT comes from the name field in measure.xml
   def name
     return "Variables CTE"
   end
 
-  #define the arguments that the user will input
   def arguments(model)
     args = OpenStudio::Ruleset::OSArgumentVector.new
     return args
-  end #end the arguments method
+  end
 
-  #define what happens when the measure is run
   def run(model, runner, user_arguments)
     super(model, runner, user_arguments)
 
-    #assign the user inputs to variables
-    # meter_name = runner.getStringArgumentValue("meter_name",user_arguments)
-    # reporting_frequency = runner.getStringArgumentValue("reporting_frequency",user_arguments)
+    # Get initial conditions ==========================================
+    meters = model.getMeters
+    output_variables = model.getOutputVariables
+    runner.registerInitialCondition("The model started with #{meters.size} meter objects, and #{output_variables.size} output variables.")
 
+    # Add CTE meters ==================================================
 
-    # meters = model.getMeters
-   ## reporting initial condition of model
-    # runner.registerInitialCondition("The model started with #{meters.size} meter objects.")
-
-    ##flag to add meter
-    # add_flag = true
-
-    ## OpenStudio doesn't seemt to like two meters of the same name, even if they have different reporting frequencies.
-    # meters.each do |meter|
-      # if meter.name == meter_name
-      # runner.registerWarning("A meter named #{meter_name} already exists. One will not be added to the model.")
-      # if not meter.reportingFrequency == reporting_frequency
-        # meter.setReportingFrequency(reporting_frequency)
-        # runner.registerInfo("Changing reporting frequency of existing meter to #{reporting_frequency}.")
-      # end
-      # add_flag = false
-      # end
-    # end
-
-    # if add_flag
-      # meter = OpenStudio::Model::Meter.new(model)
-      # meter.setName(meter_name)
-      # meter.setReportingFrequency(reporting_frequency)
-      # runner.registerInfo("Adding meter for #{meter.name} reporting #{reporting_frequency}")
-    # end
-    
-    meter = OpenStudio::Model::Meter.new(model)
-    meter.setName("DistrictHeating:Facility")
-    meter.setReportingFrequency("RunPeriod")
-    runner.registerInfo("Adding meter for DistrictHeating:Facility reporting RunPeriod")
-    
-    # esto se comenta para reducir el tiempo de escritura en disco
-    # meter = OpenStudio::Model::Meter.new(model)
-    # meter.setName("DistrictHeating:Facility")
-    # meter.setReportingFrequency("hourly")
-    # runner.registerInfo("Adding meter for DistrictHeating:Facility reporting hourly")
-    
-    meter = OpenStudio::Model::Meter.new(model)
-    meter.setName("DistrictCooling:Facility")
-    meter.setReportingFrequency("RunPeriod")
-    runner.registerInfo("Adding meter for DistrictHeating:Facility reporting RunPeriod")
-    
-    # esto se comenta para reducir el tiempo de escritura en disco
-    # meter = OpenStudio::Model::Meter.new(model)
-    # meter.setName("DistrictCooling:Facility")
-    # meter.setReportingFrequency("hourly")
-    # runner.registerInfo("Adding meter for DistrictHeating:Facility reporting hourly")
-    
-    #meters = model.getMeters
-    #reporting final condition of model
-    #runner.registerFinalCondition("The model finished with #{meters.size} meter objects.")
-    
-    
-        # "Zone Mechanical Ventilation No Load Heat Addition Energy",
-        # "Zone Mechanical Ventilation No Load Heat Removal Energy",
-        # "System Node Standard Density Volume Flow Rate",
-    
-    variables_mensuales = [
-        "Surface Inside Face Conduction Heat Transfer Energy",
-        "Surface Window Heat Gain Energy",
-        "Surface Window Heat Loss Energy",
-        "Surface Window Transmitted Solar Radiation Energy",
-        "Surface Window Transmitted Solar Radiation Energy",
-        "Zone Total Internal Total Heating Energy",
-        "Zone Ideal Loads Zone Total Heating Energy",
-        "Zone Ideal Loads Zone Total Cooling Energy",
-        "Zone Infiltration Total Heat Gain Energy",
-        "Zone Infiltration Total Heat Loss Energy",
-        "Zone Mechanical Ventilation Current Density Volume",
-        "Zone Ventilation Total Heat Gain Energy",
-        "Zone Ventilation Total Heat Loss Energy",
-        "Zone Infiltration Standard Density Volume Flow Rate",
-        "Zone Infiltration Current Density Volume",
-        "Zone Ventilation Standard Density Volume Flow Rate",
-        "Zone Ideal Loads Outdoor Air Standard Density Volume Flow Rate",
-        "Zone Ideal Loads Supply Air Standard Density Volume Flow Rate",         
-        "Site Outdoor Air Drybulb Temperature"
+    new_meters = [
+      ["DistrictHeating:Facility", "RunPeriod"],
+      ["DistrictCooling:Facility", "RunPeriod"],
+      #["Propane:Facility", "RunPeriod"] # this meter exists in the exampleModel
     ]
-     
-    variables_horarias = [
-    "Surface Inside Face Conduction Heat Transfer Energy",
-    "Surface Inside Face Conduction Heat Transfer Energy",
-    "Surface Inside Face Conduction Heat Transfer Energy",
-    "Surface Window Heat Gain Energy",
-    "Surface Window Heat Loss Energy",
-    "Surface Window Transmitted Solar Radiation Energy",
-    "Zone Thermostat Cooling Setpoint Temperature",
-    "Zone Thermostat Heating Setpoint Temperature",
-    "Zone Total Internal Total Heating Energy",
-    "Zone Infiltration Total Heat Gain Energy",
-    "Zone Infiltration Total Heat Loss Energy",
-    "Zone Ventilation Total Heat Gain Energy",
-    "Zone Ventilation Total Heat Loss Energy",
-    "Zone Infiltration Current Density Volume",
-    "Zone Mechanical Ventilation Current Density Volume",
-    "Zone Combined Outdoor Air Total Heat Loss Energy",
-    "Zone Combined Outdoor Air Total Heat Gain Energy",
-    "Zone Combined Outdoor Air Changes per Hour"
+
+    existing_meters = Hash[meters.map{ |meter| [meter.name, meter] }.compact]
+
+    new_meters.each do | new_meter |
+      new_meter_name, new_reporting_frequency = new_meter
+      if existing_meters.has_key?(new_meter_name)
+        runner.registerInfo("Meter #{new_meter_name} already in meters")
+        meter = existing_meters[new_meter_name]
+        if not meter.reportingFrequency == new_reporting_frequency
+          meter.setReportingFrequency(new_reporting_frequency)
+          runner.registerInfo("Changing meter #{new_meter_name} reporting frequency to #{new_reporting_frequency}.")
+        end
+      else
+        meter = OpenStudio::Model::Meter.new(model)
+        meter.setName(new_meter_name)
+        meter.setReportingFrequency(new_reporting_frequency)
+        runner.registerInfo("Adding meter for #{new_meter_name} reporting #{ new_reporting_frequency }")
+      end
+    end
+
+    # Add CTE output variables =========================================
+
+    new_oputput_variables = [
+      # Monthly variables
+      ["Surface Inside Face Conduction Heat Transfer Energy", "monthly", "*"],
+      ["Surface Window Heat Gain Energy", "monthly", "*"],
+      ["Surface Window Heat Loss Energy", "monthly", "*"],
+      ["Surface Window Transmitted Solar Radiation Energy", "monthly", "*"],
+      ["Surface Window Transmitted Solar Radiation Energy", "monthly", "*"],
+      ["Zone Total Internal Total Heating Energy", "monthly", "*"],
+      ["Zone Ideal Loads Zone Total Heating Energy", "monthly", "*"],
+      ["Zone Ideal Loads Zone Total Cooling Energy", "monthly", "*"],
+      ["Zone Infiltration Total Heat Gain Energy", "monthly", "*"],
+      ["Zone Infiltration Total Heat Loss Energy", "monthly", "*"],
+      ["Zone Mechanical Ventilation Current Density Volume", "monthly", "*"],
+      ["Zone Ventilation Total Heat Gain Energy", "monthly", "*"],
+      ["Zone Ventilation Total Heat Loss Energy", "monthly", "*"],
+      ["Zone Infiltration Standard Density Volume Flow Rate", "monthly", "*"],
+      ["Zone Infiltration Current Density Volume", "monthly", "*"],
+      ["Zone Ventilation Standard Density Volume Flow Rate", "monthly", "*"],
+      ["Zone Ideal Loads Outdoor Air Standard Density Volume Flow Rate", "monthly", "*"],
+      ["Zone Ideal Loads Supply Air Standard Density Volume Flow Rate", "monthly", "*"],
+      ["Site Outdoor Air Drybulb Temperature", "monthly", "*"],
+      # Hourly variables
+      ["Surface Inside Face Conduction Heat Transfer Energy", "hourly", "*"],
+      ["Surface Inside Face Conduction Heat Transfer Energy", "hourly", "*"],
+      ["Surface Inside Face Conduction Heat Transfer Energy", "hourly", "*"],
+      ["Surface Window Heat Gain Energy", "hourly", "*"],
+      ["Surface Window Heat Loss Energy", "hourly", "*"],
+      ["Surface Window Transmitted Solar Radiation Energy", "hourly", "*"],
+      ["Zone Thermostat Cooling Setpoint Temperature", "hourly", "*"],
+      ["Zone Thermostat Heating Setpoint Temperature", "hourly", "*"],
+      ["Zone Total Internal Total Heating Energy", "hourly", "*"],
+      ["Zone Infiltration Total Heat Gain Energy", "hourly", "*"],
+      ["Zone Infiltration Total Heat Loss Energy", "hourly", "*"],
+      ["Zone Ventilation Total Heat Gain Energy", "hourly", "*"],
+      ["Zone Ventilation Total Heat Loss Energy", "hourly", "*"],
+      ["Zone Infiltration Current Density Volume", "hourly", "*"],
+      ["Zone Mechanical Ventilation Current Density Volume", "hourly", "*"],
+      ["Zone Combined Outdoor Air Total Heat Loss Energy", "hourly", "*"],
+      ["Zone Combined Outdoor Air Total Heat Gain Energy", "hourly", "*"],
+      ["Zone Combined Outdoor Air Changes per Hour", "hourly", "*"]
     ]
-    
-    variables_horarias.each do | variable_name |
-        # reporting_frequency = "monthly"
-        reporting_frequency = "hourly"
-        outputVariable = OpenStudio::Model::OutputVariable.new(variable_name, model)
-        outputVariable.setReportingFrequency(reporting_frequency)
-        outputVariable.setKeyValue("*")
-    end 
-    
-    variables_mensuales.each do | variable_name |
-        reporting_frequency = "monthly"
-        #reporting_frequency = "hourly"
-        outputVariable = OpenStudio::Model::OutputVariable.new(variable_name, model)
-        outputVariable.setReportingFrequency(reporting_frequency)
-        outputVariable.setKeyValue("*")
-    end 
-    
-    
-    
+
+    new_oputput_variables.each do | variable_name, reporting_frequency, key |
+      outputVariable = OpenStudio::Model::OutputVariable.new(variable_name, model)
+      outputVariable.setReportingFrequency(reporting_frequency)
+      outputVariable.setKeyValue(key)
+      runner.registerInfo("Adding output variable #{variable_name} with reporting frequency #{reporting_frequency} for key #{key}.")
+    end
+
+
+    # Get final condition ================================================
+    meters = model.getMeters
+    output_variables = model.getOutputVariables
+    runner.registerFinalCondition("The model finished with #{meters.size} meter objects and #{output_variables.size} output variables.")
+
     return true
-
   end #end the run method
-
 end #end the measure
-
-#this allows the measure to be use by the application
 VariablesCTE.new.registerWithApplication

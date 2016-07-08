@@ -2,13 +2,13 @@
   <schema_version>3.0</schema_version>
   <name>variables_cte</name>
   <uid>1adcd9ca-53a5-427e-9662-424d35b7de33</uid>
-  <version_id>2930aa75-302a-4769-bc2d-add983f77cd8</version_id>
-  <version_modified>20160601T160519Z</version_modified>
+  <version_id>dd863c22-047b-478d-ae59-db007218a307</version_id>
+  <version_modified>20160708T094635Z</version_modified>
   <xml_checksum>9E530B22</xml_checksum>
   <class_name>VariablesCTE</class_name>
   <display_name>Variables CTE</display_name>
   <description>Esta medida aNade las variables necesarias para tomar los datos de cumplimento del CTE</description>
-  <modeler_description>Simplemente pasa una cadena con el numobre del meter sin validarlo. Para ver si es vAlido hay que consultar el fichero .mdd de una simulaciOn previa.&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;
+  <modeler_description>Simplemente pasa una cadena con el numobre del meter sin validarlo. Para ver si es vAlido hay que consultar el fichero .mdd de una simulaciOn previa.&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;
 </modeler_description>
   <arguments/>
   <provenances/>
@@ -53,7 +53,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>FF7571C1</checksum>
+      <checksum>AEAEFBE9</checksum>
+    </file>
+    <file>
+      <filename>TestInstall.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>37A2F1B6</checksum>
     </file>
   </files>
 </measure>
