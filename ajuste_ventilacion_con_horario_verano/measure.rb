@@ -1,3 +1,4 @@
+# coding: utf-8
 # see the URL below for information on how to write OpenStudio measures
 # http://nrel.github.io/OpenStudio-user-documentation/measures/measure_writing_guide/
 
@@ -6,28 +7,28 @@ class AjusteVentilacionConHorarioVerano < OpenStudio::Ruleset::ModelUserScript
 
   # human readable name
   def name
-    return " Ajuste ventilacion con horario verano"
+    return "Ventilacion nocturna en verano"
   end
 
   # human readable description
   def description
-    return "Esta medida ajusta los horarios para que las ventilaciones de las zonas habitables tengan un nivel de ventilacion de 4 en las noches de verano y el valor indicado el resto del horario.
+    return "Establece la ventilacion nocturna de 4 ren/h en verano para las zonas habitables y el caudal de diseno indicado el resto del tiempo
 
-Unicamente hay que indicar cual es el valor de renovaciones hora del edificio."
+El valor del caudal de diseno de ventilacion se define en ren/h."
   end
 
   # human readable description of modeling approach
   def modeler_description
-    return "Esta medida debe recalcular todos horarios de ventilacion para mantener a 4 las renovaciones en verano y variar el resto. Se aplica a todas las zonas habitables. De momento unicamente para residencial."
+    return "Recalcula los horarios de ventilacion para mantener a 4 las renovaciones en verano y variar el resto. Se aplica a todas las zonas habitables. De uso de momento unicamente para residencial."
   end
 
   # define the arguments that the user will input
   def arguments(model)
     args = OpenStudio::Ruleset::OSArgumentVector.new
 
-    design_flow_rate = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("design_flow_rate",true)
-    design_flow_rate.setDisplayName("Renovaciones hora del edificio")
-    design_flow_rate.setUnits("ren./h")
+    design_flow_rate = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("design_flow_rate", true)
+    design_flow_rate.setDisplayName("Caudal de diseno de ventilacion del edificio [ren/h]")
+    design_flow_rate.setUnits("ren./h") # XXX: estas unidades estan bien?
     args << design_flow_rate
 
     return args
@@ -77,7 +78,7 @@ Unicamente hay que indicar cual es el valor de renovaciones hora del edificio."
         scheduleRule.setApplySaturday(true)
         scheduleRule.setApplySunday(true)
     end
-    
+
     diaInvierno1 = OpenStudio::Model::ScheduleDay.new(model)
     diaInvierno1.setName("dia de invierno")
     time_24h =  OpenStudio::Time.new(0, 24, 0, 0)
@@ -88,8 +89,7 @@ Unicamente hay que indicar cual es el valor de renovaciones hora del edificio."
     endDate = OpenStudio::Date.new(OpenStudio::MonthOfYear.new(5) , 31 )
     inviernoRule1.setStartDate(startDate)
     inviernoRule1.setEndDate(endDate)
-    aplicalasemana(inviernoRule1)   
-    
+    aplicalasemana(inviernoRule1)
 
     diaVerano = OpenStudio::Model::ScheduleDay.new(model)
     diaVerano.setName("dia de verano")

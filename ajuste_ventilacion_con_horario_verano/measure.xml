@@ -2,19 +2,19 @@
   <schema_version>3.0</schema_version>
   <name>ajuste_ventilacion_con_horario_verano</name>
   <uid>21018e38-33dc-4586-8c49-bc3fad5cdddd</uid>
-  <version_id>13caf28d-b1b7-4db0-931d-45abf57ee88e</version_id>
-  <version_modified>20160706T133538Z</version_modified>
+  <version_id>4b59d83d-c79b-4b93-ac5d-d122fbf92457</version_id>
+  <version_modified>20160708T143245Z</version_modified>
   <xml_checksum>7D31CA80</xml_checksum>
   <class_name>AjusteVentilacionConHorarioVerano</class_name>
-  <display_name> Ajuste ventilacion con horario verano</display_name>
-  <description>Esta medida ajusta los horarios para que las ventilaciones de las zonas habitables tengan un nivel de ventilacion de 4 en las noches de verano y el valor indicado el resto del horario.
+  <display_name>Ventilacion nocturna en verano</display_name>
+  <description>Establece la ventilacion nocturna de 4 ren/h en verano para las zonas habitables y el caudal de diseno indicado el resto del tiempo
 
-Unicamente hay que indicar cual es el valor de renovaciones hora del edificio.</description>
-  <modeler_description>Esta medida debe recalcular todos horarios de ventilacion para mantener a 4 las renovaciones en verano y variar el resto. Se aplica a todas las zonas habitables. De momento unicamente para residencial.</modeler_description>
+El valor del caudal de diseno de ventilacion se define en ren/h.</description>
+  <modeler_description>Recalcula los horarios de ventilacion para mantener a 4 las renovaciones en verano y variar el resto. Se aplica a todas las zonas habitables. De uso de momento unicamente para residencial.</modeler_description>
   <arguments>
     <argument>
       <name>design_flow_rate</name>
-      <display_name>Renovaciones hora del edificio</display_name>
+      <display_name>Caudal de diseno de ventilacion del edificio [ren/h]</display_name>
       <type>Double</type>
       <units>ren./h</units>
       <required>true</required>
@@ -115,12 +115,6 @@ Unicamente hay que indicar cual es el valor de renovaciones hora del edificio.</
       <checksum>2492F353</checksum>
     </file>
     <file>
-      <filename>ajuste_ventilacion_con_horario_verano_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>51E628FF</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.8.4</identifier>
@@ -129,7 +123,25 @@ Unicamente hay que indicar cual es el valor de renovaciones hora del edificio.</
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>E08F3EAC</checksum>
+      <checksum>2D9CDF19</checksum>
+    </file>
+    <file>
+      <filename>2_cubitos.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>FDCD058D</checksum>
+    </file>
+    <file>
+      <filename>ajuste_ventilacion_con_horario_verano_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E135828D</checksum>
+    </file>
+    <file>
+      <filename>log_ajusteVentilacionVerano.txt</filename>
+      <filetype>txt</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E74F76DD</checksum>
     </file>
   </files>
 </measure>

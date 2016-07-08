@@ -21,7 +21,8 @@ class AjusteVentilacionConHorarioVeranoTest < MiniTest::Unit::TestCase
 
     # load the test model
     translator = OpenStudio::OSVersion::VersionTranslator.new
-    path = OpenStudio::Path.new(File.dirname(__FILE__) + "/example_model.osm")
+    #path = OpenStudio::Path.new(File.dirname(__FILE__) + "/example_model.osm")
+    path = OpenStudio::Path.new(File.dirname(__FILE__) + "/2_cubitos.osm")
     model = translator.loadModel(path)
     assert((not model.empty?))
     model = model.get
@@ -33,8 +34,6 @@ class AjusteVentilacionConHorarioVeranoTest < MiniTest::Unit::TestCase
     # create hash of argument values.
     # If the argument has a default that you want to use, you don't need it in the hash
     args_hash = {}
-    args_hash["zone"] = "Thermal Zone 1"
-    args_hash["vent_sch"] = "Medium Office Bldg Occ"
     args_hash["design_flow_rate"] = 50.0
     # using defaults values from measure.rb for other arguments
 
