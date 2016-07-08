@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>ajuste_ventilacion_con_horario_verano</name>
   <uid>21018e38-33dc-4586-8c49-bc3fad5cdddd</uid>
-  <version_id>4b59d83d-c79b-4b93-ac5d-d122fbf92457</version_id>
-  <version_modified>20160708T143245Z</version_modified>
+  <version_id>145b875a-fc30-4398-bfe6-22b6e2a829e7</version_id>
+  <version_modified>20160708T150401Z</version_modified>
   <xml_checksum>7D31CA80</xml_checksum>
   <class_name>AjusteVentilacionConHorarioVerano</class_name>
   <display_name>Ventilacion nocturna en verano</display_name>
@@ -109,10 +109,10 @@ El valor del caudal de diseno de ventilacion se define en ren/h.</description>
   </attributes>
   <files>
     <file>
-      <filename>example_model.osm</filename>
+      <filename>2_cubitos.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>2492F353</checksum>
+      <checksum>FDCD058D</checksum>
     </file>
     <file>
       <version>
@@ -123,25 +123,19 @@ El valor del caudal de diseno de ventilacion se define en ren/h.</description>
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>2D9CDF19</checksum>
-    </file>
-    <file>
-      <filename>2_cubitos.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>FDCD058D</checksum>
-    </file>
-    <file>
-      <filename>ajuste_ventilacion_con_horario_verano_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>E135828D</checksum>
+      <checksum>BFC1113F</checksum>
     </file>
     <file>
       <filename>log_ajusteVentilacionVerano.txt</filename>
       <filetype>txt</filetype>
       <usage_type>test</usage_type>
-      <checksum>E74F76DD</checksum>
+      <checksum>E1FD2B50</checksum>
+    </file>
+    <file>
+      <filename>AjusteVentilacionConHorarioVerano_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E135828D</checksum>
     </file>
   </files>
 </measure>
