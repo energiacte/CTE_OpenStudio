@@ -29,7 +29,7 @@ class CTE_CorrigeHorarioVentilacionEnEplus_Test < MiniTest::Unit::TestCase
   def test_CorrigeHorarioVentilacionEnEplus
 
     # create an instance of the measure
-    measure = CTE_CorrigeHorarioVentilacionEnEplus.new
+    measure = CTE_CorrigeHorarioVentilacionResidencial.new
 
     # create an instance of a runner
     runner = OpenStudio::Ruleset::OSRunner.new
