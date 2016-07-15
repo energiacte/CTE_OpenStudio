@@ -20,7 +20,7 @@
 require 'openstudio'
 require 'openstudio/ruleset/ShowRunnerOutput'
 
-require "#{File.dirname(__FILE__)}/../measure.rb"
+require_relative "../measure.rb"
 
 require 'minitest/autorun'
 
@@ -28,25 +28,33 @@ class CTE_CorrigeHorarioVentilacionEnEplus_Test < MiniTest::Unit::TestCase
 
   def test_CorrigeHorarioVentilacionEnEplus
 
-    # create an instance of the measure
     measure = CTE_CorrigeHorarioVentilacionResidencial.new
-
-    # create an instance of a runner
     runner = OpenStudio::Ruleset::OSRunner.new
 
     # load the test model
     path = OpenStudio::Path.new(File.dirname(__FILE__) + "/cubitoygarajenhideal.idf")
-    source_idf = OpenStudio::WorkSpace::load(path)
-    if source_idf.empty?
+    workspace = OpenStudio::WorkSpace.load(path)
+    if workspace.empty?
       runner.registerError("Cannot load #{ path }")
       return false
     end
-    idf = source_idf.get.toIdfFile()
-    workspace.addObjects(idf.objects)
+    workspace = workspace.get
 
     # get arguments and test that they are what we are expecting
     arguments = measure.arguments(workspace)
-    argument_map = OpenStudio::Ruleset::OSArgumentMap.new
+    argument_map = OpenStudio::Ruleset.convertOSArgumentVectorToMap(arguments)
+
+    #assert_equal(1, arguments.size)
+    #assert_equal("space_name", arguments[0].name)
+
+    # # populate argument with specified hash value if specified
+    # arguments.each do |arg|
+    #   temp_arg_var = arg.clone
+    #   if args_hash[arg.name]
+    #     assert(temp_arg_var.setValue(args_hash[arg.name]))
+    #   end
+    #   argument_map[arg.name] = temp_arg_var
+    # end
 
     measure.run(workspace, runner, argument_map)
     result = runner.result
