@@ -1,3 +1,4 @@
+# coding: utf-8
 
 require "#{File.dirname(__FILE__)}/os_lib_reporting_SI"
 require "#{File.dirname(__FILE__)}/ctegeometria" # que importa el modulo CTEgeo
@@ -7,14 +8,14 @@ module CTE_lib
   #======== Elementos generales  ============
   def self.variablesdisponiblesquery
     variablesdisponiblesquery = "
-SELECT 
-    DISTINCT VariableName, ReportingFrequency 
-FROM 
+SELECT
+    DISTINCT VariableName, ReportingFrequency
+FROM
     ReportVariableDataDictionary "
     return variablesdisponiblesquery
   end
- 
-  
+
+
   #======== Tabla general de mediciones =====
   def self.CTE_tabla_general_de_mediciones(model, sqlFile, runner)
     log = 'logpropio.txt'
@@ -25,12 +26,12 @@ FROM
     medicion_general[:data] = []
 
     # structure ID / building name
-    value = model.getBuilding.name.to_s       
+    value = model.getBuilding.name.to_s
     medicion_general[:data] << ['Nombre del edificio', value, ''] #medicion_general[:data] << [display, value, target_units]
     runner.registerValue('Nombre del edificio', value, '')
 
     # ZONAS HABITABLES, numero
-    medicion_general[:data] << ["<u>Zonas habitables</u>", '', '']    
+    medicion_general[:data] << ["<u>Zonas habitables</u>", '', '']
     numerodezonashabitables = CTEgeo.zonashabitables(sqlFile).count()
     display = 'Número de zonas habitables'
     source_units = ''
@@ -45,8 +46,8 @@ FROM
     unidades = 'm^2'
     medicion_general[:data] << [display, superficiehabitable_neat, unidades]
     runner.registerValue(display, superficiehabitable, unidades)
-   
-    # ZONAS HABITABLES, VOLUMEN HABITABLE    
+
+    # ZONAS HABITABLES, VOLUMEN HABITABLE
     volumenhabitable = CTEgeo.volumenhabitable(sqlFile)
     display = 'Volumen habitable'
     value = volumenhabitable.round
@@ -54,7 +55,7 @@ FROM
     runner.registerValue(display, value, 'm3')
 
     #  ZONAS NO HABITABLES, numero
-    medicion_general[:data] << ["<u>Zonas no habitables</u>", '', '']    
+    medicion_general[:data] << ["<u>Zonas no habitables</u>", '', '']
     zonasnohabitables = CTEgeo.zonasnohabitables(sqlFile).count()
     display = 'Número de zonas no habitables'
     medicion_general[:data] << [display, zonasnohabitables.to_s, '']
@@ -62,12 +63,12 @@ FROM
 
     # ZONAS NO HABITABLES, SUPERFICIES NO HABITABLES
     superficienohabitable = CTEgeo.superficienohabitable(sqlFile)
-    msg(log, "Superficie no habitable = #{superficienohabitable}")    
+    msg(log, "Superficie no habitable = #{superficienohabitable}")
     display = "Superficie zonas no habitables"
     superficienohabitable_neat = OpenStudio.toNeatString(superficienohabitable, 0, true)
     medicion_general[:data] << [display, superficienohabitable_neat, 'm^2']
     runner.registerValue(display, superficienohabitable.to_s, 'm^2')
-	
+
 
     # ZONAS NO HABITABLES, VOLUMEN NO HABITABLE
     volumennohabitable = CTEgeo.volumennohabitable(sqlFile)
@@ -79,13 +80,13 @@ FROM
     runner.registerValue(display, volumennohabitable.to_s, units)
 
     # ENVOLVENTE, SUPERFICIES CANDIDATAS a ser envolvente térmica
-    medicion_general[:data] << ["<u>Envolvente térmica</u>", '', '']   
+    medicion_general[:data] << ["<u>Envolvente térmica</u>", '', '']
     superficiescandidatas = CTEgeo.superficiescandidatas(sqlFile)
     source_units = ''
     value = superficiescandidatas.count()
     medicion_general[:data] << [display, value.to_s, source_units]
     runner.registerValue(display, value, source_units)
-    
+
     # ENVOLVENTE, SUPERFICIES EXTERNAS
     superficiesexternas = CTEgeo.superficiesexternas(sqlFile)
     display = 'Número de superficies externas de zonas habitables'
@@ -93,7 +94,7 @@ FROM
     value = superficiesexternas.count()
     medicion_general[:data] << [display, value.to_s, source_units]
     runner.registerValue(display, value, source_units)
-    
+
     # ENVOLVENTE, AREA EXTERIOR
     areaexterior = CTEgeo.areaexterior(sqlFile)
     display = 'Área de la envolvente térmica que es exterior'
@@ -102,7 +103,7 @@ FROM
     medicion_general[:data] << [display, areaexterior_neat, source_units]
     runner.registerValue(display, areaexterior, source_units)
 
-    # ENVOLVENTE, SUPERFICIES INTERNAS    
+    # ENVOLVENTE, SUPERFICIES INTERNAS
     superficiesinternas = CTEgeo.superficiesinternas(sqlFile)
     value = superficiesinternas.count()
     display = 'Número de particiones interiores de las zonas habitables'
@@ -117,7 +118,7 @@ FROM
     source_units = ''
     medicion_general[:data] << [display, superficiescontacto.to_s, source_units]
     runner.registerValue(display, superficiescontacto, source_units)
-    
+
     # ENVOLVENTE, AREA INTERIOR
     areainterior = CTEgeo.areainterior(sqlFile)
     display = 'Área de la envolvente térmica que es interior'
@@ -333,18 +334,18 @@ def self.flowSuelosTerreno(sqlFile)
   def self.demanda_por_componentes_verano(model, sqlFile, runner)
     return demanda_por_componentes(model, sqlFile, runner, 'verano')
   end
-  
+
   def self.mediciones_murosexeriores(model, sqlFile, runner)
     log = 'log_mediciones exteriores'
-    
+
     contenedor_general = {}
     contenedor_general[:title] = "mediciones muros exteriores"
     contenedor_general[:header] = ['construccion', 'GrossArea', 'U']
-    contenedor_general[:units] = [] 
+    contenedor_general[:units] = []
     contenedor_general[:data] = []
-    
+
     indicesconstruccionquery = "SELECT DISTINCT ConstructionIndex FROM (#{CTEgeo.murosexterioresenvolventequery})"
-       
+
     msg(log, "query indices de construcción: #{indicesconstruccionquery}")
     indicesconstruccionsearch  = sqlFile.execAndReturnVectorOfString(indicesconstruccionquery).get
     indicesconstruccionsearch.each do | indiceconstruccion |
@@ -359,21 +360,21 @@ def self.flowSuelosTerreno(sqlFile)
       contenedor_general[:data] << [nombre, area, uvalue]
     end
 
-    msg(log, "indices de construcción: #{indicesconstruccionsearch}") 
+    msg(log, "indices de construcción: #{indicesconstruccionsearch}")
     return contenedor_general
   end
-  
+
   def self.mediciones_cubiertas(model, sqlFile, runner)
     log = 'log_mediciones exteriores'
-    
+
     contenedor_general = {}
     contenedor_general[:title] = "mediciones cubiertas exteriores"
     contenedor_general[:header] = ['construccion', 'GrossArea', 'U']
-    contenedor_general[:units] = [] 
+    contenedor_general[:units] = []
     contenedor_general[:data] = []
-    
+
     indicesconstruccionquery = "SELECT DISTINCT ConstructionIndex FROM (#{CTEgeo.cubiertassexterioresenvolventequery})"
-       
+
     msg(log, "query indices de construcción cubiertas: #{indicesconstruccionquery}")
     indicesconstruccionsearch  = sqlFile.execAndReturnVectorOfString(indicesconstruccionquery).get
     indicesconstruccionsearch.each do | indiceconstruccion |
@@ -391,18 +392,18 @@ def self.flowSuelosTerreno(sqlFile)
     msg(log, "indices de construcción: #{indicesconstruccionsearch}")
     return contenedor_general
   end
-  
+
   def self.mediciones_suelosterreno(model, sqlFile, runner)
     log = 'log_mediciones exteriores'
-    
+
     contenedor_general = {}
     contenedor_general[:title] = "mediciones suelos terreno"
     contenedor_general[:header] = ['construccion', 'GrossArea', 'U']
-    contenedor_general[:units] = [] 
+    contenedor_general[:units] = []
     contenedor_general[:data] = []
-    
+
     indicesconstruccionquery = "SELECT DISTINCT ConstructionIndex FROM (#{CTEgeo.suelosterrenoenvolventequery})"
-       
+
     msg(log, "query indices de construcción cubiertas: #{indicesconstruccionquery}")
     indicesconstruccionsearch  = sqlFile.execAndReturnVectorOfString(indicesconstruccionquery).get
     indicesconstruccionsearch.each do | indiceconstruccion |
@@ -418,21 +419,21 @@ def self.flowSuelosTerreno(sqlFile)
     end
 
     msg(log, "indices de construcción: #{indicesconstruccionsearch}")
-    
+
     return contenedor_general
   end
 
   def self.mediciones_huecos(model, sqlFile, runner)
     log = 'log_mediciones exteriores'
-    
+
     contenedor_general = {}
     contenedor_general[:title] = "mediciones huecos"
     contenedor_general[:header] = ['construccion', 'GrossArea', 'U']
-    contenedor_general[:units] = [] 
+    contenedor_general[:units] = []
     contenedor_general[:data] = []
-    
+
     indicesconstruccionquery = "SELECT DISTINCT ConstructionIndex FROM (#{CTEgeo.huecosenvolventequery})"
-       
+
     msg(log, "query indices de construcción cubiertas: #{indicesconstruccionquery}")
     indicesconstruccionsearch  = sqlFile.execAndReturnVectorOfString(indicesconstruccionquery).get
     indicesconstruccionsearch.each do | indiceconstruccion |
@@ -448,19 +449,19 @@ def self.flowSuelosTerreno(sqlFile)
     end
 
     msg(log, "indices de construcción: #{indicesconstruccionsearch}")
-    
+
     return contenedor_general
   end
-  
-  
+
+
   def self.demanda_por_componentes(model, sqlFile, runner, periodo)
     log = 'log_demandaComponentes'
     msg(log, "__ inicidada demanda por componentes__#{periodo}\n")
-    
+
     superficiehabitable =  CTEgeo.superficieHabitable(sqlFile)
-    
-    
-    
+
+
+
     suphab = OpenStudio.toNeatString(superficiehabitable, 0, true).to_f
 
 
@@ -471,9 +472,9 @@ def self.flowSuelosTerreno(sqlFile)
       msg(log, "     otrasearch: correcto\n")
     end
 
-    
+
     msg(log, ".. resultado de superficie habitable:\n#{superficiehabitable}\n")
-    
+
     orden_eje_x = []
     end_use_colors = ['#EF1C21', '#0071BD', '#F7DF10', '#DEC310', '#4A4D4A', '#B5B2B5', '#FF79AD',
     '#632C94', '#F75921', '#293094', '#CE5921', '#FFB239', '#29AAE7', '#8CC739']
@@ -536,10 +537,10 @@ def self.flowSuelosTerreno(sqlFile)
     registraValores.call([heatGain[0] - heatLoss[0], heatGain[1] - heatLoss[1]], 'Infiltación', 'ppal', 1)
 
     # ventilacion
-        
+
     # ventGain = valoresZonas(sqlFile, "Zone Ventilation Total Heat Gain Energy", log)
     # ventLoss = valoresZonas(sqlFile, "Zone Ventilation Total Heat Loss Energy", log)
-    
+
     ventGain = valoresZonas(sqlFile, "Zone Combined Outdoor Air Total Heat Gain Energy", log)
     ventLoss = valoresZonas(sqlFile, "Zone Combined Outdoor Air Total Heat Loss Energy", log)
     # registraValores.call(ventGain, 'VenGain', 'segun', 1)
@@ -582,21 +583,21 @@ end
   # AND ReportingFrequency == 'Hourly' AND Month = 8 AND Day = 15 AND VariableValue < 95 AND VariableValue > -45 ) USING (TimeIndex)
 # WHERE variableName == 'Zone Total Internal Total Heating Energy'
 
-# query indices de construcción: 
-# SELECT DISTINCT ConstructionIndex 
-# FROM 
-	# (SELECT * 
-  # FROM 
-    # (SELECT * 
-    # FROM 
-      # (SELECT * 
-      # FROM Surfaces surf 
-      # INNER JOIN ( SELECT *  
-        # FROM Zones zones 
-        # LEFT OUTER JOIN ZoneInfoZoneLists zizl USING (ZoneIndex) 
-        # LEFT OUTER JOIN ZoneLists zl USING (ZoneListIndex) 
-        # WHERE zl.Name != 'CTE_NOHABITA' AND zl.Name != 'CTE_N'  ) AS zones 
+# query indices de construcción:
+# SELECT DISTINCT ConstructionIndex
+# FROM
+	# (SELECT *
+  # FROM
+    # (SELECT *
+    # FROM
+      # (SELECT *
+      # FROM Surfaces surf
+      # INNER JOIN ( SELECT *
+        # FROM Zones zones
+        # LEFT OUTER JOIN ZoneInfoZoneLists zizl USING (ZoneIndex)
+        # LEFT OUTER JOIN ZoneLists zl USING (ZoneListIndex)
+        # WHERE zl.Name != 'CTE_NOHABITA' AND zl.Name != 'CTE_N'  ) AS zones
         # ON surf.ZoneIndex = zones.ZoneIndex
-        # WHERE surf.ClassName <> 'Window' AND surf.ClassName <> 'Internal Mass' ) 
-      # WHERE ExtBoundCond = -1 OR ExtBoundCond = 0 ) AS surf 
+        # WHERE surf.ClassName <> 'Window' AND surf.ClassName <> 'Internal Mass' )
+      # WHERE ExtBoundCond = -1 OR ExtBoundCond = 0 ) AS surf
     # WHERE surf.ClassName == 'Wall' AND surf.ExtBoundCond == 0 )

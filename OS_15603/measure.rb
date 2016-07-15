@@ -1,3 +1,4 @@
+# coding: utf-8
 require 'erb'
 require 'json'
 require 'pp'
@@ -17,18 +18,18 @@ class OpenStudioResultsCopy < OpenStudio::Ruleset::ReportingUserScript
 
   # human readable description
   def description
-    return "This measure creates high level tables and charts pulling both from model inputs and EnergyPlus results. It has building level information as well as detail on space types, thermal zones, HVAC systems, envelope characteristics, and economics. Click the heading above a chart to view a table of the chart data."
+    return "Informe de resultados con informacion relativa al CTE DB-HE."
   end
 
   # human readable description of modeling approach
   def modeler_description
-    return "For the most part consumption data comes from the tabular EnergyPlus results, however there are a few requests added for time series results. Space type and loop details come from the OpenStudio model. The code for this is modular, making it easy to use as a template for your own custom reports. The structure of the report uses bootstrap, and the graphs use dimple js."
+    return "Datos obtenidos de los resultados de EnergyPlus y del modelo de OpenStudio. La estructura del informe usa Bootstrap, y dimple js para las graficas."
   end
 
   def possible_sections
-  
+
     #CTE_lib.mediciones()
-    
+
     result = []
 
     # methods for sections in order that they will appear in report
@@ -37,11 +38,11 @@ class OpenStudioResultsCopy < OpenStudio::Ruleset::ReportingUserScript
     result << 'variables_de_inspeccion'
     #result << 'variables_cte'
     result << 'annual_overview_section'
-    
+
     result << 'building_summary_section'
     # still need to extend building summary
     # still need to populate site performance
-    
+
     result << 'monthly_overview_section'
     # result << 'utility_bills_rates_section'
     result << 'mediciones_envolvente'
@@ -50,7 +51,7 @@ class OpenStudioResultsCopy < OpenStudio::Ruleset::ReportingUserScript
     result << 'space_type_details_section'
 
     result << 'interior_lighting_section'
-    
+
     # consider binning to space types
 
     result << 'plug_loads_section'
@@ -153,15 +154,22 @@ class OpenStudioResultsCopy < OpenStudio::Ruleset::ReportingUserScript
       return false
     end
 
+
+    # configure logging
+    #logFile = OpenStudio::FileLogSink.new(OpenStudio::Path.new("./CTEReport.log"))
+    #logFile.setLogLevel(OpenStudio::Debug)
+    #logFile.setLogLevel(OpenStudio::Warn)
+    #OpenStudio::Logger.instance.standardOutLogger.disable
+
     # reporting final condition
     runner.registerInitialCondition('Gathering data from EnergyPlus SQL file and OSM model.')
-    
+
     f = 'logpropio_measure15603'
     msg(f, "veamos si podemos obtener información por esta vía\n")
 
     # create a array of sections to loop through in erb file
     @sections = []
-    
+
     msg(f, "lista de secciones:\n")
     seccion = 1
     possible_sections.each do |method_name|
@@ -174,7 +182,8 @@ class OpenStudioResultsCopy < OpenStudio::Ruleset::ReportingUserScript
     possible_sections.each do |method_name|
       next unless args[method_name]
       msg(f, "___llamada a evaluar oslib_rep. #{method_name}\n")
-      eval("@sections <<  OsLib_Reporting.#{method_name}(model,sql_file,runner,false)")
+      method = OsLib_Reporting.method(method_name)
+      @sections << method.call(model, sql_file, runner, false)
       msg(f, "___finalizado oslib_rep.        #{method_name}\n\n")
       sections_made += 1
     end
@@ -190,9 +199,6 @@ class OpenStudioResultsCopy < OpenStudio::Ruleset::ReportingUserScript
     File.open(html_in_path, 'r') do |file|
       html_in = file.read
     end
-    
-    # File.open('logpropio.txt', 'a') {|file| file.write("la seccion: #{@sections.join('\n')}\n")}
-    # File.open('logpropio.txt', 'a') {|file| PP.pp(@sections, file)}
 
     # configure template with variable values
     renderer = ERB.new(html_in)
@@ -218,11 +224,11 @@ class OpenStudioResultsCopy < OpenStudio::Ruleset::ReportingUserScript
 
     true
   end # end the run method
-  
+
   def msg(fichero, cadena)
-    File.open(fichero+'.txt', 'a') {|file| file.write(cadena)}  
-  end 
-  
+    File.open(fichero+'.txt', 'a') {|file| file.write(cadena)}
+  end
+
 end # end the measure
 
 # this allows the measure to be use by the application
