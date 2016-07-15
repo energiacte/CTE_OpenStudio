@@ -24,37 +24,29 @@ require "#{File.dirname(__FILE__)}/../measure.rb"
 
 require 'minitest/autorun'
 
-class CorrigeHorarioVentilacionEnEplus_Test < MiniTest::Unit::TestCase
-
+class CTE_CorrigeHorarioVentilacionEnEplus_Test < MiniTest::Unit::TestCase
 
   def test_CorrigeHorarioVentilacionEnEplus
 
     # create an instance of the measure
-    measure = CorrigeHorarioVentilacionEnEplus.new
+    measure = CTE_CorrigeHorarioVentilacionEnEplus.new
 
     # create an instance of a runner
     runner = OpenStudio::Ruleset::OSRunner.new
 
     # load the test model
-    translator = OpenStudio::OSVersion::VersionTranslator.new
-    path = OpenStudio::Path.new(File.dirname(__FILE__) + "/EnvelopeAndLoadTestModel_01.osm")
-    model = translator.loadModel(path)
-    assert((not model.empty?))
-    model = model.get
-
-    # forward translate OSM file to IDF file
-    ft = OpenStudio::EnergyPlus::ForwardTranslator.new
-    workspace = ft.translateModel(model)
+    path = OpenStudio::Path.new(File.dirname(__FILE__) + "/cubitoygarajenhideal.idf")
+    source_idf = OpenStudio::WorkSpace::load(path)
+    if source_idf.empty?
+      runner.registerError("Cannot load #{ path }")
+      return false
+    end
+    idf = source_idf.get.toIdfFile()
+    workspace.addObjects(idf.objects)
 
     # get arguments and test that they are what we are expecting
     arguments = measure.arguments(workspace)
     argument_map = OpenStudio::Ruleset::OSArgumentMap.new
-
-    count = -1
-
-    source_idf_path = arguments[count += 1].clone
-    assert(source_idf_path.setValue(File.dirname(__FILE__) + "/Example B - BlockEnergyCharge.idf"))
-    argument_map["source_idf_path"] = source_idf_path
 
     measure.run(workspace, runner, argument_map)
     result = runner.result
@@ -63,7 +55,7 @@ class CorrigeHorarioVentilacionEnEplus_Test < MiniTest::Unit::TestCase
 
     # save the workspace to output directory
     output_file_path = OpenStudio::Path.new(File.dirname(__FILE__) + "/output/test_output.idf")
-    workspace.save(output_file_path,true)
+    workspace.save(output_file_path, true)
 
   end
 
