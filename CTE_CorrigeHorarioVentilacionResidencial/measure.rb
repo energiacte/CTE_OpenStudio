@@ -28,7 +28,7 @@ class CTE_CorrigeHorarioVentilacionResidencial < OpenStudio::Ruleset::WorkspaceU
       changeCounter = 0
       idfObjects.each do | obj |
         currentSchedule = obj.getString(2)
-        if currentSchedule == CTE_SHEDULE_NAME then continue end
+        if currentSchedule == CTE_SCHEDULE_NAME then continue end
         changeCounter += 1
         runner.registerInfo("Cambiando horario #{ currentSchedule } para clase #{ object.class }")
         result = obj.setString(2, CTE_SCHEDULE_NAME) # Correccion de nombre de horario
