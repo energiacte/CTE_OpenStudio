@@ -1,14 +1,14 @@
 <measure>
   <schema_version>3.0</schema_version>
-  <name>corrige_horario_ventilacion_en_eplus</name>
+  <name>CTE_CorrigeHorarioVentilacionResidencial</name>
   <uid>a4172009-822d-40f3-8c80-725f59797c02</uid>
   <version_id>093d6e9c-8ab1-49b5-9ad8-120bdcb5c546</version_id>
   <version_modified>20160601T134600Z</version_modified>
   <xml_checksum>31E4D2D4</xml_checksum>
-  <class_name>CorrigeHorarioVentilacionEnEplus</class_name>
-  <display_name> corrige horario ventilacion en eplus</display_name>
-  <description>Esta medida busca las definiciones de Zone Ventilation Desing Flow Rate y ajusta el horario al que debe ser.</description>
-  <modeler_description>Esta medida busca las definiciones de Zone Ventilation Desing Flow Rate y ajusta el horario al que debe ser.</modeler_description>
+  <class_name>CTE_CorrigeHorarioVentilacionResidencial</class_name>
+  <display_name>Corrige el horario de ventilacion en residencial</display_name>
+  <description>Esta medida busca las definiciones de Zone Ventilation Desing Flow Rate y asegura que se usa CTER24B_HVEN.</description>
+  <modeler_description>Esta medida cambia los objetos ZoneVentilation_DesingFlowRate al horario CTER24B_HVEN.</modeler_description>
   <arguments/>
   <provenances/>
   <tags>

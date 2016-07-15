@@ -1,11 +1,11 @@
 # coding: utf-8
 
-class CorrigeHorarioVentilacionEnEplus < OpenStudio::Ruleset::WorkspaceUserScript
+class CTE_CorrigeHorarioVentilacionResidencial < OpenStudio::Ruleset::WorkspaceUserScript
 
   def name
     # OpenStudio convierte los horarios de ventilación a AlwaysON a EPlus
     # Esto sucede en el caso de usar el método de renovaciones hora: ZoneVentilation_DesignFlowRate
-    return "Asegura que se usa CTER24B_HVEN como horario de ventilacion"
+    return "Cambia horario de ventilacion de zona a CTER24B_HVEN"
   end
 
   def arguments(workspace)
@@ -85,4 +85,4 @@ class CorrigeHorarioVentilacionEnEplus < OpenStudio::Ruleset::WorkspaceUserScrip
 end #end the measure
 
 #this allows the measure to be use by the application
-CorrigeHorarioVentilacionEnEplus.new.registerWithApplication
+CTE_CorrigeHorarioVentilacionResidencial.new.registerWithApplication
