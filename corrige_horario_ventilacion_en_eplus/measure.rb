@@ -3,9 +3,9 @@
 class CorrigeHorarioVentilacionEnEplus < OpenStudio::Ruleset::WorkspaceUserScript
 
   def name
-
-    return " corrige horario ventilacion en eplus"
-
+    # OpenStudio convierte los horarios de ventilación a AlwaysON a EPlus
+    # Esto sucede en el caso de usar el método de renovaciones hora: ZoneVentilation_DesignFlowRate
+    return "Asegura que se usa CTER24B_HVEN como horario de ventilacion"
   end
 
   def arguments(workspace)
@@ -16,28 +16,22 @@ class CorrigeHorarioVentilacionEnEplus < OpenStudio::Ruleset::WorkspaceUserScrip
   def run(workspace, runner, user_arguments)
     super(workspace, runner, user_arguments)
 
-    # el workspace está definido en
-    # https://openstudio-sdk-documentation.s3.amazonaws.com/cpp/OpenStudio-1.7.0-doc/utilities/html/classopenstudio_1_1_workspace.html
-
-    # iddFile = workspace.iddFile
-    iddFileType = workspace.iddFileType
     f = 'log_ajustarVentilacion'
-    msg(f, "workspace iddFileType =*#{iddFileType}*\n")
 
-    #DO STUFF
-    schedule = "CTER24B_HVEN"
+    CTE_SCHEDULE_NAME = "CTER24B_HVEN"
     idfFlowRates = workspace.getObjectsByType("ZoneVentilation_DesignFlowRate".to_IddObjectType)
+
     if not idfFlowRates.empty?
         idfFlowRates.each do | idfFlowRate |
             msg(f, "\n __ proceso de renombrado de schedules __\n")
             msg(f, "  idfFlowRates[0].class ----------------------> #{idfFlowRate.class}\n")
             msg(f, "  inital value: idfFlowRates[0].getString(2) -> #{idfFlowRate.getString(2)}\n")
-            result = idfFlowRate.setString(2, schedule)
+            result = idfFlowRate.setString(2, CTE_SCHEDULE_NAME) # Correccion de nombre de horario
             msg(f, "  succesfully written? -----------------------> #{result}\n")
             msg(f, "  final value --------------------------------> #{idfFlowRate.getString(2)}\n")
         end
     else
-        msg(f, "array is empty \n")
+        msg(f, "No hay objetos ZoneVentilation_DesignFlowRate \n")
     end
 
     msg(f, "\n __ fin del renombrado __\n")
