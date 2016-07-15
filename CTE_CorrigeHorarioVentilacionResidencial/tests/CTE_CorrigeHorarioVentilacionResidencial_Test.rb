@@ -19,12 +19,13 @@
 
 require 'openstudio'
 require 'openstudio/ruleset/ShowRunnerOutput'
+require 'minitest/autorun'
+require 'fileutils'
 
 require_relative "../measure.rb"
 
-require 'minitest/autorun'
 
-class CTE_CorrigeHorarioVentilacionEnEplus_Test < MiniTest::Unit::TestCase
+class CTE_CorrigeHorarioVentilacionResidencial_Test < MiniTest::Unit::TestCase
 
   def test_CorrigeHorarioVentilacionEnEplus
 
