@@ -1,13 +1,13 @@
 # coding: utf-8
 
-CTE_SCHEDULE_NAME = "CTER24B_HVEN"
-
 class CTE_CorrigeHorarioVentilacionResidencial < OpenStudio::Ruleset::WorkspaceUserScript
+  # OpenStudio convierte los horarios de ventilación de los objetos ZoneVentilation:DesignFlowRate a Always_On a EPlus
+  # Esto sucede cuando se usa un objeto OutdoorAir, que es necesario cuando no se usan sistemas ideales
 
-  # OpenStudio convierte los horarios de ventilación a AlwaysON a EPlus
-  # Esto sucede en el caso de usar el método de renovaciones hora: ZoneVentilation_DesignFlowRate
+  CTE_SCHEDULE_NAME = "CTER24B_HVEN"
+
   def name
-    return "Cambia horario de ventilacion a CTER24B_HVEN"
+    return "Corrige horario de ventilacion a CTER24B_HVEN"
   end
 
   def arguments(workspace)
