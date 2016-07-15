@@ -2,14 +2,17 @@
   <schema_version>3.0</schema_version>
   <name>ajuste_ventilacion_con_horario_verano</name>
   <uid>21018e38-33dc-4586-8c49-bc3fad5cdddd</uid>
-  <version_id>145b875a-fc30-4398-bfe6-22b6e2a829e7</version_id>
-  <version_modified>20160708T150401Z</version_modified>
+  <version_id>5c3f029a-aaf1-4508-bba3-34d7ed3ef6b9</version_id>
+  <version_modified>20160712T101815Z</version_modified>
   <xml_checksum>7D31CA80</xml_checksum>
   <class_name>AjusteVentilacionConHorarioVerano</class_name>
   <display_name>Ventilacion nocturna en verano</display_name>
   <description>Establece la ventilacion nocturna de 4 ren/h en verano para las zonas habitables y el caudal de diseno indicado el resto del tiempo
 
-El valor del caudal de diseno de ventilacion se define en ren/h.</description>
+El valor del caudal de diseno de ventilacion se define en ren/h.
+
+Esta medida necesita otra complementaria que fija en 4ren/h la ventilacion de las zonas, ya que esta solamente ajusta la fraccion de ventilacion en el horario
+</description>
   <modeler_description>Recalcula los horarios de ventilacion para mantener a 4 las renovaciones en verano y variar el resto. Se aplica a todas las zonas habitables. De uso de momento unicamente para residencial.</modeler_description>
   <arguments>
     <argument>
@@ -115,6 +118,12 @@ El valor del caudal de diseno de ventilacion se define en ren/h.</description>
       <checksum>FDCD058D</checksum>
     </file>
     <file>
+      <filename>AjusteVentilacionConHorarioVerano_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E135828D</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.8.4</identifier>
@@ -123,19 +132,7 @@ El valor del caudal de diseno de ventilacion se define en ren/h.</description>
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>BFC1113F</checksum>
-    </file>
-    <file>
-      <filename>log_ajusteVentilacionVerano.txt</filename>
-      <filetype>txt</filetype>
-      <usage_type>test</usage_type>
-      <checksum>E1FD2B50</checksum>
-    </file>
-    <file>
-      <filename>AjusteVentilacionConHorarioVerano_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>E135828D</checksum>
+      <checksum>92002460</checksum>
     </file>
   </files>
 </measure>
