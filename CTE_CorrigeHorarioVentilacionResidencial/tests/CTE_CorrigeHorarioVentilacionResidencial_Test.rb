@@ -27,14 +27,14 @@ require_relative "../measure.rb"
 
 class CTE_CorrigeHorarioVentilacionResidencial_Test < MiniTest::Unit::TestCase
 
-  def test_CorrigeHorarioVentilacionEnEplus
+  def test_CorrigeHorarioVentilacionResidencial
 
     measure = CTE_CorrigeHorarioVentilacionResidencial.new
     runner = OpenStudio::Ruleset::OSRunner.new
 
     # load the test model
     path = OpenStudio::Path.new(File.dirname(__FILE__) + "/cubitoygarajenhideal.idf")
-    workspace = OpenStudio::WorkSpace.load(path)
+    workspace = OpenStudio::Workspace.load(path)
     if workspace.empty?
       runner.registerError("Cannot load #{ path }")
       return false
