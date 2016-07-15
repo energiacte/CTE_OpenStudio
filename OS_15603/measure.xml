@@ -2,13 +2,13 @@
   <schema_version>3.0</schema_version>
   <name>open_studio_results_copy</name>
   <uid>6d91a3a6-5fcd-4f37-bcd7-9080493a5799</uid>
-  <version_id>f87ddad0-7e66-42d9-a385-76066dc54ff2</version_id>
-  <version_modified>20160706T133537Z</version_modified>
+  <version_id>04c61283-7c81-4778-887b-7a723ccf53c3</version_id>
+  <version_modified>20160712T132326Z</version_modified>
   <xml_checksum>69BA4D91</xml_checksum>
   <class_name>OpenStudioResultsCopy</class_name>
   <display_name>Informe 15603</display_name>
-  <description>This measure creates high level tables and charts pulling both from model inputs and EnergyPlus results. It has building level information as well as detail on space types, thermal zones, HVAC systems, envelope characteristics, and economics. Click the heading above a chart to view a table of the chart data.</description>
-  <modeler_description>For the most part consumption data comes from the tabular EnergyPlus results, however there are a few requests added for time series results. Space type and loop details come from the OpenStudio model. The code for this is modular, making it easy to use as a template for your own custom reports. The structure of the report uses bootstrap, and the graphs use dimple js.</modeler_description>
+  <description>Informe de resultados con informacion relativa al CTE DB-HE.</description>
+  <modeler_description>Datos obtenidos de los resultados de EnergyPlus y del modelo de OpenStudio. La estructura del informe usa Bootstrap, y dimple js para las graficas.</modeler_description>
   <arguments>
     <argument>
       <name>mediciones_de_superficies_segun_CTE</name>
@@ -501,10 +501,34 @@
       <checksum>CB625626</checksum>
     </file>
     <file>
+      <filename>os_lib_reporting_SI.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>96824A66</checksum>
+    </file>
+    <file>
+      <filename>comun.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>AC7BA514</checksum>
+    </file>
+    <file>
       <filename>test_cteLib.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>81302469</checksum>
+      <checksum>7B739B86</checksum>
+    </file>
+    <file>
+      <filename>ctelib.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>ABE6A283</checksum>
+    </file>
+    <file>
+      <filename>ctegeometria.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>9D09B95C</checksum>
     </file>
     <file>
       <version>
@@ -515,31 +539,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>60A59F6E</checksum>
-    </file>
-    <file>
-      <filename>os_lib_reporting_SI.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>96824A66</checksum>
-    </file>
-    <file>
-      <filename>ctelib.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>AB8F8D85</checksum>
-    </file>
-    <file>
-      <filename>comun.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>AC7BA514</checksum>
-    </file>
-    <file>
-      <filename>ctegeometria.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>C3A5E48D</checksum>
+      <checksum>2DDEB4B3</checksum>
     </file>
   </files>
 </measure>
