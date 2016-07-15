@@ -18,69 +18,70 @@ class CTE_CorrigeHorarioVentilacionResidencial < OpenStudio::Ruleset::WorkspaceU
   def run(workspace, runner, user_arguments)
     super(workspace, runner, user_arguments)
 
-    f = 'log_ajustarVentilacion'
+    runner.registerInitialCondition("Cambio de horarios en todos los elementos ZoneVentilation_DesignFlowRate a #{CTE_SHEDULE_NAME}")
 
-    idfFlowRates = workspace.getObjectsByType("ZoneVentilation_DesignFlowRate".to_IddObjectType)
-
-    if not idfFlowRates.empty?
-        idfFlowRates.each do | idfFlowRate |
-            msg(f, "\n __ proceso de renombrado de schedules __\n")
-            msg(f, "  idfFlowRates[0].class ----------------------> #{idfFlowRate.class}\n")
-            msg(f, "  inital value: idfFlowRates[0].getString(2) -> #{idfFlowRate.getString(2)}\n")
-            result = idfFlowRate.setString(2, CTE_SCHEDULE_NAME) # Correccion de nombre de horario
-            msg(f, "  succesfully written? -----------------------> #{result}\n")
-            msg(f, "  final value --------------------------------> #{idfFlowRate.getString(2)}\n")
-        end
+    idfObjects = workspace.getObjectsByType("ZoneVentilation_DesignFlowRate".to_IddObjectType)
+    if idfFlowRates.empty?
+      runner.registerInfo("No se han encontrado objetos ZoneVentilation_DesignFlowRate")
     else
-        msg(f, "No hay objetos ZoneVentilation_DesignFlowRate \n")
+      runner.registerInfo("Se han encontrado #{ idfObjects.size } objetos ZoneVentilation_DesignFlowRate")
+      changeCounter = 0
+      idfObjects.each do | obj |
+        currentSchedule = obj.getString(2)
+        if currentSchedule == CTE_SHEDULE_NAME then continue end
+        changeCounter += 1
+        runner.registerInfo("Cambiando horario #{ currentSchedule } para clase #{ object.class }")
+        result = obj.setString(2, CTE_SCHEDULE_NAME) # Correccion de nombre de horario
+        if not result
+          runner.registerInfo("ERROR al modificar el nombre del horario")
+        end
+      end
     end
 
-    msg(f, "\n __ fin del renombrado __\n")
+    runner.registerInfo("Se han renombrado #{ changeCounter } de #{ idfObjects.size } objetos")
 
-    ### TODO: Esto no parece funcionar
+    ### TODO: Esto necesita que se muestren los valores de Zone combined airflow ... en lugar de valores de zona en el report.
+    # SELECT AVG(data.VariableValue) FROM ReportVariableData AS data WHERE ReportVariableDataDictionaryIndex = 160;
+    # ReportVariableDataDictionary vale para buscar el Combined Air... que en este archivo era 160.
 
-    # # ZoneAirBalance:OutdoorAir,
-    # # LIVING ZONE Balance 1,   !- Name
-    # # LIVING ZONE,             !- Zone Name
-    # # Quadrature,              !- Air Balance Method
-    # # 0.00,                    !- Induced Outdoor Air Due to Unbalanced Duct Leakage {m3/s}
-    # # INF-SCHED;               !- Induced Outdoor Air Schedule Name
+    # ZoneAirBalance:OutdoorAir,
+    # LIVING ZONE Balance 1,   !- Name
+    # LIVING ZONE,             !- Zone Name
+    # Quadrature,              !- Air Balance Method
+    # 0.00,                    !- Induced Outdoor Air Due to Unbalanced Duct Leakage {m3/s}
+    # INF-SCHED;               !- Induced Outdoor Air Schedule Name
 
-    # # array to hold new IDF objects needed
-    # string_objects = []
+    # array to hold new IDF objects needed
+    string_objects = []
 
-    # idfZones = workspace.getObjectsByType("Zone".to_IddObjectType)
-    # if not idfZones.empty?
-    #   idfZones.each do | idfZone |
-    #     msg(f, "\n zona:#{idfZone}\n")
-    #     nombreZona = idfZone.getString(0)
-    #     msg(f, "\n zona1:#{idfZone.getString(0)}\n")
+    idfZones = workspace.getObjectsByType("Zone".to_IddObjectType)
+    if not idfZones.empty?
+      idfZones.each do | idfZone |
+        nombreZona = idfZone.getString(0)
+        runner.registerInfo("Añadiendo Objeto ZoneAirBalance:OutdoorAir a zona #{ nombreZona }")
 
-    #     string_objects << "
-    #       ZoneAirBalance:OutdoorAir,
-    #       #{nombreZona} Balance aire exterior, !- Name
-    #       #{nombreZona},            !- Zone Name
-    #       Quadrature,               !- Air Balance Method
-    #       0.00,                     !- Induced Outdoor Air Due to Unbalanced Duct Leakage {m3/s}
-    #       CTER24B_HINF;             !- Induced Outdoor Air Schedule Name
-    #       "
-    #   end
-    # end
+        string_objects << "
+          ZoneAirBalance:OutdoorAir,
+          #{nombreZona} OutdoorAir Balance, !- Name
+          #{nombreZona},            !- Zone Name
+          Quadrature,               !- Air Balance Method
+          0.00,                     !- Induced Outdoor Air Due to Unbalanced Duct Leakage {m3/s}
+          CTER24B_HINF;             !- Induced Outdoor Air Schedule Name
+          "
+      end
+    end
 
-    # # add all of the strings to workspace
-    # # this script won't behave well if added multiple times in the workflow. Need to address name conflicts
-    # string_objects.each do |string_object|
-    #   idfObject = OpenStudio::IdfObject::load(string_object)
-    #   object = idfObject.get
-    #   wsObject = workspace.addObject(object)
-    # end
+    # add all of the strings to workspace
+    # this script won't behave well if added multiple times in the workflow. Need to address name conflicts
+    string_objects.each do |string_object|
+      idfObject = OpenStudio::IdfObject::load(string_object)
+      object = idfObject.get
+      workspace.addObject(object)
+    end
 
+    runner.registerFinalCondition("Cambiados horarios y añadidos objetos ZoneAirBalance:OutdoorAir")
 
-   return true
-   end
-
-  def msg(fichero, cadena)
-    File.open(fichero+'.txt', 'a') {|file| file.write(cadena)}
+    return true
   end
 
 end #end the measure
