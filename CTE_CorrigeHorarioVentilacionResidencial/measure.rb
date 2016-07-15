@@ -18,7 +18,7 @@ class CTE_CorrigeHorarioVentilacionResidencial < OpenStudio::Ruleset::WorkspaceU
   def run(workspace, runner, user_arguments)
     super(workspace, runner, user_arguments)
 
-    runner.registerInitialCondition("Cambio de horarios en todos los elementos ZoneVentilation_DesignFlowRate a #{CTE_SHEDULE_NAME}")
+    runner.registerInitialCondition("Cambio de horarios en todos los elementos ZoneVentilation_DesignFlowRate a #{ CTE_SCHEDULE_NAME }")
 
     idfObjects = workspace.getObjectsByType("ZoneVentilation_DesignFlowRate".to_IddObjectType)
     if idfFlowRates.empty?
