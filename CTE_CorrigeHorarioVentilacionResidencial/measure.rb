@@ -1,11 +1,13 @@
 # coding: utf-8
 
+CTE_SCHEDULE_NAME = "CTER24B_HVEN"
+
 class CTE_CorrigeHorarioVentilacionResidencial < OpenStudio::Ruleset::WorkspaceUserScript
 
+  # OpenStudio convierte los horarios de ventilación a AlwaysON a EPlus
+  # Esto sucede en el caso de usar el método de renovaciones hora: ZoneVentilation_DesignFlowRate
   def name
-    # OpenStudio convierte los horarios de ventilación a AlwaysON a EPlus
-    # Esto sucede en el caso de usar el método de renovaciones hora: ZoneVentilation_DesignFlowRate
-    return "Cambia horario de ventilacion de zona a CTER24B_HVEN"
+    return "Cambia horario de ventilacion a CTER24B_HVEN"
   end
 
   def arguments(workspace)
@@ -18,7 +20,6 @@ class CTE_CorrigeHorarioVentilacionResidencial < OpenStudio::Ruleset::WorkspaceU
 
     f = 'log_ajustarVentilacion'
 
-    CTE_SCHEDULE_NAME = "CTER24B_HVEN"
     idfFlowRates = workspace.getObjectsByType("ZoneVentilation_DesignFlowRate".to_IddObjectType)
 
     if not idfFlowRates.empty?
