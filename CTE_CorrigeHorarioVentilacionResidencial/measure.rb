@@ -21,7 +21,7 @@ class CTE_CorrigeHorarioVentilacionResidencial < OpenStudio::Ruleset::WorkspaceU
     runner.registerInitialCondition("Cambio de horarios en todos los elementos ZoneVentilation_DesignFlowRate a #{ CTE_SCHEDULE_NAME }")
 
     idfObjects = workspace.getObjectsByType("ZoneVentilation_DesignFlowRate".to_IddObjectType)
-    if idfFlowRates.empty?
+    if idfObjects.empty?
       runner.registerInfo("No se han encontrado objetos ZoneVentilation_DesignFlowRate")
     else
       runner.registerInfo("Se han encontrado #{ idfObjects.size } objetos ZoneVentilation_DesignFlowRate")
