@@ -23,6 +23,14 @@ class CTE_VentilacionResidencialEP < OpenStudio::Ruleset::WorkspaceUserScript
     return "Ventilacion residencial CTE (EP)"
   end
 
+  def description
+    return "Asegura que los objetos ZoneVentilation:DesignFlowRate usan el horario CTER24B_HVEN y añade objetos ZoneAirBalance:OutdoorAir."
+  end
+
+  def modeler_description
+    return "Recorre objetos ZoneVentilation:DesignFlowRate y comprueba horario. Añade a todos los objetos Zone un objeto ZoneAirBalance:OutdoorAir."
+  end
+
   def arguments(workspace)
     args = OpenStudio::Ruleset::OSArgumentVector.new
     return args
