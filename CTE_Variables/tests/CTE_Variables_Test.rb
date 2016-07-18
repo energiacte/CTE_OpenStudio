@@ -6,11 +6,11 @@ require "#{File.dirname(__FILE__)}/../measure.rb"
 
 require 'test/unit'
 
-class VariablesCTE_Test < Test::Unit::TestCase
-  def test_VariablesCTE_GoodInputNew
+class CTE_Variables_Test < Test::Unit::TestCase
+  def test_CTE_Variables_GoodInputNew
 
     # create an instance of the measure
-    measure = VariablesCTE.new
+    measure = CTE_Variables.new
 
     # create an instance of a runner
     runner = OpenStudio::Ruleset::OSRunner.new
@@ -29,10 +29,10 @@ class VariablesCTE_Test < Test::Unit::TestCase
     assert(result.info.size == 39)
   end
 
-  def test_VariablesCTE_GoodInput
+  def test_CTE_Variables_GoodInput
 
     # create an instance of the measure
-    measure = VariablesCTE.new
+    measure = CTE_Variables.new
 
     # create an instance of a runner
     runner = OpenStudio::Ruleset::OSRunner.new

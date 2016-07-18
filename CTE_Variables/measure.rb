@@ -5,7 +5,7 @@
 # http://openstudio.nrel.gov/sites/openstudio.nrel.gov/files/nv_data/cpp_documentation_it/model/html/namespaces.html
 
 # Inyecta variables y meters para uso con el CTE
-class VariablesCTE < OpenStudio::Ruleset::ModelUserScript
+class CTE_Variables < OpenStudio::Ruleset::ModelUserScript
 
   def name
     return "Variables CTE"
@@ -111,4 +111,4 @@ class VariablesCTE < OpenStudio::Ruleset::ModelUserScript
     return true
   end #end the run method
 end #end the measure
-VariablesCTE.new.registerWithApplication
+CTE_Variables.new.registerWithApplication
