@@ -27,7 +27,7 @@ Esta medida necesita otra complementaria de EPlus que corrige los horarios de la
 
     design_flow_rate = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("design_flow_rate", true)
     design_flow_rate.setDisplayName("Caudal de diseno de ventilacion del edificio [ren/h]")
-    design_flow_rate.setUnits("ren./h") # XXX: estas unidades estan bien?
+    design_flow_rate.setUnits("1/h")
     args << design_flow_rate
 
     return args
@@ -63,7 +63,11 @@ Esta medida necesita otra complementaria de EPlus que corrige los horarios de la
     scheduleRulesets.each do | scheduleRuleset |
       if scheduleRuleset.name.get == conjuntodereglasalocalizar
         ventilationRuleset = scheduleRuleset
-        runner.registerInfo("- Localizado conjunto de horarios '#{conjuntodereglasalocalizar}' con #{ventilationRuleset.scheduleRules.count} reglas")
+        runner.registerInfo("+ Localizado conjunto de horarios '#{conjuntodereglasalocalizar}' con #{ventilationRuleset.scheduleRules.count} reglas existentes")
+        ventilationRuleset.scheduleRules.each do |rule|
+          runner.registerInfo("- Eliminada regla '#{rule.name.get}'")
+          rule.remove
+        end
         break
       end
     end
@@ -71,12 +75,6 @@ Esta medida necesita otra complementaria de EPlus que corrige los horarios de la
     if not ventilationRuleset
       runner.registerError("ERROR: No se ha encontrado el conjunto de horarios '#{conjuntodereglasalocalizar}'. Ha usado la plantilla para modelado CTE?")
       return false
-    else
-      runner.registerInfo("- Eliminando reglas existentes")
-      ventilationRuleset.scheduleRules.each do |rule|
-        runner.registerInfo("- Eliminada regla '#{rule.name.get}'")
-        rule.remove
-      end
     end
 
     def aplica_horario_a_semana(scheduleRule)
@@ -132,9 +130,9 @@ Esta medida necesita otra complementaria de EPlus que corrige los horarios de la
     runner.registerInfo("* Incorporando reglas de ventilación al conjunto '#{conjuntodereglasalocalizar}'")
     ventilationRuleset.scheduleRules.each do |rule|
       day_sch = rule.daySchedule
-      runner.registerInfo("- Regla '#{rule.name}' (#{rule.handle.to_s}):")
+      runner.registerInfo("+ Regla '#{rule.name}' (#{rule.handle.to_s}):")
       #runner.registerInfo("Objeto: #{rule}")
-      runner.registerInfo("- Valores: #{day_sch.values}")
+      runner.registerInfo("+ Valores: #{day_sch.values}")
     end
 
     # ------------------------------------------------------------------------------------------------------------------------------------
