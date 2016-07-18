@@ -144,35 +144,48 @@ Esta medida necesita otra complementaria de EPlus que corrige los horarios de la
 
     zones = model.getThermalZones
     runner.registerInfo("* Localizada(s) #{ zones.count } zona(s) térmica(s)")
+    zoneVentilationCounter = 0
     zones.each do | zone |
+      zoneName = zone.name.get
+      if zone.useIdealAirLoads
+        # Las zonas con Ideal Air Loads incorporan ya su objeto ZoneVentilation:DesignFlowRate
+        runner.registerInfo("+ La zona '#{ zoneName }' usa equipos ideales.")
+        next
+      end
       spaces = zone.spaces()
-      runner.registerInfo("- Localizado(s) #{ spaces.count } espacio(s) en la zona '#{ zone.name.get }'")
+      runner.registerInfo("+ Localizado(s) #{ spaces.count } espacio(s) en la zona '#{ zoneName }'")
       # Solamente usamos el primer espacio de la zona? suponemos que solo hay uno?
-      space = spaces[0]
-      nombreTipo = space.spaceType.get.name.get
-      if nombreTipo.start_with?('CTE_H') or nombreTipo.start_with?('CTE_A')
-        # TODO: deberíamos detectar si ya hay un objeto de este tipo o dejar solamente uno en la medida de EPlus
-        zone_ventilation = OpenStudio::Model::ZoneVentilationDesignFlowRate.new(model)
-        zone_ventilation.addToThermalZone(zone)
-        zone_ventilation.setVentilationType('Natural')
-        zone_ventilation.setDesignFlowRateCalculationMethod("AirChanges/Hour")
-        zone_ventilation.setAirChangesperHour(4) # 4 ren/h
-        zone_ventilation.setConstantTermCoefficient(1)
-        zone_ventilation.setTemperatureTermCoefficient(0)
-        zone_ventilation.setVelocityTermCoefficient(0)
-        zone_ventilation.setVelocitySquaredTermCoefficient(0)
-		zone_ventilation.setMinimumIndoorTemperature(-100)
-        zone_ventilation.setDeltaTemperature(-100)
-        zone_ventilation.setSchedule(ventilationRuleset)
-        runner.registerInfo("-- Creando objeto ZoneVentilation:DesignFlowRate en espacio '#{ space.name.get }' del tipo '#{ nombreTipo }' en la zona '#{ zone.name.get }'")
+      spaces.each do |space|
+        spaceName = space.name.get
+        spaceType = space.spaceType.get.name.get
+        if spaceType.start_with?('CTE_HR') or spaceType.start_with?('CTE_AR')
+          zoneVentilationCounter += 1
+          # TODO: permitir usar tipo 'Exhaust' para obtener consumo de ventiladores
+          # TODO: necesita diferencia de presión del ventilador y rendimiento total del ventilador
+          zone_ventilation = OpenStudio::Model::ZoneVentilationDesignFlowRate.new(model)
+          zone_ventilation.addToThermalZone(zone)
+          zone_ventilation.setVentilationType('Natural')
+          zone_ventilation.setDesignFlowRateCalculationMethod("AirChanges/Hour")
+          zone_ventilation.setAirChangesperHour(4) # 4 ren/h
+          zone_ventilation.setConstantTermCoefficient(1)
+          zone_ventilation.setTemperatureTermCoefficient(0)
+          zone_ventilation.setVelocityTermCoefficient(0)
+          zone_ventilation.setVelocitySquaredTermCoefficient(0)
+		  zone_ventilation.setMinimumIndoorTemperature(-100)
+          zone_ventilation.setDeltaTemperature(-100)
+          zone_ventilation.setSchedule(ventilationRuleset)
+          runner.registerInfo("- Creando objeto ZoneVentilation:DesignFlowRate en espacio '#{ spaceName }' del tipo '#{ spaceType }' en la zona '#{ zoneName }'")
+        else
+          runner.registerInfo("- El espacio '#{ spaceName }' de la zona '#{ zoneName }' no es habitable (tipo: '#{ spaceType }')")
+        end
       end
     end
+    runner.registerInfo("* Creado(s) #{ zoneVentilationCounter } objeto(s) ZoneVentilation:DesignFlowRate. ")
 
     runner.registerFinalCondition("CTE: Finalizada definición de condiciones de ventilación de espacios habitables en edificios residenciales.")
     return true # OS necesita saber que todo acabó bien
 
   end # end run
-
 end # end the measure
 
 VentilacionResidencialCTE.new.registerWithApplication
