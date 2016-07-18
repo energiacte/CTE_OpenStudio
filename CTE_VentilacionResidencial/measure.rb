@@ -165,7 +165,7 @@ Esta medida necesita otra complementaria de EPlus que corrige los horarios de la
 		zone_ventilation.setMinimumIndoorTemperature(-100)
         zone_ventilation.setDeltaTemperature(-100)
         zone_ventilation.setSchedule(ventilationRuleset)
-        runner.registerInfo("- Creando objeto ZoneVentilation:DesignFlowRate en zona '#{ zone.get.name }' del tipo '#{ nombreTipo }'")
+        runner.registerInfo("- Creando objeto ZoneVentilation:DesignFlowRate en espacio '#{ space.get.name.get }' del tipo '#{ nombreTipo }'")
       end
     end
 
