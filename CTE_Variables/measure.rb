@@ -1,3 +1,4 @@
+# coding: utf-8
 #see the URL below for information on how to write OpenStuido measures
 # http://openstudio.nrel.gov/openstudio-measure-writing-guide
 
@@ -10,6 +11,17 @@ class CTE_Variables < OpenStudio::Ruleset::ModelUserScript
   def name
     return "Variables CTE"
   end
+
+
+  def description
+    return "Define variables necesarias para la simulación en condiciones CTE."
+  end
+
+
+  def modeler_description
+    return "Introduce variables de salida utilizadas en el informe final."
+  end
+
 
   def arguments(model)
     args = OpenStudio::Ruleset::OSArgumentVector.new

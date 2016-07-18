@@ -13,7 +13,7 @@ class VentilacionResidencialCTE < OpenStudio::Ruleset::ModelUserScript
   def description
     return "Condiciones de ventilacion e infiltraciones para uso residencial segun CTE.
 
-Uas el odelo simple con ventilacion nocturna de 4 ren/h en verano para las zonas habitables y el caudal de diseno indicado en ren/h el resto del tiempo.
+Usa el modelo simple con ventilacion nocturna de 4 ren/h en verano para las zonas habitables y el caudal de diseno indicado en ren/h el resto del tiempo.
 Esta medida necesita otra complementaria de EPlus que corrige los horarios de las zonas si es necesario.
 "
   end
