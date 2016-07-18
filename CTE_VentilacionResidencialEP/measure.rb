@@ -2,7 +2,7 @@
 
 CTE_SCHEDULE_NAME = "CTER24B_HVEN"
 
-class CTE_CorrigeHorarioVentilacionResidencial < OpenStudio::Ruleset::WorkspaceUserScript
+class CTE_VentilacionResidencialEP < OpenStudio::Ruleset::WorkspaceUserScript
   # 1 - Corrección de horarios de ventilación nocturna y caudal de diseño (HS3)
   # OpenStudio genera un objeto ZoneVentilation:DesignFlowRate con horario Always_On cuando se introducen
   # sistemas ideales. Puesto que usamos objetos ZoneVentilation:DesignFlowRate para introducir el caudal
@@ -100,4 +100,4 @@ class CTE_CorrigeHorarioVentilacionResidencial < OpenStudio::Ruleset::WorkspaceU
 end #end the measure
 
 #this allows the measure to be use by the application
-CTE_CorrigeHorarioVentilacionResidencial.new.registerWithApplication
+CTE_VentilacionResidencialEP.new.registerWithApplication
