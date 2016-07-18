@@ -4,7 +4,7 @@ require 'minitest/autorun'
 require_relative '../measure.rb'
 require 'fileutils'
 
-class AjusteVentilacionConHorarioVeranoTest < MiniTest::Unit::TestCase
+class VentilacionResidencialCTETest < MiniTest::Unit::TestCase
 
   # def setup
   # end
@@ -14,7 +14,7 @@ class AjusteVentilacionConHorarioVeranoTest < MiniTest::Unit::TestCase
 
   def test_good_argument_values
     # create an instance of the measure
-    measure = AjusteVentilacionConHorarioVerano.new
+    measure = VentilacionResidencialCTE.new
 
     # create an instance of a runner
     runner = OpenStudio::Ruleset::OSRunner.new

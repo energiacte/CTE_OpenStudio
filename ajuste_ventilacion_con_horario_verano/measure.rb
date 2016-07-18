@@ -1,31 +1,27 @@
 # coding: utf-8
-# see the URL below for information on how to write OpenStudio measures
 # http://nrel.github.io/OpenStudio-user-documentation/measures/measure_writing_guide/
 
-# start the measure
-class AjusteVentilacionConHorarioVerano < OpenStudio::Ruleset::ModelUserScript
+class VentilacionResidencialCTE < OpenStudio::Ruleset::ModelUserScript
+  # Ventilacion Residencial CTE:
+  # 1 - Redefine el horario de ventilación con caudal de diseño y ventilación nocturna en verano, CTER24B_HVEN (disponible en plantilla)
+  # 2 - Incorpora objetos ZoneVentilation:DesignFlowRate a zonas habitables, con horario CTER24B_HVEN
 
-  # human readable name
   def name
-    return "Ventilacion nocturna en verano"
+    return "Ventilacion residencial CTE"
   end
 
-  # human readable description
   def description
-    return "Establece la ventilacion nocturna de 4 ren/h en verano para las zonas habitables y el caudal de diseno indicado el resto del tiempo
+    return "Condiciones de ventilacion e infiltraciones para uso residencial segun CTE.
 
-El valor del caudal de diseno de ventilacion se define en ren/h.
-
-Esta medida necesita otra complementaria que fija en 4ren/h la ventilacion de las zonas, ya que esta solamente ajusta la fraccion de ventilacion en el horario
+Uas el odelo simple con ventilacion nocturna de 4 ren/h en verano para las zonas habitables y el caudal de diseno indicado en ren/h el resto del tiempo.
+Esta medida necesita otra complementaria de EPlus que corrige los horarios de las zonas si es necesario.
 "
   end
 
-  # human readable description of modeling approach
   def modeler_description
-    return "Recalcula los horarios de ventilacion para mantener a 4 las renovaciones en verano y variar el resto. Se aplica a todas las zonas habitables. De uso de momento unicamente para residencial."
+    return "Define objetos ZoneVentilation:DesignFlowRate en cada zona habitable para modelar el aire exterior, con un horario que impone 4 ren/h en verano y el caudal de diseno el resto del tiempo."
   end
 
-  # define the arguments that the user will input
   def arguments(model)
     args = OpenStudio::Ruleset::OSArgumentVector.new
 
@@ -40,47 +36,50 @@ Esta medida necesita otra complementaria que fija en 4ren/h la ventilacion de la
   def run(model, runner, user_arguments)
     super(model, runner, user_arguments)
 
+    runner.registerInitialCondition("CTE: Definición de condiciones de ventilación de espacios habitables en edificios residenciales.")
+
     # use the built-in error checking
     if !runner.validateUserArguments(arguments(model), user_arguments)
       runner.registerError("Parametros incorrectos")
       return false
     end
 
-    runner.registerInitialCondition("CTE: Incorporacion de Ventilacion Nocturna en verano en espacios habitables residenciales (CTER24B_HVEN).")
-
-    design_flow_rate = runner.getDoubleArgumentValue('design_flow_rate',user_arguments)
-    runner.registerInfo("Caudal de ventilacion de diseno: #{design_flow_rate} [ren/h]")
+    # ------------------------------------------------------------------------------------------------------------------------------------
+    # 1 - Redefine el horario de ventilación con caudal de diseño y ventilación nocturna en verano, CTER24B_HVEN (disponible en plantilla)
+    # ------------------------------------------------------------------------------------------------------------------------------------
+    design_flow_rate = runner.getDoubleArgumentValue('design_flow_rate', user_arguments)
+    runner.registerInfo("[1/2] Definiendo horario con ventilación nocturna en verano (4ren/h) y caudal de diseño: #{design_flow_rate} [ren/h]")
+    frac_general_ventilacion = design_flow_rate / 4
+    frac_nocheverano_ventilacion = 1
+    runner.registerInfo("* Fracción de ventilación nocturna en verano: #{frac_nocheverano_ventilacion} [ren/h].")
+    runner.registerInfo("* Fracción de ventilación con caudal de diseño: #{frac_general_ventilacion} [ren/h].")
 
     conjuntodereglasalocalizar = "CTER24B_HVEN"
-    runner.registerInfo("Localizando conjunto de horarios #{conjuntodereglasalocalizar}")
+    runner.registerInfo("* Localizando en el modelo el horario '#{conjuntodereglasalocalizar}' definido en la plantilla")
 
-    # Esto localiza solamente la ultima regla. Se podría hacer un break
+    # Esto localiza la primera regla
     scheduleRulesets = model.getScheduleRulesets
     ventilationRuleset = ''
     scheduleRulesets.each do | scheduleRuleset |
       if scheduleRuleset.name.get == conjuntodereglasalocalizar
         ventilationRuleset = scheduleRuleset
-        runner.registerInfo("Conjunto de horarios localizado, con #{ventilationRuleset.scheduleRules.count} reglas")
+        runner.registerInfo("- Localizado conjunto de horarios '#{conjuntodereglasalocalizar}' con #{ventilationRuleset.scheduleRules.count} reglas")
         break
       end
     end
 
     if not ventilationRuleset
-      runner.registerError("No se ha encontrado un conjunto de horarios adecuado")
+      runner.registerError("ERROR: No se ha encontrado el conjunto de horarios '#{conjuntodereglasalocalizar}'. Ha usado la plantilla para modelado CTE?")
       return false
+    else
+      runner.registerInfo("- Eliminando reglas existentes")
+      ventilationRuleset.scheduleRules.each do |rule|
+        runner.registerInfo("- Eliminada regla '#{rule.name.get}'")
+        rule.remove
+      end
     end
 
-    ventilationRuleset.scheduleRules.each  do |rule|
-      runner.registerInfo("Eliminando regla '#{rule.name.get}' del conjunto de horarios")
-      rule.remove
-    end
-
-    frac_general_ventilacion = design_flow_rate / 4
-    frac_nocheverano_ventilacion = 1
-
-    runner.registerInfo("Cambiando fraccion de ventilacion a #{frac_general_ventilacion}, y a #{frac_nocheverano_ventilacion} de noche en verano.")
-
-    def aplicalasemana(scheduleRule)
+    def aplica_horario_a_semana(scheduleRule)
         scheduleRule.setApplyMonday(true)
         scheduleRule.setApplyTuesday(true)
         scheduleRule.setApplyWednesday(true)
@@ -90,56 +89,91 @@ Esta medida necesita otra complementaria que fija en 4ren/h la ventilacion de la
         scheduleRule.setApplySunday(true)
     end
 
+    runner.registerInfo("* Definiendo reglas de ventilación")
+
     diaInvierno1 = OpenStudio::Model::ScheduleDay.new(model)
-    diaInvierno1.setName("dia de invierno")
+    diaInvierno1.setName("Dia tipo invierno")
     time_24h =  OpenStudio::Time.new(0, 24, 0, 0)
     diaInvierno1.addValue(time_24h, frac_general_ventilacion)
     inviernoRule1 = OpenStudio::Model::ScheduleRule.new(ventilationRuleset, diaInvierno1)
-    inviernoRule1.setName("regla ventilacion invierno 1")
+    inviernoRule1.setName("Regla de ventilacion invierno 1")
     startDate = OpenStudio::Date.new(OpenStudio::MonthOfYear.new(1), 1)
     endDate = OpenStudio::Date.new(OpenStudio::MonthOfYear.new(5) , 31 )
     inviernoRule1.setStartDate(startDate)
     inviernoRule1.setEndDate(endDate)
-    aplicalasemana(inviernoRule1)
+    aplica_horario_a_semana(inviernoRule1)
 
     diaVerano = OpenStudio::Model::ScheduleDay.new(model)
-    diaVerano.setName("dia de verano")
+    diaVerano.setName("Dia de verano")
     time_8h =  OpenStudio::Time.new(0, 8, 0, 0)
     time_24h =  OpenStudio::Time.new(0, 24, 0, 0)
     diaVerano.addValue(time_8h, frac_nocheverano_ventilacion) # Fraccion de ventilacion == 1 durante la noche en verano
     diaVerano.addValue(time_24h, frac_general_ventilacion) # Fraccion de ventilacion genérica
     veranoRule = OpenStudio::Model::ScheduleRule.new(ventilationRuleset, diaVerano)
-    veranoRule.setName("regla de ventilacion verano")
+    veranoRule.setName("Regla de ventilacion verano")
     startDate = OpenStudio::Date.new(OpenStudio::MonthOfYear.new(6), 1)
     endDate = OpenStudio::Date.new(OpenStudio::MonthOfYear.new(9), 30)
     veranoRule.setStartDate(startDate)
     veranoRule.setEndDate(endDate)
-    aplicalasemana(veranoRule)
+    aplica_horario_a_semana(veranoRule)
 
     diaInvierno2 = OpenStudio::Model::ScheduleDay.new(model)
-    diaInvierno2.setName("dia de invierno")
+    diaInvierno2.setName("Dia tipo de invierno")
     time_24h =  OpenStudio::Time.new(0, 24, 0, 0)
     diaInvierno2.addValue(time_24h, frac_general_ventilacion)
     inviernoRule2 = OpenStudio::Model::ScheduleRule.new(ventilationRuleset, diaInvierno2)
-    inviernoRule2.setName("regla ventilacion invierno 2")
+    inviernoRule2.setName("Regla de ventilacion invierno 2")
     startDate = OpenStudio::Date.new(OpenStudio::MonthOfYear.new(10), 1)
     endDate = OpenStudio::Date.new(OpenStudio::MonthOfYear.new(12) , 31 )
     inviernoRule2.setStartDate(startDate)
     inviernoRule2.setEndDate(endDate)
-    aplicalasemana(inviernoRule2)
+    aplica_horario_a_semana(inviernoRule2)
 
-    ventilationRuleset.scheduleRules.each  do |rule|
+    runner.registerInfo("* Incorporando reglas de ventilación al conjunto '#{conjuntodereglasalocalizar}'")
+    ventilationRuleset.scheduleRules.each do |rule|
       day_sch = rule.daySchedule
-      runner.registerInfo("Regla '#{rule.name}' (#{rule.handle.to_s}):")
+      runner.registerInfo("- Regla '#{rule.name}' (#{rule.handle.to_s}):")
       #runner.registerInfo("Objeto: #{rule}")
-      runner.registerInfo("Valores: #{day_sch.values}")
+      runner.registerInfo("- Valores: #{day_sch.values}")
     end
 
+    # ------------------------------------------------------------------------------------------------------------------------------------
+    # 2 - Incorpora objetos ZoneVentilation:DesignFlowRate a zonas habitables, con horario CTER24B_HVEN
+    # ------------------------------------------------------------------------------------------------------------------------------------
+
+    # TODO: traer de otra medida
+    runner.registerInfo("[2/2] Incorporando objetos ZoneVentilation:DesignFlowRate a espacios habitables")
+
+    zones = model.getThermalZones
+    runner.registerInfo("* Localizada(s) #{ zones.count } zona(s) térmica(s)")
+    zones.each do | zone |
+      spaces = zone.spaces()
+      # Solamente usamos el primer espacio de la zona? suponemos que solo hay uno?
+      space = spaces[0]
+      nombreTipo = space.spaceType.get.name.get
+      if nombreTipo.start_with?('CTE_H') or nombreTipo.start_with?('CTE_A')
+        # TODO: deberíamos detectar si ya hay un objeto de este tipo o dejar solamente uno en la medida de EPlus
+        zone_ventilation = OpenStudio::Model::ZoneVentilationDesignFlowRate.new(model)
+        zone_ventilation.addToThermalZone(zone)
+        zone_ventilation.setVentilationType('Natural')
+        zone_ventilation.setDesignFlowRateCalculationMethod("AirChanges/Hour")
+        zone_ventilation.setAirChangesperHour(4) # 4 ren/h
+        zone_ventilation.setConstantTermCoefficient(1)
+        zone_ventilation.setTemperatureTermCoefficient(0)
+        zone_ventilation.setVelocityTermCoefficient(0)
+        zone_ventilation.setVelocitySquaredTermCoefficient(0)
+		zone_ventilation.setMinimumIndoorTemperature(-100)
+        zone_ventilation.setDeltaTemperature(-100)
+        zone_ventilation.setSchedule(ventilationRuleset)
+        runner.registerInfo("- Creando objeto ZoneVentilation:DesignFlowRate en zona '#{ zone.get.name }' del tipo '#{ nombreTipo }'")
+      end
+    end
+
+    runner.registerFinalCondition("CTE: Finalizada definición de condiciones de ventilación de espacios habitables en edificios residenciales.")
     return true # OS necesita saber que todo acabó bien
 
   end # end run
 
 end # end the measure
 
-# register the measure to be used by the application
-AjusteVentilacionConHorarioVerano.new.registerWithApplication
+VentilacionResidencialCTE.new.registerWithApplication
