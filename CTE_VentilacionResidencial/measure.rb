@@ -1,6 +1,8 @@
 # coding: utf-8
 # http://nrel.github.io/OpenStudio-user-documentation/measures/measure_writing_guide/
 
+HORARIOVENTILACIONRESIDENCIAL = "CTER24B_HVEN"
+
 class VentilacionResidencialCTE < OpenStudio::Ruleset::ModelUserScript
   # Ventilacion Residencial CTE:
   # 1 - Redefine el horario de ventilación con caudal de diseño y ventilación nocturna en verano, CTER24B_HVEN (disponible en plantilla)
@@ -54,16 +56,15 @@ Esta medida necesita otra complementaria de EPlus que corrige los horarios de la
     runner.registerInfo("* Fracción de ventilación nocturna en verano: #{frac_nocheverano_ventilacion} [ren/h].")
     runner.registerInfo("* Fracción de ventilación con caudal de diseño: #{frac_general_ventilacion} [ren/h].")
 
-    conjuntodereglasalocalizar = "CTER24B_HVEN"
-    runner.registerInfo("* Localizando en el modelo el horario '#{conjuntodereglasalocalizar}' definido en la plantilla")
+    runner.registerInfo("* Localizando en el modelo el horario '#{HORARIOVENTILACIONRESIDENCIAL}' definido en la plantilla")
 
     # Esto localiza la primera regla
     scheduleRulesets = model.getScheduleRulesets
     ventilationRuleset = ''
     scheduleRulesets.each do | scheduleRuleset |
-      if scheduleRuleset.name.get == conjuntodereglasalocalizar
+      if scheduleRuleset.name.get == HORARIOVENTILACIONRESIDENCIAL
         ventilationRuleset = scheduleRuleset
-        runner.registerInfo("+ Localizado conjunto de horarios '#{conjuntodereglasalocalizar}' con #{ventilationRuleset.scheduleRules.count} reglas existentes")
+        runner.registerInfo("+ Localizado conjunto de horarios '#{HORARIOVENTILACIONRESIDENCIAL}' con #{ventilationRuleset.scheduleRules.count} reglas existentes")
         ventilationRuleset.scheduleRules.each do |rule|
           runner.registerInfo("- Eliminada regla '#{rule.name.get}'")
           rule.remove
@@ -73,7 +74,7 @@ Esta medida necesita otra complementaria de EPlus que corrige los horarios de la
     end
 
     if not ventilationRuleset
-      runner.registerError("ERROR: No se ha encontrado el conjunto de horarios '#{conjuntodereglasalocalizar}'. Ha usado la plantilla para modelado CTE?")
+      runner.registerError("ERROR: No se ha encontrado el conjunto de horarios '#{HORARIOVENTILACIONRESIDENCIAL}'. Ha usado la plantilla para modelado CTE?")
       return false
     end
 
@@ -127,7 +128,7 @@ Esta medida necesita otra complementaria de EPlus que corrige los horarios de la
     inviernoRule2.setEndDate(endDate)
     aplica_horario_a_semana(inviernoRule2)
 
-    runner.registerInfo("* Incorporando reglas de ventilación al conjunto '#{conjuntodereglasalocalizar}'")
+    runner.registerInfo("* Incorporando reglas de ventilación al conjunto '#{HORARIOVENTILACIONRESIDENCIAL}'")
     ventilationRuleset.scheduleRules.each do |rule|
       day_sch = rule.daySchedule
       runner.registerInfo("+ Regla '#{rule.name}' (#{rule.handle.to_s}):")
