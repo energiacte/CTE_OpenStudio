@@ -20,7 +20,7 @@ class CTE_VentilacionResidencialEP < OpenStudio::Ruleset::WorkspaceUserScript
 
 
   def name
-    return "Corrige horario de ventilacion a CTER24B_HVEN"
+    return "Ventilacion residencial CTE (EP)"
   end
 
   def arguments(workspace)
@@ -33,7 +33,9 @@ class CTE_VentilacionResidencialEP < OpenStudio::Ruleset::WorkspaceUserScript
 
     runner.registerInitialCondition("CTE: Ventilacion en uso residencial")
 
+    # --------------------------------------------------------------------------------------------------------
     # **** 1 - Corrección de horarios de ventilación en objetos ZoneVentilation:DesignFlowRate es CTER24B_HVEN
+    # --------------------------------------------------------------------------------------------------------
     runner.registerInfo("[1/2] - Cambio de horarios en objetos ZoneVentilation_DesignFlowRate a #{ CTE_SCHEDULE_NAME }")
     idfObjects = workspace.getObjectsByType("ZoneVentilation_DesignFlowRate".to_IddObjectType)
     if idfObjects.empty?
@@ -60,7 +62,9 @@ class CTE_VentilacionResidencialEP < OpenStudio::Ruleset::WorkspaceUserScript
     string_objects = []
 
 
+    # --------------------------------------------------------------------------------------------------------
     # **** 2 - Introducción de balance de aire exterior
+    # --------------------------------------------------------------------------------------------------------
     runner.registerInfo("[2/2] - Introducción de objetos ZoneAirBalance:OutdooAir")
     idfZones = workspace.getObjectsByType("Zone".to_IddObjectType)
     if idfZones.empty?
