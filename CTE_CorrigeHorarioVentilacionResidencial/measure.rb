@@ -9,11 +9,6 @@ class CTE_CorrigeHorarioVentilacionResidencial < OpenStudio::Ruleset::WorkspaceU
   # de diseño de aire de renovación (HS3) y la ventilación noctura, debemos cambiar el horario Always_On
   # por uno que cuando se use con fracción 1 nos de 4 ren/h en horario nocturno de verano y el caudal
   # de diseño el resto del tiempo (CTER24B_HVEN).
-  # En el caso de sistemas reales no se genera el objeto y lo debemos introducir en la medida.
-  # Los sistemas reales en principio usan un objeto OutDoorAir que se conecta a la caja de mezclas, de modo
-  # que se debe eliminar esta caja puesto que no realizaremos el control de aire exterior de ese modo.
-  # Nuestra plantilla define un objeto de aire exterior que indica las 4ren/h para pasar los parámetros a
-  # los sistemas ideales.
 
   # 2 - Introducción de objetos de balance de aire exterior
   # En lugar de una red de flujos, la consideración de las infiltraciones se está haciendo mediante
