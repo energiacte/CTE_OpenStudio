@@ -44,20 +44,20 @@ class CTE_CorrigeHorarioVentilacionResidencial < OpenStudio::Ruleset::WorkspaceU
     if idfObjects.empty?
       runner.registerInfo("No se han encontrado objetos ZoneVentilation_DesignFlowRate")
     else
-      runner.registerInfo("Se han encontrado #{ idfObjects.size } objetos ZoneVentilation_DesignFlowRate")
+      runner.registerInfo("Encontrado(s) #{ idfObjects.size } objeto(s) ZoneVentilation_DesignFlowRate")
       changeCounter = 0
       idfObjects.each do | obj |
         currentSchedule = obj.getString(2)
         if currentSchedule == CTE_SCHEDULE_NAME then continue end
         changeCounter += 1
-        runner.registerInfo("Cambiando horario #{ currentSchedule } para objeto '#{ obj.getString(0) }'")
+        runner.registerInfo("Cambiando horario #{ currentSchedule } del objeto '#{ obj.getString(0) }'")
         result = obj.setString(2, CTE_SCHEDULE_NAME) # Correccion de nombre de horario
         if not result
           runner.registerInfo("ERROR al modificar el nombre del horario")
         end
       end
+      runner.registerInfo("Se han cambiado #{ changeCounter } horario(s) de #{ idfObjects.size } objeto(s) ZoneVentilation_DesignFlowRate")
     end
-    runner.registerInfo("Se han cambiado #{ changeCounter } horarios de #{ idfObjects.size } objetos ZoneVentilation_DesignFlowRate")
     # ****
 
 
@@ -68,11 +68,13 @@ class CTE_CorrigeHorarioVentilacionResidencial < OpenStudio::Ruleset::WorkspaceU
     # **** 2 - Introducción de balance de aire exterior
     runner.registerInfo("2 - Introducción de objetos ZoneAirBalance:OutdooAir")
     idfZones = workspace.getObjectsByType("Zone".to_IddObjectType)
-    if not idfZones.empty?
-      runner.registerInfo("Localizado(s) #{ idfZones.size } objeto(s) Zone")
+    if idfZones.empty?
+      runner.registerInfo("No se han encontrado objetos Zone a los que añadir un objeto ZoneAirBalance:OutdoorAir")
+    else
+      runner.registerInfo("Encontrado(s) #{ idfZones.size } objeto(s) Zone")
       idfZones.each do | idfZone |
         nombreZona = idfZone.getString(0)
-        runner.registerInfo("Definido objeto ZoneAirBalance:OutdoorAir a zona #{ nombreZona }")
+        runner.registerInfo("Definido objeto ZoneAirBalance:OutdoorAir para la zona #{ nombreZona }")
 
         string_objects << "
           ZoneAirBalance:OutdoorAir,
@@ -83,8 +85,7 @@ class CTE_CorrigeHorarioVentilacionResidencial < OpenStudio::Ruleset::WorkspaceU
           CTER24B_HINF;             !- Induced Outdoor Air Schedule Name
           "
       end
-    else
-      runner.registerInfo("No se han encontrado objetos Zone")
+      runner.registerInfo("Cambiado(s) #{ idfZones.size } objeto(s) Zone")
     end
     # ****
 
@@ -96,7 +97,7 @@ class CTE_CorrigeHorarioVentilacionResidencial < OpenStudio::Ruleset::WorkspaceU
       workspace.addObject(object)
     end
 
-    runner.registerFinalCondition("Cambiados horarios y añadidos objetos ZoneAirBalance:OutdoorAir")
+    runner.registerFinalCondition("Finalizada la configuración de la ventilación residencial")
 
     return true
   end
