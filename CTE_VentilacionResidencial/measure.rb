@@ -148,6 +148,7 @@ Esta medida necesita otra complementaria de EPlus que corrige los horarios de la
     runner.registerInfo("* Localizada(s) #{ zones.count } zona(s) térmica(s)")
     zones.each do | zone |
       spaces = zone.spaces()
+      runner.registerInfo("- Localizado(s) #{ spaces.count } espacio(s) en la zona '#{ zone.name.get }'")
       # Solamente usamos el primer espacio de la zona? suponemos que solo hay uno?
       space = spaces[0]
       nombreTipo = space.spaceType.get.name.get
@@ -165,7 +166,7 @@ Esta medida necesita otra complementaria de EPlus que corrige los horarios de la
 		zone_ventilation.setMinimumIndoorTemperature(-100)
         zone_ventilation.setDeltaTemperature(-100)
         zone_ventilation.setSchedule(ventilationRuleset)
-        runner.registerInfo("- Creando objeto ZoneVentilation:DesignFlowRate en espacio '#{ space.get.name.get }' del tipo '#{ nombreTipo }'")
+        runner.registerInfo("-- Creando objeto ZoneVentilation:DesignFlowRate en espacio '#{ space.name.get }' del tipo '#{ nombreTipo }' en la zona '#{ zone.name.get }'")
       end
     end
 
