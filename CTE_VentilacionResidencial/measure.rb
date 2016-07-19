@@ -28,8 +28,9 @@ Esta medida necesita otra complementaria de EPlus que corrige los horarios de la
     args = OpenStudio::Ruleset::OSArgumentVector.new
 
     design_flow_rate = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("design_flow_rate", true)
-    design_flow_rate.setDisplayName("Caudal de diseno de ventilacion del edificio [ren/h]")
-    design_flow_rate.setUnits("1/h")
+    design_flow_rate.setDisplayName("Caudal de diseno de ventilacion del edificio")
+    design_flow_rate.setUnits("ren/h")
+    design_flow_rate.setDefaultValue(0.63)
     args << design_flow_rate
 
     return args
