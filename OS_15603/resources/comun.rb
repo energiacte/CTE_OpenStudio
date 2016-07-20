@@ -1,3 +1,4 @@
+# coding: utf-8
 
 module Comun
 
@@ -14,5 +15,5 @@ module Comun
       return search.get
     end
   end
-  
+
 end

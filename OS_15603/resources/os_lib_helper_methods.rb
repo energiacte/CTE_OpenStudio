@@ -1,3 +1,5 @@
+# coding: utf-8
+
 module OsLib_HelperMethods
   # populate choice argument from model objects
   def self.populateChoiceArgFromModelObjects(model, modelObject_args_hash, includeBuilding = nil)

@@ -1,3 +1,5 @@
+# coding: utf-8
+
 module OsLib_Schedules
   # create a ruleset schedule with a basic profile
   def self.createSimpleSchedule(model, options = {})

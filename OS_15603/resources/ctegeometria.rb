@@ -1,4 +1,6 @@
-require "#{File.dirname(__FILE__)}/comun"
+# coding: utf-8
+
+require_relative "comun"
 
 module CTEgeo
 
