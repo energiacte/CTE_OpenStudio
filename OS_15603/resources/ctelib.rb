@@ -1,7 +1,7 @@
 # coding: utf-8
 
-require "#{File.dirname(__FILE__)}/os_lib_reporting_SI"
-require "#{File.dirname(__FILE__)}/ctegeometria" # que importa el modulo CTEgeo
+require_relative "os_lib_reporting_SI"
+require_relative "ctegeometria" # que importa el modulo CTEgeo
 
 module CTE_lib
 
