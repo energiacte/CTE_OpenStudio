@@ -1,23 +1,6 @@
 # coding: utf-8
 
 module CTEgeo
-
-  # Métodos auxiliares ------------------------------------------------
-  def self.msg(fichero, cadena)
-    File.open(fichero+'.txt', 'a') {|file| file.write(cadena)}
-  end
-
-  def self.verificaBusqueda(log, nombre,  search, query)
-    if search.empty?
-      msg(log, "     #{nombre}: *#{query}*\n búsqueda vacía\n")
-      return false
-    else
-      msg(log, "     #{nombre}: correcto\n")
-      return search.get
-    end
-  end
-  # Fin métodos auxiliares ---------------------------------------------
-
   def self.zonashabitables(sqlFile)
     search = sqlFile.execAndReturnVectorOfString("#{zonashabitablesquery}")
     return (if search.empty? then false else search.get end)
@@ -46,7 +29,7 @@ module CTEgeo
     return (if search.empty? then false else search.get end)
   end
 
-  def self.volumennohabitable(sqlFile,  log = 'CTEgeo')
+  def self.volumennohabitable(sqlFile)
     query = "SELECT SUM(Volume) FROM (#{CTEgeo.zonasnohabitablesquery})"
     search = sqlFile.execAndReturnFirstDouble(query)
     return (if search.empty? then false else search.get end)
@@ -58,36 +41,30 @@ module CTEgeo
   end
 
   def self.superficiesexternas(sqlFile)
-    log = 'CTEgeo'
-    superficiesexternassearch = sqlFile.execAndReturnVectorOfString(superficiesexternasquery)
-    superficiesexternas = verificaBusqueda(log, 'superficies externas', superficiesexternassearch, superficiesexternasquery)
-    return superficiesexternas
+    search = sqlFile.execAndReturnVectorOfString(superficiesexternasquery)
+    return (if search.empty? then false else search.get end)
   end
 
-  def self.superficiesinternas(sqlFile,  log = 'CTEgeo')
-    superficiesinternassearch = sqlFile.execAndReturnVectorOfString(superficiesinternasquery)
-    superficiesinternas = verificaBusqueda(log, 'superficies internas',superficiesinternassearch,superficiesinternasquery )
-    return superficiesinternas
+  def self.superficiesinternas(sqlFile)
+    search = sqlFile.execAndReturnVectorOfString(superficiesinternasquery)
+    return (if search.empty? then false else search.get end)
   end
 
-  def self.superficiescontacto(sqlFile,  log = 'CTEgeo')
-    superficiescontactosearch = sqlFile.execAndReturnVectorOfString(superficiescontactoquery)
-    superficiescontacto = verificaBusqueda(log, 'superficies de contacto', superficiescontactosearch, superficiescontactoquery)
-    return superficiescontacto
+  def self.superficiescontacto(sqlFile)
+    search = sqlFile.execAndReturnVectorOfString(superficiescontactoquery)
+    return (if search.empty? then false else search.get end)
   end
 
-  def self.areaexterior(sqlFile, log = 'CTEgeo')
-    areaexteriorquery = "SELECT SUM(GrossArea) FROM (#{superficiesexternasquery})"
-    areaexteriorsearch = sqlFile.execAndReturnFirstDouble(areaexteriorquery)
-    areaexterior = verificaBusqueda(log, 'area exterior de la envolvente', areaexteriorsearch, areaexteriorquery)
-    return areaexterior
+  def self.areaexterior(sqlFile)
+    query = "SELECT SUM(GrossArea) FROM (#{superficiesexternasquery})"
+    search = sqlFile.execAndReturnFirstDouble(query)
+    return (if search.empty? then false else search.get end)
   end
 
-  def self.areainterior(sqlFile, log = 'CTEgeo')
-    areainteriorquery = "SELECT SUM(GrossArea) FROM (#{superficiescontactoquery})"
-    areainteriorsearch = sqlFile.execAndReturnFirstDouble(areainteriorquery)
-    areainterior = verificaBusqueda(log, 'area interior de la envolvente', areainteriorsearch, areainteriorquery)
-    return  areainterior
+  def self.areainterior(sqlFile)
+    query = "SELECT SUM(GrossArea) FROM (#{superficiescontactoquery})"
+    search = sqlFile.execAndReturnFirstDouble(query)
+    return (if search.empty? then false else search.get end)
   end
 
 
