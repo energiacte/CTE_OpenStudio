@@ -50,10 +50,9 @@ module CTE_lib
     medicion_general[:data] = []
     medicion_general[:data] << ["<u>Zonas habitables</u>", zonasHabitables.count(), superficieHabitable, volumenHabitable]
     medicion_general[:data] << ["<u>Zonas no habitables</u>", zonasNoHabitables.count(), superficieNoHabitable, volumenNoHabitable]
-    medicion_general[:data] << ["<u>Envolvente térmica</u>", '', '', '']
+    medicion_general[:data] << ["<u>Envolvente térmica</u>", '', areatotal, '']
     medicion_general[:data] << ['- Exterior', '', areaexterior, '']
     medicion_general[:data] << ['- Interior', '', areainterior, '']
-    medicion_general[:data] << ['- <b>Total</b>', '', areatotal, '']
     medicion_general[:data] << ['<b>Compacidad</b>', "<b>#{ compacidad }</b>", areatotal, volumenHabitable]
     runner.registerInfo("* Finalizadas mediciones (edificio #{ buildingName })")
 
