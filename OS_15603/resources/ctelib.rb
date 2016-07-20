@@ -6,140 +6,55 @@ require_relative "ctegeometria" # que importa el modulo CTEgeo
 module CTE_lib
 
   #======== Elementos generales  ============
-  def self.variablesdisponiblesquery
-    variablesdisponiblesquery = "
-SELECT
-    DISTINCT VariableName, ReportingFrequency
-FROM
-    ReportVariableDataDictionary "
-    return variablesdisponiblesquery
-  end
-
+  # variablesdisponiblesquery = "SELECT DISTINCT VariableName, ReportingFrequency FROM ReportVariableDataDictionary "
 
   #======== Tabla general de mediciones =====
   def self.CTE_tabla_general_de_mediciones(model, sqlFile, runner)
-    log = 'logpropio.txt'
-    medicion_general = {}
-    medicion_general[:title] = 'Mediciones Generales CTE'
-    medicion_general[:header] = %w(informacion valor unidades)
-    medicion_general[:units] = [] #vacio porque son distintas
-    medicion_general[:data] = []
-
-    # structure ID / building name
-    value = model.getBuilding.name.to_s
-    medicion_general[:data] << ['Nombre del edificio', value, ''] #medicion_general[:data] << [display, value, target_units]
-    runner.registerValue('Nombre del edificio', value, '')
-
-    # ZONAS HABITABLES, numero
-    medicion_general[:data] << ["<u>Zonas habitables</u>", '', '']
-    numerodezonashabitables = CTEgeo.zonashabitables(sqlFile).count()
-    display = 'Número de zonas habitables'
-    source_units = ''
-    medicion_general[:data] << [display, numerodezonashabitables.to_s, source_units]
-    runner.registerValue(display, numerodezonashabitables, source_units)
-
-    #  ZONAS HABITABLES, SUPERFICIE HABITABLE
-    superficiehabitable = CTEgeo.superficiehabitable(sqlFile)
-    msg(log, "superficie habitable = #{superficiehabitable}\n")
-    display = 'Superficie habitable'
-    superficiehabitable_neat = OpenStudio.toNeatString(superficiehabitable, 0, true)
-    unidades = 'm^2'
-    medicion_general[:data] << [display, superficiehabitable_neat, unidades]
-    runner.registerValue(display, superficiehabitable, unidades)
-
-    # ZONAS HABITABLES, VOLUMEN HABITABLE
-    volumenhabitable = CTEgeo.volumenhabitable(sqlFile)
-    display = 'Volumen habitable'
-    value = volumenhabitable.round
-    medicion_general[:data] << [display, value.to_s, 'm3']
-    runner.registerValue(display, value, 'm3')
-
-    #  ZONAS NO HABITABLES, numero
-    medicion_general[:data] << ["<u>Zonas no habitables</u>", '', '']
-    zonasnohabitables = CTEgeo.zonasnohabitables(sqlFile).count()
-    display = 'Número de zonas no habitables'
-    medicion_general[:data] << [display, zonasnohabitables.to_s, '']
-    runner.registerValue(display, zonasnohabitables, '')
-
-    # ZONAS NO HABITABLES, SUPERFICIES NO HABITABLES
-    superficienohabitable = CTEgeo.superficienohabitable(sqlFile)
-    msg(log, "Superficie no habitable = #{superficienohabitable}")
-    display = "Superficie zonas no habitables"
-    superficienohabitable_neat = OpenStudio.toNeatString(superficienohabitable, 0, true)
-    medicion_general[:data] << [display, superficienohabitable_neat, 'm^2']
-    runner.registerValue(display, superficienohabitable.to_s, 'm^2')
-
-
-    # ZONAS NO HABITABLES, VOLUMEN NO HABITABLE
-    volumennohabitable = CTEgeo.volumennohabitable(sqlFile)
-    msg(log, "Volumen de zonas no habitables = #{volumennohabitable}")
-    display = "Volumen de zonas no habitables"
-    units = 'm^3'
-    volumennohabitable_neat = OpenStudio.toNeatString(volumennohabitable, 0, true)
-    medicion_general[:data] << [display, volumennohabitable_neat, units]
-    runner.registerValue(display, volumennohabitable.to_s, units)
-
-    # ENVOLVENTE, SUPERFICIES CANDIDATAS a ser envolvente térmica
-    medicion_general[:data] << ["<u>Envolvente térmica</u>", '', '']
-    superficiescandidatas = CTEgeo.superficiescandidatas(sqlFile)
-    source_units = ''
-    value = superficiescandidatas.count()
-    medicion_general[:data] << [display, value.to_s, source_units]
-    runner.registerValue(display, value, source_units)
-
-    # ENVOLVENTE, SUPERFICIES EXTERNAS
+    buildingName = model.getBuilding.name.get
+    # Zonas habitables
+    zonasHabitables = CTEgeo.zonashabitables(sqlFile)
+    superficieHabitable = CTEgeo.superficiehabitable(sqlFile).round(2)
+    volumenHabitable = CTEgeo.volumenhabitable(sqlFile).round(2)
+    # Zonas no habitables
+    zonasNoHabitables = CTEgeo.zonasnohabitables(sqlFile)
+    superficieNoHabitable = CTEgeo.superficienohabitable(sqlFile).round(2)
+    volumenNoHabitable = CTEgeo.volumennohabitable(sqlFile).round(2)
+    # Envolvente térmica
     superficiesexternas = CTEgeo.superficiesexternas(sqlFile)
-    display = 'Número de superficies externas de zonas habitables'
-    source_units = ''
-    value = superficiesexternas.count()
-    medicion_general[:data] << [display, value.to_s, source_units]
-    runner.registerValue(display, value, source_units)
-
-    # ENVOLVENTE, AREA EXTERIOR
-    areaexterior = CTEgeo.areaexterior(sqlFile)
-    display = 'Área de la envolvente térmica que es exterior'
-    source_units = 'm^2'
-    areaexterior_neat = OpenStudio.toNeatString(areaexterior, 0, true)
-    medicion_general[:data] << [display, areaexterior_neat, source_units]
-    runner.registerValue(display, areaexterior, source_units)
-
-    # ENVOLVENTE, SUPERFICIES INTERNAS
-    superficiesinternas = CTEgeo.superficiesinternas(sqlFile)
-    value = superficiesinternas.count()
-    display = 'Número de particiones interiores de las zonas habitables'
-    source_units = ''
-    medicion_general[:data] << [display, value.to_s, source_units]
-    runner.registerValue(display, value, source_units)
-
-    # ENVOLVENTE, SUPERFICIES DE CONTACTO
+    areaexterior = CTEgeo.areaexterior(sqlFile).round(2)
     superficiescontacto = CTEgeo.superficiescontacto(sqlFile)
-    superficiescontacto = superficiescontacto.count()
-    display = 'Número de particiones interiores que pertenecen a la envolvente térmica'
-    source_units = ''
-    medicion_general[:data] << [display, superficiescontacto.to_s, source_units]
-    runner.registerValue(display, superficiescontacto, source_units)
-
-    # ENVOLVENTE, AREA INTERIOR
-    areainterior = CTEgeo.areainterior(sqlFile)
-    display = 'Área de la envolvente térmica que es interior'
-    source_units = 'm^2'
-    areainterior_neat = OpenStudio.toNeatString(areainterior, 0, true)
-    medicion_general[:data] << [display, areainterior_neat, source_units]
-    runner.registerValue(display, areainterior, source_units)
-
+    areainterior = CTEgeo.areainterior(sqlFile).round(2)
     areatotal = areaexterior + areainterior
-    display = '<b>Área total de la envolvente térmica</b>'
-    source_units = 'm^2'
-    areatotal_neat = OpenStudio.toNeatString(areatotal, 0, true)
-    medicion_general[:data] << [display, areatotal_neat, source_units]
-    runner.registerValue(display, areatotal, source_units)
+    compacidad = (volumenHabitable / areatotal).round(2)
 
-    compacidad = volumenhabitable / areatotal
-    display = '<b>Compacidad</b>'
-    source_units = ''
-    compacidad_neat = OpenStudio.toNeatString(compacidad, 2, true)
-    medicion_general[:data] << [display, compacidad_neat, source_units]
-    runner.registerValue(display, compacidad, source_units)
+    runner.registerInfo("* Mediciones (edificio #{ buildingName })")
+    runner.registerValue("Zonas habitables", "#{ zonasHabitables }")
+    runner.registerValue("Zonas habitables, número", zonasHabitables.count())
+    runner.registerValue("Zonas habitables, superficie", superficieHabitable, 'm^2')
+    runner.registerValue("Zonas habitables, volumen", volumenHabitable, 'm^3')
+    runner.registerValue("Zonas no habitables", "#{ zonasNoHabitables }")
+    runner.registerValue("Zonas no habitables, número", zonasNoHabitables.count())
+    runner.registerValue("Zonas no habitables, superficie", superficieNoHabitable, 'm^2')
+    runner.registerValue("Zonas no habitables, volumen", volumenNoHabitable, 'm^3')
+    runner.registerValue('Envolvente Térmica, superficies exteriores', superficiesexternas.count())
+    runner.registerValue('Envolvente Térmica, superficies interiores', superficiescontacto.count())
+    runner.registerValue('Envolvente Térmica, área de superficies exteriores', areaexterior, 'm^2')
+    runner.registerValue('Envolvente Térmica, área de superficies interiores', areainterior, 'm^2')
+    runner.registerValue('Envolvente Térmica, área total', areatotal, 'm^2')
+    runner.registerValue('Compacidad', compacidad)
+
+    medicion_general = {}
+    medicion_general[:title] = "Mediciones (edificio #{ buildingName })"
+    medicion_general[:header] = ['', '#', 'Superficie', 'Volumen']
+    medicion_general[:units] = ['', '', 'm²', 'm³']
+    medicion_general[:data] = []
+    medicion_general[:data] << ["<u>Zonas habitables</u>", zonasHabitables.count(), superficieHabitable, volumenHabitable]
+    medicion_general[:data] << ["<u>Zonas no habitables</u>", zonasNoHabitables.count(), superficieNoHabitable, volumenNoHabitable]
+    medicion_general[:data] << ["<u>Envolvente térmica</u>", '', '', '']
+    medicion_general[:data] << ['- Exterior', '', areaexterior, '']
+    medicion_general[:data] << ['- Interior', '', areainterior, '']
+    medicion_general[:data] << ['- <b>Total</b>', '', areatotal, '']
+    medicion_general[:data] << ['<b>Compacidad</b>', "<b>#{ compacidad }</b>", areatotal, volumenHabitable]
 
     return medicion_general
   end
