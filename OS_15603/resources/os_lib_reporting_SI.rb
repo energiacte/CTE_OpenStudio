@@ -1,3 +1,4 @@
+# coding: utf-8
 require 'json'
 require "#{File.dirname(__FILE__)}/ctelib" #parece que asi no la encuentra
 require "#{File.dirname(__FILE__)}/inspeccionvariables"
@@ -41,7 +42,7 @@ module OsLib_Reporting
 
     return results
   end
-  
+
   def self.ann_env_pd(sqlFile)
     # get the weather file run period (as opposed to design day run period)
     ann_env_pd = nil
@@ -166,82 +167,80 @@ module OsLib_Reporting
     return template_table
   end
 
-  
-  # def self.llamada_de_vuelta(model, sqlFile, runner, name_only=false)
-    # File.open('logpropio.txt', 'a') {|file| file.write("Llamada de vuelta de CTE_lib __\n")}
-  # end
+  ### -----------------------------------------------------------------------------------
+  ### Métodos propios -------------------------------------------------------------------
+  ### -----------------------------------------------------------------------------------
 
-
-  def self.demanadas_por_componentes(model, sqlFile, runner, name_only = false)
+  def self.demandas_por_componentes(model, sqlFile, runner, name_only = false)
     # array to hold tables
     general_tables = []
-    
+
     # gather data for section
-    @demanadas_por_componente = {}
-    @demanadas_por_componente[:title] = "Demandas por componentes"
-    @demanadas_por_componente[:tables] = general_tables
-    
+    @demandas_por_componente = {}
+    @demandas_por_componente[:title] = "Demandas por componentes"
+    @demandas_por_componente[:tables] = general_tables
+
     if name_only == true
-        return @demanadas_por_componente
-    end  
-    
+        return @demandas_por_componente
+    end
+
     # add in general information from method
     general_tables << CTE_lib.demanda_por_componentes_invierno(model, sqlFile, runner)
     general_tables << CTE_lib.demanda_por_componentes_verano(model, sqlFile, runner)
-    
-    return @demanadas_por_componente
-    
+
+    return @demandas_por_componente
+
   end
-  
-def self.mediciones_envolvente(model, sqlfile, runner, name_only = false)
+
+  def self.mediciones_envolvente(model, sqlfile, runner, name_only = false)
     # array to hold tables
     general_tables = []
-  
+
     #gather data for section
     @mediciones = {}
     @mediciones[:title] = "Mediciones de la envolvente"
     @mediciones[:tables] = general_tables
-  
+
     if name_only == true
       return @mediciones
     end
-  
+
     # add in general information from method
     general_tables << CTE_lib.mediciones_murosexeriores(model, sqlfile, runner)
     general_tables << CTE_lib.mediciones_cubiertas(model, sqlfile, runner)
     general_tables << CTE_lib.mediciones_suelosterreno(model, sqlfile, runner)
     general_tables << CTE_lib.mediciones_huecos(model, sqlfile, runner)
     # general_tables << CTE_lib.mediciones_huecos(model, sqlfile, runner)
-  
+
     return @mediciones
   end
-  
-  def self.variables_de_inspeccion(model, sqlFile, runner, name_only = false)    
-  
+
+  def self.variables_de_inspeccion(model, sqlFile, runner, name_only = false)
+
     # array to hold tables
     general_tables = []
-    
+
     # gather data for section
     @inspeccion_variables = {}
     @inspeccion_variables[:title] = "Inspección de variables"
     @inspeccion_variables[:tables] = general_tables
-    
+
     if name_only == true
         return @inspeccion_variables
-    end  
-    
+    end
+
     # add in general information from method
     general_tables << Variables_inspeccion.variables_inspeccionadas(model, sqlFile, runner)
-    
+
     return @inspeccion_variables
-    
-  end  
-  
-  
-   # mediciones_segun_CTE section   
-  def self.mediciones_de_superficies_segun_CTE(model, sqlFile, runner, name_only = false)  
-  
-    # CTE_lib.mediciones()#, sqlFile, runner, name_only = false) 
+
+  end
+
+
+   # mediciones_segun_CTE section
+  def self.mediciones_de_superficies_segun_CTE(model, sqlFile, runner, name_only = false)
+
+    # CTE_lib.mediciones()#, sqlFile, runner, name_only = false)
     # File.open('logpropio.txt', 'w') {|file| file.write("log propio__\n")}
     # File.open('logpropio.txt', 'a') {|file| file.write("llamada a self.mediciones_segun_CTE__\n")}
     # File.open('logpropio.txt', 'a') {|file| file.write("El sqlFile es:\n#{sqlFile}\n")}
@@ -255,8 +254,8 @@ def self.mediciones_envolvente(model, sqlfile, runner, name_only = false)
 
     if name_only == true
         return @mediciones_segun_CTE
-    end    
-    
+    end
+
     # add in general information from method
     general_tables << OsLib_Reporting.tabla_general_de_mediciones(model, sqlFile, runner)
     general_tables << OsLib_Reporting.tabla_de_energias_CTE(model, sqlFile, runner)
@@ -264,17 +263,17 @@ def self.mediciones_envolvente(model, sqlfile, runner, name_only = false)
 
     # File.open('logpropio.txt', 'a') {|file| PP.pp(@mediciones_segun_CTE, file)}
     # File.open('logpropio.txt', 'a') {|file| file.write("FIN mediciones_segun_CTE__\n")}
-    
+
     return @mediciones_segun_CTE
   end
-  
+
   def self.tabla_de_energias_CTE(model, sqlFile, runner)
     general_table = {}
     general_table[:title] = 'Energía según CTE'
     general_table[:header] =%w(informacion valor unidades)
     general_table[:units] = []
     general_table[:data] = []
-    
+
     # net site energy
     display = 'Energia Neta (Net Site Energy)'
     source_units = 'GJ'
@@ -283,26 +282,26 @@ def self.mediciones_envolvente(model, sqlfile, runner, name_only = false)
     energianeta_neat = OpenStudio.toNeatString(energianeta, 0, true)
     general_table[:data] << [display, energianeta_neat, target_units]
     runner.registerValue(display, energianeta, target_units)
-       
-    # File.open('logpropio.txt', 'a') {|file| file.write("Energía neta:#{energianeta}\n")}    
-    
+
+    # File.open('logpropio.txt', 'a') {|file| file.write("Energía neta:#{energianeta}\n")}
+
      # ZONAS HABITABLES
     zonashabitablesquery = "SELECT * FROM Zones zones "
     zonashabitablesquery << "LEFT OUTER JOIN ZoneInfoZoneLists zizl USING (ZoneIndex) "
     zonashabitablesquery << "LEFT OUTER JOIN ZoneLists zl USING (ZoneListIndex) "
-    zonashabitablesquery << "WHERE zl.Name != 'CTE_NOHABITA' AND zl.Name != 'CTE_N' "    
+    zonashabitablesquery << "WHERE zl.Name != 'CTE_NOHABITA' AND zl.Name != 'CTE_N' "
     zonashabitablessearch = sqlFile.execAndReturnVectorOfString(zonashabitablesquery)
     #  SUPERFICIE HABITABLE
     superficiehabitablesearch = sqlFile.execAndReturnFirstDouble("SELECT SUM(FloorArea) FROM (#{zonashabitablesquery})")
     superficiehabitable = superficiehabitablesearch.get
-    
-    # File.open('logpropio.txt', 'a') {|file| file.write("Superficie habitable#{superficiehabitable}\n")}    
-    
+
+    # File.open('logpropio.txt', 'a') {|file| file.write("Superficie habitable#{superficiehabitable}\n")}
+
     intensidadEnergetica = energianeta / superficiehabitable
     intensidadEnergetica_neat = OpenStudio.toNeatString(intensidadEnergetica, 0, true)
     general_table[:data] << ['Energía por superficie habitable', intensidadEnergetica_neat, 'kWh/m^2']
     general_table[:data] << ['EUI es simplemente dividir', 'la energía neta', 'por la superficie']
-    
+
     return general_table
   end
 
@@ -310,7 +309,7 @@ def self.mediciones_envolvente(model, sqlfile, runner, name_only = false)
     tabla_general = CTE_lib.CTE_tabla_general_de_mediciones(model, sqlFile, runner)
     return tabla_general
   end
-  
+
   def self.estoloquito(model, sqlFile, runner)
     medicion_general = {}
     medicion_general[:title] = 'Mediciones Generales CTE'
@@ -321,18 +320,18 @@ def self.mediciones_envolvente(model, sqlfile, runner, name_only = false)
     # structure ID / building name
     display = 'Nombre del edificio'
     target_units = ''
-    #value = model.getBuilding.name.to_s
+    value = model.getBuilding.name.to_s
     value = 'caracola'
     medicion_general[:data] << [display, value, target_units]
     runner.registerValue(display, value, target_units)
 
     # ZONAS HABITABLES
     medicion_general[:data] << ["<u>Zonas habitables</u>", '', '']
-    
+
     zonashabitablesquery = "SELECT * FROM Zones zones "
     zonashabitablesquery << "LEFT OUTER JOIN ZoneInfoZoneLists zizl USING (ZoneIndex) "
     zonashabitablesquery << "LEFT OUTER JOIN ZoneLists zl USING (ZoneListIndex) "
-    zonashabitablesquery << "WHERE zl.Name != 'CTE_NOHABITA' AND zl.Name != 'CTE_N' "    
+    zonashabitablesquery << "WHERE zl.Name != 'CTE_NOHABITA' AND zl.Name != 'CTE_N' "
     zonashabitablessearch = sqlFile.execAndReturnVectorOfString(zonashabitablesquery)
 
     if zonashabitablessearch.empty?
@@ -349,17 +348,17 @@ def self.mediciones_envolvente(model, sqlfile, runner, name_only = false)
       medicion_general[:data] << [display, numerodezonas.to_s, source_units]
       runner.registerValue(display, numerodezonas, source_units)
     end
-    
+
     #  SUPERFICIE HABITABLE
     superficiehabitablesearch = sqlFile.execAndReturnFirstDouble("SELECT SUM(FloorArea) FROM (#{zonashabitablesquery})")
     superficiehabitable = superficiehabitablesearch.get
     # File.open('logpropio.txt', 'a') {|file| file.write("superficie habitable = #{superficiehabitable}\n")}
-    display = 'Superficie habitable'    
-    superficiehabitable_neat = OpenStudio.toNeatString(superficiehabitable, 0, true)     
+    display = 'Superficie habitable'
+    superficiehabitable_neat = OpenStudio.toNeatString(superficiehabitable, 0, true)
     unidades = 'm^2'
     medicion_general[:data] << [display, superficiehabitable_neat, unidades]
     runner.registerValue(display, superficiehabitable, unidades)
-    
+
 
     # VOLUMEN HABITABLE
     volumenhabitablequery = "SELECT SUM(z.Volume) FROM Zones z "
@@ -378,7 +377,7 @@ def self.mediciones_envolvente(model, sqlfile, runner, name_only = false)
       display = '<b>Volumen de las zonas habitables</b>'
       source_units = 'm^3'
       volumenhabitable = volumenhabitablesearch.get
-      volumenhabitable_neat = OpenStudio.toNeatString(volumenhabitable, 0, true)      
+      volumenhabitable_neat = OpenStudio.toNeatString(volumenhabitable, 0, true)
       medicion_general[:data] << [display, volumenhabitable_neat, source_units]
       runner.registerValue(display, volumenhabitable, source_units)
     end
@@ -404,7 +403,7 @@ def self.mediciones_envolvente(model, sqlfile, runner, name_only = false)
       medicion_general[:data] << [display, value.to_s, source_units]
       runner.registerValue(display, value, source_units)
     end
-    
+
     superficienohabitablessearch = sqlFile.execAndReturnFirstDouble("SELECT SUM(FloorArea) FROM (#{zonasnohabitablesquery})")
     superficienohabitables = superficienohabitablessearch.get()
     # File.open('logpropio.txt', 'a') {|file| file.write("Superficie no habitable = #{superficienohabitables}")}
@@ -413,7 +412,7 @@ def self.mediciones_envolvente(model, sqlfile, runner, name_only = false)
     superficienohabitables_neat = OpenStudio.toNeatString(superficienohabitables, 0, true)
     medicion_general[:data] << [display, superficienohabitables_neat, units]
     runner.registerValue(display, superficienohabitables.to_s, units)
-    
+
     volumennohabitablesearch = sqlFile.execAndReturnFirstDouble("SELECT SUM(Volume) FROM (#{zonasnohabitablesquery})")
     volumennohabitable = volumennohabitablesearch.get()
     # File.open('logpropio.txt', 'a') {|file| file.write("Volumen de zonas no habitables = #{volumennohabitable}")}
@@ -422,7 +421,7 @@ def self.mediciones_envolvente(model, sqlfile, runner, name_only = false)
     volumennohabitable_neat = OpenStudio.toNeatString(volumennohabitable, 0, true)
     medicion_general[:data] << [display, volumennohabitable_neat, units]
     runner.registerValue(display, volumennohabitable.to_s, units)
-    
+
 
     #SUPERFICIES CANDIDATAS
     medicion_general[:data] << ["<u>Envolvente térmica</u>", '', '']
@@ -512,7 +511,7 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
     areatotal_neat = OpenStudio.toNeatString(areatotal, 0, true)
     medicion_general[:data] << [display, areatotal_neat, source_units]
     runner.registerValue(display, areatotal, source_units)
-    
+
     compacidad = volumenhabitable / areatotal
     File.open('logpropio.txt', 'a') {|file| file.write("Compacidad correcta__\n")}
     display = '<b>Compacidad</b>'
@@ -523,7 +522,12 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
 
     return medicion_general
   end
-  
+
+  ### -----------------------------------------------------------------------------------
+  ### Fin métodos propios ---------------------------------------------------------------
+  ### -----------------------------------------------------------------------------------
+
+
   # building_summary section
   def self.building_summary_section(model, sqlFile, runner, name_only = false)
     # array to hold tables
@@ -560,7 +564,7 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
 
     # gather data for section
     @annual_overview_section = {}
-    @annual_overview_section[:title] = 'Resumen anual'#'Annual Overview'
+    @annual_overview_section[:title] = 'Resumen anual' #'Annual Overview'
     @annual_overview_section[:tables] = annual_tables
 
     # stop here if only name is requested this is used to populate display name for arguments
@@ -579,11 +583,11 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
 
   # create table with general building information
   # this just makes a table, and not a full section. It feeds into another method that makes a full section
-  
+
   def self.general_building_information_table(model, sqlFile, runner)
     # general building information type data output
     general_building_information = {}
-    general_building_information[:title] = 'Resumen del Edificio, Building Summary' # name will be with section
+    general_building_information[:title] = 'Resumen del Edificio' # 'Building Summary' # name will be with section
     general_building_information[:header] = %w(Informacion Valor Unidades)
     general_building_information[:units] = [] # won't populate for this table since each row has different units
     general_building_information[:data] = []
@@ -594,7 +598,7 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
     #value = model.getBuilding.name.to_s
     value = 'caracola'
     general_building_information[:data] << [display, value, target_units]
-    runner.registerValue(display, value, target_units)    
+    runner.registerValue(display, value, target_units)
 
     # total building area
     query = 'SELECT Value FROM tabulardatawithstrings WHERE '
@@ -611,12 +615,11 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
     else
       display = 'Area total del edificio (Total Building Area)'
       source_units = 'm^2'
-      target_units = 'ft^2'
-      # value = OpenStudio.convert(query_results.get, source_units, target_units).get
-      value = query_results.get
+      target_units = 'm^2'
+      value = OpenStudio.convert(query_results.get, source_units, target_units).get
       value_neat = OpenStudio.toNeatString(value, 0, true)
-      general_building_information[:data] << [display, value_neat, source_units]
-      runner.registerValue(display, value, source_units)
+      general_building_information[:data] << [display, value_neat, target_units]
+      runner.registerValue(display, value, target_units)
     end
 
     # EUI
@@ -626,8 +629,8 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
     target_units = 'kWh/m^2'
     value = OpenStudio.convert(eui, source_units, target_units).get
     value_neat = OpenStudio.toNeatString(value, 2, true)
-    general_building_information[:data] << [display, value_neat, source_units]
-    runner.registerValue(display, value, source_units)
+    general_building_information[:data] << [display, value_neat, target_units]
+    runner.registerValue(display, value, target_units)
 
     return general_building_information
   end
@@ -638,7 +641,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
     output_data_space_type_breakdown = {}
     output_data_space_type_breakdown[:title] = ''
     output_data_space_type_breakdown[:header] = ['Space Type Name', 'Floor Area']
-    # units = 'ft^2'
     units = 'm^2'
     output_data_space_type_breakdown[:units] = ['', units]
     output_data_space_type_breakdown[:data] = []
@@ -706,7 +708,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
 
       # data for graph
       color = 'rgb(20,20,20)' # maybe do random or let d3 pick color instead of this?
-      # output_data_space_type_breakdown[:chart] << JSON.generate(label: 'No SpaceType Assigned', value: OpenStudio.convert(no_space_type_area_counter, 'm^2', 'ft^2'), color: color)
       output_data_space_type_breakdown[:chart] << JSON.generate(label: 'No SpaceType Assigned', value: OpenStudio.convert(no_space_type_area_counter, 'm^2', 'm^2'), color: color)
     end
 
@@ -720,7 +721,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
     output_data_end_use = {}
     output_data_end_use[:title] = 'End Use'
     output_data_end_use[:header] = ['End Use', 'Consumption']
-    # target_units = 'kBtu'
     target_units = 'kWh'
     output_data_end_use[:units] = ['', target_units]
     output_data_end_use[:data] = []
@@ -730,16 +730,13 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
     end_use_colors = ['#EF1C21', '#0071BD', '#F7DF10', '#DEC310', '#4A4D4A', '#B5B2B5', '#FF79AD', '#632C94', '#F75921', '#293094', '#CE5921', '#FFB239', '#29AAE7', '#8CC739']
 
     # loop through fuels for consumption tables
-    File.open('logpropio.txt', 'a') {|file| file.write("Iterando sobre los combustibles para completar las tablas\n")}
     counter = 0
     OpenStudio::EndUseCategoryType.getValues.each do |end_use|
-      File.open('logpropio.txt', 'a') {|file| file.write("  #{end_use}\n")} #aqui end_use es un número
       # get end uses
       end_use = OpenStudio::EndUseCategoryType.new(end_use).valueDescription #aquí es un nombre de categoría:
         # Heating, Cooling, Interior Lighting, Exterior Lighting, Interior Equipment, Exterior Equipment,
         # Fans, Pumps, Heat Rejection, Humidification, Heat Recovery, Water Systems, Refrigeration, Generators
 
-      File.open('logpropio.txt', 'a') {|file| file.write("    #{end_use}\n")}
       query_elec = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' and TableName='End Uses' and RowName= '#{end_use}' and ColumnName= 'Electricity'"
       query_gas = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' and TableName='End Uses' and RowName= '#{end_use}' and ColumnName= 'Natural Gas'"
       query_add = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' and TableName='End Uses' and RowName= '#{end_use}' and ColumnName= 'Additional Fuel'"
@@ -752,8 +749,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
       results_dh = sqlFile.execAndReturnFirstDouble(query_dh).get
       total_end_use = results_elec + results_gas + results_add + results_dc + results_dh
       value = OpenStudio.convert(total_end_use, 'GJ', target_units).get
-      # value = enkWh(total_end_use)
-
       value_neat = OpenStudio.toNeatString(value, 0, true)
       output_data_end_use[:data] << [end_use, value_neat]
       runner.registerValue("End Use - #{end_use}", value, target_units)
@@ -803,9 +798,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
     return output_data_end_use_electricity
   end
 
-  def self.therm2kWh(therms)
-    return therms*25*1.163
-  end
   # create table with general building information
   # this just makes a table, and not a full section. It feeds into another method that makes a full section
   def self.output_data_end_use_gas_table(model, sqlFile, runner)
@@ -813,7 +805,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
     output_data_end_use_gas = {}
     output_data_end_use_gas[:title] = 'EUI - Gas'
     output_data_end_use_gas[:header] = ['End Use', 'Consumption']
-    # target_units = 'therms'
     target_units = 'kWh'
     output_data_end_use_gas[:units] = ['', target_units]
     output_data_end_use_gas[:data] = []
@@ -831,8 +822,7 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
       end_use = OpenStudio::EndUseCategoryType.new(end_use).valueDescription
       query = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' and TableName='End Uses' and RowName= '#{end_use}' and ColumnName= 'Natural Gas'"
       results = sqlFile.execAndReturnFirstDouble(query)
-      # value = results.get * 9.48 # manual conversion from GJ to therms
-      value = therm2kWh(results.get)
+      value = OpenStudio.convert(results.get, 'GJ', target_units).get
       value_neat = OpenStudio.toNeatString(value, 0, true)
       output_data_end_use_gas[:data] << [end_use, value_neat]
       runner.registerValue("End Use Natural Gas - #{end_use}", value, target_units)
@@ -851,10 +841,9 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
   def self.output_data_energy_use_table(model, sqlFile, runner)
     # energy use data output
     output_data_energy_use = {}
-    output_data_energy_use[:title] = 'Energy Use'
-    output_data_energy_use[:header] = ['Fuel', 'Consumo',
-'Consumption']
-    output_data_energy_use[:units] = ['', 'kWh', 'MBth']#['', 'kBtu']
+    output_data_energy_use[:title] = 'Energia Final (Energy Use)'
+    output_data_energy_use[:header] = ['Combustible', 'Consumo']
+    output_data_energy_use[:units] = ['', 'kWh']
     output_data_energy_use[:data] = []
     output_data_energy_use[:chart_type] = 'simple_pie'
     output_data_energy_use[:chart] = []
@@ -877,13 +866,10 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
       next if fuel_type == 'Water'
       query = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' and TableName='End Uses' and RowName= 'Total End Uses' and ColumnName= '#{fuel_type}'"
       results = sqlFile.execAndReturnFirstDouble(query)
-      # target_units = 'kBtu'
       target_units = 'kWh'
-      valueIP = OpenStudio.convert(results.get, 'GJ', 'MBtu').get
       value = OpenStudio.convert(results.get, 'GJ', target_units).get
       value_neat = OpenStudio.toNeatString(value, 0, true)
-      valueIP_neat = OpenStudio.toNeatString(valueIP, 0, true)
-      output_data_energy_use[:data] << [fuel_type, value_neat, valueIP_neat]
+      output_data_energy_use[:data] << [fuel_type, value_neat]
       runner.registerValue("Fuel - #{fuel_type}", value, target_units)
 
       if value > 0
@@ -944,7 +930,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
       controller_oa = component.getControllerOutdoorAir
 
       sizing_source_units = 'm^3/s'
-      # sizing_target_units = 'cfm'
       sizing_target_units = 'm^3/s'
       if controller_oa.maximumOutdoorAirFlowRate.is_initialized
         sizing_ip = OpenStudio.convert(controller_oa.maximumOutdoorAirFlowRate.get, sizing_source_units, sizing_target_units).get
@@ -953,7 +938,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
         sizing_ip_neat = 'Autosized'
       end
       value_source_units = 'm^3/s'
-      # value_target_units = 'cfm'
       value_target_units = 'm^3/s'
       if controller_oa.minimumOutdoorAirFlowRate.is_initialized
         value_ip = OpenStudio.convert(controller_oa.minimumOutdoorAirFlowRate.get, value_source_units, value_target_units).get
@@ -966,7 +950,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
     elsif component.to_CoilCoolingDXSingleSpeed.is_initialized
       component = component.to_CoilCoolingDXSingleSpeed.get
       sizing_source_units = 'W'
-      # sizing_target_units = 'Btu/h'
       sizing_target_units = 'W'
       if component.ratedTotalCoolingCapacity.is_initialized
         sizing_ip = OpenStudio.convert(component.ratedTotalCoolingCapacity.get, sizing_source_units, sizing_target_units).get
@@ -986,7 +969,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
 
       # high speed
       sizing_source_units = 'W'
-      # sizing_target_units = 'Btu/h'
       sizing_target_units = 'W'
       if component.ratedHighSpeedTotalCoolingCapacity.is_initialized
         sizing_ip = OpenStudio.convert(component.ratedHighSpeedTotalCoolingCapacity.get, sizing_source_units, sizing_target_units).get
@@ -1003,7 +985,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
 
       # low speed
       sizing_source_units = 'W'
-      # sizing_target_units = 'Btu/h'
       sizing_target_units = 'W'
       if component.ratedLowSpeedTotalCoolingCapacity.is_initialized
         sizing_ip = OpenStudio.convert(component.ratedLowSpeedTotalCoolingCapacity.get, sizing_source_units, sizing_target_units).get
@@ -1021,7 +1002,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
     elsif component.iddObject.name == 'OS:Coil:Cooling:Water'
       component = component.to_CoilCoolingWater.get
       sizing_source_units = 'm^3/s'
-      # sizing_target_units = 'gal/min'
       sizing_target_units =  'm^3/s'
       if component.designWaterFlowRate.is_initialized
         sizing_ip = OpenStudio.convert(component.designWaterFlowRate.get, sizing_source_units, sizing_target_units).get
@@ -1036,7 +1016,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
     elsif component.to_CoilHeatingGas.is_initialized
       component = component.to_CoilHeatingGas.get
       sizing_source_units = 'W'
-      sizing_target_units = 'Btu/h'
       sizing_target_units = 'W'
       if component.nominalCapacity.is_initialized
         sizing_ip = OpenStudio.convert(component.nominalCapacity.get, sizing_source_units, sizing_target_units).get
@@ -1054,7 +1033,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
     elsif component.to_CoilHeatingElectric.is_initialized
       component = component.to_CoilHeatingElectric.get
       sizing_source_units = 'W'
-      sizing_target_units = 'Btu/h'
       sizing_target_units = 'W'
       if component.nominalCapacity.is_initialized
         sizing_ip = OpenStudio.convert(component.nominalCapacity.get, sizing_source_units, sizing_target_units).get
@@ -1072,7 +1050,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
     elsif component.to_CoilHeatingDXSingleSpeed.is_initialized
       component = component.to_CoilHeatingDXSingleSpeed.get
       sizing_source_units = 'W'
-      sizing_target_units = 'Btu/h'
       sizing_target_units = 'W'
       if component.ratedTotalHeatingCapacity.is_initialized
         sizing_ip = OpenStudio.convert(component.ratedTotalHeatingCapacity.get, sizing_source_units, sizing_target_units).get
@@ -1090,7 +1067,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
     elsif component.to_CoilHeatingWater.is_initialized
       component = component.to_CoilHeatingWater.get
       sizing_source_units = 'm^3/s'
-      sizing_target_units = 'gal/min'
       sizing_target_units = 'm^3/s'
       if component.maximumWaterFlowRate.is_initialized
         sizing_ip = OpenStudio.convert(component.maximumWaterFlowRate.get, sizing_source_units, sizing_target_units).get
@@ -1105,7 +1081,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
     elsif component.to_FanConstantVolume.is_initialized
       component = component.to_FanConstantVolume.get
       sizing_source_units = 'm^3/s'
-      sizing_target_units = 'cfm'
       sizing_target_units = 'm^3/s'
       if component.maximumFlowRate.is_initialized
         sizing_ip = OpenStudio.convert(component.maximumFlowRate.get, sizing_source_units, sizing_target_units).get
@@ -1114,7 +1089,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
         sizing_ip_neat = 'Autosized'
       end
       value_source_units = 'Pa'
-      value_target_units = 'inH_{2}O'
       value_target_units = 'Pa'
       value_ip = OpenStudio.convert(component.pressureRise, value_source_units, value_target_units).get
       value_ip_neat = OpenStudio.toNeatString(value_ip, 2, true)
@@ -1123,7 +1097,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
     elsif component.to_FanVariableVolume.is_initialized
       component = component.to_FanVariableVolume.get
       sizing_source_units = 'm^3/s'
-      sizing_target_units = 'cfm'
       sizing_target_units = 'm^3/s'
       if component.maximumFlowRate.is_initialized
         sizing_ip = OpenStudio.convert(component.maximumFlowRate.get, sizing_source_units, sizing_target_units).get
@@ -1132,7 +1105,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
         sizing_ip_neat = 'Autosized'
       end
       value_source_units = 'Pa'
-      value_target_units = 'inH_{2}O'
       value_target_units = 'Pa'
       value_ip = OpenStudio.convert(component.pressureRise, value_source_units, value_target_units).get
       value_ip_neat = OpenStudio.toNeatString(value_ip, 2, true)
@@ -1148,7 +1120,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
       else
         if setpoint.controlVariable.to_s == 'Temperature'
           source_units = 'C'
-          target_units = 'F'
           target_units = 'C'
           schedule_values_pretty = "#{OpenStudio.convert(schedule_values['min'], source_units, target_units).get.round(1)} to #{OpenStudio.convert(schedule_values['max'], source_units, target_units).get.round(1)}"
         else # TODO: - add support for other control variables
@@ -1279,28 +1250,22 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
       thermal_zones.each do |zone|
         total_loop_floor_area += zone.floorArea
       end
-      # total_loop_floor_area_ip = OpenStudio.convert(total_loop_floor_area, 'm^2', 'ft^2').get
       total_loop_floor_area_ip = OpenStudio.convert(total_loop_floor_area, 'm^2', 'm^2').get
       total_loop_floor_area_ip_neat = OpenStudio.toNeatString(total_loop_floor_area_ip, 0, true)
 
       # output zone and terminal data
-      # output_data_air_loops[:data] << ['Thermal Zones', '', '', 'Total Floor Area', total_loop_floor_area_ip_neat, 'ft^2', thermal_zones.size]
       output_data_air_loops[:data] << ['Thermal Zones', '', '', 'Total Floor Area', total_loop_floor_area_ip_neat, 'm^2', thermal_zones.size]
       if cooling_temp_ranges.size == 0
         cooling_temp_ranges_pretty = "can't inspect schedules"
       else
-        # cooling_temp_ranges_pretty = "#{OpenStudio.convert(cooling_temp_ranges.min, 'C', 'F').get.round(1)} to #{OpenStudio.convert(cooling_temp_ranges.max, 'C', 'F').get.round(1)}"
         cooling_temp_ranges_pretty = "#{OpenStudio.convert(cooling_temp_ranges.min, 'C', 'C').get.round(1)} to #{OpenStudio.convert(cooling_temp_ranges.max, 'C', 'C').get.round(1)}"
       end
       if heating_temps_ranges.size == 0
         heating_temps_ranges_pretty = "can't inspect schedules"
       else
-        # heating_temps_ranges_pretty = "#{OpenStudio.convert(heating_temps_ranges.min, 'C', 'F').get.round(1)} to #{OpenStudio.convert(heating_temps_ranges.max, 'C', 'F').get.round(1)}"
         heating_temps_ranges_pretty = "#{OpenStudio.convert(heating_temps_ranges.min, 'C', 'C').get.round(1)} to #{OpenStudio.convert(heating_temps_ranges.max, 'C', 'C').get.round(1)}"
       end
-      # output_data_air_loops[:data] << ['Thermal Zones', '', '', 'thermostat ranges for heating', cooling_temp_ranges_pretty, 'F', '']
       output_data_air_loops[:data] << ['Thermal Zones', '', '', 'thermostat ranges for heating', cooling_temp_ranges_pretty, 'C', '']
-      # output_data_air_loops[:data] << ['Thermal Zones', '', '', 'thermostat ranges for cooling', heating_temps_ranges_pretty, 'F', '']
       output_data_air_loops[:data] << ['Thermal Zones', '', '', 'thermostat ranges for cooling', heating_temps_ranges_pretty, 'C', '']
       output_data_air_loops[:data] << ['Terminal Types Used', '', '', terminals.uniq.sort.join(', '), '', '', terminals.size]
 
@@ -1324,7 +1289,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
     if component.to_PumpConstantSpeed.is_initialized
       component = component.to_PumpConstantSpeed.get
       sizing_source_units = 'm^3/s'
-      # sizing_target_units = 'gal/min'
       sizing_target_units =  'm^3/s'
       if component.ratedFlowRate.is_initialized
         sizing_ip = OpenStudio.convert(component.ratedFlowRate.get, sizing_source_units, sizing_target_units).get
@@ -1333,7 +1297,7 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
         sizing_ip_neat = 'Autosized'
       end
       value_source_units = 'Pa'
-      value_target_units = 'W'
+      value_target_units = 'W' # XXX: ???
       if component.ratedFlowRate.is_initialized
         value_ip = OpenStudio.convert(component.ratedFlowRate.get, sizing_source_units, sizing_target_units).get
         value_ip_neat = OpenStudio.toNeatString(value_ip, 2, true)
@@ -1346,7 +1310,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
     elsif component.to_PumpVariableSpeed.is_initialized
       component = component.to_PumpVariableSpeed.get
       sizing_source_units = 'm^3/s'
-      # sizing_target_units = 'gal/min'
       sizing_target_units =  'm^3/s'
       if component.ratedFlowRate.is_initialized
         sizing_ip = OpenStudio.convert(component.ratedFlowRate.get, sizing_source_units, sizing_target_units).get
@@ -1355,7 +1318,7 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
         sizing_ip_neat = 'Autosized'
       end
       value_source_units = 'Pa'
-      value_target_units = 'W'
+      value_target_units = 'W' # XXX: ???
       if component.ratedFlowRate.is_initialized
         value_ip = OpenStudio.convert(component.ratedFlowRate.get, sizing_source_units, sizing_target_units).get
         value_ip_neat = OpenStudio.toNeatString(value_ip, 2, true)
@@ -1368,7 +1331,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
     elsif component.to_BoilerHotWater.is_initialized
       component = component.to_BoilerHotWater.get
       sizing_source_units = 'W'
-      sizing_target_units = 'Btu/h'
       sizing_target_units =  'W'
       if component.nominalCapacity.is_initialized
         sizing_ip = OpenStudio.convert(component.nominalCapacity.get, sizing_source_units, sizing_target_units).get
@@ -1386,16 +1348,10 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
     elsif component.to_WaterHeaterMixed.is_initialized
       component = component.to_WaterHeaterMixed.get
       sizing_source_units = 'm^3'
-      # sizing_target_units = 'gal'
-      sizing_target_units =  'm^3/s'
+      sizing_target_units =  'm^3'
       if component.tankVolume.is_initialized
-        # puts component.tankVolume.get
-        # puts sizing_source_units
-        # puts sizing_target_units
-        # sizing_ip = OpenStudio.convert(component.tankVolume.get, sizing_source_units, sizing_target_units).get
-        File.open('componentTankVolume.txt', 'a') {|file| file.write("component.tankVolume.get   #{component.tankVolume.get}\n")}  
-        sizing_ip_neat = OpenStudio.toNeatString(component.tankVolume.get, 0, true)
-        #sizing_ip_neat = OpenStudio.toNeatString(sizing_ip, 0, true)
+        sizing_ip = OpenStudio.convert(component.tankVolume.get, sizing_source_units, sizing_target_units).get
+        sizing_ip_neat = OpenStudio.toNeatString(sizing_ip, 0, true)
       else
         sizing_ip_neat = 'Autosized'
       end
@@ -1413,7 +1369,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
     elsif component.to_ChillerElectricEIR.is_initialized
       component = component.to_ChillerElectricEIR.get
       sizing_source_units = 'W'
-      sizing_target_units = 'Btu/h'
       sizing_target_units =  'W'
       if component.referenceCapacity.is_initialized
         sizing_ip = OpenStudio.convert(component.referenceCapacity.get, sizing_source_units, sizing_target_units).get
@@ -1438,7 +1393,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
       # data for water
       component = component.to_CoolingTowerSingleSpeed.get
       sizing_source_units = 'm^3/s'
-      # sizing_target_units = 'gal/min'
       sizing_target_units =  'm^3/s'
       if component.designWaterFlowRate.is_initialized
         sizing_ip = OpenStudio.convert(component.designWaterFlowRate.get, sizing_source_units, sizing_target_units).get
@@ -1451,7 +1405,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
       # data for air
       component = component.to_CoolingTowerSingleSpeed.get
       sizing_source_units = 'm^3/s'
-      # sizing_target_units = 'cfm'
       sizing_target_units =  'm^3/s'
       if component.designAirFlowRate.is_initialized
         sizing_ip = OpenStudio.convert(component.designAirFlowRate.get, sizing_source_units, sizing_target_units).get
@@ -1480,7 +1433,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
       else
         if setpoint.controlVariable.to_s == 'Temperature'
           source_units = 'C'
-          # target_units = 'F'
           target_units = 'C'
           schedule_values_pretty = "#{OpenStudio.convert(schedule_values['min'], source_units, target_units).get.round(1)} to #{OpenStudio.convert(schedule_values['max'], source_units, target_units).get.round(1)}"
         else # TODO: - add support for other control variables
@@ -1605,7 +1557,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
 
       # loop flow rates
       sizing_source_units = 'm^3/s'
-      # sizing_target_units = 'gal/min'
       sizing_target_units =  'm^3/s'
       if plant_loop.maximumLoopFlowRate.is_initialized
         sizing_ip = OpenStudio.convert(plant_loop.maximumLoopFlowRate.get, sizing_source_units, sizing_target_units).get
@@ -1614,7 +1565,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
         sizing_ip_neat = 'Autosized'
       end
       value_source_units = 'm^3/s'
-      # value_target_units = 'gal/min'
       value_target_units =  'm^3/s'
       if plant_loop.maximumLoopFlowRate.is_initialized
         value_ip = OpenStudio.convert(plant_loop.minimumLoopFlowRate.get, value_source_units, value_target_units).get
@@ -1626,7 +1576,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
 
       # loop temperatures
       source_units = 'C'
-      # target_units = 'F'
       target_units = 'C'
       min_temp = plant_loop.minimumLoopTemperature
       max_temp = plant_loop.maximumLoopTemperature
@@ -1636,14 +1585,12 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
       # get values out of sizing plant
       sizing_plant = plant_loop.sizingPlant
       source_units = 'C'
-      # target_units = 'F'
       target_units = 'C'
       loop_exit_temp = sizing_plant.designLoopExitTemperature
       value_neat = OpenStudio.toNeatString(OpenStudio.convert(loop_exit_temp, source_units, target_units).get, 2, true)
 
       output_data_plant_loops[:data] << ['Design Loop Exit Temperature', '', '', '', value_neat, target_units, '']
       source_units = 'K'
-      # target_units = 'R'
       target_units = 'K'
       loop_design_temp_diff = sizing_plant.loopDesignTemperatureDifference
       value_neat = OpenStudio.toNeatString(OpenStudio.convert(loop_design_temp_diff, source_units, target_units).get, 2, true)
@@ -1662,7 +1609,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
       component = component.to_FanZoneExhaust.get
 
       sizing_source_units = 'm^3/s'
-      # sizing_target_units = 'cfm'
       sizing_target_units =  'm^3/s'
       if component.maximumFlowRate.is_initialized
         sizing_ip = OpenStudio.convert(component.maximumFlowRate.get, sizing_source_units, sizing_target_units).get
@@ -1683,7 +1629,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
 
       # report outdoor air when not heating or cooling
       sizing_source_units = 'm^3/s'
-      # sizing_target_units = 'cfm'
       sizing_target_units =  'm^3/s'
       if component.outdoorAirFlowRateWhenNoCoolingorHeatingisNeeded.is_initialized
         sizing_ip = OpenStudio.convert(component.outdoorAirFlowRateWhenNoCoolingorHeatingisNeeded.get, sizing_source_units, sizing_target_units).get
@@ -1699,7 +1644,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
       if component.coolingCoil.to_CoilCoolingDXSingleSpeed.is_initialized
         cooling_coil = component.coolingCoil.to_CoilCoolingDXSingleSpeed.get
         sizing_source_units = 'W'
-        sizing_target_units = 'Btu/h'
         sizing_target_units =  'W'
         if cooling_coil.ratedTotalCoolingCapacity.is_initialized
           sizing_ip = OpenStudio.convert(cooling_coil.ratedTotalCoolingCapacity.get, sizing_source_units, sizing_target_units).get
@@ -1722,7 +1666,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
       if component.coolingCoil.to_CoilHeatingDXSingleSpeed.is_initialized
         heating_coil = component.heatingCoil.to_CoilHeatingDXSingleSpeed.get
         sizing_source_units = 'W'
-        sizing_target_units = 'Btu/h'
         sizing_target_units =  'W'
         if heating_coil.ratedTotalHeatingCapacity.is_initialized
           sizing_ip = OpenStudio.convert(heating_coil.ratedTotalHeatingCapacity.get, sizing_source_units, sizing_target_units).get
@@ -1745,7 +1688,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
       if component.supplyAirFan.to_FanConstantVolume.is_initialized
         fan = component.supplyAirFan.to_FanConstantVolume.get
         sizing_source_units = 'm^3/s'
-        # sizing_target_units = 'cfm'
         sizing_target_units =  'm^3/s'
         if fan.maximumFlowRate.is_initialized
           sizing_ip = OpenStudio.convert(fan.maximumFlowRate.get, sizing_source_units, sizing_target_units).get
@@ -1754,7 +1696,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
           sizing_ip_neat = 'Autosized'
         end
         value_source_units = 'Pa'
-        value_target_units = 'inH_{2}O'
         value_target_units =  'Pa'
         value_ip = OpenStudio.convert(fan.pressureRise, value_source_units, value_target_units).get
         value_ip_neat = OpenStudio.toNeatString(value_ip, 2, true)
@@ -1768,7 +1709,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
       if component.supplementalHeatingCoil.to_CoilHeatingElectric.is_initialized
         supplemental_heating_coil = component.supplementalHeatingCoil.to_CoilHeatingElectric.get
         sizing_source_units = 'W'
-        # sizing_target_units = 'Btu/h'
         sizing_target_units =  'W'
         if supplemental_heating_coil.nominalCapacity.is_initialized
           sizing_ip = OpenStudio.convert(supplemental_heating_coil.nominalCapacity.get, sizing_source_units, sizing_target_units).get
@@ -1792,7 +1732,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
 
       # report outdoor air when not heating or cooling
       sizing_source_units = 'm^3/s'
-      # sizing_target_units = 'cfm'
       sizing_target_units =  'm^3/s'
       if component.outdoorAirFlowRateWhenNoCoolingorHeatingisNeeded.is_initialized
         sizing_ip = OpenStudio.convert(component.outdoorAirFlowRateWhenNoCoolingorHeatingisNeeded.get, sizing_source_units, sizing_target_units).get
@@ -1808,7 +1747,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
       if component.coolingCoil.to_CoilCoolingDXSingleSpeed.is_initialized
         cooling_coil = component.coolingCoil.to_CoilCoolingDXSingleSpeed.get
         sizing_source_units = 'W'
-        # sizing_target_units = 'Btu/h'
         sizing_target_units =  'W'
         if cooling_coil.ratedTotalCoolingCapacity.is_initialized
           sizing_ip = OpenStudio.convert(cooling_coil.ratedTotalCoolingCapacity.get, sizing_source_units, sizing_target_units).get
@@ -1831,7 +1769,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
       if component.heatingCoil.to_CoilHeatingWater.is_initialized
         heating_coil = component.heatingCoil.to_CoilHeatingWater.get
         sizing_source_units = 'm^3/s'
-        # sizing_target_units = 'gal/min'
         sizing_target_units =  'm^3/s'
         if heating_coil.maximumWaterFlowRate.is_initialized
           sizing_ip = OpenStudio.convert(heating_coil.maximumWaterFlowRate.get, sizing_source_units, sizing_target_units).get
@@ -1851,7 +1788,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
       if component.supplyAirFan.to_FanConstantVolume.is_initialized
         fan = component.supplyAirFan.to_FanConstantVolume.get
         sizing_source_units = 'm^3/s'
-        # sizing_target_units = 'cfm'
         sizing_target_units =  'm^3/s'
         if fan.maximumFlowRate.is_initialized
           sizing_ip = OpenStudio.convert(fan.maximumFlowRate.get, sizing_source_units, sizing_target_units).get
@@ -1860,7 +1796,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
           sizing_ip_neat = 'Autosized'
         end
         value_source_units = 'Pa'
-        value_target_units = 'inH_{2}O'
         value_target_units =  'Pa'
         value_ip = OpenStudio.convert(fan.pressureRise, value_source_units, value_target_units).get
         value_ip_neat = OpenStudio.toNeatString(value_ip, 2, true)
@@ -1934,8 +1869,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
     surface_data = {}
     surface_data[:title] = 'Base Surface Constructions'
     surface_data[:header] = ['Construction', 'Net Area', 'Surface Count', 'R Value']
-    # area_units = 'ft^2'
-    # target_units = 'ft^2*h*R/Btu'
     area_units = 'm^2'
     target_units = 'm^2*h*K/kWh'
     surface_data[:units] = ['', area_units, '', target_units]
@@ -1953,7 +1886,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
     end
     ext_const_base.sort.each do |construction, count|
       net_area = construction.getNetArea
-      # net_area_ip = OpenStudio.convert(net_area, 'm^2', 'ft^2').get
       net_area_ip = OpenStudio.convert(net_area, 'm^2', 'm^2').get
       net_area_ip_neat = OpenStudio.toNeatString(net_area_ip, 0, true)
       surface_count = count
@@ -1970,8 +1902,7 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
     sub_surface_data = {}
     sub_surface_data[:title] = 'Sub Surface Constructions'
     sub_surface_data[:header] = ['Construction', 'Area', 'Surface Count', 'U-Factor']
-    area_units = 'ft^2'
-    # u_factor_units = 'Btu/ft^2*h*R'
+    area_units = 'm^2'
     u_factor_units = 'kWh/m^2*h*K'
     sub_surface_data[:units] = ['', area_units, '', u_factor_units]
     sub_surface_data[:data] = []
@@ -1988,12 +1919,10 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
     end
     ext_const_sub.sort.each do |construction, count|
       net_area = construction.getNetArea
-      # net_area_ip = OpenStudio.convert(net_area, 'm^2', 'ft^2').get
       net_area_ip = OpenStudio.convert(net_area, 'm^2', 'm^2').get
       net_area_ip_neat = OpenStudio.toNeatString(net_area_ip, 0, true)
       surface_count = count
       source_units = 'm^2*K/W'
-      # target_units = 'ft^2*h*R/Btu'
       target_units = 'm^2*K/W'
       if construction.uFactor.is_initialized
         u_factor = construction.uFactor.get
@@ -2063,10 +1992,8 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
     water_use_data[:title] = ''
     water_use_data[:header] = ['Instance', 'Plant Loop', 'Definition', 'Space', 'Peak Flow Rate', 'Flow Rate Schedule', 'Target Temp Range']
     source_units = 'm^3/s'
-    # target_units = 'gal/min'
     target_units =  'm^3/s'
     source_units_temp = 'C'
-    # target_units_temp = 'F'
     target_units_temp =  'C'
     water_use_data[:units] = ['', '', '', '', target_units, '', target_units_temp]
     water_use_data[:data] = []
@@ -2105,9 +2032,7 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
       if water_use_equipment_def.targetTemperatureSchedule.is_initialized
         target_temp_sch = water_use_equipment_def.targetTemperatureSchedule.get
         schedule_values = OsLib_Schedules.getMinMaxAnnualProfileValue(model, target_temp_sch)
-        # min_ip = OpenStudio.convert(schedule_values['min'], 'C', 'F').get
         min_ip = OpenStudio.convert(schedule_values['min'], 'C', 'C').get
-        # max_ip = OpenStudio.convert(schedule_values['max'], 'C', 'F').get
         max_ip = OpenStudio.convert(schedule_values['max'], 'C', 'C').get
         target_temp_range = "#{min_ip.round(1)} to #{max_ip.round(1)}"
       else
@@ -2259,18 +2184,14 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
       instances.each do |instance|
         def_display = instance.definition.name
         if instance.surfaceArea.is_initialized && instance.surfaceArea.get > 0
-          # def_value = OpenStudio.convert(instance.surfaceArea.get, 'm^2', 'ft^2').get
           def_value = OpenStudio.convert(instance.surfaceArea.get, 'm^2', 'm^2').get
           def_value_neat = OpenStudio.toNeatString(def_value, 0, true)
-          # def_units = 'ft^2'
           def_units = 'm^2'
         elsif instance.surfaceAreaPerFloorArea.is_initialized && instance.surfaceAreaPerFloorArea.get > 0
           def_value = instance.surfaceAreaPerFloorArea.get
           def_value_neat = OpenStudio.toNeatString(def_value, 0, true)
-          # def_units = 'ft^2/floor area ft^2'
           def_units = 'm^2/floor area m^2'
         elsif instance.surfaceAreaPerPerson.is_initialized && instance.surfaceAreaPerPerson.get > 0
-          # def_value = OpenStudio.convert(instance.surfaceAreaPerPerson.get, 'm^2', 'ft^2').get
           def_value = OpenStudio.convert(instance.surfaceAreaPerPerson.get, 'm^2', 'm^2').get
           def_value_neat = OpenStudio.toNeatString(def_value, 0, true)
           def_units = 'm^2/person'
@@ -2287,12 +2208,10 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
           def_value_neat = OpenStudio.toNeatString(def_value, 0, true)
           def_units = 'people'
         elsif instance.peoplePerFloorArea.is_initialized && instance.peoplePerFloorArea.get > 0
-          # def_value = instance.peoplePerFloorArea.get / OpenStudio.convert(1, 'm^2', 'ft^2').get
           def_value = instance.peoplePerFloorArea.get / OpenStudio.convert(1, 'm^2', 'm^2').get
           def_value_neat = OpenStudio.toNeatString(def_value, 4, true)
           def_units = 'people/m^2'
         elsif instance.spaceFloorAreaPerPerson.is_initialized && instance.spaceFloorAreaPerPerson.get > 0
-          # def_value = OpenStudio.convert(instance.spaceFloorAreaPerPerson.get, 'm^2', 'ft^2').get
           def_value = OpenStudio.convert(instance.spaceFloorAreaPerPerson.get, 'm^2', 'm^2').get
           def_value_neat = OpenStudio.toNeatString(def_value, 0, true)
           def_units = 'm^2/person'
@@ -2309,12 +2228,10 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
           def_value_neat = OpenStudio.toNeatString(def_value, 0, true)
           def_units = 'W'
         elsif instance.powerPerFloorArea.is_initialized && instance.powerPerFloorArea.get > 0
-          # def_value = instance.powerPerFloorArea.get / OpenStudio.convert(1, 'm^2', 'ft^2').get
           def_value = instance.powerPerFloorArea.get / OpenStudio.convert(1, 'm^2', 'm^2').get
           def_value_neat = OpenStudio.toNeatString(def_value, 4, true)
           def_units = 'W/m^2'
         elsif instance.powerPerPerson .is_initialized && instance.powerPerPerson .get > 0
-          # def_value = OpenStudio.convert(instance.powerPerPerson .get, 'm^2', 'ft^2').get
           def_value = OpenStudio.convert(instance.powerPerPerson .get, 'm^2', 'm^2').get
           def_value_neat = OpenStudio.toNeatString(def_value, 0, true)
           def_units = 'W/person'
@@ -2331,12 +2248,10 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
           def_value_neat = OpenStudio.toNeatString(def_value, 0, true)
           def_units = 'W'
         elsif instance.powerPerFloorArea.is_initialized && instance.powerPerFloorArea.get > 0
-          # def_value = instance.powerPerFloorArea.get / OpenStudio.convert(1, 'm^2', 'ft^2').get
           def_value = instance.powerPerFloorArea.get / OpenStudio.convert(1, 'm^2', 'm^2').get
           def_value_neat = OpenStudio.toNeatString(def_value, 4, true)
           def_units = 'W/m^2'
         elsif instance.powerPerPerson .is_initialized && instance.powerPerPerson .get > 0
-          # def_value = OpenStudio.convert(instance.powerPerPerson .get, 'm^2', 'ft^2').get
           def_value = OpenStudio.convert(instance.powerPerPerson .get, 'm^2', 'm^2').get
           def_value_neat = OpenStudio.toNeatString(def_value, 0, true)
           def_units = 'W/person'
@@ -2353,12 +2268,10 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
           def_value_neat = OpenStudio.toNeatString(def_value, 0, true)
           def_units = 'W'
         elsif instance.powerPerFloorArea.is_initialized && instance.powerPerFloorArea.get > 0
-          # def_value = instance.powerPerFloorArea.get / OpenStudio.convert(1, 'm^2', 'ft^2').get
           def_value = instance.powerPerFloorArea.get / OpenStudio.convert(1, 'm^2', 'm^2').get
           def_value_neat = OpenStudio.toNeatString(def_value, 4, true)
           def_units = 'W/m^2'
         elsif instance.powerPerPerson .is_initialized && instance.powerPerPerson .get > 0
-          # def_value = OpenStudio.convert(instance.powerPerPerson .get, 'm^2', 'ft^2').get
           def_value = OpenStudio.convert(instance.powerPerPerson .get, 'm^2', 'm^2').get
           def_value_neat = OpenStudio.toNeatString(def_value, 0, true)
           def_units = 'W/person'
@@ -2371,35 +2284,30 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
       instances.each do |instance|
         instance_display = instance.name
         if instance.designFlowRate.is_initialized
-          # inst_value = OpenStudio.convert(instance.designFlowRate.get, 'm^3/s', 'ft^3/min').get
-          inst_value = instance.designFlowRate.get
+          inst_value = OpenStudio.convert(instance.designFlowRate.get, 'm^3/s', 'm^3/s').get
           inst_value_neat = OpenStudio.toNeatString(inst_value, 4, true)
           inst_units = 'm^3/s'
           count = ''
           output_data_space_type_details[:data] << [instance_display, inst_value_neat, inst_units, count]
         end
         if instance.flowperSpaceFloorArea.is_initialized
-          # inst_value = OpenStudio.convert(instance.flowperSpaceFloorArea.get, 'm/s', 'ft/min').get
           inst_value = OpenStudio.convert(instance.flowperSpaceFloorArea.get, 'm/s', 'm/s').get
           inst_value_neat = OpenStudio.toNeatString(inst_value, 4, true)
-          inst_units = 'm^3/s??/ floor area m^2'
+          inst_units = 'm^3/s/ floor area m^2'
           count = ''
           output_data_space_type_details[:data] << [instance_display, inst_value_neat, inst_units, count]
         end
         if instance.flowperExteriorSurfaceArea.is_initialized
-          # inst_value = OpenStudio.convert(instance.flowperExteriorSurfaceArea.get, 'm/s', 'ft/min').get
           inst_value = OpenStudio.convert(instance.flowperExteriorSurfaceArea.get, 'm/s', 'm/s').get
           inst_value_neat = OpenStudio.toNeatString(inst_value, 4, true)
-          inst_units = 'm^3/s??/ext surf area m^2'
+          inst_units = 'm^3/s/ext surf area m^2'
           count = ''
           output_data_space_type_details[:data] << [instance_display, inst_value_neat, inst_units, count]
         end
         if instance.flowperExteriorWallArea.is_initialized # uses same input as exterior surface area but different calc method
-          # inst_value = OpenStudio.convert(instance.flowperExteriorWallArea.get, 'm/s', 'ft/min').get
           inst_value = OpenStudio.convert(instance.flowperExteriorWallArea.get, 'm/s', 'm/s').get
           inst_value_neat = OpenStudio.toNeatString(inst_value, 4, true)
-          # inst_units = 'cfm/ext wall area ft^2'
-          inst_units = 'm^3/s??/ext surf area m^2'
+          inst_units = 'm^3/s/ext surf area m^2'
           count = ''
           output_data_space_type_details[:data] << [instance_display, inst_value_neat, inst_units, count]
         end
@@ -2422,22 +2330,18 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
 
           # calculate and report various methods
           if instance.outdoorAirFlowperPerson > 0
-            # inst_value = OpenStudio.convert(instance.outdoorAirFlowperPerson, 'm^3/s', 'ft^3/min').get
             inst_value = OpenStudio.convert(instance.outdoorAirFlowperPerson, 'm^3/s', 'm^3/s').get
             inst_value_neat = OpenStudio.toNeatString(inst_value, 4, true)
             inst_units = 'm^3/s/person'
             output_data_space_type_details[:data] << ["#{instance_display} (outdoor air method #{outdoor_air_method})", inst_value_neat, inst_units, count]
           end
           if instance.outdoorAirFlowperFloorArea > 0
-            # inst_value = OpenStudio.convert(instance.outdoorAirFlowperFloorArea, 'm/s', 'ft/min').get
             inst_value = OpenStudio.convert(instance.outdoorAirFlowperFloorArea, 'm/s', 'm/s').get
             inst_value_neat = OpenStudio.toNeatString(inst_value, 4, true)
-            # inst_units = 'cfm/floor area ft^2'
             inst_units = 'm^3/s/floor area ft^2'
             output_data_space_type_details[:data] << ["#{instance_display} (outdoor air method #{outdoor_air_method})", inst_value_neat, inst_units, count]
           end
           if instance.outdoorAirFlowRate > 0
-            # inst_value = OpenStudio.convert(instance.outdoorAirFlowRate, 'm^3/s', 'ft^3/min').get
             inst_value = OpenStudio.convert(instance.outdoorAirFlowRate, 'm^3/s', 'm^3/s').get
             inst_value_neat = OpenStudio.toNeatString(inst_value, 4, true)
             # inst_units = 'cfm'
@@ -2471,8 +2375,8 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
 
     # create table
     table = {}
-    table[:title] = 'Datos climaticos, Weather Summary'
-    table[:header] = ['', 'Valor']#columns
+    table[:title] = 'Resumen climático'
+    table[:header] = ['', 'Valor']
     table[:units] = []
     table[:data] = []
 
@@ -2480,7 +2384,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
     rows.each do |row|
       row_data = [row]
       column_counter = -1
-      # table[:header].each do |header|
       columns.each do |header|
         column_counter += 1
         next if header == ''
@@ -2516,7 +2419,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
     table[:title] = 'Sizing Period Design Days'
     table[:header] = columns
     table[:source_units] = ['', 'C', 'C', '', '', 'm/s', '']
-    # table[:units] = ['', 'F', 'F', '', '', 'mph', '']
     table[:units] =  ['', 'C', 'C', '', '', 'm/s', '']
     table[:data] = []
 
@@ -2530,9 +2432,7 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
         query = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='#{report_name}' and TableName='#{table_name}' and RowName= '#{row}' and ColumnName= '#{header}'"
         if header == 'Humidity Type'
           results = sqlFile.execAndReturnFirstString(query).get
-          # results = results.gsub('[C]', '[F]')
           results = results.gsub('[C]', '[C]')
-          # results = results.gsub('[J/kg]', '[Btu/lb]')
           results = results.gsub('[J/kg]', '[J/kg]')
           # any other types?
         elsif header == 'Humidity Value'
@@ -2541,10 +2441,8 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
           query_humidity_type = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='#{report_name}' and TableName='#{table_name}' and RowName= '#{row}' and ColumnName= 'Humidity Type'"
           results_units = sqlFile.execAndReturnFirstString(query_humidity_type).get
           if results_units.include?('[C]')
-            # results = OpenStudio.convert(results, 'C', 'F').get.round(2)
             results = OpenStudio.convert(results, 'C', 'C').get.round(2)
           elsif results_units.include?('[J/kg]')
-            # results = OpenStudio.convert(results, 'J/kg', 'Btu/lb').get.round(2)
             results = OpenStudio.convert(results, 'J/kg', 'J/kg').get.round(2)
             # any other types?
           end
@@ -2638,7 +2536,7 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
 
     # gather data for section
     @monthly_overview_section = {}
-    @monthly_overview_section[:title] = 'Vista mensual, Monthly Overview'
+    @monthly_overview_section[:title] = 'Resumen mensual' # 'Monthly Overview'
     @monthly_overview_section[:tables] = monthly_tables
 
     # stop here if only name is requested this is used to populate display name for arguments
@@ -2661,9 +2559,7 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
         units = "\"kWh\""
         unit_str = 'kWh'
       else
-        # units = "\"Million Btu\""
         units = "\"kWh\""
-        # unit_str = 'MBtu'
         unit_str = 'kWh'
       end
 
@@ -2782,7 +2678,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
       if fuel_type == 'Electricity'
         unit_str = 'kW'
       else
-        # unit_str = 'kBtu/hr' # TODO: - update units
         unit_str = 'kW'
       end
 
@@ -2983,18 +2878,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
     end
 
     # hash to store hours
-    # temperature_bins = {}
-    # for i in 0..(temperature_bins_temps_ip.size - 1)
-      # if i == 0
-        # temperature_bins["< #{temperature_bins_temps_ip[i]}"] = 0
-      # elsif i == temperature_bins_temps_ip.size - 1
-        # temperature_bins[">= #{temperature_bins_temps_ip[i]}"] = 0
-      # else
-        # temperature_bins["#{temperature_bins_temps_ip[i - 1]}-#{temperature_bins_temps_ip[i]}"] = 0
-      # end
-    # end
-
-    # hash to store hours
     temperature_bins = {}
     for i in 0..(temperature_bins_temps_si.size - 1)
       if i == 0
@@ -3016,10 +2899,8 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
     temperature_table[:header] += ['Unmet Cooling Hours', 'Mean Temp']
     temperature_table[:units] = ['', 'hr']
     temperature_bins.each do |k, v|
-      # temperature_table[:units] << 'F'
       temperature_table[:units] << 'C'
     end
-    # temperature_table[:units] += %w(hr F)
     temperature_table[:units] += %w(hr C)
     temperature_table[:data] = []
     temperature_table[:data_color] = []
@@ -3067,7 +2948,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
         unmet_clg = sqlFile.execAndReturnFirstDouble(query_clg).get
 
         # get mean temp
-        # mean = OpenStudio.convert(temp_sum / temp_counter.to_f, 'C', 'F').get
         mean = temp_sum / temp_counter.to_f
 
         # add rows to table
@@ -3085,7 +2965,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
             row_color << ''
           end
         end
-        # row_data += [unmet_clg.round, "#{mean.round(1)} (F)"]
         row_data += [unmet_clg.round, "#{mean.round(1)} (C)"]
         row_color += ['', '']
         temperature_table[:data] << row_data
@@ -3236,7 +3115,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
     table[:header] = columns
     source_units_lpd = 'W/m^2'
     source_units_energy = 'GJ'
-    # target_units_lpd = 'W/ft^2'
     target_units_lpd = 'W/m^2'
     target_units_energy = 'kWh'
     table[:source_units] = ['', '', source_units_lpd, 'W', '', 'hr', 'hr', '', source_units_energy] # used for conversation, not needed for rendering.
@@ -3348,7 +3226,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
     table[:title] = 'Gas Plug Load Consumption'
     table[:header] = columns
     source_units_energy = 'GJ'
-    # target_units_energy = 'kBtu'
     target_units_energy = 'kWh'
     table[:source_units] = ['', source_units_energy] # used for conversation, not needed for rendering.
     table[:units] = ['', target_units_energy]
@@ -3400,7 +3277,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
     hvac_load_profile_monthly_table[:units] = []
     hvac_load_profile_monthly_table[:data] = []
     hvac_load_profile_monthly_table[:chart_type] = 'vertical_grouped_bar_with_comp_line'
-    # hvac_load_profile_monthly_table[:chart_attributes] = { value_left: 'Cooling/Heating Load (MBtu)', label_x: 'Month', value_right: 'Average Outdoor Air Dry Bulb (F)', sort_xaxis: month_order }
     hvac_load_profile_monthly_table[:chart_attributes] = { value_left: 'Cooling/Heating Load (kWh)', label_x: 'Month', value_right: 'Average Outdoor Air Dry Bulb (C)', sort_xaxis: month_order }
     hvac_load_profile_monthly_table[:chart] = []
 
@@ -3410,7 +3286,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
 
     # units for conversion
     source_units = 'J'
-    # target_units = 'MBtu'
     target_units = 'kWh'
 
     # loop through fuel types
@@ -3474,7 +3349,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
         output_timeseries = output_timeseries.get.values
         for i in 0..(output_timeseries.size - 1)
           month = hvac_load_profile_monthly_table[:header][i + 1]
-          # value = OpenStudio.convert(output_timeseries[i], 'C', 'F').get
           value = OpenStudio.convert(output_timeseries[i], 'C', 'C').get
           dry_bulb_monthly << value.round(1)
           hvac_load_profile_monthly_table[:chart] << JSON.generate(label: 'Outdoor Temp', label_x: month, value2: value, color: 'green')
@@ -3489,7 +3363,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
 
     # populate tables
     hvac_load_profile_monthly_table[:data] << dry_bulb_monthly
-    # cooling_array = ['Cooling Load (MBtu)']
     cooling_array = ['Cooling Load (kWh)']
     cooling_monthly.each do |k, v|
       cooling_array << v.round(2)
@@ -3499,7 +3372,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
     end
     hvac_load_profile_monthly_table[:data] << cooling_array
 
-    # heating_array = ['Heating Load (MBtu)']
     heating_array = ['Heating Load (kWh)']
     heating_monthly.each do |k, v|
       heating_array << v.round(2)
@@ -3516,7 +3388,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
     hvac_part_load_profile_table = {}
     hvac_part_load_profile_table[:title] = 'Part Load Profiles'
     hvac_part_load_profile_table[:header] = ['Load', 'Clg: Cutoff', 'Clg: Hours', 'Clg: Hours', 'Htg: Cutoff', 'Htg: Hours', 'Htg: Hours']
-    # hvac_part_load_profile_table[:units] = ['%', 'MBtu', '%', 'hr', 'MBtu', '%', 'hr']
     hvac_part_load_profile_table[:units] = ['%', 'kWh', '%', 'hr', 'kWh', '%', 'hr']
     hvac_part_load_profile_table[:data] = []
 
@@ -3586,16 +3457,12 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
     zone_summary_table[:title] = table_name
     zone_summary_table[:header] = columns
     source_units_area = 'm^2'
-    # target_units_area = 'ft^2'
     target_units_area = 'm^2'
     source_units_area_per_person = 'm^2/person'
-    # target_units_area_per_person = 'ft^2/person'
     target_units_area_per_person = 'm^2/person'
     source_units_volume = 'm^3'
-    # target_units_volume = 'ft^3'
     target_units_volume = 'm^3'
     source_units_pd = 'W/m^2'
-    # target_units_pd = 'W/ft^2'
     target_units_pd = 'W/m^2'
     zone_summary_table[:units] = ['', target_units_area, '', '', target_units_volume, '', target_units_area, target_units_area, target_units_pd, target_units_area_per_person, target_units_pd]
     zone_summary_table[:source_units] = ['', source_units_area, '', '', source_units_volume, '', source_units_area, source_units_area, source_units_pd, source_units_area_per_person, source_units_pd] # used for conversation, not needed for rendering.
@@ -3647,18 +3514,14 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
     zone_dd_table[:header] = columns
     source_units_power = 'W'
     target_units_power_clg = 'ton'
-    # target_units_power_htg = 'kBtu/h'
     target_units_power_htg = 'kW'
     source_units_air_flow = 'm^3/s'
-    # target_units_air_flow = 'ft^3/min'
-    target_units_air_flow = 'm^3/min'
+    target_units_air_flow = 'm^3/s'
     source_units_temp = 'C'
-    # target_units_temp = 'F'
     target_units_temp = 'C'
     zone_dd_table[:units] = ['', '', '', '', target_units_air_flow, target_units_air_flow, '', target_units_temp, 'lbWater/lbAir']
     zone_dd_table[:source_units] = ['', '', '', '', source_units_air_flow, source_units_air_flow, '', source_units_temp, 'lbWater/lbAir'] # used for conversation, not needed for rendering.
     zone_dd_table[:data] = []
-    # TO DO: cambiar row_data_ip por row_data_si
     # run query and populate zone_dd_table
     rows.each do |row|
       # populate cooling row
@@ -3787,9 +3650,9 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
     report_name = 'OutdoorAirSummary'
     table_name = 'Average Outdoor Air During Occupied Hours'
     min_table_name = 'Minimum Outdoor Air During Occupied Hours'
-    # columns = ['', 'Average Number of Occupants', 'Nominal Number of Occupants', 'Zone Volume', 
+    # columns = ['', 'Average Number of Occupants', 'Nominal Number of Occupants', 'Zone Volume',
         # 'Avg. Mechanical Ventilation', 'Min. Mechanical Ventilation', 'Avg. Infiltration', 'Min. Infiltration']
-    columns = ['', 'Average Number of Occupants', 'Avg. Mechanical Ventilation', 'Min. Mechanical Ventilation', 
+    columns = ['', 'Average Number of Occupants', 'Avg. Mechanical Ventilation', 'Min. Mechanical Ventilation',
           'Avg. Infiltration', 'Min. Infiltration', 'Avg. Simple Ventilation', 'Min. Simple Ventilation']
 
     # populate dynamic rows
@@ -3805,7 +3668,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
     table[:title] = 'Average and Minimum Outdoor Air During Occupied Hours'
     table[:header] = columns
     source_units_volume = 'm^3'
-    # target_units_volume = 'ft^3'
     target_units_volume = 'm^3'
     # table[:units] = ['', '', '', target_units_volume, 'ach', 'ach', 'ach', 'ach']
     table[:units] = ['', '', 'ach', 'ach', 'ach', 'ach', 'ach', 'ach']
@@ -4107,9 +3969,7 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
     source_energy_table[:header] = columns
     source_units_total = 'GJ'
     source_units_area = 'MJ/m^2'
-    # target_units_total = 'kBtu'
     target_units_total = 'kWh'
-    # target_units_area = 'kBtu/ft^2'
     target_units_area = 'kWh/m^2'
     source_energy_table[:units] = ['', target_units_total, target_units_area, target_units_area]
     source_energy_table[:source_units] = ['', source_units_total, source_units_area, source_units_area] # used for conversation, not needed for rendering.
@@ -4193,9 +4053,7 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
     table[:header] = columns
     source_units_total = 'kg'
     source_units_rate = 'kg/s'
-    # target_units_total = 'lb'
     target_units_total = 'kg'
-    # target_units_rate = 'lb/s'
     target_units_rate = 'kg/s'
     table[:units] = ['', target_units_total, target_units_rate, '', target_units_rate, '']
     table[:source_units] = ['', source_units_total, source_units_rate, '', source_units_rate, ''] # used for conversation, not needed for rendering.
@@ -4394,7 +4252,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
 
           # add unit conversion depending on type limits
           if type_limits == 'Temperature'
-            # val = OpenStudio.convert(val, 'C', 'F').get
             val = OpenStudio.convert(val, 'C', 'C').get
           end
 
@@ -4405,7 +4262,6 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
 
       # populate chart attributes
       if type_limits == 'Temperature'
-        # chart[:chart_attributes][:value] = "#{type_limits} (F)"
         chart[:chart_attributes][:value] = "#{type_limits} (C)"
       elsif type_limits == 'ActivityLevel'
         chart[:chart_attributes][:value] = "#{type_limits} (W)"
@@ -4421,9 +4277,5 @@ INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
 
     return @schedules_overview_section
   end
-  
-  def msg(fichero, cadena)
-    File.open(fichero+'.txt', 'a') {|file| file.write(cadena)}  
-  end 
-  
+
 end

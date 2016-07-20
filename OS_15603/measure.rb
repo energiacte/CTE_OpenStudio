@@ -23,7 +23,8 @@ class OpenStudioResultsCopy < OpenStudio::Ruleset::ReportingUserScript
 
   # human readable description of modeling approach
   def modeler_description
-    return "Datos obtenidos de los resultados de EnergyPlus y del modelo de OpenStudio. La estructura del informe usa Bootstrap, y dimple js para las graficas."
+    return "Datos obtenidos de los resultados de EnergyPlus y del modelo de OpenStudio.
+ La estructura del informe usa Bootstrap, y dimple js para las graficas."
   end
 
   def possible_sections
@@ -34,7 +35,7 @@ class OpenStudioResultsCopy < OpenStudio::Ruleset::ReportingUserScript
 
     # methods for sections in order that they will appear in report
     result << 'mediciones_de_superficies_segun_CTE'
-    #result << 'demanadas_por_componentes'
+    #result << 'demandas_por_componentes'
     result << 'variables_de_inspeccion'
     #result << 'variables_cte'
     result << 'annual_overview_section'
@@ -92,7 +93,7 @@ class OpenStudioResultsCopy < OpenStudio::Ruleset::ReportingUserScript
     # TODO: - some tables are so long on real models you loose header. Should we have scrolling within a table?
     # TODO: - maybe sorting as well if it doesn't slow process down too much
 
-    result
+    return result
   end
 
   # define the arguments that the user will input
@@ -154,7 +155,6 @@ class OpenStudioResultsCopy < OpenStudio::Ruleset::ReportingUserScript
       return false
     end
 
-
     # configure logging
     #logFile = OpenStudio::FileLogSink.new(OpenStudio::Path.new("./CTEReport.log"))
     #logFile.setLogLevel(OpenStudio::Debug)
@@ -162,29 +162,20 @@ class OpenStudioResultsCopy < OpenStudio::Ruleset::ReportingUserScript
     #OpenStudio::Logger.instance.standardOutLogger.disable
 
     # reporting final condition
-    runner.registerInitialCondition('Gathering data from EnergyPlus SQL file and OSM model.')
+    runner.registerInitialCondition('Recopilando datos de archivo SQL de EnergyPlus y model OSM.')
 
-    f = 'logpropio_measure15603'
-    msg(f, "veamos si podemos obtener información por esta vía\n")
-
-    # create a array of sections to loop through in erb file
-    @sections = []
-
-    msg(f, "lista de secciones:\n")
-    seccion = 1
-    possible_sections.each do |method_name|
-        msg(f, "   #{seccion}__ #{method_name}\n")
-        seccion += 1
-    end
+    runner.registerInfo("Lista de secciones:")
+    possible_sections.each_with_index { |method_name, index| runner.registerInfo("- #{ index }: #{method_name}")}
 
     # generate data for requested sections
+    # create a array of sections to loop through in erb file
+    @sections = []
     sections_made = 0
     possible_sections.each do |method_name|
       next unless args[method_name]
-      msg(f, "___llamada a evaluar oslib_rep. #{method_name}\n")
+      runner.registerInfo("* Llamando a método '#{method_name}'")
       method = OsLib_Reporting.method(method_name)
       @sections << method.call(model, sql_file, runner, false)
-      msg(f, "___finalizado oslib_rep.        #{method_name}\n\n")
       sections_made += 1
     end
 
@@ -220,14 +211,10 @@ class OpenStudioResultsCopy < OpenStudio::Ruleset::ReportingUserScript
     sql_file.close
 
     # reporting final condition
-    runner.registerFinalCondition("Generated report with #{sections_made} sections to #{html_out_path}.")
+    runner.registerFinalCondition("Generado informe con #{sections_made} secciones en #{html_out_path}.")
 
-    true
+    return true
   end # end the run method
-
-  def msg(fichero, cadena)
-    File.open(fichero+'.txt', 'a') {|file| file.write(cadena)}
-  end
 
 end # end the measure
 

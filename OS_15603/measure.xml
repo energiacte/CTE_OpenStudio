@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>open_studio_results_copy</name>
   <uid>6d91a3a6-5fcd-4f37-bcd7-9080493a5799</uid>
-  <version_id>04c61283-7c81-4778-887b-7a723ccf53c3</version_id>
-  <version_modified>20160712T132326Z</version_modified>
+  <version_id>c6e9c8a7-83d5-4330-9e8d-edbccbddb68a</version_id>
+  <version_modified>20160718T144955Z</version_modified>
   <xml_checksum>69BA4D91</xml_checksum>
   <class_name>OpenStudioResultsCopy</class_name>
   <display_name>Informe 15603</display_name>
@@ -539,7 +539,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>2DDEB4B3</checksum>
+      <checksum>F15EE034</checksum>
     </file>
   </files>
 </measure>
