@@ -19,40 +19,42 @@ module CTEgeo
   # Fin métodos auxiliares ---------------------------------------------
 
   def self.zonashabitables(sqlFile)
-    log = 'CTEgeo'
-    zonashabitablessearch = sqlFile.execAndReturnVectorOfString("#{zonashabitablesquery}")
-    zonashabitables = verificaBusqueda(log, 'zonas habitables', zonashabitablessearch, zonashabitablesquery)
-    return  zonashabitables
-  end
-
-  def self.zonasnohabitables(sqlFile)
-    log = 'CTEgeo'
-    zonasnohabitablessearch = sqlFile.execAndReturnVectorOfString("#{zonasnohabitablesquery}")
-    zonasnohabitables = verificaBusqueda(log, 'zonas no habitables', zonasnohabitablessearch, zonasnohabitablesquery)
-    return zonasnohabitables
+    search = sqlFile.execAndReturnVectorOfString("#{zonashabitablesquery}")
+    return (if search.empty? then false else search.get end)
   end
 
   def self.superficiehabitable(sqlFile)
-    log = 'CTEgeo'
-    superficiehabitablequery = "SELECT SUM(FloorArea) FROM (#{zonashabitablesquery}) "
-    superficiehabitablesearch = sqlFile.execAndReturnFirstDouble(superficiehabitablequery)
-    resultado = verificaBusqueda(log, 'superficie habitable',  superficiehabitablesearch, superficiehabitablequery)
-    return resultado
+    query = "SELECT SUM(FloorArea) FROM (#{zonashabitablesquery}) "
+    search = sqlFile.execAndReturnFirstDouble(query)
+    return (if search.empty? then false else search.get end)
+  end
+
+  def self.volumenhabitable(sqlFile)
+    query = "SELECT SUM(Volume) FROM  (#{zonashabitablesquery})"
+    search = sqlFile.execAndReturnFirstDouble(query)
+    return (if search.empty? then false else search.get end)
+  end
+
+  def self.zonasnohabitables(sqlFile)
+    search = sqlFile.execAndReturnVectorOfString("#{zonasnohabitablesquery}")
+    return (if search.empty? then false else search.get end)
   end
 
   def self.superficienohabitable(sqlFile)
-    log = 'CTEgeo'
-    superficienohabitablequery = "SELECT SUM(FloorArea) FROM (#{zonasnohabitablesquery}) "
-    superficienohabitablesearch = sqlFile.execAndReturnFirstDouble(superficienohabitablequery)
-    superficienohabitable = verificaBusqueda(log, 'superficie no habitable',  superficienohabitablesearch, superficienohabitablequery)
-    return superficienohabitable
+    query = "SELECT SUM(FloorArea) FROM (#{zonasnohabitablesquery}) "
+    search = sqlFile.execAndReturnFirstDouble(query)
+    return (if search.empty? then false else search.get end)
+  end
+
+  def self.volumennohabitable(sqlFile,  log = 'CTEgeo')
+    query = "SELECT SUM(Volume) FROM (#{CTEgeo.zonasnohabitablesquery})"
+    search = sqlFile.execAndReturnFirstDouble(query)
+    return (if search.empty? then false else search.get end)
   end
 
   def self.superficiescandidatas(sqlFile)
-    log = 'CTEgeo'
-    superficiescandidatassearch = sqlFile.execAndReturnVectorOfString(superficiescandidatasquery)
-    superficiescandidatas = verificaBusqueda(log, 'superficies candidatas', superficiescandidatassearch, superficiescandidatasquery)
-    return superficiescandidatas
+    search = sqlFile.execAndReturnVectorOfString(superficiescandidatasquery)
+    return (if search.empty? then false else search.get end)
   end
 
   def self.superficiesexternas(sqlFile)
@@ -74,21 +76,6 @@ module CTEgeo
     return superficiescontacto
   end
 
-  def self.volumenhabitable(sqlFile)
-    log = 'CTEgeo'
-    volumenhabitablequery = "SELECT SUM(Volume) FROM  (#{zonashabitablesquery})"
-    volumenhabitablesearch = sqlFile.execAndReturnFirstDouble(volumenhabitablequery)
-    volumenhabitable = verificaBusqueda(log, 'volumen habitable', volumenhabitablesearch, volumenhabitablequery)
-    return volumenhabitable
-  end
-
-  def self.volumennohabitable(sqlFile,  log = 'CTEgeo')
-    volumennohabitablequery = "SELECT SUM(Volume) FROM (#{CTEgeo.zonasnohabitablesquery})"
-    volumennohabitablesearch = sqlFile.execAndReturnFirstDouble(volumennohabitablequery)
-    volumennohabitable = verificaBusqueda(log, 'volumen no habitable', volumennohabitablesearch, volumennohabitablequery)
-    return volumennohabitable
-  end
-
   def self.areaexterior(sqlFile, log = 'CTEgeo')
     areaexteriorquery = "SELECT SUM(GrossArea) FROM (#{superficiesexternasquery})"
     areaexteriorsearch = sqlFile.execAndReturnFirstDouble(areaexteriorquery)
@@ -102,9 +89,6 @@ module CTEgeo
     areainterior = verificaBusqueda(log, 'area interior de la envolvente', areainteriorsearch, areainteriorquery)
     return  areainterior
   end
-
-
-
 
 
   def self.zonashabitablesquery
