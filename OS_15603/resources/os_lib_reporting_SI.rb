@@ -209,7 +209,6 @@ module OsLib_Reporting
     general_tables << CTE_lib.mediciones_cubiertas(model, sqlfile, runner)
     general_tables << CTE_lib.mediciones_suelosterreno(model, sqlfile, runner)
     general_tables << CTE_lib.mediciones_huecos(model, sqlfile, runner)
-    # general_tables << CTE_lib.mediciones_huecos(model, sqlfile, runner)
 
     return @mediciones
   end
