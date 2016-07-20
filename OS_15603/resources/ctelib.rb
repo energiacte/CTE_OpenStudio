@@ -10,6 +10,7 @@ module CTE_lib
 
   #======== Tabla general de mediciones =====
   def self.CTE_tabla_general_de_mediciones(model, sqlFile, runner)
+    # TODO: descomponer superficies externas de la envolvente por tipos (muros, cubiertas, huecos, lucernarios, etc)
     buildingName = model.getBuilding.name.get
     # Zonas habitables
     zonasHabitables = CTEgeo.zonashabitables(sqlFile)
