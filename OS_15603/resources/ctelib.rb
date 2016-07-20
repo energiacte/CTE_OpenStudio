@@ -27,7 +27,7 @@ module CTE_lib
     areatotal = areaexterior + areainterior
     compacidad = (volumenHabitable / areatotal).round(2)
 
-    runner.registerInfo("* Mediciones (edificio #{ buildingName })")
+    runner.registerInfo("* Iniciando mediciones (edificio #{ buildingName })")
     runner.registerValue("Zonas habitables", "#{ zonasHabitables }")
     runner.registerValue("Zonas habitables, número", zonasHabitables.count())
     runner.registerValue("Zonas habitables, superficie", superficieHabitable, 'm^2')
@@ -55,6 +55,7 @@ module CTE_lib
     medicion_general[:data] << ['- Interior', '', areainterior, '']
     medicion_general[:data] << ['- <b>Total</b>', '', areatotal, '']
     medicion_general[:data] << ['<b>Compacidad</b>', "<b>#{ compacidad }</b>", areatotal, volumenHabitable]
+    runner.registerInfo("* Finalizadas mediciones (edificio #{ buildingName })")
 
     return medicion_general
   end
