@@ -1,43 +1,26 @@
 # coding: utf-8
-require "#{File.dirname(__FILE__)}/os_lib_reporting_SI"
+require_relative "os_lib_reporting_SI"
 
 module Variables_inspeccion
 
-  def self.valoresZona(sqlFile, variable, log)
-    msg(log, ".. variable: '#{variable}'\n")
+  def self.valoresZona(sqlFile, variable)
+    # esto parece una query que hay en ctegeometria
     respuesta = "SELECT SUM(VariableValue) FROM "#, ZoneName, VariableName, month, variablevalue, variableUnits, reportingfrequency FROM
     respuesta << "(#{zonashabitablesquery})
     INNER JOIN ReportVariableDataDictionary rvdd
     INNER JOIN ReportVariableData USING (ReportVariableDataDictionaryIndex)
     INNER JOIN Time time USING (TimeIndex)
-    WHERE rvdd.variableName == '#{variable}'
+    WHERE rvdd.VariableName == '#{variable}'
     AND ReportingFrequency == 'Monthly' "
 
     queryInvierno = respuesta + "AND month IN (1,2,3,4,5,10,11,12)"
     queryVerano = respuesta + "AND month IN (6,7,8,9)"
 
-    # searchInvierno = sqlFile.execAndReturnVectorOfString(queryInvierno) #execAndReturnFirstDouble(query)
-    # searchVerano = sqlFile.execAndReturnVectorOfString(queryVerano) #execAndReturnFirstDouble(query)
     searchInvierno = sqlFile.execAndReturnFirstDouble(queryInvierno)
     searchVerano = sqlFile.execAndReturnFirstDouble(queryVerano)
 
-    #msg(log, "search: *#{search}*\n")
-
-    if searchInvierno.empty?
-      msg(log, "     searchInvierno: *#{queryInvierno}*\n búsqueda vacía\n")
-    else
-      msg(log, "     searchInvierno: correcto\n")
-    end
-
-    if searchVerano.empty?
-      msg(log, "     searchVerano: *#{queryVerano}*\n búsqueda vacía\n")
-    else
-      msg(log, "     searchVerano:    correcto\n")
-    end
-
     salida = {'valInv' => OpenStudio.convert(searchInvierno.get, 'J', 'kWh').get,
               'valVer' => OpenStudio.convert(searchVerano.get,   'J', 'kWh').get   }
-    msg(log, "     salida #{salida}\n")
     return salida
   end
 
@@ -67,13 +50,12 @@ module Variables_inspeccion
 
     header = []
     ordenX = []
-    tabledata = []
     invierno = []
     verano = []
     msg(log, "_ se recorren las variables\n")
     variables_inspeccionadas.each do | variable |
       msg(log, ".. variable: #{variable[0]}\n")
-      valores = valoresZona(sqlFile, variable[0], log)
+      valores = valoresZona(sqlFile, variable[0])
       msg(log, "     valores #{valores}\n")
       valorInvierno = valores['valInv']
       valorVerano = valores['valVer']
@@ -81,7 +63,7 @@ module Variables_inspeccion
       msg(log, " #{label}: inv #{valorInvierno}, ver: #{valorVerano}\n")
       medicion_general[:chart] << JSON.generate(label:'calefaccion', label_x:label+'i', value: valorInvierno.to_f, color:'#EF1C21')
       medicion_general[:chart] << JSON.generate(label:'refrigeracion', label_x:label+'v', value: valorVerano.to_f, color:'#0071BD')
-      header << label +'[kWh]'
+      header << label + '[kWh]'
       # header << label + '_v'
       ordenX << label + 'i'
       ordenX << label + 'v'

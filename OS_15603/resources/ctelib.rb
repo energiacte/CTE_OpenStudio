@@ -366,26 +366,10 @@ module CTE_lib
     log = 'log_demandaComponentes'
     msg(log, "__ inicidada demanda por componentes__#{periodo}\n")
 
-    superficiehabitable =  CTEgeo.superficieHabitable(sqlFile)
-
-
-
-    suphab = OpenStudio.toNeatString(superficiehabitable, 0, true).to_f
-
-
-    otrasearch = sqlFile.execAndReturnVectorOfString("#{CTEgeo.zonashabitablesquery}")
-    if otrasearch.empty?
-      msg(log, "     otrasearch: \n*#{otrasearch}*\nbúsqueda vacía\n")
-    else
-      msg(log, "     otrasearch: correcto\n")
-    end
-
-
-    msg(log, ".. resultado de superficie habitable:\n#{superficiehabitable}\n")
+    superficiehabitable =  CTEgeo.superficieHabitable(sqlFile).round(2)
 
     orden_eje_x = []
-    end_use_colors = ['#EF1C21', '#0071BD', '#F7DF10', '#DEC310', '#4A4D4A', '#B5B2B5', '#FF79AD',
-    '#632C94', '#F75921', '#293094', '#CE5921', '#FFB239', '#29AAE7', '#8CC739']
+    # end_use_colors = ['#EF1C21', '#0071BD', '#F7DF10', '#DEC310', '#4A4D4A', '#B5B2B5', '#FF79AD', '#632C94', '#F75921', '#293094', '#CE5921', '#FFB239', '#29AAE7', '#8CC739']
 
     medicion_general = {}
     medicion_general[:title] = "Demandas por componentes en #{periodo}"
@@ -407,13 +391,13 @@ module CTE_lib
 
     registraValores = lambda do | data, label, tipo, signo |
       medicion_general[:chart] << JSON.generate(label:temporada[periodo][tipo],
-      label_x: label, value: signo * data[indice[periodo]]/suphab, color: colores[periodo][tipo])
+      label_x: label, value: signo * data[indice[periodo]]/superficiehabitable, color: colores[periodo][tipo])
       if tipo == 'ppal'
-        valores_fila << (data[indice[periodo]]/suphab).round
-        valores_data << data[indice[periodo]]/suphab
+        valores_fila << (data[indice[periodo]]/superficiehabitable).round
+        valores_data << data[indice[periodo]]/superficiehabitable
       end
       orden_eje_x << label
-      msg(log, "#{signo * data[indice[periodo]]/suphab}\n")
+      msg(log, "#{signo * data[indice[periodo]]/superficiehabitable}\n")
     end
 
     # paredes exteriores
@@ -462,7 +446,7 @@ module CTE_lib
         total += valor
       end
     end
-    total = total*suphab
+    total = total*superficiehabitable
 
     registraValores.call([total, total], 'Total', 'ppal', 1)
 
