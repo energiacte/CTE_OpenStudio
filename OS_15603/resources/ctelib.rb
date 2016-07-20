@@ -76,7 +76,6 @@ module CTE_lib
     flowMurosExterioresInviernoQuery << "WHERE month IN (1,2,3,4,5,10,11,12)"
     flowMurosExterioresInviernoSearch = sqlFile.execAndReturnFirstDouble(flowMurosExterioresInviernoQuery)
     energianetaInvierno = OpenStudio.convert(flowMurosExterioresInviernoSearch.get, 'J', 'kWh').get
-    energianetaInvierno_neat = OpenStudio.toNeatString(energianetaInvierno, 0, true)
     msg(log, "Energia neta muros invierno: #{energianetaInvierno.round}\n")
 
     flowMurosExterioresVeranoQuery = "SELECT SUM(variableValue) FROM (#{flowMurosExterioresQuery}) "
@@ -102,7 +101,6 @@ module CTE_lib
     flowCubiertasInviernoQuery << "WHERE month IN (1,2,3,4,5,10,11,12)"
     flowCubiertasInviernoSearch = sqlFile.execAndReturnFirstDouble(flowCubiertasInviernoQuery)
     energianetaInvierno = OpenStudio.convert(flowCubiertasInviernoSearch.get, 'J', 'kWh').get
-    energianetaInvierno_neat = OpenStudio.toNeatString(energianetaInvierno, 0, true)
     msg(log, "Energia neta cubiertas invierno: #{energianetaInvierno.round}\n")
 
     flowCubiertasVeranoQuery = "SELECT SUM(variableValue) FROM (#{flowCubiertasQuery}) "
@@ -114,7 +112,7 @@ module CTE_lib
     return [energianetaInvierno, energianetaVerano]
   end
 
-def self.flowSuelosTerreno(sqlFile)
+  def self.flowSuelosTerreno(sqlFile)
     log = 'log_demandaComponentes'
     msg(log, "  ..flowSuelosTerreno\n")
     flowSuelosTerrenoQuery = "SELECT * FROM "
@@ -128,7 +126,6 @@ def self.flowSuelosTerreno(sqlFile)
     flowSuelosTerrenoInviernoQuery << "WHERE month IN (1,2,3,4,5,10,11,12)"
     flowSuelosTerrenoInviernoSearch = sqlFile.execAndReturnFirstDouble(flowSuelosTerrenoInviernoQuery)
     energianetaInvierno = OpenStudio.convert(flowSuelosTerrenoInviernoSearch.get, 'J', 'kWh').get
-    energianetaInvierno_neat = OpenStudio.toNeatString(energianetaInvierno, 0, true)
     msg(log, "Energia neta suelos invierno: #{energianetaInvierno.round}\n")
 
     flowSuelosTerrenoVeranoQuery = "SELECT SUM(variableValue) FROM (#{flowSuelosTerrenoQuery}) "
@@ -184,12 +181,9 @@ def self.flowSuelosTerreno(sqlFile)
     transmittedVeranoSearch = sqlFile.execAndReturnFirstDouble(flowVentanasVerano.call('transmitted solar'))
     transmittedVerano = OpenStudio.convert(transmittedVeranoSearch.get, 'J', 'kWh').get
 
-
     return {'HGi' => heatGainInvierno, 'HGv' => heatGainVerano,
             'HLi' => heatLossInvierno, 'HLv' => heatLossVerano,
             'TSi' => transmittedInvierno, 'TSv' => transmittedVerano,}
-    #return 14
-
   end
 
   def self.timeindexquery
@@ -200,15 +194,15 @@ def self.flowSuelosTerreno(sqlFile)
     timeindexquery << "AND ReportingFrequency == 'Hourly' "
     timeindexquery << "AND VariableValue < 95 "
     timeindexquery << "AND VariableValue > -45 "
-    timeindexquery
+    return timeindexquery
   end
 
 
 
   def self.valoresZonas(sqlFile, variable, log)
     msg(log, "\n.. variable: '#{variable}'\n")
-    respuesta = "SELECT SUM(VariableValue) FROM "#, ZoneName, VariableName, month, variablevalue, variableUnits, reportingfrequency FROM
-    respuesta << "(#{CTEgeo.zonashabitablesquery})
+    #, ZoneName, VariableName, month, VariableValue, variableUnits, reportingfrequency FROM
+    respuesta = "SELECT SUM(VariableValue) FROM (#{CTEgeo.zonashabitablesquery})
     INNER JOIN ReportVariableDataDictionary rvdd
     INNER JOIN ReportVariableData USING (ReportVariableDataDictionaryIndex)
     INNER JOIN (#{timeindexquery}) USING (TimeIndex)
@@ -217,8 +211,6 @@ def self.flowSuelosTerreno(sqlFile)
     queryInvierno = respuesta + "AND month IN (1,2,3,4,5,10,11,12)"
     queryVerano = respuesta + "AND month IN (6,7,8,9)"
 
-    # searchInvierno = sqlFile.execAndReturnVectorOfString(queryInvierno) #execAndReturnFirstDouble(query)
-    # searchVerano = sqlFile.execAndReturnVectorOfString(queryVerano) #execAndReturnFirstDouble(query)
     searchInvierno = sqlFile.execAndReturnFirstDouble(queryInvierno)
     searchVerano = sqlFile.execAndReturnFirstDouble(queryVerano)
 
