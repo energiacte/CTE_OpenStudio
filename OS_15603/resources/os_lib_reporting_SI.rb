@@ -1,8 +1,7 @@
 # coding: utf-8
 require 'json'
-require "#{File.dirname(__FILE__)}/ctelib" #parece que asi no la encuentra
-require "#{File.dirname(__FILE__)}/inspeccionvariables"
-# require "#{File.dirname(__FILE__)}/resources/ctelib" esto no lo encuentra, tiene que ser como arriba
+require_relative "ctelib" #parece que asi no la encuentra
+require_relative "inspeccionvariables"
 
 module OsLib_Reporting
   # setup - get model, sql, and setup web assets path
