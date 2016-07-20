@@ -98,7 +98,7 @@ SELECT
 FROM Zones
     LEFT OUTER JOIN ZoneInfoZoneLists zizl USING (ZoneIndex)
     LEFT OUTER JOIN ZoneLists zl USING (ZoneListIndex)
-WHERE zl.Name != 'CTE_NOHABITA' AND zl.Name != 'CTE_N' AND zl.Name != 'CTE_NOHABITABLE' "
+WHERE zl.Name NOT LIKE 'CTE_N%' "
     zonashabitablesquery
   end
 
@@ -109,7 +109,7 @@ SELECT
 FROM Zones
     LEFT OUTER JOIN ZoneInfoZoneLists zizl USING (ZoneIndex)
     LEFT OUTER JOIN ZoneLists zl USING (ZoneListIndex)
-WHERE zl.Name == 'CTE_NOHABITA' OR zl.Name == 'CTE_N' OR zl.Name == 'CTE_NOHABITABLE'  "
+WHERE zl.Name LIKE 'CTE_N%'  "
     zonasnohabitablesquery
   end
 
