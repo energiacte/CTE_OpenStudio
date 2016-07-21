@@ -63,84 +63,77 @@ module CTE_lib
   def self.flowMurosExteriores(sqlFile)
     log = 'log_demandaComponentes'
     msg(log, "  ..flowMurosExteriores\n")
-    flowMurosExterioresQuery = "SELECT * FROM "
-    flowMurosExterioresQuery << "(#{superficiesquery}) AS surf "
-    flowMurosExterioresQuery << "INNER JOIN ReportVariableData rvd  USING (ReportVariableDataDictionaryIndex) "
-    flowMurosExterioresQuery << "INNER JOIN Time time USING (TimeIndex) "
-    flowMurosExterioresQuery << "WHERE surf.VariableName == 'Surface Inside Face Conduction Heat Transfer Energy' "
-    flowMurosExterioresQuery << "AND surf.ClassName == 'Wall' AND surf.ExtBoundCond == 0 "
-    #para depuracion --> Optional not initialized (RuntimeError)
-    msg(log, "flowMurosExterioresQuery\n")
-    msg(log, "#{flowMurosExterioresQuery}")
 
-    flowMurosExterioresInviernoQuery = "SELECT SUM(VariableValue) FROM (#{flowMurosExterioresQuery}) "
-    flowMurosExterioresInviernoQuery << "WHERE month IN (1,2,3,4,5,10,11,12)"
+    flowMurosExterioresQuery = "SELECT * FROM (#{superficiesquery}) AS surf
+INNER JOIN ReportVariableData rvd  USING (ReportVariableDataDictionaryIndex)
+INNER JOIN Time time USING (TimeIndex)
+WHERE surf.VariableName == 'Surface Inside Face Conduction Heat Transfer Energy'
+AND surf.ClassName == 'Wall' AND surf.ExtBoundCond == 0 "
+
+    flowMurosExterioresInviernoQuery = "SELECT SUM(VariableValue) FROM (#{flowMurosExterioresQuery}) WHERE month IN (1,2,3,4,5,10,11,12)"
     flowMurosExterioresInviernoSearch = sqlFile.execAndReturnFirstDouble(flowMurosExterioresInviernoQuery)
     energianetaInvierno = OpenStudio.convert(flowMurosExterioresInviernoSearch.get, 'J', 'kWh').get
+
     msg(log, "Energia neta muros invierno: #{energianetaInvierno.round}\n")
 
-    flowMurosExterioresVeranoQuery = "SELECT SUM(variableValue) FROM (#{flowMurosExterioresQuery}) "
-    flowMurosExterioresVeranoQuery << "WHERE month IN (6,7,8,9)"
+    flowMurosExterioresVeranoQuery = "SELECT SUM(variableValue) FROM (#{flowMurosExterioresQuery}) WHERE month IN (6,7,8,9)"
     flowMurosExterioresVeranoSearch = sqlFile.execAndReturnFirstDouble(flowMurosExterioresVeranoQuery)
     energianetaVerano = OpenStudio.convert(flowMurosExterioresVeranoSearch.get, 'J', 'kWh').get
+
     msg(log, "Energia neta muros verano #{energianetaVerano.round}\n")
-    msg(log, "\n")
     return [energianetaInvierno, energianetaVerano]
   end
 
   def self.flowCubiertas(sqlFile)
     log = 'log_demandaComponentes'
     msg(log, "  ..flowCubiertas\n")
-    flowCubiertasQuery = "SELECT * FROM "
-    flowCubiertasQuery << "(#{superficiesquery}) AS surf "
-    flowCubiertasQuery << "INNER JOIN ReportVariableData rvd  USING (ReportVariableDataDictionaryIndex) "
-    flowCubiertasQuery << "INNER JOIN Time time USING (TimeIndex) "
-    flowCubiertasQuery << "WHERE surf.VariableName == 'Surface Inside Face Conduction Heat Transfer Energy' "
-    flowCubiertasQuery << "AND surf.ClassName == 'Roof' AND surf.ExtBoundCond == 0 "
 
-    flowCubiertasInviernoQuery = "SELECT SUM(VariableValue) FROM (#{flowCubiertasQuery}) "
-    flowCubiertasInviernoQuery << "WHERE month IN (1,2,3,4,5,10,11,12)"
+    flowCubiertasQuery = "SELECT * FROM (#{superficiesquery}) AS surf
+INNER JOIN ReportVariableData rvd  USING (ReportVariableDataDictionaryIndex)
+INNER JOIN Time time USING (TimeIndex)
+WHERE surf.VariableName == 'Surface Inside Face Conduction Heat Transfer Energy'
+AND surf.ClassName == 'Roof' AND surf.ExtBoundCond == 0 "
+
+    flowCubiertasInviernoQuery = "SELECT SUM(VariableValue) FROM (#{flowCubiertasQuery}) WHERE month IN (1,2,3,4,5,10,11,12)"
     flowCubiertasInviernoSearch = sqlFile.execAndReturnFirstDouble(flowCubiertasInviernoQuery)
     energianetaInvierno = OpenStudio.convert(flowCubiertasInviernoSearch.get, 'J', 'kWh').get
     msg(log, "Energia neta cubiertas invierno: #{energianetaInvierno.round}\n")
 
-    flowCubiertasVeranoQuery = "SELECT SUM(variableValue) FROM (#{flowCubiertasQuery}) "
-    flowCubiertasVeranoQuery << "WHERE month IN (6,7,8,9)"
+    flowCubiertasVeranoQuery = "SELECT SUM(variableValue) FROM (#{flowCubiertasQuery}) WHERE month IN (6,7,8,9)"
     flowCubiertasVeranoSearch = sqlFile.execAndReturnFirstDouble(flowCubiertasVeranoQuery)
     energianetaVerano = OpenStudio.convert(flowCubiertasVeranoSearch.get, 'J', 'kWh').get
     msg(log, "Energia neta cubiertas verano #{energianetaVerano.round}\n")
-    msg(log, "\n")
+
     return [energianetaInvierno, energianetaVerano]
   end
 
   def self.flowSuelosTerreno(sqlFile)
     log = 'log_demandaComponentes'
     msg(log, "  ..flowSuelosTerreno\n")
-    flowSuelosTerrenoQuery = "SELECT * FROM "
-    flowSuelosTerrenoQuery << "(#{superficiesquery}) AS surf "
-    flowSuelosTerrenoQuery << "INNER JOIN ReportVariableData rvd  USING (ReportVariableDataDictionaryIndex) "
-    flowSuelosTerrenoQuery << "INNER JOIN Time time USING (TimeIndex) "
-    flowSuelosTerrenoQuery << "WHERE surf.VariableName == 'Surface Inside Face Conduction Heat Transfer Energy' "
-    flowSuelosTerrenoQuery << "AND surf.ClassName == 'Floor' AND surf.ExtBoundCond == -1 "
 
-    flowSuelosTerrenoInviernoQuery = "SELECT SUM(VariableValue) FROM (#{flowSuelosTerrenoQuery}) "
-    flowSuelosTerrenoInviernoQuery << "WHERE month IN (1,2,3,4,5,10,11,12)"
+    flowSuelosTerrenoQuery = "SELECT * FROM (#{superficiesquery}) AS surf
+INNER JOIN ReportVariableData rvd  USING (ReportVariableDataDictionaryIndex)
+INNER JOIN Time time USING (TimeIndex)
+WHERE surf.VariableName == 'Surface Inside Face Conduction Heat Transfer Energy'
+AND surf.ClassName == 'Floor' AND surf.ExtBoundCond == -1 "
+
+    flowSuelosTerrenoInviernoQuery = "SELECT SUM(VariableValue) FROM (#{flowSuelosTerrenoQuery}) WHERE month IN (1,2,3,4,5,10,11,12)"
     flowSuelosTerrenoInviernoSearch = sqlFile.execAndReturnFirstDouble(flowSuelosTerrenoInviernoQuery)
     energianetaInvierno = OpenStudio.convert(flowSuelosTerrenoInviernoSearch.get, 'J', 'kWh').get
     msg(log, "Energia neta suelos invierno: #{energianetaInvierno.round}\n")
 
-    flowSuelosTerrenoVeranoQuery = "SELECT SUM(variableValue) FROM (#{flowSuelosTerrenoQuery}) "
-    flowSuelosTerrenoVeranoQuery << "WHERE month IN (6,7,8,9)"
+    flowSuelosTerrenoVeranoQuery = "SELECT SUM(variableValue) FROM (#{flowSuelosTerrenoQuery}) WHERE month IN (6,7,8,9)"
     flowSuelosTerrenoVeranoSearch = sqlFile.execAndReturnFirstDouble(flowSuelosTerrenoVeranoQuery)
     energianetaVerano = OpenStudio.convert(flowSuelosTerrenoVeranoSearch.get, 'J', 'kWh').get
     msg(log, "Energia neta suelos verano #{energianetaVerano.round}\n")
-    msg(log, "\n")
+
     return [energianetaInvierno, energianetaVerano]
   end
 
   def self.flowVentanas(sqlFile)
     log = 'log_demandaComponentes'
     msg(log, "  ..flowVentanas\n")
+
     variable =   {  'heat gain' => 'Surface Window Heat Gain Energy',
                 'heat loss' => 'Surface Window Heat Loss Energy',
                 'transmitted solar' => 'Surface Window Transmitted Solar Radiation Energy'}
@@ -188,20 +181,17 @@ module CTE_lib
   end
 
   def self.timeindexquery
-    timeindexquery =  "SELECT TimeIndex, Month, Day, Hour FROM ReportVariableDataDictionary "
-    timeindexquery << "INNER JOIN  ReportVariableData USING (ReportVariableDataDictionaryIndex) "
-    timeindexquery << "INNER JOIN Time USING (TimeIndex) "
-    timeindexquery << "WHERE (VariableName = 'Zone Thermostat Cooling Setpoint Temperature' OR VariableName = 'Zone Thermostat Heating Setpoint Temperature') "
-    timeindexquery << "AND ReportingFrequency == 'Hourly' "
-    timeindexquery << "AND VariableValue < 95 "
-    timeindexquery << "AND VariableValue > -45 "
-    return timeindexquery
+    return "SELECT TimeIndex, Month, Day, Hour FROM ReportVariableDataDictionary
+INNER JOIN  ReportVariableData USING (ReportVariableDataDictionaryIndex)
+INNER JOIN Time USING (TimeIndex)
+WHERE (VariableName = 'Zone Thermostat Cooling Setpoint Temperature' OR VariableName = 'Zone Thermostat Heating Setpoint Temperature')
+AND ReportingFrequency == 'Hourly'
+AND VariableValue < 95
+AND VariableValue > -45 "
   end
 
-
-
-  def self.valoresZonas(sqlFile, variable, log)
-    msg(log, "\n.. variable: '#{variable}'\n")
+  def self.valoresZonas(sqlFile, variable, runner)
+    runner.registerInfo("\n.. variable: '#{variable}'\n")
     #, ZoneName, VariableName, month, VariableValue, variableUnits, reportingfrequency FROM
     respuesta = "SELECT SUM(VariableValue) FROM (#{CTEgeo.zonashabitablesquery})
     INNER JOIN ReportVariableDataDictionary rvdd
@@ -217,7 +207,7 @@ module CTE_lib
 
     salida = {'valInv' => OpenStudio.convert(searchInvierno.get, 'J', 'kWh').get,
               'valVer' => OpenStudio.convert(searchVerano.get,   'J', 'kWh').get   }
-    msg(log, "     salida #{salida}\n")
+    runner.registerInfo("     salida #{salida}\n")
     return [salida['valInv'], salida['valVer']]
   end
 
@@ -230,8 +220,6 @@ module CTE_lib
   end
 
   def self.mediciones_murosexeriores(model, sqlFile, runner)
-    log = 'log_mediciones exteriores'
-
     contenedor_general = {}
     contenedor_general[:title] = "mediciones muros exteriores"
     contenedor_general[:header] = ['construccion', 'GrossArea', 'U']
@@ -240,27 +228,25 @@ module CTE_lib
 
     indicesconstruccionquery = "SELECT DISTINCT ConstructionIndex FROM (#{CTEgeo.murosexterioresenvolventequery})"
 
-    msg(log, "query indices de construcción: #{indicesconstruccionquery}")
+    runner.registerInfo("query indices de construcción: #{indicesconstruccionquery}")
     indicesconstruccionsearch  = sqlFile.execAndReturnVectorOfString(indicesconstruccionquery).get
     indicesconstruccionsearch.each do | indiceconstruccion |
       query = "SELECT SUM(GrossArea) FROM (#{CTEgeo.murosexterioresenvolventequery}) WHERE ConstructionIndex == #{indiceconstruccion} "
       area = sqlFile.execAndReturnFirstDouble(query).get
-      msg(log, "\narea:\n#{area}\n")
+      runner.registerInfo("\narea:\n#{area}\n")
       nombrequery = "SELECT Name FROM Constructions WHERE ConstructionIndex == #{indiceconstruccion} "
       nombre = sqlFile.execAndReturnFirstString(nombrequery)
-      msg(log, "\nnombre:\n#{nombre}\n")
+      runner.registerInfo("\nnombre:\n#{nombre}\n")
       uvaluequery = "SELECT Uvalue FROM Constructions WHERE ConstructionIndex == #{indiceconstruccion} "
       uvalue = sqlFile.execAndReturnFirstString(uvaluequery)
       contenedor_general[:data] << [nombre, area, uvalue]
     end
 
-    msg(log, "indices de construcción: #{indicesconstruccionsearch}")
+    runner.registerInfo("indices de construcción: #{indicesconstruccionsearch}")
     return contenedor_general
   end
 
   def self.mediciones_cubiertas(model, sqlFile, runner)
-    log = 'log_mediciones exteriores'
-
     contenedor_general = {}
     contenedor_general[:title] = "mediciones cubiertas exteriores"
     contenedor_general[:header] = ['construccion', 'GrossArea', 'U']
@@ -269,27 +255,25 @@ module CTE_lib
 
     indicesconstruccionquery = "SELECT DISTINCT ConstructionIndex FROM (#{CTEgeo.cubiertassexterioresenvolventequery})"
 
-    msg(log, "query indices de construcción cubiertas: #{indicesconstruccionquery}")
+    runner.registerInfo("query indices de construcción cubiertas: #{indicesconstruccionquery}")
     indicesconstruccionsearch  = sqlFile.execAndReturnVectorOfString(indicesconstruccionquery).get
     indicesconstruccionsearch.each do | indiceconstruccion |
       query = "SELECT SUM(GrossArea) FROM (#{CTEgeo.cubiertassexterioresenvolventequery}) WHERE ConstructionIndex == #{indiceconstruccion} "
       area = sqlFile.execAndReturnFirstDouble(query).get
-      msg(log, "\narea:\n#{area}\n")
+      runner.registerInfo("\narea:\n#{area}\n")
       nombrequery = "SELECT Name FROM Constructions WHERE ConstructionIndex == #{indiceconstruccion} "
       nombre = sqlFile.execAndReturnFirstString(nombrequery)
-      msg(log, "\nnombre:\n#{nombre}\n")
+      runner.registerInfo("\nnombre:\n#{nombre}\n")
       uvaluequery = "SELECT Uvalue FROM Constructions WHERE ConstructionIndex == #{indiceconstruccion} "
       uvalue = sqlFile.execAndReturnFirstString(uvaluequery)
       contenedor_general[:data] << [nombre, area, uvalue]
     end
 
-    msg(log, "indices de construcción: #{indicesconstruccionsearch}")
+    runner.registerInfo("indices de construcción: #{indicesconstruccionsearch}")
     return contenedor_general
   end
 
   def self.mediciones_suelosterreno(model, sqlFile, runner)
-    log = 'log_mediciones exteriores'
-
     contenedor_general = {}
     contenedor_general[:title] = "mediciones suelos terreno"
     contenedor_general[:header] = ['construccion', 'GrossArea', 'U']
@@ -298,28 +282,26 @@ module CTE_lib
 
     indicesconstruccionquery = "SELECT DISTINCT ConstructionIndex FROM (#{CTEgeo.suelosterrenoenvolventequery})"
 
-    msg(log, "query indices de construcción cubiertas: #{indicesconstruccionquery}")
+    runner.registerInfo("query indices de construcción cubiertas: #{indicesconstruccionquery}")
     indicesconstruccionsearch  = sqlFile.execAndReturnVectorOfString(indicesconstruccionquery).get
     indicesconstruccionsearch.each do | indiceconstruccion |
       query = "SELECT SUM(GrossArea) FROM (#{CTEgeo.suelosterrenoenvolventequery}) WHERE ConstructionIndex == #{indiceconstruccion} "
       area = sqlFile.execAndReturnFirstDouble(query).get
-      msg(log, "\narea:\n#{area}\n")
+      runner.registerInfo("\narea:\n#{area}\n")
       nombrequery = "SELECT Name FROM Constructions WHERE ConstructionIndex == #{indiceconstruccion} "
       nombre = sqlFile.execAndReturnFirstString(nombrequery)
-      msg(log, "\nnombre:\n#{nombre}\n")
+      runner.registerInfo("\nnombre:\n#{nombre}\n")
       uvaluequery = "SELECT Uvalue FROM Constructions WHERE ConstructionIndex == #{indiceconstruccion} "
       uvalue = sqlFile.execAndReturnFirstString(uvaluequery)
       contenedor_general[:data] << [nombre, area, uvalue]
     end
 
-    msg(log, "indices de construcción: #{indicesconstruccionsearch}")
+    runner.registerInfo("indices de construcción: #{indicesconstruccionsearch}")
 
     return contenedor_general
   end
 
   def self.mediciones_huecos(model, sqlFile, runner)
-    log = 'log_mediciones exteriores'
-
     contenedor_general = {}
     contenedor_general[:title] = "mediciones huecos"
     contenedor_general[:header] = ['construccion', 'GrossArea', 'U']
@@ -328,29 +310,28 @@ module CTE_lib
 
     indicesconstruccionquery = "SELECT DISTINCT ConstructionIndex FROM (#{CTEgeo.huecosenvolventequery})"
 
-    msg(log, "query indices de construcción cubiertas: #{indicesconstruccionquery}")
+    runner.registerInfo("query indices de construcción cubiertas: #{indicesconstruccionquery}")
     indicesconstruccionsearch  = sqlFile.execAndReturnVectorOfString(indicesconstruccionquery).get
     indicesconstruccionsearch.each do | indiceconstruccion |
       query = "SELECT SUM(GrossArea) FROM (#{CTEgeo.huecosenvolventequery}) WHERE ConstructionIndex == #{indiceconstruccion} "
       area = sqlFile.execAndReturnFirstDouble(query).get
-      msg(log, "\narea:\n#{area}\n")
+      runner.registerInfo("\narea:\n#{area}\n")
       nombrequery = "SELECT Name FROM Constructions WHERE ConstructionIndex == #{indiceconstruccion} "
       nombre = sqlFile.execAndReturnFirstString(nombrequery)
-      msg(log, "\nnombre:\n#{nombre}\n")
+      runner.registerInfo("\nnombre:\n#{nombre}\n")
       uvaluequery = "SELECT Uvalue FROM Constructions WHERE ConstructionIndex == #{indiceconstruccion} "
       uvalue = sqlFile.execAndReturnFirstString(uvaluequery)
       contenedor_general[:data] << [nombre, area, uvalue]
     end
 
-    msg(log, "indices de construcción: #{indicesconstruccionsearch}")
+    runner.registerInfo("indices de construcción: #{indicesconstruccionsearch}")
 
     return contenedor_general
   end
 
 
   def self.demanda_por_componentes(model, sqlFile, runner, periodo)
-    log = 'log_demandaComponentes'
-    msg(log, "__ inicidada demanda por componentes__#{periodo}\n")
+    runner.registerInfo("__ inicidada demanda por componentes__#{periodo}\n")
 
     superficiehabitable =  CTEgeo.superficieHabitable(sqlFile).round(2)
 
@@ -383,7 +364,7 @@ module CTE_lib
         valores_data << data[indice[periodo]]/superficiehabitable
       end
       orden_eje_x << label
-      msg(log, "#{signo * data[indice[periodo]]/superficiehabitable}\n")
+      runner.registerInfo("#{signo * data[indice[periodo]]/superficiehabitable}\n")
     end
 
     # paredes exteriores
@@ -396,7 +377,7 @@ module CTE_lib
     valores_fila << 'sin calcular'
     #solar y transmisión ventanas
     energiaVentanas = flowVentanas(sqlFile)
-    msg(log, "#{energiaVentanas}\n")
+    runner.registerInfo("#{energiaVentanas}\n")
     # label = ['wHeGa', 'wHeLo', 'wSoVe', 'wTrVe']
     registraValores.call([energiaVentanas['TSi'], energiaVentanas['TSv']], 'Solar Ventanas', 'ppal', 1)
 
@@ -405,18 +386,18 @@ module CTE_lib
     registraValores.call([transmisionVentanasInvierno, transmisionVentanaVerano], 'Transmision Ventanas', 'ppal', 1)
 
    # suelos terreno
-    registraValores.call(valoresZonas(sqlFile, "Zone Total Internal Total Heating Energy", log), 'Fuentes Internas', 'ppal', 1)
+    registraValores.call(valoresZonas(sqlFile, "Zone Total Internal Total Heating Energy", runner), 'Fuentes Internas', 'ppal', 1)
 
     # infiltracion
-    heatGain = valoresZonas(sqlFile, "Zone Infiltration Total Heat Gain Energy", log)
-    heatLoss = valoresZonas(sqlFile, "Zone Infiltration Total Heat Loss Energy", log)
+    heatGain = valoresZonas(sqlFile, "Zone Infiltration Total Heat Gain Energy", runner)
+    heatLoss = valoresZonas(sqlFile, "Zone Infiltration Total Heat Loss Energy", runner)
     # registraValores.call(heatGain, 'InfGain', 'segun', 1)
     # registraValores.call(heatLoss, 'InfLoss', 'segun', -1)
     registraValores.call([heatGain[0] - heatLoss[0], heatGain[1] - heatLoss[1]], 'Infiltación', 'ppal', 1)
 
     # ventilacion
-    ventGain = valoresZonas(sqlFile, "Zone Combined Outdoor Air Total Heat Gain Energy", log)
-    ventLoss = valoresZonas(sqlFile, "Zone Combined Outdoor Air Total Heat Loss Energy", log)
+    ventGain = valoresZonas(sqlFile, "Zone Combined Outdoor Air Total Heat Gain Energy", runner)
+    ventLoss = valoresZonas(sqlFile, "Zone Combined Outdoor Air Total Heat Loss Energy", runner)
     # registraValores.call(ventGain, 'VenGain', 'segun', 1)
     # registraValores.call(ventLoss, 'VenLoss', 'segun', -1)
     registraValores.call([ventGain[0]-ventLoss[0], ventGain[1]-ventLoss[1]], 'Ventilación', 'ppal', 1)
