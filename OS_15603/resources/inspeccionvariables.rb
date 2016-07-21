@@ -1,12 +1,13 @@
 # coding: utf-8
-require_relative "os_lib_reporting_SI"
+require "openstudio"
+require_relative "ctegeometria"
 
 module Variables_inspeccion
 
   def self.valoresZona(sqlFile, variable)
     # esto parece una query que hay en ctegeometria
-    respuesta = "SELECT SUM(VariableValue) FROM "#, ZoneName, VariableName, month, variablevalue, variableUnits, reportingfrequency FROM
-    respuesta << "(#{zonashabitablesquery})
+    #, ZoneName, VariableName, month, variablevalue, variableUnits, reportingfrequency FROM
+    respuesta = "SELECT SUM(VariableValue) FROM (#{ CTEgeo::Query::ZONASHABITABLES })
     INNER JOIN ReportVariableDataDictionary rvdd
     INNER JOIN ReportVariableData USING (ReportVariableDataDictionaryIndex)
     INNER JOIN Time time USING (TimeIndex)
@@ -125,14 +126,6 @@ module Variables_inspeccion
     # end
 
     return medicion_general
-  end
-
-  def self.zonashabitablesquery
-    return "
-SELECT zones.ZoneIndex, zones.ZoneName  FROM Zones zones
-LEFT OUTER JOIN ZoneInfoZoneLists zizl USING (ZoneIndex)
-LEFT OUTER JOIN ZoneLists zl USING (ZoneListIndex)
-WHERE zl.Name != 'CTE_NOHABITA' AND zl.Name != 'CTE_N' "
   end
 
 end

@@ -269,27 +269,19 @@ module OsLib_Reporting
     source_units = 'GJ'
     target_units = 'kWh'
     energianeta = OpenStudio.convert(sqlFile.netSiteEnergy.get, source_units, target_units).get
-    energianeta_neat = OpenStudio.toNeatString(energianeta, 0, true)
-    general_table[:data] << [display, energianeta_neat, target_units]
+    general_table[:data] << [display, energianeta.round(2), target_units]
     runner.registerValue(display, energianeta, target_units)
 
     # File.open('logpropio.txt', 'a') {|file| file.write("Energía neta:#{energianeta}\n")}
 
-     # ZONAS HABITABLES
-    zonashabitablesquery = "SELECT * FROM Zones zones "
-    zonashabitablesquery << "LEFT OUTER JOIN ZoneInfoZoneLists zizl USING (ZoneIndex) "
-    zonashabitablesquery << "LEFT OUTER JOIN ZoneLists zl USING (ZoneListIndex) "
-    zonashabitablesquery << "WHERE zl.Name != 'CTE_NOHABITA' AND zl.Name != 'CTE_N' "
-    zonashabitablessearch = sqlFile.execAndReturnVectorOfString(zonashabitablesquery)
     #  SUPERFICIE HABITABLE
-    superficiehabitablesearch = sqlFile.execAndReturnFirstDouble("SELECT SUM(FloorArea) FROM (#{zonashabitablesquery})")
+    superficiehabitablesearch = sqlFile.execAndReturnFirstDouble("SELECT SUM(FloorArea) FROM (#{ CTEgeo::Query::ZONASHABITABLES })")
     superficiehabitable = superficiehabitablesearch.get
 
     # File.open('logpropio.txt', 'a') {|file| file.write("Superficie habitable#{superficiehabitable}\n")}
 
     intensidadEnergetica = energianeta / superficiehabitable
-    intensidadEnergetica_neat = OpenStudio.toNeatString(intensidadEnergetica, 0, true)
-    general_table[:data] << ['Energía por superficie habitable', intensidadEnergetica_neat, 'kWh/m^2']
+    general_table[:data] << ['Energía por superficie habitable', intensidadEnergetica.round(2), 'kWh/m^2']
     general_table[:data] << ['EUI es simplemente dividir', 'la energía neta', 'por la superficie']
 
     return general_table

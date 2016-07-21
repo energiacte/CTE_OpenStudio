@@ -79,7 +79,7 @@ class Cte_lib_Test < MiniTest::Unit::TestCase
     # end
 
     # def test_zonasHabitables
-    #     stm = @cur.prepare CTE_lib.zonashabitablesquery
+    #     stm = @cur.prepare CTEgeo::Query::ZONASHABITABLES
     #     rs = stm.execute
     #     assert_equal(rs.count,1)
     # end
@@ -147,7 +147,7 @@ end
     #~ ### ZONAS HABITABLES
     #~ def test_variablesDisponibles
 
-        #~ #zonashabitablessearch = sqlFile.execAndReturnVectorOfString("#{zonashabitablesquery}")
+        #~ #zonashabitablessearch = sqlFile.execAndReturnVectorOfString("#{ CTEgeo::Query::ZONASHABITABLES }")
         #~ # no podemos hacer test de esto porque tendríamos que cargar openstudio y, aún así,
         #~ # no sé como cargar un modelo concreto.
 

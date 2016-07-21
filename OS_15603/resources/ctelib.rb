@@ -192,7 +192,7 @@ AND VariableValue > -45 "
   def self.valoresZonas(sqlFile, variable, runner)
     runner.registerInfo("\n.. variable: '#{variable}'\n")
     #, ZoneName, VariableName, month, VariableValue, variableUnits, reportingfrequency FROM
-    respuesta = "SELECT SUM(VariableValue) FROM (#{CTEgeo.zonashabitablesquery})
+    respuesta = "SELECT SUM(VariableValue) FROM (#{ CTEgeo::Query::ZONASHABITABLES })
     INNER JOIN ReportVariableDataDictionary rvdd
     INNER JOIN ReportVariableData USING (ReportVariableDataDictionaryIndex)
     INNER JOIN (#{timeindexquery}) USING (TimeIndex)

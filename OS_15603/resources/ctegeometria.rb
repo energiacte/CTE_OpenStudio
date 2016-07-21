@@ -1,20 +1,32 @@
 # coding: utf-8
 
 module CTEgeo
+
+  module Query
+    ZONASHABITABLES = "
+SELECT
+    ZoneIndex, ZoneName, Volume, FloorArea, ZoneListIndex, Name
+FROM Zones
+    LEFT OUTER JOIN ZoneInfoZoneLists zizl USING (ZoneIndex)
+    LEFT OUTER JOIN ZoneLists zl USING (ZoneListIndex)
+WHERE zl.Name NOT LIKE 'CTE_N%' "
+  end
+
+
   def self.getValueOrFalse(search)
     return (if search.empty? then false else search.get end)
   end
 
   def self.zonashabitables(sqlFile)
-    return getValueOrFalse(sqlFile.execAndReturnVectorOfString("#{zonashabitablesquery}"))
+    return getValueOrFalse(sqlFile.execAndReturnVectorOfString("#{ Query::ZONASHABITABLES }"))
   end
 
   def self.superficiehabitable(sqlFile)
-    return getValueOrFalse(sqlFile.execAndReturnFirstDouble("SELECT SUM(FloorArea) FROM (#{zonashabitablesquery})"))
+    return getValueOrFalse(sqlFile.execAndReturnFirstDouble("SELECT SUM(FloorArea) FROM (#{ Query::ZONASHABITABLES })"))
   end
 
   def self.volumenhabitable(sqlFile)
-    return getValueOrFalse(sqlFile.execAndReturnFirstDouble("SELECT SUM(Volume) FROM  (#{zonashabitablesquery})"))
+    return getValueOrFalse(sqlFile.execAndReturnFirstDouble("SELECT SUM(Volume) FROM  (#{ Query::ZONASHABITABLES })"))
   end
 
   def self.zonasnohabitables(sqlFile)
@@ -44,7 +56,6 @@ module CTEgeo
   def self.areainterior(sqlFile)
     return getValueOrFalse(sqlFile.execAndReturnFirstDouble("SELECT SUM(GrossArea) FROM (#{superficiescontactoquery})"))
   end
-
 
   def self.zonashabitablesquery
     # Zonas habitables
