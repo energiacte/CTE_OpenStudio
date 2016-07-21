@@ -215,20 +215,6 @@ module CTE_lib
     searchInvierno = sqlFile.execAndReturnFirstDouble(queryInvierno)
     searchVerano = sqlFile.execAndReturnFirstDouble(queryVerano)
 
-    #msg(log, "search: *#{search}*\n")
-
-    if searchInvierno.empty?
-      msg(log, "     searchInvierno: *#{queryInvierno}*\n búsqueda vacía\n")
-    else
-      msg(log, "     searchInvierno: correcto\n")
-    end
-
-    if searchVerano.empty?
-      msg(log, "     searchVerano: *#{queryVerano}*\n búsqueda vacía\n")
-    else
-      msg(log, "     searchVerano:    correcto\n")
-    end
-
     salida = {'valInv' => OpenStudio.convert(searchInvierno.get, 'J', 'kWh').get,
               'valVer' => OpenStudio.convert(searchVerano.get,   'J', 'kWh').get   }
     msg(log, "     salida #{salida}\n")
@@ -429,10 +415,6 @@ module CTE_lib
     registraValores.call([heatGain[0] - heatLoss[0], heatGain[1] - heatLoss[1]], 'Infiltación', 'ppal', 1)
 
     # ventilacion
-
-    # ventGain = valoresZonas(sqlFile, "Zone Ventilation Total Heat Gain Energy", log)
-    # ventLoss = valoresZonas(sqlFile, "Zone Ventilation Total Heat Loss Energy", log)
-
     ventGain = valoresZonas(sqlFile, "Zone Combined Outdoor Air Total Heat Gain Energy", log)
     ventLoss = valoresZonas(sqlFile, "Zone Combined Outdoor Air Total Heat Loss Energy", log)
     # registraValores.call(ventGain, 'VenGain', 'segun', 1)
