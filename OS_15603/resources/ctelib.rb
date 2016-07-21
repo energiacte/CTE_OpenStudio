@@ -1,6 +1,5 @@
 # coding: utf-8
 
-require_relative "os_lib_reporting_SI"
 require_relative "ctegeometria" # que importa el modulo CTEgeo
 
 module CTE_lib
