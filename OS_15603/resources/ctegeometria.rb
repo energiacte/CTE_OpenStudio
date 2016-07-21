@@ -73,22 +73,11 @@ WHERE zl.Name LIKE 'CTE_N%' "
     return "
 SELECT
     SurfaceIndex, SurfaceName, ConstructionIndex, ClassName, Area, GrossArea,
-    ExtBoundCond, surf.ZoneIndex
+    ExtBoundCond, surf.ZoneIndex AS ZoneIndex
 FROM
     Surfaces surf
     INNER JOIN ( #{zonashabitablesquery} ) AS zones
         ON surf.ZoneIndex = zones.ZoneIndex"
-  end
-
-  def self.superficiescandidatasquery
-    # Superficies que podrían formar parte de la envolvente térmica
-    return "
-SELECT
-    SurfaceIndex, SurfaceName, ConstructionIndex, ClassName, Area,
-    GrossArea, ExtBoundCond, ZoneIndex
-FROM
-    (#{superficiesquery}) AS surf
-    WHERE (surf.ClassName NOT IN ('Window', 'Internal Mass')) "
   end
 
   def self.superficiesexternasquery
@@ -98,31 +87,23 @@ SELECT
     SurfaceIndex, SurfaceName, ConstructionIndex, ClassName, Area,
     GrossArea, ExtBoundCond, ZoneIndex
 FROM
-    (#{superficiescandidatasquery})
-    WHERE (ExtBoundCond IN (-1, 0)) "
-  end
-
-  def self.superficiesinternasquery
-    # Superficies interiores de los espacios habitables
-    return "
-SELECT
-    SurfaceIndex, SurfaceName, ConstructionIndex, ClassName, Area,
-    GrossArea, ExtBoundCond, ZoneIndex
-FROM (#{superficiescandidatasquery})
-      WHERE (ExtBoundCond NOT IN (-1, 0))"
+    (#{superficiesquery}) AS surf
+    WHERE (surf.ClassName NOT IN ('Window', 'Internal Mass') AND surf.ExtBoundCond IN (-1, 0)) "
   end
 
   def self.superficiescontactoquery
     # Superficies interiores de la envolvente térmica
     return "
 SELECT
-    surf.SurfaceIndex SurfaceIndex, SurfaceName SurfaceName,
+    surf.SurfaceIndex AS SurfaceIndex, SurfaceName,
     ConstructionIndex, ClassName, Area, GrossArea, ExtBoundCond,
-    surf.ZoneIndex ZoneIndex
+    surf.ZoneIndex AS ZoneIndex
 FROM (  SELECT
             SurfaceIndex
         FROM
-            (#{superficiesinternasquery})  ) AS internas
+            (#{superficiesquery}) AS surf
+            WHERE (surf.ClassName NOT IN ('Window', 'Internal Mass') AND ExtBoundCond NOT IN (-1, 0))
+     ) AS internas
     INNER JOIN Surfaces surf ON surf.ExtBoundCond = internas.SurfaceIndex
     INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
   end
