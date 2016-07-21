@@ -64,7 +64,7 @@ module CTE_lib
     log = 'log_demandaComponentes'
     msg(log, "  ..flowMurosExteriores\n")
 
-    flowMurosExterioresQuery = "SELECT * FROM (#{superficiesquery}) AS surf
+    flowMurosExterioresQuery = "SELECT * FROM (#{CTEgeo.superficiesquery}) AS surf
 INNER JOIN ReportVariableData rvd  USING (ReportVariableDataDictionaryIndex)
 INNER JOIN Time time USING (TimeIndex)
 WHERE surf.VariableName == 'Surface Inside Face Conduction Heat Transfer Energy'
@@ -88,7 +88,7 @@ AND surf.ClassName == 'Wall' AND surf.ExtBoundCond == 0 "
     log = 'log_demandaComponentes'
     msg(log, "  ..flowCubiertas\n")
 
-    flowCubiertasQuery = "SELECT * FROM (#{superficiesquery}) AS surf
+    flowCubiertasQuery = "SELECT * FROM (#{CTEgeo.superficiesquery}) AS surf
 INNER JOIN ReportVariableData rvd  USING (ReportVariableDataDictionaryIndex)
 INNER JOIN Time time USING (TimeIndex)
 WHERE surf.VariableName == 'Surface Inside Face Conduction Heat Transfer Energy'
@@ -111,7 +111,7 @@ AND surf.ClassName == 'Roof' AND surf.ExtBoundCond == 0 "
     log = 'log_demandaComponentes'
     msg(log, "  ..flowSuelosTerreno\n")
 
-    flowSuelosTerrenoQuery = "SELECT * FROM (#{superficiesquery}) AS surf
+    flowSuelosTerrenoQuery = "SELECT * FROM (#{CTEgeo.superficiesquery}) AS surf
 INNER JOIN ReportVariableData rvd  USING (ReportVariableDataDictionaryIndex)
 INNER JOIN Time time USING (TimeIndex)
 WHERE surf.VariableName == 'Surface Inside Face Conduction Heat Transfer Energy'
@@ -139,7 +139,7 @@ AND surf.ClassName == 'Floor' AND surf.ExtBoundCond == -1 "
                 'transmitted solar' => 'Surface Window Transmitted Solar Radiation Energy'}
 
     flowVentanasInvierno = lambda do | var | "SELECT SUM(variableValue) FROM
-    (#{superficiesquery}) AS surf
+    (#{CTEgeo.superficiesquery}) AS surf
     INNER JOIN ReportVariableData rvd  USING (ReportVariableDataDictionaryIndex)
     INNER JOIN Time time USING (TimeIndex)
     WHERE surf.VariableName == '#{variable[var]}'
@@ -148,7 +148,7 @@ AND surf.ClassName == 'Floor' AND surf.ExtBoundCond == -1 "
     end
 
     flowVentanasVerano = lambda do | var | "SELECT SUM(variableValue) FROM
-    (#{superficiesquery}) AS surf
+    (#{CTEgeo.superficiesquery}) AS surf
     INNER JOIN ReportVariableData rvd  USING (ReportVariableDataDictionaryIndex)
     INNER JOIN Time time USING (TimeIndex)
     WHERE surf.VariableName == '#{variable[var]}'
