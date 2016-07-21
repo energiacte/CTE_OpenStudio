@@ -282,7 +282,6 @@ module OsLib_Reporting
 
     intensidadEnergetica = energianeta / superficiehabitable
     general_table[:data] << ['Energía por superficie habitable', intensidadEnergetica.round(2), 'kWh/m^2']
-    general_table[:data] << ['EUI es simplemente dividir', 'la energía neta', 'por la superficie']
 
     return general_table
   end
