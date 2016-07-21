@@ -1,6 +1,6 @@
 # coding: utf-8
 require 'json'
-require_relative "ctelib" #parece que asi no la encuentra
+require_relative "ctelib"
 require_relative "inspeccionvariables"
 
 module OsLib_Reporting
