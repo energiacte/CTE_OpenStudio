@@ -29,16 +29,8 @@ module CTEgeo
     return getValueOrFalse(sqlFile.execAndReturnFirstDouble("SELECT SUM(Volume) FROM (#{zonasnohabitablesquery})"))
   end
 
-  def self.superficiescandidatas(sqlFile)
-    return getValueOrFalse(sqlFile.execAndReturnVectorOfString(superficiescandidatasquery))
-  end
-
   def self.superficiesexternas(sqlFile)
     return getValueOrFalse(sqlFile.execAndReturnVectorOfString(superficiesexternasquery))
-  end
-
-  def self.superficiesinternas(sqlFile)
-    return getValueOrFalse(sqlFile.execAndReturnVectorOfString(superficiesinternasquery))
   end
 
   def self.superficiescontacto(sqlFile)
@@ -55,6 +47,7 @@ module CTEgeo
 
 
   def self.zonashabitablesquery
+    # Zonas habitables
     return "
 SELECT
     ZoneIndex, ZoneName, Volume, FloorArea, ZoneListIndex, Name
@@ -65,20 +58,22 @@ WHERE zl.Name NOT LIKE 'CTE_N%' "
   end
 
   def self.zonasnohabitablesquery
+    # Zonas no habitables
     return "
 SELECT
     ZoneIndex, ZoneName, Volume, FloorArea, ZoneListIndex, Name
 FROM Zones
     LEFT OUTER JOIN ZoneInfoZoneLists zizl USING (ZoneIndex)
     LEFT OUTER JOIN ZoneLists zl USING (ZoneListIndex)
-WHERE zl.Name LIKE 'CTE_N%'  "
+WHERE zl.Name LIKE 'CTE_N%' "
   end
 
   def self.superficiesquery
+    # Superficies de las zonas habitables
     return "
 SELECT
     SurfaceIndex, SurfaceName, ConstructionIndex, ClassName, Area, GrossArea,
-    ExtBoundCond, surf.ZoneIndex ZoneIndex
+    ExtBoundCond, surf.ZoneIndex
 FROM
     Surfaces surf
     INNER JOIN ( #{zonashabitablesquery} ) AS zones
@@ -86,35 +81,39 @@ FROM
   end
 
   def self.superficiescandidatasquery
+    # Superficies que podrían formar parte de la envolvente térmica
     return "
 SELECT
     SurfaceIndex, SurfaceName, ConstructionIndex, ClassName, Area,
     GrossArea, ExtBoundCond, ZoneIndex
 FROM
     (#{superficiesquery}) AS surf
-    WHERE surf.ClassName <> 'Window' AND surf.ClassName <> 'Internal Mass' "
+    WHERE (surf.ClassName NOT IN ('Window', 'Internal Mass')) "
   end
 
   def self.superficiesexternasquery
+    # Superficies exteriores de la envolvente térmica que son exteriores
     return "
 SELECT
     SurfaceIndex, SurfaceName, ConstructionIndex, ClassName, Area,
     GrossArea, ExtBoundCond, ZoneIndex
 FROM
     (#{superficiescandidatasquery})
-    WHERE ExtBoundCond = -1 OR ExtBoundCond = 0 "
+    WHERE (ExtBoundCond IN (-1, 0)) "
   end
 
   def self.superficiesinternasquery
+    # Superficies interiores de los espacios habitables
     return "
 SELECT
     SurfaceIndex, SurfaceName, ConstructionIndex, ClassName, Area,
     GrossArea, ExtBoundCond, ZoneIndex
 FROM (#{superficiescandidatasquery})
-      WHERE ExtBoundCond <> -1 AND ExtBoundCond <> 0"
+      WHERE (ExtBoundCond NOT IN (-1, 0))"
   end
 
   def self.superficiescontactoquery
+    # Superficies interiores de la envolvente térmica
     return "
 SELECT
     surf.SurfaceIndex SurfaceIndex, SurfaceName SurfaceName,
@@ -135,7 +134,7 @@ SELECT
     GrossArea, ExtBoundCond, ZoneIndex
 FROM
     (#{superficiesexternasquery}) AS surf
-    WHERE surf.ClassName == 'Wall' AND surf.ExtBoundCond == 0 "
+    WHERE (surf.ClassName == 'Wall' AND surf.ExtBoundCond == 0) "
   end
 
   def self.cubiertassexterioresenvolventequery
@@ -145,7 +144,7 @@ SELECT
     GrossArea, ExtBoundCond, ZoneIndex
 FROM
     (#{superficiesexternasquery}) AS surf
-    WHERE surf.ClassName == 'Roof' AND surf.ExtBoundCond == 0 "
+    WHERE (surf.ClassName == 'Roof' AND surf.ExtBoundCond == 0) "
   end
 
   def self.suelosterrenoenvolventequery
@@ -155,17 +154,18 @@ SELECT
     GrossArea, ExtBoundCond, ZoneIndex
 FROM
     (#{superficiesexternasquery}) AS surf
-    WHERE surf.ClassName == 'Floor' AND surf.ExtBoundCond == -1 "
+    WHERE (surf.ClassName == 'Floor' AND surf.ExtBoundCond == -1) "
   end
 
   def self.huecosenvolventequery
+    # XXX: No incluye lucernarios!
     return "
 SELECT
     *
 FROM Surfaces surf
     INNER JOIN  ( #{zonashabitablesquery} ) AS zones
     ON surf.ZoneIndex = zones.ZoneIndex
-    WHERE surf.ClassName == 'Window' AND surf.ExtBoundCond == 0 "
+    WHERE (surf.ClassName == 'Window' AND surf.ExtBoundCond == 0) "
   end
 
 end

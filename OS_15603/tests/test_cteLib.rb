@@ -94,19 +94,9 @@ class Cte_lib_Test < MiniTest::Unit::TestCase
     #     assert_equal(stm.execute.count, 8)
     # end
 
-    # def test_superficiescandidatas
-    #     stm = @cur.prepare CTE_lib.superficiescandidatasquery
-    #     assert_equal(stm.execute.count, 6)
-    # end
-
     # def test_superficiesexternas
     #     stm = @cur.prepare CTE_lib.superficiesexternasquery
     #     assert_equal(stm.execute.count, 5)
-    # end
-
-    # def test_superficiesinternas
-    #     stm = @cur.prepare CTE_lib.superficiesinternasquery
-    #     assert_equal(stm.execute.count, 1)
     # end
 
     # def test_superficiescontacto
