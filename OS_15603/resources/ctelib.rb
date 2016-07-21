@@ -1,5 +1,6 @@
 # coding: utf-8
 
+require "openstudio"
 require_relative "ctegeometria" # que importa el modulo CTEgeo
 
 module CTE_lib
@@ -17,13 +18,13 @@ module CTE_lib
     volumenHabitable = CTEgeo.volumenHabitable(sqlFile).round(2)
     # Zonas no habitables
     zonasNoHabitables = CTEgeo.zonasNoHabitables(sqlFile)
-    superficieNoHabitable = CTEgeo.superficienohabitable(sqlFile).round(2)
-    volumenNoHabitable = CTEgeo.volumennohabitable(sqlFile).round(2)
+    superficieNoHabitable = CTEgeo.superficieNoHabitable(sqlFile).round(2)
+    volumenNoHabitable = CTEgeo.volumenNoHabitable(sqlFile).round(2)
     # Envolvente térmica
-    superficiesexternas = CTEgeo.superficiesexternas(sqlFile)
-    areaexterior = CTEgeo.areaexterior(sqlFile).round(2)
-    superficiescontacto = CTEgeo.superficiescontacto(sqlFile)
-    areainterior = CTEgeo.areainterior(sqlFile).round(2)
+    superficiesExteriores = CTEgeo.envolventeSuperficiesExteriores(sqlFile)
+    areaexterior = CTEgeo.envolventeAreaExterior(sqlFile).round(2)
+    superficiesInteriores = CTEgeo.envolventeSuperficiesInteriores(sqlFile)
+    areainterior = CTEgeo.envolventeAreaInterior(sqlFile).round(2)
     areatotal = areaexterior + areainterior
     compacidad = (volumenHabitable / areatotal).round(2)
 
@@ -36,8 +37,8 @@ module CTE_lib
     runner.registerValue("Zonas no habitables, número", zonasNoHabitables.count())
     runner.registerValue("Zonas no habitables, superficie", superficieNoHabitable, 'm^2')
     runner.registerValue("Zonas no habitables, volumen", volumenNoHabitable, 'm^3')
-    runner.registerValue('Envolvente Térmica, superficies exteriores', superficiesexternas.count())
-    runner.registerValue('Envolvente Térmica, superficies interiores', superficiescontacto.count())
+    runner.registerValue('Envolvente Térmica, superficies exteriores', superficiesExteriores.count())
+    runner.registerValue('Envolvente Térmica, superficies interiores', superficiesInteriores.count())
     runner.registerValue('Envolvente Térmica, área de superficies exteriores', areaexterior, 'm^2')
     runner.registerValue('Envolvente Térmica, área de superficies interiores', areainterior, 'm^2')
     runner.registerValue('Envolvente Térmica, área total', areatotal, 'm^2')
@@ -60,6 +61,31 @@ module CTE_lib
     return medicion_general
   end
 
+
+  def self.CTE_tabla_de_energias(model, sqlFile, runner)
+    # Basada en una tabla del report SI
+    energianeta = OpenStudio.convert(sqlFile.netSiteEnergy.get, 'GJ', 'kWh').get
+    superficiehabitable = CTEgeo.superficieHabitable(sqlFile)
+    intensidadEnergetica = superficiehabitable != 0 ? (energianeta / superficiehabitable) : 0
+
+    runner.registerValue('Energia Neta (Net Site Energy)', energianeta, 'kWh')
+    runner.registerValue('Intensidad energética (EUI)', intensidadEnergetica, 'kWh/m^2')
+
+    general_table = {}
+    general_table[:title] = 'Energía según CTE'
+    general_table[:header] =%w(informacion valor unidades)
+    general_table[:units] = []
+    general_table[:data] = []
+    general_table[:data] << ['Energia Neta (Net Site Energy)', energianeta.round(2), 'kWh']
+    general_table[:data] << ['Energía por superficie habitable', intensidadEnergetica.round(2), 'kWh/m^2']
+
+    return general_table
+  end
+
+
+
+
+  
   def self.flowMurosExteriores(sqlFile)
     log = 'log_demandaComponentes'
     msg(log, "  ..flowMurosExteriores\n")
@@ -211,124 +237,42 @@ AND VariableValue > -45 "
     return [salida['valInv'], salida['valVer']]
   end
 
-  def self.demanda_por_componentes_invierno(model, sqlFile, runner)
+  def self.tabla_demanda_por_componentes_invierno(model, sqlFile, runner)
     return demanda_por_componentes(model, sqlFile, runner, 'invierno')
   end
 
-  def self.demanda_por_componentes_verano(model, sqlFile, runner)
+  def self.tabla_demanda_por_componentes_verano(model, sqlFile, runner)
     return demanda_por_componentes(model, sqlFile, runner, 'verano')
   end
 
-  def self.mediciones_murosexeriores(model, sqlFile, runner)
+  def self.tabla_mediciones_envolvente(model, sqlFile, runner)
     contenedor_general = {}
-    contenedor_general[:title] = "mediciones muros exteriores"
-    contenedor_general[:header] = ['construccion', 'GrossArea', 'U']
-    contenedor_general[:units] = []
+    contenedor_general[:title] = "Mediciones elementos de la envolvente"
+    contenedor_general[:header] = ['Construcción', 'Superficie', 'U']
+    contenedor_general[:units] = ['', 'm²', 'W/m²K']
     contenedor_general[:data] = []
 
-    indicesconstruccionquery = "SELECT DISTINCT ConstructionIndex FROM (#{CTEgeo.murosexterioresenvolventequery})"
+    indicesquery = "SELECT ConstructionIndex FROM (#{ CTEgeo::Query::ENVOLVENTE_SUPERFICIES_EXTERIORES })
+                    UNION
+                    SELECT ConstructionIndex FROM (#{ CTEgeo::Query::ENVOLVENTE_SUPERFICIES_INTERIORES })"
+    indices  = sqlFile.execAndReturnVectorOfString(indicesquery).get
 
-    runner.registerInfo("query indices de construcción: #{indicesconstruccionquery}")
-    indicesconstruccionsearch  = sqlFile.execAndReturnVectorOfString(indicesconstruccionquery).get
-    indicesconstruccionsearch.each do | indiceconstruccion |
-      query = "SELECT SUM(GrossArea) FROM (#{CTEgeo.murosexterioresenvolventequery}) WHERE ConstructionIndex == #{indiceconstruccion} "
+    indices.each do | indiceconstruccion |
+      query = "SELECT SUM(Area) FROM
+                   (SELECT Area, ConstructionIndex FROM (#{ CTEgeo::Query::ENVOLVENTE_SUPERFICIES_EXTERIORES })
+                    UNION ALL
+                    SELECT Area, ConstructionIndex FROM (#{ CTEgeo::Query::ENVOLVENTE_SUPERFICIES_INTERIORES }))
+               WHERE ConstructionIndex == #{ indiceconstruccion }"
       area = sqlFile.execAndReturnFirstDouble(query).get
-      runner.registerInfo("\narea:\n#{area}\n")
       nombrequery = "SELECT Name FROM Constructions WHERE ConstructionIndex == #{indiceconstruccion} "
       nombre = sqlFile.execAndReturnFirstString(nombrequery)
-      runner.registerInfo("\nnombre:\n#{nombre}\n")
       uvaluequery = "SELECT Uvalue FROM Constructions WHERE ConstructionIndex == #{indiceconstruccion} "
-      uvalue = sqlFile.execAndReturnFirstString(uvaluequery)
-      contenedor_general[:data] << [nombre, area, uvalue]
+      uvalue = sqlFile.execAndReturnFirstDouble(uvaluequery).get
+      contenedor_general[:data] << ["#{ nombre }".encode("UTF-8", invalid: :replace, undef: :replace), area.round(2), uvalue.round(3)]
     end
-
-    runner.registerInfo("indices de construcción: #{indicesconstruccionsearch}")
-    return contenedor_general
-  end
-
-  def self.mediciones_cubiertas(model, sqlFile, runner)
-    contenedor_general = {}
-    contenedor_general[:title] = "mediciones cubiertas exteriores"
-    contenedor_general[:header] = ['construccion', 'GrossArea', 'U']
-    contenedor_general[:units] = []
-    contenedor_general[:data] = []
-
-    indicesconstruccionquery = "SELECT DISTINCT ConstructionIndex FROM (#{CTEgeo.cubiertassexterioresenvolventequery})"
-
-    runner.registerInfo("query indices de construcción cubiertas: #{indicesconstruccionquery}")
-    indicesconstruccionsearch  = sqlFile.execAndReturnVectorOfString(indicesconstruccionquery).get
-    indicesconstruccionsearch.each do | indiceconstruccion |
-      query = "SELECT SUM(GrossArea) FROM (#{CTEgeo.cubiertassexterioresenvolventequery}) WHERE ConstructionIndex == #{indiceconstruccion} "
-      area = sqlFile.execAndReturnFirstDouble(query).get
-      runner.registerInfo("\narea:\n#{area}\n")
-      nombrequery = "SELECT Name FROM Constructions WHERE ConstructionIndex == #{indiceconstruccion} "
-      nombre = sqlFile.execAndReturnFirstString(nombrequery)
-      runner.registerInfo("\nnombre:\n#{nombre}\n")
-      uvaluequery = "SELECT Uvalue FROM Constructions WHERE ConstructionIndex == #{indiceconstruccion} "
-      uvalue = sqlFile.execAndReturnFirstString(uvaluequery)
-      contenedor_general[:data] << [nombre, area, uvalue]
-    end
-
-    runner.registerInfo("indices de construcción: #{indicesconstruccionsearch}")
-    return contenedor_general
-  end
-
-  def self.mediciones_suelosterreno(model, sqlFile, runner)
-    contenedor_general = {}
-    contenedor_general[:title] = "mediciones suelos terreno"
-    contenedor_general[:header] = ['construccion', 'GrossArea', 'U']
-    contenedor_general[:units] = []
-    contenedor_general[:data] = []
-
-    indicesconstruccionquery = "SELECT DISTINCT ConstructionIndex FROM (#{CTEgeo.suelosterrenoenvolventequery})"
-
-    runner.registerInfo("query indices de construcción cubiertas: #{indicesconstruccionquery}")
-    indicesconstruccionsearch  = sqlFile.execAndReturnVectorOfString(indicesconstruccionquery).get
-    indicesconstruccionsearch.each do | indiceconstruccion |
-      query = "SELECT SUM(GrossArea) FROM (#{CTEgeo.suelosterrenoenvolventequery}) WHERE ConstructionIndex == #{indiceconstruccion} "
-      area = sqlFile.execAndReturnFirstDouble(query).get
-      runner.registerInfo("\narea:\n#{area}\n")
-      nombrequery = "SELECT Name FROM Constructions WHERE ConstructionIndex == #{indiceconstruccion} "
-      nombre = sqlFile.execAndReturnFirstString(nombrequery)
-      runner.registerInfo("\nnombre:\n#{nombre}\n")
-      uvaluequery = "SELECT Uvalue FROM Constructions WHERE ConstructionIndex == #{indiceconstruccion} "
-      uvalue = sqlFile.execAndReturnFirstString(uvaluequery)
-      contenedor_general[:data] << [nombre, area, uvalue]
-    end
-
-    runner.registerInfo("indices de construcción: #{indicesconstruccionsearch}")
 
     return contenedor_general
   end
-
-  def self.mediciones_huecos(model, sqlFile, runner)
-    contenedor_general = {}
-    contenedor_general[:title] = "mediciones huecos"
-    contenedor_general[:header] = ['construccion', 'GrossArea', 'U']
-    contenedor_general[:units] = []
-    contenedor_general[:data] = []
-
-    indicesconstruccionquery = "SELECT DISTINCT ConstructionIndex FROM (#{CTEgeo.huecosenvolventequery})"
-
-    runner.registerInfo("query indices de construcción cubiertas: #{indicesconstruccionquery}")
-    indicesconstruccionsearch  = sqlFile.execAndReturnVectorOfString(indicesconstruccionquery).get
-    indicesconstruccionsearch.each do | indiceconstruccion |
-      query = "SELECT SUM(GrossArea) FROM (#{CTEgeo.huecosenvolventequery}) WHERE ConstructionIndex == #{indiceconstruccion} "
-      area = sqlFile.execAndReturnFirstDouble(query).get
-      runner.registerInfo("\narea:\n#{area}\n")
-      nombrequery = "SELECT Name FROM Constructions WHERE ConstructionIndex == #{indiceconstruccion} "
-      nombre = sqlFile.execAndReturnFirstString(nombrequery)
-      runner.registerInfo("\nnombre:\n#{nombre}\n")
-      uvaluequery = "SELECT Uvalue FROM Constructions WHERE ConstructionIndex == #{indiceconstruccion} "
-      uvalue = sqlFile.execAndReturnFirstString(uvaluequery)
-      contenedor_general[:data] << [nombre, area, uvalue]
-    end
-
-    runner.registerInfo("indices de construcción: #{indicesconstruccionsearch}")
-
-    return contenedor_general
-  end
-
 
   def self.demanda_por_componentes(model, sqlFile, runner, periodo)
     runner.registerInfo("__ inicidada demanda por componentes__#{periodo}\n")

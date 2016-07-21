@@ -184,8 +184,8 @@ module OsLib_Reporting
     end
 
     # add in general information from method
-    general_tables << CTE_lib.demanda_por_componentes_invierno(model, sqlFile, runner)
-    general_tables << CTE_lib.demanda_por_componentes_verano(model, sqlFile, runner)
+    general_tables << CTE_lib.tabla_demanda_por_componentes_invierno(model, sqlFile, runner)
+    general_tables << CTE_lib.tabla_demanda_por_componentes_verano(model, sqlFile, runner)
 
     return @demandas_por_componente
 
@@ -205,10 +205,7 @@ module OsLib_Reporting
     end
 
     # add in general information from method
-    general_tables << CTE_lib.mediciones_murosexeriores(model, sqlfile, runner)
-    general_tables << CTE_lib.mediciones_cubiertas(model, sqlfile, runner)
-    general_tables << CTE_lib.mediciones_suelosterreno(model, sqlfile, runner)
-    general_tables << CTE_lib.mediciones_huecos(model, sqlfile, runner)
+    general_tables << CTE_lib.tabla_mediciones_envolvente(model, sqlfile, runner)
 
     return @mediciones
   end
@@ -231,7 +228,6 @@ module OsLib_Reporting
     general_tables << Variables_inspeccion.variables_inspeccionadas(model, sqlFile, runner)
 
     return @inspeccion_variables
-
   end
 
 
@@ -250,35 +246,11 @@ module OsLib_Reporting
     end
 
     # add in general information from method
-    general_tables << OsLib_Reporting.tabla_general_de_mediciones(model, sqlFile, runner)
-    general_tables << OsLib_Reporting.tabla_de_energias_CTE(model, sqlFile, runner)
+    general_tables << CTE_lib.CTE_tabla_general_de_mediciones(model, sqlFile, runner)
+    general_tables << CTE_lib.CTE_tabla_de_energias(model, sqlFile, runner)
     #general_tables << OsLib_Reporting.general_building_information_table(model, sqlFile, runner)
 
     return @mediciones_segun_CTE
-  end
-
-  def self.tabla_de_energias_CTE(model, sqlFile, runner)
-    energianeta = OpenStudio.convert(sqlFile.netSiteEnergy.get, 'GJ', 'kWh').get
-    superficiehabitable = CTEgeo.superficieHabitable(sqlFile)
-    intensidadEnergetica = superficiehabitable != 0 ? (energianeta / superficiehabitable) : 0
-
-    runner.registerValue('Energia Neta (Net Site Energy)', energianeta, 'kWh')
-    runner.registerValue('Intensidad energética (EUI)', intensidadEnergetica, 'kWh/m^2')
-
-    general_table = {}
-    general_table[:title] = 'Energía según CTE'
-    general_table[:header] =%w(informacion valor unidades)
-    general_table[:units] = []
-    general_table[:data] = []
-    general_table[:data] << ['Energia Neta (Net Site Energy)', energianeta.round(2), 'kWh']
-    general_table[:data] << ['Energía por superficie habitable', intensidadEnergetica.round(2), 'kWh/m^2']
-
-    return general_table
-  end
-
-  def self.tabla_general_de_mediciones(model, sqlFile, runner)
-    tabla_general = CTE_lib.CTE_tabla_general_de_mediciones(model, sqlFile, runner)
-    return tabla_general
   end
 
 

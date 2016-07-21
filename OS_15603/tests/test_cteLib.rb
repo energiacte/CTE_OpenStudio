@@ -70,6 +70,9 @@ class Cte_lib_Test < MiniTest::Unit::TestCase
 
       assert(File.exist?(reportPath))
 
+      
+
+
     end
 
     # def test_variables_disponibles
@@ -95,12 +98,12 @@ class Cte_lib_Test < MiniTest::Unit::TestCase
     # end
 
     # def test_superficiesexternas
-    #     stm = @cur.prepare CTE_lib.superficiesexternasquery
+    #     stm = @cur.prepare CTEgeo::Query::ENVOLVENTE_SUPERFICIES_EXTERIORES
     #     assert_equal(stm.execute.count, 5)
     # end
 
     # def test_superficiescontacto
-    #     stm = @cur.prepare CTE_lib.superficiescontactoquery
+    #     stm = @cur.prepare CTEgeo::Query::ENVOLVENTE_SUPERFICIES_INTERIORES
     #     assert_equal(stm.execute.count, 1)
     # end
 
