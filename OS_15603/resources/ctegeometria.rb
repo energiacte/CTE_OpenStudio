@@ -30,7 +30,7 @@ module CTEgeo
   end
 
   def self.volumennohabitable(sqlFile)
-    query = "SELECT SUM(Volume) FROM (#{CTEgeo.zonasnohabitablesquery})"
+    query = "SELECT SUM(Volume) FROM (#{zonasnohabitablesquery})"
     search = sqlFile.execAndReturnFirstDouble(query)
     return (if search.empty? then false else search.get end)
   end
