@@ -12,11 +12,11 @@ module CTE_lib
     # TODO: descomponer superficies externas de la envolvente por tipos (muros, cubiertas, huecos, lucernarios, etc)
     buildingName = model.getBuilding.name.get
     # Zonas habitables
-    zonasHabitables = CTEgeo.zonashabitables(sqlFile)
-    superficieHabitable = CTEgeo.superficiehabitable(sqlFile).round(2)
-    volumenHabitable = CTEgeo.volumenhabitable(sqlFile).round(2)
+    zonasHabitables = CTEgeo.zonasHabitables(sqlFile)
+    superficieHabitable = CTEgeo.superficieHabitable(sqlFile).round(2)
+    volumenHabitable = CTEgeo.volumenHabitable(sqlFile).round(2)
     # Zonas no habitables
-    zonasNoHabitables = CTEgeo.zonasnohabitables(sqlFile)
+    zonasNoHabitables = CTEgeo.zonasNoHabitables(sqlFile)
     superficieNoHabitable = CTEgeo.superficienohabitable(sqlFile).round(2)
     volumenNoHabitable = CTEgeo.volumennohabitable(sqlFile).round(2)
     # Envolvente térmica
@@ -48,6 +48,7 @@ module CTE_lib
     medicion_general[:header] = ['', '#', 'Superficie', 'Volumen']
     medicion_general[:units] = ['', '', 'm²', 'm³']
     medicion_general[:data] = []
+    medicion_general[:data] << ['<b>Edificio</b>', '', superficieHabitable + superficieNoHabitable, volumenHabitable + volumenNoHabitable]
     medicion_general[:data] << ["<u>Zonas habitables</u>", zonasHabitables.count(), superficieHabitable, volumenHabitable]
     medicion_general[:data] << ["<u>Zonas no habitables</u>", zonasNoHabitables.count(), superficieNoHabitable, volumenNoHabitable]
     medicion_general[:data] << ["<u>Envolvente térmica</u>", '', areatotal, '']
@@ -63,7 +64,7 @@ module CTE_lib
     log = 'log_demandaComponentes'
     msg(log, "  ..flowMurosExteriores\n")
 
-    flowMurosExterioresQuery = "SELECT * FROM (#{CTEgeo.superficiesquery}) AS surf
+    flowMurosExterioresQuery = "SELECT * FROM (#{ CTEgeo::Query::ZONASHABITABLES_SUPERFICIES }) AS surf
 INNER JOIN ReportVariableData rvd  USING (ReportVariableDataDictionaryIndex)
 INNER JOIN Time time USING (TimeIndex)
 WHERE surf.VariableName == 'Surface Inside Face Conduction Heat Transfer Energy'
@@ -87,7 +88,7 @@ AND surf.ClassName == 'Wall' AND surf.ExtBoundCond == 0 "
     log = 'log_demandaComponentes'
     msg(log, "  ..flowCubiertas\n")
 
-    flowCubiertasQuery = "SELECT * FROM (#{CTEgeo.superficiesquery}) AS surf
+    flowCubiertasQuery = "SELECT * FROM (#{ CTEgeo::Query::ZONASHABITABLES_SUPERFICIES }) AS surf
 INNER JOIN ReportVariableData rvd  USING (ReportVariableDataDictionaryIndex)
 INNER JOIN Time time USING (TimeIndex)
 WHERE surf.VariableName == 'Surface Inside Face Conduction Heat Transfer Energy'
@@ -110,7 +111,7 @@ AND surf.ClassName == 'Roof' AND surf.ExtBoundCond == 0 "
     log = 'log_demandaComponentes'
     msg(log, "  ..flowSuelosTerreno\n")
 
-    flowSuelosTerrenoQuery = "SELECT * FROM (#{CTEgeo.superficiesquery}) AS surf
+    flowSuelosTerrenoQuery = "SELECT * FROM (#{ CTEgeo::Query::ZONASHABITABLES_SUPERFICIES }) AS surf
 INNER JOIN ReportVariableData rvd  USING (ReportVariableDataDictionaryIndex)
 INNER JOIN Time time USING (TimeIndex)
 WHERE surf.VariableName == 'Surface Inside Face Conduction Heat Transfer Energy'
@@ -138,7 +139,7 @@ AND surf.ClassName == 'Floor' AND surf.ExtBoundCond == -1 "
                 'transmitted solar' => 'Surface Window Transmitted Solar Radiation Energy'}
 
     flowVentanasInvierno = lambda do | var | "SELECT SUM(variableValue) FROM
-    (#{CTEgeo.superficiesquery}) AS surf
+    (#{ CTEgeo::Query::ZONASHABITABLES_SUPERFICIES }) AS surf
     INNER JOIN ReportVariableData rvd  USING (ReportVariableDataDictionaryIndex)
     INNER JOIN Time time USING (TimeIndex)
     WHERE surf.VariableName == '#{variable[var]}'
@@ -147,7 +148,7 @@ AND surf.ClassName == 'Floor' AND surf.ExtBoundCond == -1 "
     end
 
     flowVentanasVerano = lambda do | var | "SELECT SUM(variableValue) FROM
-    (#{CTEgeo.superficiesquery}) AS surf
+    (#{ CTEgeo::Query::ZONASHABITABLES_SUPERFICIES }) AS surf
     INNER JOIN ReportVariableData rvd  USING (ReportVariableDataDictionaryIndex)
     INNER JOIN Time time USING (TimeIndex)
     WHERE surf.VariableName == '#{variable[var]}'

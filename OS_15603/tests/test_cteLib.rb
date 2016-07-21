@@ -79,18 +79,18 @@ class Cte_lib_Test < MiniTest::Unit::TestCase
     # end
 
     # def test_zonasHabitables
-    #     stm = @cur.prepare CTEgeo::Query::ZONASHABITABLES
+    #     stm = @cur.prepare CTEgeo.getValueOrFalse(sqlFile.execAndReturnVectorOfString("#{ CTEgeo::Query::ZONASHABITABLES }"))
     #     rs = stm.execute
     #     assert_equal(rs.count,1)
     # end
 
     # def test_zonasNoHabitables
-    #     stm = @cur.prepare CTE_lib.zonasnohabitablesquery
+    #     stm = @cur.prepare CTEgeo::Query::ZONASNOHABITABLES
     #     assert_equal(stm.execute.count,1)
     # end
 
     # def test_superficies
-    #     stm = @cur.prepare CTE_lib.superficiesquery
+    #     stm = @cur.prepare CTEgeo::Query::ZONASHABITABLES_SUPERFICIES
     #     assert_equal(stm.execute.count, 8)
     # end
 
@@ -147,11 +147,11 @@ end
     #~ ### ZONAS HABITABLES
     #~ def test_variablesDisponibles
 
-        #~ #zonashabitablessearch = sqlFile.execAndReturnVectorOfString("#{ CTEgeo::Query::ZONASHABITABLES }")
+        #~ #zonashabitables = CTEgeo.zonasHabitables(sqlFile)
         #~ # no podemos hacer test de esto porque tendríamos que cargar openstudio y, aún así,
         #~ # no sé como cargar un modelo concreto.
 
-        #~ #numerodezonas = zonashabitablessearch.get.count()
+        #~ #numerodezonas = zonashabitables.count()
         #~ #assert_equal(numerodezonas, 47)
 
         #~ db = SQLite3::Database.open "cubito+garaje_eplusoutZAB.sql"

@@ -10,6 +10,24 @@ FROM Zones
     LEFT OUTER JOIN ZoneInfoZoneLists zizl USING (ZoneIndex)
     LEFT OUTER JOIN ZoneLists zl USING (ZoneListIndex)
 WHERE zl.Name NOT LIKE 'CTE_N%' "
+
+    ZONASNOHABITABLES = "
+SELECT
+    ZoneIndex, ZoneName, Volume, FloorArea, ZoneListIndex, Name
+FROM Zones
+    LEFT OUTER JOIN ZoneInfoZoneLists zizl USING (ZoneIndex)
+    LEFT OUTER JOIN ZoneLists zl USING (ZoneListIndex)
+WHERE zl.Name LIKE 'CTE_N%' "
+
+      ZONASHABITABLES_SUPERFICIES = "
+SELECT
+    SurfaceIndex, SurfaceName, ConstructionIndex, ClassName, Area, GrossArea,
+    ExtBoundCond, surf.ZoneIndex AS ZoneIndex
+FROM
+    Surfaces surf
+    INNER JOIN ( #{ CTEgeo::Query::ZONASHABITABLES } ) AS zones
+        ON surf.ZoneIndex = zones.ZoneIndex"
+
   end
 
 
@@ -17,78 +35,54 @@ WHERE zl.Name NOT LIKE 'CTE_N%' "
     return (if search.empty? then false else search.get end)
   end
 
-  def self.zonashabitables(sqlFile)
-    return getValueOrFalse(sqlFile.execAndReturnVectorOfString("#{ Query::ZONASHABITABLES }"))
+  def self.zonasHabitables(sqlFile)
+    result = getValueOrFalse(sqlFile.execAndReturnVectorOfString("#{ CTEgeo::Query::ZONASHABITABLES }"))
+    return (result != false) ? result : []
   end
 
-  def self.superficiehabitable(sqlFile)
-    return getValueOrFalse(sqlFile.execAndReturnFirstDouble("SELECT SUM(FloorArea) FROM (#{ Query::ZONASHABITABLES })"))
+  def self.superficieHabitable(sqlFile)
+    result = getValueOrFalse(sqlFile.execAndReturnFirstDouble("SELECT SUM(FloorArea) FROM (#{ CTEgeo::Query::ZONASHABITABLES })"))
+    return (result != false) ? result : 0
   end
 
-  def self.volumenhabitable(sqlFile)
-    return getValueOrFalse(sqlFile.execAndReturnFirstDouble("SELECT SUM(Volume) FROM  (#{ Query::ZONASHABITABLES })"))
+  def self.volumenHabitable(sqlFile)
+    result = getValueOrFalse(sqlFile.execAndReturnFirstDouble("SELECT SUM(Volume) FROM  (#{ CTEgeo::Query::ZONASHABITABLES })"))
+    return (result != false) ? result : 0
   end
 
-  def self.zonasnohabitables(sqlFile)
-    return getValueOrFalse(sqlFile.execAndReturnVectorOfString("#{zonasnohabitablesquery}"))
+  def self.zonasNoHabitables(sqlFile)
+    result = getValueOrFalse(sqlFile.execAndReturnVectorOfString("#{ CTEgeo::Query::ZONASNOHABITABLES }"))
+    return (result != false) ? result : []
   end
 
   def self.superficienohabitable(sqlFile)
-    return getValueOrFalse(sqlFile.execAndReturnFirstDouble("SELECT SUM(FloorArea) FROM (#{zonasnohabitablesquery})"))
+    result = getValueOrFalse(sqlFile.execAndReturnFirstDouble("SELECT SUM(FloorArea) FROM (#{ CTEgeo::Query::ZONASNOHABITABLES })"))
+    return (result != false) ? result : 0
   end
 
   def self.volumennohabitable(sqlFile)
-    return getValueOrFalse(sqlFile.execAndReturnFirstDouble("SELECT SUM(Volume) FROM (#{zonasnohabitablesquery})"))
+    result = getValueOrFalse(sqlFile.execAndReturnFirstDouble("SELECT SUM(Volume) FROM (#{ CTEgeo::Query::ZONASNOHABITABLES })"))
+    return (result != false) ? result : 0
   end
 
   def self.superficiesexternas(sqlFile)
-    return getValueOrFalse(sqlFile.execAndReturnVectorOfString(superficiesexternasquery))
+    result = getValueOrFalse(sqlFile.execAndReturnVectorOfString(superficiesexternasquery))
+    return (result != false) ? result : []
   end
 
   def self.superficiescontacto(sqlFile)
-    return getValueOrFalse(sqlFile.execAndReturnVectorOfString(superficiescontactoquery))
+    result = getValueOrFalse(sqlFile.execAndReturnVectorOfString(superficiescontactoquery))
+    return (result != false) ? result : []
   end
 
   def self.areaexterior(sqlFile)
-    return getValueOrFalse(sqlFile.execAndReturnFirstDouble("SELECT SUM(GrossArea) FROM (#{superficiesexternasquery})"))
+    result = getValueOrFalse(sqlFile.execAndReturnFirstDouble("SELECT SUM(GrossArea) FROM (#{superficiesexternasquery})"))
+    return (result != false) ? result : 0
   end
 
   def self.areainterior(sqlFile)
-    return getValueOrFalse(sqlFile.execAndReturnFirstDouble("SELECT SUM(GrossArea) FROM (#{superficiescontactoquery})"))
-  end
-
-  def self.zonashabitablesquery
-    # Zonas habitables
-    return "
-SELECT
-    ZoneIndex, ZoneName, Volume, FloorArea, ZoneListIndex, Name
-FROM Zones
-    LEFT OUTER JOIN ZoneInfoZoneLists zizl USING (ZoneIndex)
-    LEFT OUTER JOIN ZoneLists zl USING (ZoneListIndex)
-WHERE zl.Name NOT LIKE 'CTE_N%' "
-  end
-
-  def self.zonasnohabitablesquery
-    # Zonas no habitables
-    return "
-SELECT
-    ZoneIndex, ZoneName, Volume, FloorArea, ZoneListIndex, Name
-FROM Zones
-    LEFT OUTER JOIN ZoneInfoZoneLists zizl USING (ZoneIndex)
-    LEFT OUTER JOIN ZoneLists zl USING (ZoneListIndex)
-WHERE zl.Name LIKE 'CTE_N%' "
-  end
-
-  def self.superficiesquery
-    # Superficies de las zonas habitables
-    return "
-SELECT
-    SurfaceIndex, SurfaceName, ConstructionIndex, ClassName, Area, GrossArea,
-    ExtBoundCond, surf.ZoneIndex AS ZoneIndex
-FROM
-    Surfaces surf
-    INNER JOIN ( #{zonashabitablesquery} ) AS zones
-        ON surf.ZoneIndex = zones.ZoneIndex"
+    result = getValueOrFalse(sqlFile.execAndReturnFirstDouble("SELECT SUM(GrossArea) FROM (#{superficiescontactoquery})"))
+    return (result != false) ? result : 0
   end
 
   def self.superficiesexternasquery
@@ -98,7 +92,7 @@ SELECT
     SurfaceIndex, SurfaceName, ConstructionIndex, ClassName, Area,
     GrossArea, ExtBoundCond, ZoneIndex
 FROM
-    (#{superficiesquery}) AS surf
+    (#{ CTEgeo::Query::ZONASHABITABLES_SUPERFICIES }) AS surf
     WHERE (surf.ClassName NOT IN ('Window', 'Internal Mass') AND surf.ExtBoundCond IN (-1, 0)) "
   end
 
@@ -112,11 +106,11 @@ SELECT
 FROM (  SELECT
             SurfaceIndex
         FROM
-            (#{superficiesquery}) AS surf
+            (#{ CTEgeo::Query::ZONASHABITABLES_SUPERFICIES }) AS surf
             WHERE (surf.ClassName NOT IN ('Window', 'Internal Mass') AND ExtBoundCond NOT IN (-1, 0))
      ) AS internas
     INNER JOIN Surfaces surf ON surf.ExtBoundCond = internas.SurfaceIndex
-    INNER JOIN (#{zonasnohabitablesquery}) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
+    INNER JOIN (#{ CTEgeo::Query::ZONASNOHABITABLES }) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
   end
 
   def self.murosexterioresenvolventequery
@@ -155,7 +149,7 @@ FROM
 SELECT
     *
 FROM Surfaces surf
-    INNER JOIN  ( #{zonashabitablesquery} ) AS zones
+    INNER JOIN  ( #{ CTEgeo::Query::ZONASHABITABLES } ) AS zones
     ON surf.ZoneIndex = zones.ZoneIndex
     WHERE (surf.ClassName == 'Window' AND surf.ExtBoundCond == 0) "
   end
