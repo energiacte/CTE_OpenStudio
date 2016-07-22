@@ -3,6 +3,9 @@
 module CTEgeo
 
   module Query
+    # Queries para localizar superficies y elementos
+    # ExtBoundCond: 0=exterior, -1=terreno, numero=otra superficie
+    # ClassName puede ser ['Wall', 'Roof', 'Floor', 'Window', 'InternalMass']
     ZONASHABITABLES = "
 SELECT
     ZoneIndex, ZoneName, Volume, FloorArea, ZoneListIndex, Name
@@ -50,9 +53,6 @@ FROM (  SELECT
      ) AS internas
     INNER JOIN Surfaces surf ON surf.ExtBoundCond = internas.SurfaceIndex
     INNER JOIN (#{ CTEgeo::Query::ZONASNOHABITABLES }) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
-
-
-
   end
 
   def self.getValueOrFalse(search)
@@ -107,47 +107,6 @@ FROM (  SELECT
   def self.envolventeAreaInterior(sqlFile)
     result = getValueOrFalse(sqlFile.execAndReturnFirstDouble("SELECT SUM(Area) FROM (#{ CTEgeo::Query::ENVOLVENTE_SUPERFICIES_INTERIORES })"))
     return (result != false) ? result : 0
-  end
-
-  def self.murosexterioresenvolventequery
-    return "
-SELECT
-    SurfaceIndex, SurfaceName, ConstructionIndex, ClassName, Area,
-    GrossArea, ExtBoundCond, ZoneIndex
-FROM
-    (#{ CTEgeo::Query::ENVOLVENTE_SUPERFICIES_EXTERIORES }) AS surf
-    WHERE (surf.ClassName == 'Wall' AND surf.ExtBoundCond == 0) "
-  end
-
-  def self.cubiertassexterioresenvolventequery
-    return "
-SELECT
-    SurfaceIndex, SurfaceName, ConstructionIndex, ClassName, Area,
-    GrossArea, ExtBoundCond, ZoneIndex
-FROM
-    (#{ CTEgeo::Query::ENVOLVENTE_SUPERFICIES_EXTERIORES }) AS surf
-    WHERE (surf.ClassName == 'Roof' AND surf.ExtBoundCond == 0) "
-  end
-
-  def self.suelosterrenoenvolventequery
-    return "
-SELECT
-    SurfaceIndex, SurfaceName, ConstructionIndex, ClassName, Area,
-    GrossArea, ExtBoundCond, ZoneIndex
-FROM
-    (#{ CTEgeo::Query::ENVOLVENTE_SUPERFICIES_EXTERIORES }) AS surf
-    WHERE (surf.ClassName == 'Floor' AND surf.ExtBoundCond == -1) "
-  end
-
-  def self.huecosenvolventequery
-    # XXX: No incluye lucernarios!
-    return "
-SELECT
-    *
-FROM Surfaces surf
-    INNER JOIN  ( #{ CTEgeo::Query::ZONASHABITABLES } ) AS zones
-    ON surf.ZoneIndex = zones.ZoneIndex
-    WHERE (surf.ClassName == 'Window' AND surf.ExtBoundCond == 0) "
   end
 
 end

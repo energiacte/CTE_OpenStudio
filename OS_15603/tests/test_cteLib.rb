@@ -21,10 +21,10 @@ class Cte_lib_Test < MiniTest::Unit::TestCase
     end
 
     def test_StandardReports
-      modelPath = "cubito+garaje_NH.osm"
-      idfPath = "cubito+garaje_NH-out.idf"
-      sqlPath = "cubito+garaje_NH.sql"
-      reportPath = "cubito+garaje_NH-report.html"
+      modelPath = "#{File.dirname(__FILE__)}/cubito+garaje_NH.osm"
+      idfPath = "#{File.dirname(__FILE__)}/cubito+garaje_NH-out.idf"
+      sqlPath = "#{File.dirname(__FILE__)}/cubito+garaje_NH.sql"
+      reportPath = "#{File.dirname(__FILE__)}/report.html"
 
       assert(File.exist?(modelPath))
       model = OpenStudio::Path.new(modelPath)
@@ -107,23 +107,23 @@ class Cte_lib_Test < MiniTest::Unit::TestCase
     #     assert_equal(stm.execute.count, 1)
     # end
 
-    # def test_murosexterires
-    #     stm = @cur.prepare CTE_lib.murosexterioresenvolventequery
+    # def test_murosexteriores
+    #     stm = @cur.prepare murosexterioresenvolventequery
     #     assert_equal(stm.execute.count, 3)
     # end
 
     # def test_cubiertasexteriores
-    #     stm = @cur.prepare CTE_lib.cubiertassexterioresenvolventequery
+    #     stm = @cur.prepare cubiertasexterioresenvolventequery
     #     assert_equal(stm.execute.count, 1)
     # end
 
     # def test_suelosterreno
-    #     stm = @cur.prepare CTE_lib.suelosterrenoenvolventequery
+    #     stm = @cur.prepare suelosterrenoenvolventequery
     #     assert_equal(stm.execute.count, 1)
     # end
 
     # def test_huecos
-    #     stm = @cur.prepare CTE_lib.huecosenvolventequery
+    #     stm = @cur.prepare huecosenvolventequery
     #     rs =  stm.execute
     #     #~ puts rs.columns
     #     assert_equal(rs.count, 1)
@@ -136,10 +136,55 @@ class Cte_lib_Test < MiniTest::Unit::TestCase
     # end
 
     #~ def test_CambioHorarioVeranoInvierno
-        #~ stm = @cur.prepare CTE_lib.flowmurosexterioresquery
-        #~ rs = stm.execute
+    #~ stm = @cur.prepare CTE_lib.flowmurosexterioresquery
+    #~ rs = stm.execute
     #~ end
+
+    def murosexterioresenvolventequery
+      return "
+SELECT
+    SurfaceIndex, SurfaceName, ConstructionIndex, ClassName, Area,
+    GrossArea, ExtBoundCond, ZoneIndex
+FROM
+    (#{ CTEgeo::Query::ENVOLVENTE_SUPERFICIES_EXTERIORES }) AS surf
+    WHERE (surf.ClassName == 'Wall' AND surf.ExtBoundCond == 0) "
+    end
+
+    def cubiertasexterioresenvolventequery
+      return "
+SELECT
+    SurfaceIndex, SurfaceName, ConstructionIndex, ClassName, Area,
+    GrossArea, ExtBoundCond, ZoneIndex
+FROM
+    (#{ CTEgeo::Query::ENVOLVENTE_SUPERFICIES_EXTERIORES }) AS surf
+    WHERE (surf.ClassName == 'Roof' AND surf.ExtBoundCond == 0) "
+    end
+
+    def suelosterrenoenvolventequery
+      return "
+SELECT
+    SurfaceIndex, SurfaceName, ConstructionIndex, ClassName, Area,
+    GrossArea, ExtBoundCond, ZoneIndex
+FROM
+    (#{ CTEgeo::Query::ENVOLVENTE_SUPERFICIES_EXTERIORES }) AS surf
+    WHERE (surf.ClassName == 'Floor' AND surf.ExtBoundCond == -1) "
+    end
+
+    def huecosenvolventequery
+      # XXX: No incluye lucernarios!
+      return "
+SELECT
+    *
+FROM Surfaces surf
+    INNER JOIN  ( #{ CTEgeo::Query::ZONASHABITABLES } ) AS zones
+    ON surf.ZoneIndex = zones.ZoneIndex
+    WHERE (surf.ClassName == 'Window' AND surf.ExtBoundCond == 0) "
+    end
+
 end
+
+
+
 
 # @cur = SQLite3::Database.open "cubito+garaje_eplusoutZAB.sql"
 # stm = @cur.prepare CTE_lib.huecosenvolventequery
