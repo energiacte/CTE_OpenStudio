@@ -61,7 +61,6 @@ module CTE_lib
       return medicion_general
     end
 
-
     def self.CTE_tabla_de_energias(model, sqlFile, runner)
       # Basada en una tabla del report SI
       energianeta = OpenStudio.convert(sqlFile.netSiteEnergy.get, 'GJ', 'kWh').get
@@ -82,14 +81,38 @@ module CTE_lib
       return general_table
     end
 
+    def self.tabla_mediciones_envolvente(model, sqlFile, runner)
+      contenedor_general = {}
+      contenedor_general[:title] = "Mediciones elementos de la envolvente"
+      contenedor_general[:header] = ['Construcción', 'Superficie', 'U']
+      contenedor_general[:units] = ['', 'm²', 'W/m²K']
+      contenedor_general[:data] = []
+
+      indicesquery = "SELECT ConstructionIndex FROM (#{ CTE_Query::ENVOLVENTE_SUPERFICIES_EXTERIORES })
+                    UNION
+                    SELECT ConstructionIndex FROM (#{ CTE_Query::ENVOLVENTE_SUPERFICIES_INTERIORES })"
+      indices  = sqlFile.execAndReturnVectorOfString(indicesquery).get
+
+      indices.each do | indiceconstruccion |
+        query = "SELECT SUM(Area) FROM
+                   (SELECT Area, ConstructionIndex FROM (#{ CTE_Query::ENVOLVENTE_SUPERFICIES_EXTERIORES })
+                    UNION ALL
+                    SELECT Area, ConstructionIndex FROM (#{ CTE_Query::ENVOLVENTE_SUPERFICIES_INTERIORES }))
+               WHERE ConstructionIndex == #{ indiceconstruccion }"
+        area = sqlFile.execAndReturnFirstDouble(query).get
+        nombre = sqlFile.execAndReturnFirstString("SELECT Name FROM Constructions WHERE ConstructionIndex == #{indiceconstruccion} ").get
+        uvalue = sqlFile.execAndReturnFirstDouble("SELECT Uvalue FROM Constructions WHERE ConstructionIndex == #{indiceconstruccion} ").get
+        contenedor_general[:data] << ["#{ nombre }".encode("UTF-8", invalid: :replace, undef: :replace), area.round(2), uvalue.round(3)]
+      end
+
+      return contenedor_general
+    end
 
 
 
-    
+
+
     def self.flowMurosExteriores(sqlFile)
-      log = 'log_demandaComponentes'
-      msg(log, "  ..flowMurosExteriores\n")
-
       flowMurosExterioresQuery = "SELECT * FROM (#{ CTE_Query::ZONASHABITABLES_SUPERFICIES }) AS surf
 INNER JOIN ReportVariableData rvd  USING (ReportVariableDataDictionaryIndex)
 INNER JOIN Time time USING (TimeIndex)
@@ -100,20 +123,14 @@ AND surf.ClassName == 'Wall' AND surf.ExtBoundCond == 0 "
       flowMurosExterioresInviernoSearch = sqlFile.execAndReturnFirstDouble(flowMurosExterioresInviernoQuery)
       energianetaInvierno = OpenStudio.convert(flowMurosExterioresInviernoSearch.get, 'J', 'kWh').get
 
-      msg(log, "Energia neta muros invierno: #{energianetaInvierno.round}\n")
-
       flowMurosExterioresVeranoQuery = "SELECT SUM(variableValue) FROM (#{flowMurosExterioresQuery}) WHERE month IN (6,7,8,9)"
       flowMurosExterioresVeranoSearch = sqlFile.execAndReturnFirstDouble(flowMurosExterioresVeranoQuery)
       energianetaVerano = OpenStudio.convert(flowMurosExterioresVeranoSearch.get, 'J', 'kWh').get
 
-      msg(log, "Energia neta muros verano #{energianetaVerano.round}\n")
       return [energianetaInvierno, energianetaVerano]
     end
 
     def self.flowCubiertas(sqlFile)
-      log = 'log_demandaComponentes'
-      msg(log, "  ..flowCubiertas\n")
-
       flowCubiertasQuery = "SELECT * FROM (#{ CTE_Query::ZONASHABITABLES_SUPERFICIES }) AS surf
 INNER JOIN ReportVariableData rvd  USING (ReportVariableDataDictionaryIndex)
 INNER JOIN Time time USING (TimeIndex)
@@ -123,20 +140,15 @@ AND surf.ClassName == 'Roof' AND surf.ExtBoundCond == 0 "
       flowCubiertasInviernoQuery = "SELECT SUM(VariableValue) FROM (#{flowCubiertasQuery}) WHERE month IN (1,2,3,4,5,10,11,12)"
       flowCubiertasInviernoSearch = sqlFile.execAndReturnFirstDouble(flowCubiertasInviernoQuery)
       energianetaInvierno = OpenStudio.convert(flowCubiertasInviernoSearch.get, 'J', 'kWh').get
-      msg(log, "Energia neta cubiertas invierno: #{energianetaInvierno.round}\n")
 
       flowCubiertasVeranoQuery = "SELECT SUM(variableValue) FROM (#{flowCubiertasQuery}) WHERE month IN (6,7,8,9)"
       flowCubiertasVeranoSearch = sqlFile.execAndReturnFirstDouble(flowCubiertasVeranoQuery)
       energianetaVerano = OpenStudio.convert(flowCubiertasVeranoSearch.get, 'J', 'kWh').get
-      msg(log, "Energia neta cubiertas verano #{energianetaVerano.round}\n")
 
       return [energianetaInvierno, energianetaVerano]
     end
 
     def self.flowSuelosTerreno(sqlFile)
-      log = 'log_demandaComponentes'
-      msg(log, "  ..flowSuelosTerreno\n")
-
       flowSuelosTerrenoQuery = "SELECT * FROM (#{ CTE_Query::ZONASHABITABLES_SUPERFICIES }) AS surf
 INNER JOIN ReportVariableData rvd  USING (ReportVariableDataDictionaryIndex)
 INNER JOIN Time time USING (TimeIndex)
@@ -146,20 +158,15 @@ AND surf.ClassName == 'Floor' AND surf.ExtBoundCond == -1 "
       flowSuelosTerrenoInviernoQuery = "SELECT SUM(VariableValue) FROM (#{flowSuelosTerrenoQuery}) WHERE month IN (1,2,3,4,5,10,11,12)"
       flowSuelosTerrenoInviernoSearch = sqlFile.execAndReturnFirstDouble(flowSuelosTerrenoInviernoQuery)
       energianetaInvierno = OpenStudio.convert(flowSuelosTerrenoInviernoSearch.get, 'J', 'kWh').get
-      msg(log, "Energia neta suelos invierno: #{energianetaInvierno.round}\n")
 
       flowSuelosTerrenoVeranoQuery = "SELECT SUM(variableValue) FROM (#{flowSuelosTerrenoQuery}) WHERE month IN (6,7,8,9)"
       flowSuelosTerrenoVeranoSearch = sqlFile.execAndReturnFirstDouble(flowSuelosTerrenoVeranoQuery)
       energianetaVerano = OpenStudio.convert(flowSuelosTerrenoVeranoSearch.get, 'J', 'kWh').get
-      msg(log, "Energia neta suelos verano #{energianetaVerano.round}\n")
 
       return [energianetaInvierno, energianetaVerano]
     end
 
     def self.flowVentanas(sqlFile)
-      log = 'log_demandaComponentes'
-      msg(log, "  ..flowVentanas\n")
-
       variable =   {  'heat gain' => 'Surface Window Heat Gain Energy',
                       'heat loss' => 'Surface Window Heat Loss Energy',
                       'transmitted solar' => 'Surface Window Transmitted Solar Radiation Energy'}
@@ -181,7 +188,6 @@ AND surf.ClassName == 'Floor' AND surf.ExtBoundCond == -1 "
     AND surf.ClassName == 'Window'
     AND month IN (6,7,8,9)"
       end
-
 
       heatGainInviernoSearch = sqlFile.execAndReturnFirstDouble(flowVentanasInvierno.call('heat gain'))
       heatGainInvierno = OpenStudio.convert(heatGainInviernoSearch.get, 'J', 'kWh').get
@@ -243,35 +249,6 @@ AND VariableValue > -45 "
 
     def self.tabla_demanda_por_componentes_verano(model, sqlFile, runner)
       return demanda_por_componentes(model, sqlFile, runner, 'verano')
-    end
-
-    def self.tabla_mediciones_envolvente(model, sqlFile, runner)
-      contenedor_general = {}
-      contenedor_general[:title] = "Mediciones elementos de la envolvente"
-      contenedor_general[:header] = ['Construcción', 'Superficie', 'U']
-      contenedor_general[:units] = ['', 'm²', 'W/m²K']
-      contenedor_general[:data] = []
-
-      indicesquery = "SELECT ConstructionIndex FROM (#{ CTE_Query::ENVOLVENTE_SUPERFICIES_EXTERIORES })
-                    UNION
-                    SELECT ConstructionIndex FROM (#{ CTE_Query::ENVOLVENTE_SUPERFICIES_INTERIORES })"
-      indices  = sqlFile.execAndReturnVectorOfString(indicesquery).get
-
-      indices.each do | indiceconstruccion |
-        query = "SELECT SUM(Area) FROM
-                   (SELECT Area, ConstructionIndex FROM (#{ CTE_Query::ENVOLVENTE_SUPERFICIES_EXTERIORES })
-                    UNION ALL
-                    SELECT Area, ConstructionIndex FROM (#{ CTE_Query::ENVOLVENTE_SUPERFICIES_INTERIORES }))
-               WHERE ConstructionIndex == #{ indiceconstruccion }"
-        area = sqlFile.execAndReturnFirstDouble(query).get
-        nombrequery = "SELECT Name FROM Constructions WHERE ConstructionIndex == #{indiceconstruccion} "
-        nombre = sqlFile.execAndReturnFirstString(nombrequery)
-        uvaluequery = "SELECT Uvalue FROM Constructions WHERE ConstructionIndex == #{indiceconstruccion} "
-        uvalue = sqlFile.execAndReturnFirstDouble(uvaluequery).get
-        contenedor_general[:data] << ["#{ nombre }".encode("UTF-8", invalid: :replace, undef: :replace), area.round(2), uvalue.round(3)]
-      end
-
-      return contenedor_general
     end
 
     def self.demanda_por_componentes(model, sqlFile, runner, periodo)
@@ -361,43 +338,5 @@ AND VariableValue > -45 "
       return medicion_general
 
     end
-    def self.msg(fichero, cadena)
-      File.open(fichero+'.txt', 'a') {|file| file.write(cadena)}
-    end
   end
 end
-
-# Búqueda de ejemplo
-# SELECT * FROM
-# (SELECT zones.ZoneIndex, zones.ZoneName  FROM Zones zones
-# LEFT OUTER JOIN ZoneInfoZoneLists zizl USING (ZoneIndex)
-# LEFT OUTER JOIN ZoneLists zl USING (ZoneListIndex)
-# WHERE zl.Name != 'CTE_NOHABITA' AND zl.Name != 'CTE_N' )
-# INNER JOIN ReportVariableDataDictionary
-# INNER JOIN ReportVariableData USING (ReportVariableDataDictionaryIndex)
-# INNER JOIN
-  # (SELECT TimeIndex, Month, Day, Hour FROM ReportVariableDataDictionary rvdd
-  # INNER JOIN  ReportVariableData USING (ReportVariableDataDictionaryIndex)
-  # INNER JOIN Time time USING (TimeIndex)
-  # WHERE VariableName = 'Zone Thermostat Cooling Setpoint Temperature'
-  # AND ReportingFrequency == 'Hourly' AND Month = 8 AND Day = 15 AND VariableValue < 95 AND VariableValue > -45 ) USING (TimeIndex)
-# WHERE variableName == 'Zone Total Internal Total Heating Energy'
-
-# query indices de construcción:
-# SELECT DISTINCT ConstructionIndex
-# FROM
-	# (SELECT *
-  # FROM
-    # (SELECT *
-    # FROM
-      # (SELECT *
-      # FROM Surfaces surf
-      # INNER JOIN ( SELECT *
-        # FROM Zones zones
-        # LEFT OUTER JOIN ZoneInfoZoneLists zizl USING (ZoneIndex)
-        # LEFT OUTER JOIN ZoneLists zl USING (ZoneListIndex)
-        # WHERE zl.Name != 'CTE_NOHABITA' AND zl.Name != 'CTE_N'  ) AS zones
-        # ON surf.ZoneIndex = zones.ZoneIndex
-        # WHERE surf.ClassName <> 'Window' AND surf.ClassName <> 'Internal Mass' )
-      # WHERE ExtBoundCond = -1 OR ExtBoundCond = 0 ) AS surf
-    # WHERE surf.ClassName == 'Wall' AND surf.ExtBoundCond == 0 )

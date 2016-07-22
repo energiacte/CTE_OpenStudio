@@ -16,11 +16,11 @@ module Variables_inspeccion
     queryInvierno = respuesta + "AND month IN (1,2,3,4,5,10,11,12)"
     queryVerano = respuesta + "AND month IN (6,7,8,9)"
 
-    searchInvierno = sqlFile.execAndReturnFirstDouble(queryInvierno)
-    searchVerano = sqlFile.execAndReturnFirstDouble(queryVerano)
+    searchInvierno = sqlFile.execAndReturnFirstDouble(queryInvierno).get
+    searchVerano = sqlFile.execAndReturnFirstDouble(queryVerano).get
 
-    salida = {'valInv' => OpenStudio.convert(searchInvierno.get, 'J', 'kWh').get,
-              'valVer' => OpenStudio.convert(searchVerano.get,   'J', 'kWh').get   }
+    salida = {'valInv' => OpenStudio.convert(searchInvierno, 'J', 'kWh').get,
+              'valVer' => OpenStudio.convert(searchVerano,   'J', 'kWh').get   }
     return salida
   end
 
@@ -39,8 +39,7 @@ module Variables_inspeccion
 
     medicion_general = {}
     medicion_general[:title] = 'Variables Inspeccionadas'
-    #medicion_general[:header] = ['', 'PEi', 'PEv', 'CUi', 'CUv', 'SUi', 'SUv', 'PTi', 'PTv', 'SVi',
-    #            'SVv', 'TVi', 'TVv', 'FIi', 'FIv', 'VIi', 'VIv', 'TOTi', 'TOTv']
+    #medicion_general[:header] = ['', 'PEi', 'PEv', 'CUi', 'CUv', 'SUi', 'SUv', 'PTi', 'PTv', 'SVi', 'SVv', 'TVi', 'TVv', 'FIi', 'FIv', 'VIi', 'VIv', 'TOTi', 'TOTv']
     medicion_general[:units] = [] #vacio porque son distintas
     medicion_general[:data] = []
     medicion_general[:chart_type] = 'vertical_stacked_bar'
@@ -51,24 +50,21 @@ module Variables_inspeccion
     ordenX = []
     invierno = []
     verano = []
-    variables_inspeccionadas.each do | variable |
-      label = variable[1]
-      valores = valoresZona(sqlFile, variable[0])
+    variables_inspeccionadas.each do | variable, labelx |
+      valores = valoresZona(sqlFile, variable)
       valorInvierno = valores['valInv'].round(2)
       valorVerano = valores['valVer'].round(2)
 
-      header << label + '[kWh]'
-      # header << label + '_v'
-      ordenX << label + 'i'
-      ordenX << label + 'v'
+      header << labelx + '[kWh]'
+      ordenX << labelx + 'i'
+      ordenX << labelx + 'v'
       invierno << valorInvierno
       verano << valorVerano
 
-      runner.registerInfo("- '#{ variable[0] }' (etiqueta '#{ label }'): #{ valores }")
-      runner.registerInfo("-- #{ label }: invierno #{ valorInvierno }, verano: #{ valorVerano }")
+      runner.registerInfo("- '#{ variable }' (etiqueta '#{ labelx }'): Valores:: invierno #{ valorInvierno }, verano: #{ valorVerano }")
 
-      medicion_general[:chart] << JSON.generate(label: 'calefaccion', label_x: label + 'i', value: valorInvierno, color: '#EF1C21')
-      medicion_general[:chart] << JSON.generate(label: 'refrigeracion', label_x: label + 'v', value: valorVerano, color: '#0071BD')
+      medicion_general[:chart] << JSON.generate(label: 'calefaccion', label_x: labelx + 'i', value: valorInvierno, color: '#EF1C21')
+      medicion_general[:chart] << JSON.generate(label: 'refrigeracion', label_x: labelx + 'v', value: valorVerano, color: '#0071BD')
     end
 
     medicion_general[:header] = [''] + header
