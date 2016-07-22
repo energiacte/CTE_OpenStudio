@@ -55,6 +55,8 @@ module Variables_inspeccion
     runner.registerInfo("* Variables inspeccionadas")
     runner.registerInfo("+ Encabezado tabla: #{ labels }")
 
+    # # hvac_load_prqofile_monthly_table[:chart_attributes] = { value_left: 'Cooling/Heating Load (kWh)',
+    # # label_x: 'Month', value_right: 'Average Outdoor Air Dry Bulb (C)', sort_xaxis: month_order }
     medicion_general = {}
     medicion_general[:title] = 'Variables Inspeccionadas'
     medicion_general[:header] = [''] + labels
@@ -69,52 +71,6 @@ module Variables_inspeccion
       medicion_general[:chart] << JSON.generate(label: 'calefaccion', label_x: label + 'i', value: valori, color: '#EF1C21')
       medicion_general[:chart] << JSON.generate(label: 'refrigeracion', label_x: label + 'v', value: valorv, color: '#0071BD')
     end
-
-    # orden_eje_x = %w(PEi PEv CUi CUv STi STv HGi HLi TSi TVi HGv HLv TSv TVv PTi PTv SVi SVv TVi TVv FIi FIv VIi VIv TOTi TOTv)
-    # # end use colors by index
-    # end_use_colors = ['#EF1C21', '#0071BD', '#F7DF10', '#DEC310', '#4A4D4A', '#B5B2B5', '#FF79AD',
-    # '#632C94', '#F75921', '#293094', '#CE5921', '#FFB239', '#29AAE7', '#8CC739']
-
-   # # hvac_load_prqofile_monthly_table[:chart_attributes] = { value_left: 'Cooling/Heating Load (kWh)',
-   # # label_x: 'Month', value_right: 'Average Outdoor Air Dry Bulb (C)', sort_xaxis: month_order }
-    # valoresPrueba = [-10.1, 0, -3.4, 0, -3.1, 0, -3.6, 0, 17.1, 0 , -9.6, 0, 22.8, 0, -21.2, 0, -11.1, 0]
-    # valoresPrueba1 = [ -0, 2.9, 0, 2.0, 0, -1.4, 0, 1.2, 0 , 11.3, 0, 2.9, 0, 13.2, 0, -12.6, 0, 19.5]
-    # medicion_general[:data] << ['invierno', -10.1, 0, -3.4, 0, -3.1, 0, -3.6, 0, 17.1, 0 , -9.6, 0, 22.8, 0, -21.2, 0, -11.1, 0]
-    # medicion_general[:data] << ['verano', -0, 2.9, 0, 2.0, 0, -1.4, 0, 1.2, 0 , 11.3, 0, 2.9, 0, 13.2, 0, -12.6, 0, 19.5]
-    # runner.registerInfo("__ cargando valores de muros exteriores__\n")
-    # energiaMuros = flowMurosExteriores(sqlFile)
-    # medicion_general[:chart] << JSON.generate(label:'calefaccion', label_x:'PEi', value: energiaMuros[0], color:'#EF1C21')
-    # medicion_general[:chart] << JSON.generate(label:'refrigeracion', label_x:'PEv', value: energiaMuros[1], color:'#0071BD')
-    # runner.registerInfo("#{energiaMuros}\n")
-    # runner.registerInfo("__ cargando valores de cubiertas__\n")
-    # energiaCubiertas = flowCubiertas(sqlFile)
-    # medicion_general[:chart] << JSON.generate(label:'calefaccion', label_x:'CUi', value: energiaCubiertas[0], color:'#EF1C21')
-    # medicion_general[:chart] << JSON.generate(label:'refrigeracion', label_x:'CUv', value: energiaCubiertas[1], color:'#0071BD')
-    # runner.registerInfo("#{energiaCubiertas}\n")
-    # runner.registerInfo("__ cargando valores de suelos terreno__\n")
-    # energiaSuelosTerreno = flowSuelosTerreno(sqlFile)
-    # medicion_general[:chart] << JSON.generate(label:'calefaccion', label_x:'STi', value: energiaSuelosTerreno[0], color:'#EF1C21')
-    # medicion_general[:chart] << JSON.generate(label:'refrigeracion', label_x:'Sv', value: energiaSuelosTerreno[1], color:'#0071BD')
-    # runner.registerInfo("#{energiaSuelosTerreno}\n")
-    # runner.registerInfo("__ cargando valores de ventanas__\n")
-    # energiaVentanas = flowVentanas(sqlFile)
-    # runner.registerInfo("#{energiaVentanas}\n")
-    # solarVentanasInvierno = energiaVentanas['TSi']
-    # solarVentanasVerano = energiaVentanas['TSv']
-    # transmisionVentanasInvierno = energiaVentanas['HGi'] - energiaVentanas['HLi'] -energiaVentanas['TSi']
-    # transmisionVentanaVerano = energiaVentanas['HGv'] - energiaVentanas['HLv'] -energiaVentanas['TSv']
-    # medicion_general[:chart] << JSON.generate(label:'calefaccion', label_x:'HGi', value: energiaVentanas['HGi'], color:'#EF1C21')
-    # medicion_general[:chart] << JSON.generate(label:'calefaccion', label_x:'HLi', value: energiaVentanas['HLi'], color:'#EF1C21')
-    # medicion_general[:chart] << JSON.generate(label:'calefaccion', label_x:'TSi', value: energiaVentanas['TSi'], color:'#EF1C21')
-    # medicion_general[:chart] << JSON.generate(label:'calefaccion', label_x:'TVi', value: transmisionVentanasInvierno, color:'#EF1C21')
-    # medicion_general[:chart] << JSON.generate(label:'refrigeracion', label_x:'HGv', value: energiaVentanas['HGv'], color:'#0071BD')
-    # medicion_general[:chart] << JSON.generate(label:'refrigeracion', label_x:'HLv', value: energiaVentanas['HLv'], color:'#0071BD')
-    # medicion_general[:chart] << JSON.generate(label:'refrigeracion', label_x:'TSv', value: energiaVentanas['TSv'], color:'#0071BD')
-    # medicion_general[:chart] << JSON.generate(label:'refrigeracion', label_x:'TVv', value: transmisionVentanaVerano, color:'#0071BD')
-    # (0..11).each do | orden |
-        # medicion_general[:chart] << JSON.generate(label:'calefaccion', label_x:orden_eje_x[orden], value: valoresPrueba[orden], color:'#EF1C21')
-        # medicion_general[:chart] << JSON.generate(label:'refrigeracion', label_x:orden_eje_x[orden], value: valoresPrueba1[orden], color:'#0071BD')
-    # end
 
     return medicion_general
   end
