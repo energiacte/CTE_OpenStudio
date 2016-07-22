@@ -27,13 +27,8 @@ class Cte_lib_Test < MiniTest::Unit::TestCase
       reportPath = "#{File.dirname(__FILE__)}/report.html"
 
       assert(File.exist?(modelPath))
-      model = OpenStudio::Path.new(modelPath)
-
       assert(File.exist?(idfPath))
-      idfFile = OpenStudio::Path.new(idfPath)
-
       assert(File.exist?(sqlPath))
-      sqlFile = OpenStudio::Path.new(sqlPath)
 
       # create an instance of the measure
       measure = OpenStudioResultsCopy.new
@@ -46,9 +41,9 @@ class Cte_lib_Test < MiniTest::Unit::TestCase
       assert_equal(22, arguments.size)
 
       # set up runner, this will happen automatically when measure is run in PAT
-      runner.setLastOpenStudioModelPath(model)
-      runner.setLastEnergyPlusWorkspacePath(idfFile)
-      runner.setLastEnergyPlusSqlFilePath(sqlFile)
+      runner.setLastOpenStudioModelPath(OpenStudio::Path.new(modelPath))
+      runner.setLastEnergyPlusWorkspacePath(OpenStudio::Path.new(idfPath))
+      runner.setLastEnergyPlusSqlFilePath(OpenStudio::Path.new(sqlPath))
 
       # set argument values to good values and run the measure
       #argument_map = OpenStudio::Ruleset::OSArgumentMap.new
@@ -65,13 +60,32 @@ class Cte_lib_Test < MiniTest::Unit::TestCase
 
       assert(result.value.valueName == "Success")
       assert(result.warnings.size == 0)
-
       #assert(result.info.size == 1)
 
       assert(File.exist?(reportPath))
 
-      
+      # model = runner.lastOpenStudioModel
+      # if model.empty?
+      #   runner.registerError("Cannot find last model.")
+      #   return false
+      # end
+      # model = model.get
+      # #puts model.getSpaces.size
+      # sqlFile = model.setSqlFile(runner.lastEnergyPlusSqlFile.get)
+      # sqlFile = model.sqlFile.get
+      # puts sqlFile.is_initialized
 
+      # assert(CTEgeo.zonasHabitables(sqlFile).count() == 1)
+      # assert(CTEgeo.superficieHabitable == 49)
+      # assert(CTEgeo.volumenHabitable == 49)
+      # assert(CTEgeo.superficieHabitable == 49)
+      # assert(CTEgeo.zonasNoHabitables(sqlFile).count() == 47)
+      # assert(CTEgeo.superficieNoHabitable == 49)
+      # assert(CTEgeo.volumenNoHabitable == 49)
+      # assert(CTEgeo.envolventeSuperficiesExteriores.count() == 49)
+      # assert(CTEgeo.envolventeSuperficiesInteriores.count() == 49)
+      # assert(CTEgeo.envolventeAreaExterior == 49)
+      # assert(CTEgeo.envolventeAreaInterior == 49)
 
     end
 
@@ -79,17 +93,6 @@ class Cte_lib_Test < MiniTest::Unit::TestCase
     #     stm = @cur.prepare CTE_lib.variablesdisponiblesquery
     #     rs = stm.execute
     #     assert_equal(rs.count,47)
-    # end
-
-    # def test_zonasHabitables
-    #     stm = @cur.prepare CTEgeo.getValueOrFalse(sqlFile.execAndReturnVectorOfString("#{ CTEgeo::Query::ZONASHABITABLES }"))
-    #     rs = stm.execute
-    #     assert_equal(rs.count,1)
-    # end
-
-    # def test_zonasNoHabitables
-    #     stm = @cur.prepare CTEgeo::Query::ZONASNOHABITABLES
-    #     assert_equal(stm.execute.count,1)
     # end
 
     # def test_superficies
