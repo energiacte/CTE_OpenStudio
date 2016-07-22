@@ -1,7 +1,6 @@
 # coding: utf-8
 require 'json'
 require_relative "ctelib"
-require_relative "inspeccionvariables"
 
 module OsLib_Reporting
   # setup - get model, sql, and setup web assets path
@@ -225,7 +224,7 @@ module OsLib_Reporting
     end
 
     # add in general information from method
-    general_tables << Variables_inspeccion.variables_inspeccionadas(model, sqlFile, runner)
+    general_tables << CTE_lib::Tables.tabla_variables_inspeccionadas(model, sqlFile, runner)
 
     return @inspeccion_variables
   end
