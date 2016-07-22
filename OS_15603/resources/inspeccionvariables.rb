@@ -19,60 +19,55 @@ module Variables_inspeccion
     searchInvierno = sqlFile.execAndReturnFirstDouble(queryInvierno).get
     searchVerano = sqlFile.execAndReturnFirstDouble(queryVerano).get
 
-    salida = {'valInv' => OpenStudio.convert(searchInvierno, 'J', 'kWh').get,
-              'valVer' => OpenStudio.convert(searchVerano,   'J', 'kWh').get   }
+    salida = { 'valInv' => OpenStudio.convert(searchInvierno, 'J', 'kWh').get.round(2),
+               'valVer' => OpenStudio.convert(searchVerano,   'J', 'kWh').get.round(2) }
     return salida
   end
 
   def self.variables_inspeccionadas(model, sqlFile, runner)
-    runner.registerInfo("* Variables inspeccionadas")
 
     variables_inspeccionadas = [
-        ["Zone Total Internal Total Heating Energy", 'IntHeat'],
-        ["Zone Ideal Loads Zone Total Heating Energy", 'IdealHeat'],
-        ["Zone Ideal Loads Zone Total Cooling Energy", 'IdealCool'],
-        ["Zone Infiltration Total Heat Gain Energy", 'InfGain'],
-        ["Zone Infiltration Total Heat Loss Energy", 'InfLoss'],
-        ["Zone Mechanical Ventilation No Load Heat Addition Energy", 'MecAdd'],
-        ["Zone Mechanical Ventilation No Load Heat Removal Energy", 'MecRem']
+        ['IntHeat', "Zone Total Internal Total Heating Energy"],
+        ['IdealHeat', "Zone Ideal Loads Zone Total Heating Energy"],
+        ['IdealCool', "Zone Ideal Loads Zone Total Cooling Energy"],
+        #['InfGain', "Zone Infiltration Total Heat Gain Energy"], # ya no sale al combinar
+        #['InfLoss', "Zone Infiltration Total Heat Loss Energy"], # ya no la tenemos al combinar
+        ['VenCombGain', "Zone Combined Outdoor Air Total Heat Gain Energy"], # es horaria
+        ['VenCombLoss', "Zone Combined Outdoor Air Total Heat Loss Energy"], # es horaria
+        #['MecAdd', "Zone Mechanical Ventilation No Load Heat Addition Energy"],
+        #['MecRem', "Zone Mechanical Ventilation No Load Heat Removal Energy"]
     ]
+
+    data = variables_inspeccionadas.map do | labelx, variable |
+      valores = valoresZona(sqlFile, variable)
+      valorInvierno = valores['valInv']
+      valorVerano = valores['valVer']
+      [labelx, variable, valorInvierno, valorVerano]
+    end
+
+    labels = data.map{ |label, var, vi, vv| label }
+    valoresi = data.map{ |label, var, valori, valorv| valori }
+    valoresv = data.map{ |label, var, valori, valorv| valorv }
+    ordenx = labels.map{ |l| [l+'i', l+'v'] }.flatten
+
+    data.each{ | label, var, vi, vv | runner.registerInfo("- '#{ var }' (etiqueta '#{ label }'): Valores:: invierno #{ vi }, verano: #{ vv }")}
+    runner.registerInfo("* Variables inspeccionadas")
+    runner.registerInfo("+ Encabezado tabla: #{ labels }")
 
     medicion_general = {}
     medicion_general[:title] = 'Variables Inspeccionadas'
-    #medicion_general[:header] = ['', 'PEi', 'PEv', 'CUi', 'CUv', 'SUi', 'SUv', 'PTi', 'PTv', 'SVi', 'SVv', 'TVi', 'TVv', 'FIi', 'FIv', 'VIi', 'VIv', 'TOTi', 'TOTv']
-    medicion_general[:units] = [] #vacio porque son distintas
+    medicion_general[:header] = [''] + labels
+    medicion_general[:units] = [''] + ['kWh'] * data.size
     medicion_general[:data] = []
+    medicion_general[:data] << ['invierno'] + valoresi
+    medicion_general[:data] << ['verano'] + valoresv
     medicion_general[:chart_type] = 'vertical_stacked_bar'
-    #medicion_general[:chart_attributes] = { value: medicion_general[:title], label_x: 'Componente', sort_yaxis: [], sort_xaxis: orden_eje_x }
+    medicion_general[:chart_attributes] = { value: medicion_general[:title], label_x: 'Variable', sort_yaxis: [], sort_xaxis: ordenx }
     medicion_general[:chart] = []
-
-    header = []
-    ordenX = []
-    invierno = []
-    verano = []
-    variables_inspeccionadas.each do | variable, labelx |
-      valores = valoresZona(sqlFile, variable)
-      valorInvierno = valores['valInv'].round(2)
-      valorVerano = valores['valVer'].round(2)
-
-      header << labelx + '[kWh]'
-      ordenX << labelx + 'i'
-      ordenX << labelx + 'v'
-      invierno << valorInvierno
-      verano << valorVerano
-
-      runner.registerInfo("- '#{ variable }' (etiqueta '#{ labelx }'): Valores:: invierno #{ valorInvierno }, verano: #{ valorVerano }")
-
-      medicion_general[:chart] << JSON.generate(label: 'calefaccion', label_x: labelx + 'i', value: valorInvierno, color: '#EF1C21')
-      medicion_general[:chart] << JSON.generate(label: 'refrigeracion', label_x: labelx + 'v', value: valorVerano, color: '#0071BD')
+    data.each do |label, variable, valori, valorv|
+      medicion_general[:chart] << JSON.generate(label: 'calefaccion', label_x: label + 'i', value: valori, color: '#EF1C21')
+      medicion_general[:chart] << JSON.generate(label: 'refrigeracion', label_x: label + 'v', value: valorv, color: '#0071BD')
     end
-
-    medicion_general[:header] = [''] + header
-    medicion_general[:chart_attributes] = {value: medicion_general[:title], label_x: 'Variable', sort_yaxis: [], sort_xaxis: ordenX}
-    medicion_general[:data] << ['invierno'] + invierno
-    medicion_general[:data] << ['verano'] + verano
-
-    runner.registerInfo("+ Encabezado tabla: #{header}")
 
     # orden_eje_x = %w(PEi PEv CUi CUv STi STv HGi HLi TSi TVi HGv HLv TSv TVv PTi PTv SVi SVv TVi TVv FIi FIv VIi VIv TOTi TOTv)
     # # end use colors by index

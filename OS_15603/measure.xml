@@ -2,13 +2,14 @@
   <schema_version>3.0</schema_version>
   <name>open_studio_results_copy</name>
   <uid>6d91a3a6-5fcd-4f37-bcd7-9080493a5799</uid>
-  <version_id>c6e9c8a7-83d5-4330-9e8d-edbccbddb68a</version_id>
-  <version_modified>20160718T144955Z</version_modified>
+  <version_id>091db681-9fe5-4351-9429-ff99c15befd3</version_id>
+  <version_modified>20160722T145619Z</version_modified>
   <xml_checksum>69BA4D91</xml_checksum>
   <class_name>OpenStudioResultsCopy</class_name>
   <display_name>Informe 15603</display_name>
   <description>Informe de resultados con informacion relativa al CTE DB-HE.</description>
-  <modeler_description>Datos obtenidos de los resultados de EnergyPlus y del modelo de OpenStudio. La estructura del informe usa Bootstrap, y dimple js para las graficas.</modeler_description>
+  <modeler_description>Datos obtenidos de los resultados de EnergyPlus y del modelo de OpenStudio.
+ La estructura del informe usa Bootstrap, y dimple js para las graficas.</modeler_description>
   <arguments>
     <argument>
       <name>mediciones_de_superficies_segun_CTE</name>
@@ -84,7 +85,7 @@
     </argument>
     <argument>
       <name>monthly_overview_section</name>
-      <display_name>Vista mensual, Monthly Overview</display_name>
+      <display_name>Resumen mensual</display_name>
       <type>Boolean</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -465,70 +466,16 @@
   </attributes>
   <files>
     <file>
-      <filename>os_lib_schedules.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>C4185CAA</checksum>
-    </file>
-    <file>
-      <filename>os_lib_helper_methods.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>A6430141</checksum>
-    </file>
-    <file>
       <filename>report.html.erb</filename>
       <filetype>erb</filetype>
       <usage_type>resource</usage_type>
       <checksum>1351A912</checksum>
     </file>
     <file>
-      <filename>os_lib_reporting.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>2CF6E6F4</checksum>
-    </file>
-    <file>
-      <filename>inspeccionvariables.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>E5BE828A</checksum>
-    </file>
-    <file>
       <filename>cubito+garaje_eplusoutZAB.sql</filename>
       <filetype>sql</filetype>
       <usage_type>test</usage_type>
       <checksum>CB625626</checksum>
-    </file>
-    <file>
-      <filename>os_lib_reporting_SI.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>96824A66</checksum>
-    </file>
-    <file>
-      <filename>comun.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>AC7BA514</checksum>
-    </file>
-    <file>
-      <filename>test_cteLib.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>7B739B86</checksum>
-    </file>
-    <file>
-      <filename>ctelib.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>ABE6A283</checksum>
-    </file>
-    <file>
-      <filename>ctegeometria.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>9D09B95C</checksum>
     </file>
     <file>
       <version>
@@ -539,7 +486,85 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>F15EE034</checksum>
+      <checksum>996E4AA1</checksum>
+    </file>
+    <file>
+      <filename>cubito+garaje_NH-out.idf</filename>
+      <filetype>idf</filetype>
+      <usage_type>test</usage_type>
+      <checksum>6BC9BADB</checksum>
+    </file>
+    <file>
+      <filename>cubito+garaje_NH-report.html</filename>
+      <filetype>html</filetype>
+      <usage_type>test</usage_type>
+      <checksum>26974C1F</checksum>
+    </file>
+    <file>
+      <filename>cubito+garaje_NH.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>73D99CA3</checksum>
+    </file>
+    <file>
+      <filename>cubito+garaje_NH.sql</filename>
+      <filetype>sql</filetype>
+      <usage_type>test</usage_type>
+      <checksum>0E699055</checksum>
+    </file>
+    <file>
+      <filename>os_lib_schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>2F758AA5</checksum>
+    </file>
+    <file>
+      <filename>os_lib_helper_methods.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>0EB4E42A</checksum>
+    </file>
+    <file>
+      <filename>os_lib_reporting.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>6EB900DD</checksum>
+    </file>
+    <file>
+      <filename>inspeccionvariables.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B5064DE9</checksum>
+    </file>
+    <file>
+      <filename>ctelib.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>68221156</checksum>
+    </file>
+    <file>
+      <filename>os_lib_reporting_SI.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>638C8F1B</checksum>
+    </file>
+    <file>
+      <filename>test_cteLib.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>D018F118</checksum>
+    </file>
+    <file>
+      <filename>report.html</filename>
+      <filetype>html</filetype>
+      <usage_type>test</usage_type>
+      <checksum>DA8D05EA</checksum>
+    </file>
+    <file>
+      <filename>cte_query.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>5C18BFDC</checksum>
     </file>
   </files>
 </measure>
