@@ -4,27 +4,28 @@ require_relative "cte_query"
 
 module Variables_inspeccion
 
-  def self.valoresZona(sqlFile, variable)
-    #, ZoneName, VariableName, month, variablevalue, variableUnits, reportingfrequency FROM
-    respuesta = "SELECT SUM(VariableValue) FROM (#{ CTE_Query::ZONASHABITABLES })
+  def self.variables_inspeccionadas(model, sqlFile, runner)
+
+    # Valores de invierno y verano para una variable
+    valoresZona = lambda do |sqlFile, variable|
+      #, ZoneName, VariableName, month, variablevalue, variableUnits, reportingfrequency FROM
+      respuesta = "SELECT SUM(VariableValue) FROM (#{ CTE_Query::ZONASHABITABLES })
     INNER JOIN ReportVariableDataDictionary rvdd
     INNER JOIN ReportVariableData USING (ReportVariableDataDictionaryIndex)
     INNER JOIN Time time USING (TimeIndex)
     WHERE rvdd.VariableName == '#{variable}'
     AND ReportingFrequency == 'Monthly' "
 
-    queryInvierno = respuesta + "AND month IN (1,2,3,4,5,10,11,12)"
-    queryVerano = respuesta + "AND month IN (6,7,8,9)"
+      queryInvierno = respuesta + "AND month IN (1,2,3,4,5,10,11,12)"
+      queryVerano = respuesta + "AND month IN (6,7,8,9)"
 
-    searchInvierno = sqlFile.execAndReturnFirstDouble(queryInvierno).get
-    searchVerano = sqlFile.execAndReturnFirstDouble(queryVerano).get
+      searchInvierno = sqlFile.execAndReturnFirstDouble(queryInvierno).get
+      searchVerano = sqlFile.execAndReturnFirstDouble(queryVerano).get
 
-    salida = { 'valInv' => OpenStudio.convert(searchInvierno, 'J', 'kWh').get.round(2),
-               'valVer' => OpenStudio.convert(searchVerano,   'J', 'kWh').get.round(2) }
-    return salida
-  end
-
-  def self.variables_inspeccionadas(model, sqlFile, runner)
+      salida = { 'valInv' => OpenStudio.convert(searchInvierno, 'J', 'kWh').get.round(2),
+                 'valVer' => OpenStudio.convert(searchVerano,   'J', 'kWh').get.round(2) }
+      return salida
+    end
 
     variables_inspeccionadas = [
         ['IntHeat', "Zone Total Internal Total Heating Energy"],
@@ -39,7 +40,7 @@ module Variables_inspeccion
     ]
 
     data = variables_inspeccionadas.map do | labelx, variable |
-      valores = valoresZona(sqlFile, variable)
+      valores = valoresZona.call(sqlFile, variable)
       valorInvierno = valores['valInv']
       valorVerano = valores['valVer']
       [labelx, variable, valorInvierno, valorVerano]
