@@ -131,7 +131,7 @@ module OsLib_Reporting
     # create table
     template_table_01 = {}
     template_table_01[:title] = 'Fruit'
-    template_table_01[:header] = %w(Definicion Valor)
+    template_table_01[:header] = %w(Definition Value)
     template_table_01[:units] = ['', '$/pound']
     template_table_01[:data] = []
 
@@ -324,11 +324,19 @@ module OsLib_Reporting
     general_building_information[:data] = []
 
     # structure ID / building name
-    display = 'Nombre del edificio Building Name'
-    target_units = 'Nombre, building_name'
-    #value = model.getBuilding.name.to_s
-    value = 'caracola'
+    display = 'Building Name'
+    target_units = 'building_name'
+    value = model.getBuilding.name.to_s
     general_building_information[:data] << [display, value, target_units]
+    runner.registerValue(display, value, target_units)
+
+    # net site energy
+    display = 'Net Site Energy'
+    source_units = 'GJ'
+    target_units = 'kWh'
+    value = OpenStudio.convert(sqlFile.netSiteEnergy.get, source_units, target_units).get
+    value_neat = OpenStudio.toNeatString(value, 0, true)
+    general_building_information[:data] << [display, value_neat, target_units]
     runner.registerValue(display, value, target_units)
 
     # total building area
@@ -344,7 +352,7 @@ module OsLib_Reporting
       runner.registerError('Did not find value for total building area.')
       return false
     else
-      display = 'Area total del edificio (Total Building Area)'
+      display = 'Total Building Area'
       source_units = 'm^2'
       target_units = 'm^2'
       value = OpenStudio.convert(query_results.get, source_units, target_units).get
