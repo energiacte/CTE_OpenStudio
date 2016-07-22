@@ -1,6 +1,6 @@
 # coding: utf-8
 require 'json'
-require_relative "ctelib"
+require_relative "cte_lib"
 
 module OsLib_Reporting
   # setup - get model, sql, and setup web assets path
@@ -183,8 +183,8 @@ module OsLib_Reporting
     end
 
     # add in general information from method
-    general_tables << CTE_lib::Tables.tabla_demanda_por_componentes_invierno(model, sqlFile, runner)
-    general_tables << CTE_lib::Tables.tabla_demanda_por_componentes_verano(model, sqlFile, runner)
+    general_tables << CTE_tables.tabla_demanda_por_componentes_invierno(model, sqlFile, runner)
+    general_tables << CTE_tables.tabla_demanda_por_componentes_verano(model, sqlFile, runner)
 
     return @demandas_por_componente
 
@@ -204,7 +204,7 @@ module OsLib_Reporting
     end
 
     # add in general information from method
-    general_tables << CTE_lib::Tables.tabla_mediciones_envolvente(model, sqlfile, runner)
+    general_tables << CTE_tables.tabla_mediciones_envolvente(model, sqlfile, runner)
 
     return @mediciones
   end
@@ -224,7 +224,7 @@ module OsLib_Reporting
     end
 
     # add in general information from method
-    general_tables << CTE_lib::Tables.tabla_variables_inspeccionadas(model, sqlFile, runner)
+    general_tables << CTE_tables.tabla_variables_inspeccionadas(model, sqlFile, runner)
 
     return @inspeccion_variables
   end
@@ -245,8 +245,8 @@ module OsLib_Reporting
     end
 
     # add in general information from method
-    general_tables << CTE_lib::Tables.CTE_tabla_general_de_mediciones(model, sqlFile, runner)
-    general_tables << CTE_lib::Tables.CTE_tabla_de_energias(model, sqlFile, runner)
+    general_tables << CTE_tables.CTE_tabla_general_de_mediciones(model, sqlFile, runner)
+    general_tables << CTE_tables.CTE_tabla_de_energias(model, sqlFile, runner)
 
     return @mediciones_segun_CTE
   end

@@ -6,7 +6,7 @@ require 'pp'
 require "#{File.dirname(__FILE__)}/resources/os_lib_reporting_SI"
 require "#{File.dirname(__FILE__)}/resources/os_lib_schedules"
 require "#{File.dirname(__FILE__)}/resources/os_lib_helper_methods"
-require "#{File.dirname(__FILE__)}/resources/ctelib"
+require "#{File.dirname(__FILE__)}/resources/cte_lib"
 
 # start the measure
 class OpenStudioResultsCopy < OpenStudio::Ruleset::ReportingUserScript

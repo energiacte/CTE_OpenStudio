@@ -6,7 +6,7 @@ require 'minitest/autorun'
 require 'fileutils'
 
 require_relative '../measure.rb'
-require_relative "../resources/ctelib.rb"
+require_relative "../resources/cte_lib.rb"
 
 #require 'sqlite3'
 
