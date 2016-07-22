@@ -1,10 +1,9 @@
 # coding: utf-8
 
 require "openstudio"
-require_relative "ctegeometria" # que importa el modulo CTEgeo
+require_relative "cte_query"
 
 module CTE_lib
-
   module Tables
     #======== Elementos generales  ============
     # variablesdisponiblesquery = "SELECT DISTINCT VariableName, ReportingFrequency FROM ReportVariableDataDictionary "
@@ -14,18 +13,18 @@ module CTE_lib
       # TODO: descomponer superficies externas de la envolvente por tipos (muros, cubiertas, huecos, lucernarios, etc)
       buildingName = model.getBuilding.name.get
       # Zonas habitables
-      zonasHabitables = CTEgeo.zonasHabitables(sqlFile)
-      superficieHabitable = CTEgeo.superficieHabitable(sqlFile).round(2)
-      volumenHabitable = CTEgeo.volumenHabitable(sqlFile).round(2)
+      zonasHabitables = CTE_Query.zonasHabitables(sqlFile)
+      superficieHabitable = CTE_Query.superficieHabitable(sqlFile).round(2)
+      volumenHabitable = CTE_Query.volumenHabitable(sqlFile).round(2)
       # Zonas no habitables
-      zonasNoHabitables = CTEgeo.zonasNoHabitables(sqlFile)
-      superficieNoHabitable = CTEgeo.superficieNoHabitable(sqlFile).round(2)
-      volumenNoHabitable = CTEgeo.volumenNoHabitable(sqlFile).round(2)
+      zonasNoHabitables = CTE_Query.zonasNoHabitables(sqlFile)
+      superficieNoHabitable = CTE_Query.superficieNoHabitable(sqlFile).round(2)
+      volumenNoHabitable = CTE_Query.volumenNoHabitable(sqlFile).round(2)
       # Envolvente térmica
-      superficiesExteriores = CTEgeo.envolventeSuperficiesExteriores(sqlFile)
-      areaexterior = CTEgeo.envolventeAreaExterior(sqlFile).round(2)
-      superficiesInteriores = CTEgeo.envolventeSuperficiesInteriores(sqlFile)
-      areainterior = CTEgeo.envolventeAreaInterior(sqlFile).round(2)
+      superficiesExteriores = CTE_Query.envolventeSuperficiesExteriores(sqlFile)
+      areaexterior = CTE_Query.envolventeAreaExterior(sqlFile).round(2)
+      superficiesInteriores = CTE_Query.envolventeSuperficiesInteriores(sqlFile)
+      areainterior = CTE_Query.envolventeAreaInterior(sqlFile).round(2)
       areatotal = areaexterior + areainterior
       compacidad = (volumenHabitable / areatotal).round(2)
 
@@ -66,7 +65,7 @@ module CTE_lib
     def self.CTE_tabla_de_energias(model, sqlFile, runner)
       # Basada en una tabla del report SI
       energianeta = OpenStudio.convert(sqlFile.netSiteEnergy.get, 'GJ', 'kWh').get
-      superficiehabitable = CTEgeo.superficieHabitable(sqlFile)
+      superficiehabitable = CTE_Query.superficieHabitable(sqlFile)
       intensidadEnergetica = superficiehabitable != 0 ? (energianeta / superficiehabitable) : 0
 
       runner.registerValue('Energia Neta (Net Site Energy)', energianeta, 'kWh')
@@ -91,7 +90,7 @@ module CTE_lib
       log = 'log_demandaComponentes'
       msg(log, "  ..flowMurosExteriores\n")
 
-      flowMurosExterioresQuery = "SELECT * FROM (#{ CTEgeo::Query::ZONASHABITABLES_SUPERFICIES }) AS surf
+      flowMurosExterioresQuery = "SELECT * FROM (#{ CTE_Query::ZONASHABITABLES_SUPERFICIES }) AS surf
 INNER JOIN ReportVariableData rvd  USING (ReportVariableDataDictionaryIndex)
 INNER JOIN Time time USING (TimeIndex)
 WHERE surf.VariableName == 'Surface Inside Face Conduction Heat Transfer Energy'
@@ -115,7 +114,7 @@ AND surf.ClassName == 'Wall' AND surf.ExtBoundCond == 0 "
       log = 'log_demandaComponentes'
       msg(log, "  ..flowCubiertas\n")
 
-      flowCubiertasQuery = "SELECT * FROM (#{ CTEgeo::Query::ZONASHABITABLES_SUPERFICIES }) AS surf
+      flowCubiertasQuery = "SELECT * FROM (#{ CTE_Query::ZONASHABITABLES_SUPERFICIES }) AS surf
 INNER JOIN ReportVariableData rvd  USING (ReportVariableDataDictionaryIndex)
 INNER JOIN Time time USING (TimeIndex)
 WHERE surf.VariableName == 'Surface Inside Face Conduction Heat Transfer Energy'
@@ -138,7 +137,7 @@ AND surf.ClassName == 'Roof' AND surf.ExtBoundCond == 0 "
       log = 'log_demandaComponentes'
       msg(log, "  ..flowSuelosTerreno\n")
 
-      flowSuelosTerrenoQuery = "SELECT * FROM (#{ CTEgeo::Query::ZONASHABITABLES_SUPERFICIES }) AS surf
+      flowSuelosTerrenoQuery = "SELECT * FROM (#{ CTE_Query::ZONASHABITABLES_SUPERFICIES }) AS surf
 INNER JOIN ReportVariableData rvd  USING (ReportVariableDataDictionaryIndex)
 INNER JOIN Time time USING (TimeIndex)
 WHERE surf.VariableName == 'Surface Inside Face Conduction Heat Transfer Energy'
@@ -166,7 +165,7 @@ AND surf.ClassName == 'Floor' AND surf.ExtBoundCond == -1 "
                       'transmitted solar' => 'Surface Window Transmitted Solar Radiation Energy'}
 
       flowVentanasInvierno = lambda do | var | "SELECT SUM(variableValue) FROM
-    (#{ CTEgeo::Query::ZONASHABITABLES_SUPERFICIES }) AS surf
+    (#{ CTE_Query::ZONASHABITABLES_SUPERFICIES }) AS surf
     INNER JOIN ReportVariableData rvd  USING (ReportVariableDataDictionaryIndex)
     INNER JOIN Time time USING (TimeIndex)
     WHERE surf.VariableName == '#{variable[var]}'
@@ -175,7 +174,7 @@ AND surf.ClassName == 'Floor' AND surf.ExtBoundCond == -1 "
       end
 
       flowVentanasVerano = lambda do | var | "SELECT SUM(variableValue) FROM
-    (#{ CTEgeo::Query::ZONASHABITABLES_SUPERFICIES }) AS surf
+    (#{ CTE_Query::ZONASHABITABLES_SUPERFICIES }) AS surf
     INNER JOIN ReportVariableData rvd  USING (ReportVariableDataDictionaryIndex)
     INNER JOIN Time time USING (TimeIndex)
     WHERE surf.VariableName == '#{variable[var]}'
@@ -220,7 +219,7 @@ AND VariableValue > -45 "
     def self.valoresZonas(sqlFile, variable, runner)
       runner.registerInfo("\n.. variable: '#{variable}'\n")
       #, ZoneName, VariableName, month, VariableValue, variableUnits, reportingfrequency FROM
-      respuesta = "SELECT SUM(VariableValue) FROM (#{ CTEgeo::Query::ZONASHABITABLES })
+      respuesta = "SELECT SUM(VariableValue) FROM (#{ CTE_Query::ZONASHABITABLES })
     INNER JOIN ReportVariableDataDictionary rvdd
     INNER JOIN ReportVariableData USING (ReportVariableDataDictionaryIndex)
     INNER JOIN (#{timeindexquery}) USING (TimeIndex)
@@ -253,16 +252,16 @@ AND VariableValue > -45 "
       contenedor_general[:units] = ['', 'm²', 'W/m²K']
       contenedor_general[:data] = []
 
-      indicesquery = "SELECT ConstructionIndex FROM (#{ CTEgeo::Query::ENVOLVENTE_SUPERFICIES_EXTERIORES })
+      indicesquery = "SELECT ConstructionIndex FROM (#{ CTE_Query::ENVOLVENTE_SUPERFICIES_EXTERIORES })
                     UNION
-                    SELECT ConstructionIndex FROM (#{ CTEgeo::Query::ENVOLVENTE_SUPERFICIES_INTERIORES })"
+                    SELECT ConstructionIndex FROM (#{ CTE_Query::ENVOLVENTE_SUPERFICIES_INTERIORES })"
       indices  = sqlFile.execAndReturnVectorOfString(indicesquery).get
 
       indices.each do | indiceconstruccion |
         query = "SELECT SUM(Area) FROM
-                   (SELECT Area, ConstructionIndex FROM (#{ CTEgeo::Query::ENVOLVENTE_SUPERFICIES_EXTERIORES })
+                   (SELECT Area, ConstructionIndex FROM (#{ CTE_Query::ENVOLVENTE_SUPERFICIES_EXTERIORES })
                     UNION ALL
-                    SELECT Area, ConstructionIndex FROM (#{ CTEgeo::Query::ENVOLVENTE_SUPERFICIES_INTERIORES }))
+                    SELECT Area, ConstructionIndex FROM (#{ CTE_Query::ENVOLVENTE_SUPERFICIES_INTERIORES }))
                WHERE ConstructionIndex == #{ indiceconstruccion }"
         area = sqlFile.execAndReturnFirstDouble(query).get
         nombrequery = "SELECT Name FROM Constructions WHERE ConstructionIndex == #{indiceconstruccion} "
@@ -278,7 +277,7 @@ AND VariableValue > -45 "
     def self.demanda_por_componentes(model, sqlFile, runner, periodo)
       runner.registerInfo("__ inicidada demanda por componentes__#{periodo}\n")
 
-      superficiehabitable =  CTEgeo.superficieHabitable(sqlFile).round(2)
+      superficiehabitable =  CTE_Query.superficieHabitable(sqlFile).round(2)
 
       orden_eje_x = []
       # end_use_colors = ['#EF1C21', '#0071BD', '#F7DF10', '#DEC310', '#4A4D4A', '#B5B2B5', '#FF79AD', '#632C94', '#F75921', '#293094', '#CE5921', '#FFB239', '#29AAE7', '#8CC739']

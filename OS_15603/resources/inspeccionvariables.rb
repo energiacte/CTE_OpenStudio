@@ -1,13 +1,12 @@
 # coding: utf-8
 require "openstudio"
-require_relative "ctegeometria"
+require_relative "cte_query"
 
 module Variables_inspeccion
 
   def self.valoresZona(sqlFile, variable)
-    # esto parece una query que hay en ctegeometria
     #, ZoneName, VariableName, month, variablevalue, variableUnits, reportingfrequency FROM
-    respuesta = "SELECT SUM(VariableValue) FROM (#{ CTEgeo::Query::ZONASHABITABLES })
+    respuesta = "SELECT SUM(VariableValue) FROM (#{ CTE_Query::ZONASHABITABLES })
     INNER JOIN ReportVariableDataDictionary rvdd
     INNER JOIN ReportVariableData USING (ReportVariableDataDictionaryIndex)
     INNER JOIN Time time USING (TimeIndex)
