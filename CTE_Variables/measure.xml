@@ -1,15 +1,14 @@
 <measure>
   <schema_version>3.0</schema_version>
-  <name>variables_cte</name>
+  <name>cte_variables</name>
   <uid>1adcd9ca-53a5-427e-9662-424d35b7de33</uid>
-  <version_id>2601532e-6049-43ea-9db7-37529171c3c3</version_id>
-  <version_modified>20160708T143019Z</version_modified>
+  <version_id>4a08a958-dc4e-4cfa-a4bb-f1ae0bec1456</version_id>
+  <version_modified>20160722T150055Z</version_modified>
   <xml_checksum>9E530B22</xml_checksum>
-  <class_name>VariablesCTE</class_name>
+  <class_name>CTE_Variables</class_name>
   <display_name>Variables CTE</display_name>
-  <description>Esta medida aNade las variables necesarias para tomar los datos de cumplimento del CTE</description>
-  <modeler_description>Simplemente pasa una cadena con el numobre del meter sin validarlo. Para ver si es vAlido hay que consultar el fichero .mdd de una simulaciOn previa.&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;
-</modeler_description>
+  <description>Define variables necesarias para la simulaci?n en condiciones CTE.</description>
+  <modeler_description>Introduce variables de salida utilizadas en el informe final.</modeler_description>
   <arguments/>
   <provenances/>
   <tags>
@@ -39,6 +38,12 @@
   </attributes>
   <files>
     <file>
+      <filename>CTE_Variables_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>B27285C8</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.0.0</identifier>
@@ -47,13 +52,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>739D16F7</checksum>
-    </file>
-    <file>
-      <filename>VariablesCTE_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>964FEC94</checksum>
+      <checksum>B4FEF4A9</checksum>
     </file>
   </files>
 </measure>
