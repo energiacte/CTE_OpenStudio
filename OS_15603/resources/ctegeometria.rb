@@ -5,7 +5,9 @@ module CTEgeo
   module Query
     # Queries para localizar superficies y elementos
     # ExtBoundCond: 0=exterior, -1=terreno, numero=otra superficie
-    # ClassName puede ser ['Wall', 'Roof', 'Floor', 'Window', 'InternalMass']
+    # Clases en https://github.com/NREL/EnergyPlus/blob/f8be4f0d31d5988a52c515ac5e0076a7b8b0a322/src/EnergyPlus/DataSurfaces.cc#L442
+    # ClassName puede ser ['Wall', 'Floor', 'Roof', 'Window', 'Door', 'Glass Door', 'TubularDaylightDome', 'TubularDaylighDiffuser', 'Internal Mass', 'Shading', 'Detached Shading:Building', 'Detached Shading:Fixed', 'Invalid/Unknown']
+
     ZONASHABITABLES = "
 SELECT
     ZoneIndex, ZoneName, Volume, FloorArea, ZoneListIndex, Name
@@ -31,13 +33,14 @@ FROM
     INNER JOIN ( #{ CTEgeo::Query::ZONASHABITABLES } ) AS zones
         ON surf.ZoneIndex = zones.ZoneIndex"
 
+      # XXX: No está claro que Internal Mass sea un SurfaceType
       ENVOLVENTE_SUPERFICIES_EXTERIORES = "
 SELECT
     SurfaceIndex, SurfaceName, ConstructionIndex, ClassName, Area,
     GrossArea, ExtBoundCond, ZoneIndex
 FROM
     (#{ CTEgeo::Query::ZONASHABITABLES_SUPERFICIES }) AS surf
-    WHERE (surf.ClassName NOT IN ('Internal Mass') AND surf.ExtBoundCond IN (-1, 0)) "
+    WHERE (surf.ClassName NOT IN ('Internal Mass', 'Shading') AND surf.ExtBoundCond IN (-1, 0)) "
 
 
       ENVOLVENTE_SUPERFICIES_INTERIORES = "
@@ -49,7 +52,7 @@ FROM (  SELECT
             SurfaceIndex
         FROM
             (#{ CTEgeo::Query::ZONASHABITABLES_SUPERFICIES }) AS surf
-            WHERE (surf.ClassName NOT IN ('Internal Mass') AND ExtBoundCond NOT IN (-1, 0))
+            WHERE (surf.ClassName NOT IN ('Internal Mass', 'Shading') AND ExtBoundCond NOT IN (-1, 0))
      ) AS internas
     INNER JOIN Surfaces surf ON surf.ExtBoundCond = internas.SurfaceIndex
     INNER JOIN (#{ CTEgeo::Query::ZONASNOHABITABLES }) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
