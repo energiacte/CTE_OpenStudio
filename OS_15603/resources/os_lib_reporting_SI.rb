@@ -248,7 +248,6 @@ module OsLib_Reporting
     # add in general information from method
     general_tables << CTE_lib.CTE_tabla_general_de_mediciones(model, sqlFile, runner)
     general_tables << CTE_lib.CTE_tabla_de_energias(model, sqlFile, runner)
-    #general_tables << OsLib_Reporting.general_building_information_table(model, sqlFile, runner)
 
     return @mediciones_segun_CTE
   end
