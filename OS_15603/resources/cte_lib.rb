@@ -346,52 +346,48 @@ AND VariableValue > -45 "
     valores_fila = [periodo] #la fila de la tabla en cuestión
     valores_data = []
     indice = {'invierno' => 0, 'verano' => 1}
-    temporada = {'invierno' => {'ppal' => 'calefaccion'},
-                 'verano'   => {'ppal' => 'refrigeracion'} }
-    colores = {'invierno' => {'ppal' => '#EF1C21'},
-               'verano'   => {'ppal' => '#008FF0'} }
+    temporada = {'invierno' => 'calefaccion',
+                 'verano'   => 'refrigeracion' }
+    colores = {'invierno' => '#EF1C21',
+               'verano'   => '#008FF0' }
 
-    registraValores = lambda do | data, label, tipo |
-      medicion_general[:chart] << JSON.generate(label:temporada[periodo][tipo],
-                                                label_x: label, value: data[indice[periodo]]/superficiehabitable, color: colores[periodo][tipo])
-      if tipo == 'ppal'
-        valores_fila << (data[indice[periodo]] / superficiehabitable).round
-        valores_data << data[indice[periodo]] / superficiehabitable
-      end
+    registraValores = lambda do | data, label |
+      medicion_general[:chart] << JSON.generate(label:temporada[periodo],
+                                                label_x: label, value: data[indice[periodo]] / superficiehabitable, color: colores[periodo])
+      valores_fila << (data[indice[periodo]] / superficiehabitable).round
+      valores_data << data[indice[periodo]] / superficiehabitable
       orden_eje_x << label
       runner.registerInfo("#{ data[indice[periodo]] / superficiehabitable }\n")
     end
 
     # paredes exteriores
-    registraValores.call(flowMurosExteriores(sqlFile), 'Paredes Exteriores', 'ppal')
+    registraValores.call(flowMurosExteriores(sqlFile), 'Paredes Exteriores')
     # cubiertas
-    registraValores.call(flowCubiertas(sqlFile), 'Cubiertas', 'ppal')
+    registraValores.call(flowCubiertas(sqlFile), 'Cubiertas')
     # suelos terreno
-    registraValores.call(flowSuelosTerreno(sqlFile), 'SuelosT', 'ppal')
+    registraValores.call(flowSuelosTerreno(sqlFile), 'SuelosT')
     # puentes termicos
     valores_fila << 'sin calcular'
     #solar y transmisión ventanas
     energiaVentanas = flowVentanas(sqlFile)
-    runner.registerInfo("#{energiaVentanas}\n")
-    # label = ['wHeGa', 'wHeLo', 'wSoVe', 'wTrVe']
-    registraValores.call([energiaVentanas['TSi'], energiaVentanas['TSv']], 'Solar Ventanas', 'ppal')
+    registraValores.call([energiaVentanas['TSi'], energiaVentanas['TSv']], 'Solar Ventanas')
 
-    transmisionVentanasInvierno = energiaVentanas['HGi'] - energiaVentanas['HLi'] -energiaVentanas['TSi']
-    transmisionVentanaVerano = energiaVentanas['HGv'] - energiaVentanas['HLv'] -energiaVentanas['TSv']
-    registraValores.call([transmisionVentanasInvierno, transmisionVentanaVerano], 'Transmision Ventanas', 'ppal')
+    transmisionVentanasInvierno = energiaVentanas['HGi'] - energiaVentanas['HLi'] - energiaVentanas['TSi']
+    transmisionVentanaVerano = energiaVentanas['HGv'] - energiaVentanas['HLv'] - energiaVentanas['TSv']
+    registraValores.call([transmisionVentanasInvierno, transmisionVentanaVerano], 'Transmision Ventanas')
 
     # suelos terreno
-    registraValores.call(valoresZonas(sqlFile, "Zone Total Internal Total Heating Energy", runner), 'Fuentes Internas', 'ppal')
+    registraValores.call(valoresZonas(sqlFile, "Zone Total Internal Total Heating Energy", runner), 'Fuentes Internas')
 
     # infiltracion
     heatGain = valoresZonas(sqlFile, "Zone Infiltration Total Heat Gain Energy", runner)
     heatLoss = valoresZonas(sqlFile, "Zone Infiltration Total Heat Loss Energy", runner)
-    registraValores.call([heatGain[0] - heatLoss[0], heatGain[1] - heatLoss[1]], 'Infiltación', 'ppal')
+    registraValores.call([heatGain[0] - heatLoss[0], heatGain[1] - heatLoss[1]], 'Infiltación')
 
-    # ventilacion
+    # ventilacion + infiltraciones
     ventGain = valoresZonas(sqlFile, "Zone Combined Outdoor Air Total Heat Gain Energy", runner)
     ventLoss = valoresZonas(sqlFile, "Zone Combined Outdoor Air Total Heat Loss Energy", runner)
-    registraValores.call([ventGain[0]-ventLoss[0], ventGain[1]-ventLoss[1]], 'Ventilación', 'ppal')
+    registraValores.call([ventGain[0] - ventLoss[0], ventGain[1] - ventLoss[1]], 'Ventilación')
 
     #total
     total = 0
@@ -402,7 +398,7 @@ AND VariableValue > -45 "
     end
     total = total*superficiehabitable
 
-    registraValores.call([total, total], 'Total', 'ppal')
+    registraValores.call([total, total], 'Total')
 
     medicion_general[:data] << valores_fila
     return medicion_general
