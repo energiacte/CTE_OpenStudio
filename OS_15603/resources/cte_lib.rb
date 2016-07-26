@@ -186,22 +186,20 @@ module CTE_tables
 
 
 
-  def self.flowMurosExteriores(sqlFile)
+  def self.flowMurosExteriores(sqlFile, periodo)
     flowMurosExterioresQuery = "SELECT * FROM (#{ CTE_Query::ZONASHABITABLES_SUPERFICIES }) AS surf
 INNER JOIN ReportVariableData rvd  USING (ReportVariableDataDictionaryIndex)
 INNER JOIN Time time USING (TimeIndex)
 WHERE surf.VariableName == 'Surface Inside Face Conduction Heat Transfer Energy'
 AND surf.ClassName == 'Wall' AND surf.ExtBoundCond == 0 "
+    if periodo == 'invierno'
+      query = "SELECT SUM(VariableValue) FROM (#{flowMurosExterioresQuery}) WHERE month IN (1,2,3,4,5,10,11,12)"
+    else
 
-    flowMurosExterioresInviernoQuery = "SELECT SUM(VariableValue) FROM (#{flowMurosExterioresQuery}) WHERE month IN (1,2,3,4,5,10,11,12)"
-    flowMurosExterioresInviernoSearch = sqlFile.execAndReturnFirstDouble(flowMurosExterioresInviernoQuery)
-    energianetaInvierno = OpenStudio.convert(flowMurosExterioresInviernoSearch.get, 'J', 'kWh').get
-
-    flowMurosExterioresVeranoQuery = "SELECT SUM(variableValue) FROM (#{flowMurosExterioresQuery}) WHERE month IN (6,7,8,9)"
-    flowMurosExterioresVeranoSearch = sqlFile.execAndReturnFirstDouble(flowMurosExterioresVeranoQuery)
-    energianetaVerano = OpenStudio.convert(flowMurosExterioresVeranoSearch.get, 'J', 'kWh').get
-
-    return [energianetaInvierno, energianetaVerano]
+      query = "SELECT SUM(variableValue) FROM (#{flowMurosExterioresQuery}) WHERE month IN (6,7,8,9)"
+    end
+    energianeta = OpenStudio.convert(sqlFile.execAndReturnFirstDouble(query).get, 'J', 'kWh').get
+    return energianeta
   end
 
   def self.flowCubiertas(sqlFile)
@@ -286,23 +284,19 @@ AND surf.ClassName == 'Floor' AND surf.ExtBoundCond == -1 "
             'TSi' => transmittedInvierno, 'TSv' => transmittedVerano,}
   end
 
-  def self.timeindexquery
-    return "SELECT TimeIndex, Month, Day, Hour FROM ReportVariableDataDictionary
-INNER JOIN  ReportVariableData USING (ReportVariableDataDictionaryIndex)
-INNER JOIN Time USING (TimeIndex)
-WHERE (VariableName = 'Zone Thermostat Cooling Setpoint Temperature' OR VariableName = 'Zone Thermostat Heating Setpoint Temperature')
-AND ReportingFrequency == 'Hourly'
-AND VariableValue < 95
-AND VariableValue > -45 "
-  end
-
   def self.valoresZonas(sqlFile, variable, runner)
     runner.registerInfo("\n.. variable: '#{variable}'\n")
     #, ZoneName, VariableName, month, VariableValue, variableUnits, reportingfrequency FROM
     respuesta = "SELECT SUM(VariableValue) FROM (#{ CTE_Query::ZONASHABITABLES })
     INNER JOIN ReportVariableDataDictionary rvdd
     INNER JOIN ReportVariableData USING (ReportVariableDataDictionaryIndex)
-    INNER JOIN (#{timeindexquery}) USING (TimeIndex)
+    INNER JOIN (SELECT TimeIndex, Month, Day, Hour FROM ReportVariableDataDictionary
+                INNER JOIN  ReportVariableData USING (ReportVariableDataDictionaryIndex)
+                INNER JOIN Time USING (TimeIndex)
+                WHERE (VariableName = 'Zone Thermostat Cooling Setpoint Temperature' OR VariableName = 'Zone Thermostat Heating Setpoint Temperature')
+                AND ReportingFrequency == 'Hourly'
+                AND VariableValue < 95
+                AND VariableValue > -45) USING (TimeIndex)
     WHERE rvdd.variableName == '#{variable}' "
 
     queryInvierno = respuesta + "AND month IN (1,2,3,4,5,10,11,12)"
@@ -331,8 +325,6 @@ AND VariableValue > -45 "
     superficiehabitable =  CTE_Query.superficieHabitable(sqlFile).round(2)
 
     orden_eje_x = []
-    # end_use_colors = ['#EF1C21', '#0071BD', '#F7DF10', '#DEC310', '#4A4D4A', '#B5B2B5', '#FF79AD', '#632C94', '#F75921', '#293094', '#CE5921', '#FFB239', '#29AAE7', '#8CC739']
-
     medicion_general = {}
     medicion_general[:title] = "Demandas por componentes en #{periodo}"
     medicion_general[:header] = ['', 'Paredes E', 'Cubiertas', 'SuelosT', 'PuentesT','SolarVen', 'TransVen', 'FuentesI', 'Infiltr', 'Ventil', 'Total']
@@ -351,54 +343,61 @@ AND VariableValue > -45 "
     colores = {'invierno' => '#EF1C21',
                'verano'   => '#008FF0' }
 
-    registraValores = lambda do | data, label |
-      medicion_general[:chart] << JSON.generate(label:temporada[periodo],
-                                                label_x: label, value: data[indice[periodo]] / superficiehabitable, color: colores[periodo])
-      valores_fila << (data[indice[periodo]] / superficiehabitable).round
-      valores_data << data[indice[periodo]] / superficiehabitable
-      orden_eje_x << label
-      runner.registerInfo("#{ data[indice[periodo]] / superficiehabitable }\n")
+    registraValores = lambda do | value, label, label_x |
+      medicion_general[:chart] << JSON.generate(label: label, label_x: label_x, value: value, color: colores[periodo])
+      valores_fila << value.round
+      valores_data << value
+      orden_eje_x << label_x
     end
 
     # paredes exteriores
-    registraValores.call(flowMurosExteriores(sqlFile), 'Paredes Exteriores')
+    value = flowMurosExteriores(sqlFile, periodo) / superficiehabitable
+    registraValores.call(value, temporada[periodo], 'Paredes Exteriores')
     # cubiertas
-    registraValores.call(flowCubiertas(sqlFile), 'Cubiertas')
+    values = flowCubiertas(sqlFile)
+    value = values[indice[periodo]] / superficiehabitable
+    registraValores.call(value, temporada[periodo], 'Cubiertas')
     # suelos terreno
-    registraValores.call(flowSuelosTerreno(sqlFile), 'SuelosT')
+    values = flowSuelosTerreno(sqlFile)
+    value = values[indice[periodo]] / superficiehabitable
+    registraValores.call(value, temporada[periodo], 'SuelosT')
     # puentes termicos
     valores_fila << 'sin calcular'
     #solar y transmisión ventanas
     energiaVentanas = flowVentanas(sqlFile)
-    registraValores.call([energiaVentanas['TSi'], energiaVentanas['TSv']], 'Solar Ventanas')
+    values = [energiaVentanas['TSi'], energiaVentanas['TSv']]
+    value = values[indice[periodo]] / superficiehabitable
+    registraValores.call(value, temporada[periodo], 'Solar Ventanas')
 
     transmisionVentanasInvierno = energiaVentanas['HGi'] - energiaVentanas['HLi'] - energiaVentanas['TSi']
     transmisionVentanaVerano = energiaVentanas['HGv'] - energiaVentanas['HLv'] - energiaVentanas['TSv']
-    registraValores.call([transmisionVentanasInvierno, transmisionVentanaVerano], 'Transmision Ventanas')
+    values = [transmisionVentanasInvierno, transmisionVentanaVerano]
+    value = values[indice[periodo]] / superficiehabitable
+    registraValores.call(value, temporada[periodo], 'Transmision Ventanas')
 
     # suelos terreno
-    registraValores.call(valoresZonas(sqlFile, "Zone Total Internal Total Heating Energy", runner), 'Fuentes Internas')
+    values = valoresZonas(sqlFile, "Zone Total Internal Total Heating Energy", runner)
+    value = values[indice[periodo]] / superficiehabitable
+    registraValores.call(value, temporada[periodo], 'Fuentes Internas')
 
     # infiltracion
     heatGain = valoresZonas(sqlFile, "Zone Infiltration Total Heat Gain Energy", runner)
     heatLoss = valoresZonas(sqlFile, "Zone Infiltration Total Heat Loss Energy", runner)
-    registraValores.call([heatGain[0] - heatLoss[0], heatGain[1] - heatLoss[1]], 'Infiltación')
+    values = [heatGain[0] - heatLoss[0], heatGain[1] - heatLoss[1]]
+    registraValores.call(values[indice[periodo]] / superficiehabitable, temporada[periodo], 'Infiltación')
 
     # ventilacion + infiltraciones
     ventGain = valoresZonas(sqlFile, "Zone Combined Outdoor Air Total Heat Gain Energy", runner)
     ventLoss = valoresZonas(sqlFile, "Zone Combined Outdoor Air Total Heat Loss Energy", runner)
-    registraValores.call([ventGain[0] - ventLoss[0], ventGain[1] - ventLoss[1]], 'Ventilación')
+    values = [ventGain[0] - ventLoss[0], ventGain[1] - ventLoss[1]]
+    value = values[indice[periodo]] / superficiehabitable
+    registraValores.call(value, temporada[periodo], 'Ventilación')
 
     #total
-    total = 0
-    valores_data.each do | valor |
-      if valor.to_f == valor
-        total += valor
-      end
-    end
-    total = total*superficiehabitable
-
-    registraValores.call([total, total], 'Total')
+    total = superficieHabitable * valores_data.reduce(:+)
+    values = [total, total]
+    value = values[indice[periodo]] / superficiehabitable
+    registraValores.call(value, temporada[periodo], 'Total')
 
     medicion_general[:data] << valores_fila
     return medicion_general
