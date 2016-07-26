@@ -183,8 +183,8 @@ module OsLib_Reporting
     end
 
     # add in general information from method
-    general_tables << CTE_tables.tabla_demanda_por_componentes_invierno(model, sqlFile, runner)
-    general_tables << CTE_tables.tabla_demanda_por_componentes_verano(model, sqlFile, runner)
+    general_tables << CTE_tables.tabla_demanda_por_componentes(model, sqlFile, runner, 'invierno')
+    general_tables << CTE_tables.tabla_demanda_por_componentes(model, sqlFile, runner, 'verano')
 
     return @demandas_por_componente
 

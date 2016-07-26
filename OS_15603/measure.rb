@@ -35,7 +35,7 @@ class OpenStudioResultsCopy < OpenStudio::Ruleset::ReportingUserScript
 
     # methods for sections in order that they will appear in report
     result << 'mediciones_de_superficies_segun_CTE'
-    #result << 'demandas_por_componentes'
+    result << 'demandas_por_componentes'
     result << 'variables_de_inspeccion'
     #result << 'variables_cte'
     result << 'annual_overview_section'

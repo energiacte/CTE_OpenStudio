@@ -184,110 +184,94 @@ module CTE_tables
   end
 
 
+  def self.tabla_demanda_por_componentes(model, sqlFile, runner, periodo)
+    runner.registerInfo("__ inicidada demanda por componentes__#{periodo}\n")
 
+    superficiehabitable =  CTE_Query.superficieHabitable(sqlFile).round(2)
 
-  def self.flowMurosExteriores(sqlFile, periodo)
-    flowMurosExterioresQuery = "SELECT * FROM (#{ CTE_Query::ZONASHABITABLES_SUPERFICIES }) AS surf
-INNER JOIN ReportVariableData rvd  USING (ReportVariableDataDictionaryIndex)
-INNER JOIN Time time USING (TimeIndex)
-WHERE surf.VariableName == 'Surface Inside Face Conduction Heat Transfer Energy'
-AND surf.ClassName == 'Wall' AND surf.ExtBoundCond == 0 "
-    if periodo == 'invierno'
-      query = "SELECT SUM(VariableValue) FROM (#{flowMurosExterioresQuery}) WHERE month IN (1,2,3,4,5,10,11,12)"
-    else
+    orden_eje_x = []
+    medicion_general = {}
+    medicion_general[:title] = "Demandas por componentes en #{periodo}"
+    medicion_general[:header] = ['', 'Paredes Exteriores', 'Paredes Terreno', 'Cubiertas', 'Suelos Aire', 'Suelos Terreno', 'Solar Ventanas', 'Transmisión Ventanas', 'Fuentes Internas', 'Ventilación + Infiltraciones', 'Total']
 
-      query = "SELECT SUM(variableValue) FROM (#{flowMurosExterioresQuery}) WHERE month IN (6,7,8,9)"
-    end
-    energianeta = OpenStudio.convert(sqlFile.execAndReturnFirstDouble(query).get, 'J', 'kWh').get
-    return energianeta
-  end
+    medicion_general[:units] = [''] + ['kWh/m²'] * 10 #vacio porque son distintas
+    medicion_general[:data] = []
+    medicion_general[:chart_type] = 'vertical_stacked_bar'
+    medicion_general[:chart_attributes] = { value: medicion_general[:title], label_x: 'Componente', sort_yaxis: [], sort_xaxis: orden_eje_x }
+    medicion_general[:chart] = []
 
-  def self.flowCubiertas(sqlFile)
-    flowCubiertasQuery = "SELECT * FROM (#{ CTE_Query::ZONASHABITABLES_SUPERFICIES }) AS surf
-INNER JOIN ReportVariableData rvd  USING (ReportVariableDataDictionaryIndex)
-INNER JOIN Time time USING (TimeIndex)
-WHERE surf.VariableName == 'Surface Inside Face Conduction Heat Transfer Energy'
-AND surf.ClassName == 'Roof' AND surf.ExtBoundCond == 0 "
+    valores_fila = [periodo] #la fila de la tabla en cuestión
+    valores_data = []
+    temporada = {'invierno' => 'calefaccion', 'verano'   => 'refrigeracion' }[periodo]
+    color = {'invierno' => '#EF1C21', 'verano'   => '#008FF0' }[periodo]
 
-    flowCubiertasInviernoQuery = "SELECT SUM(VariableValue) FROM (#{flowCubiertasQuery}) WHERE month IN (1,2,3,4,5,10,11,12)"
-    flowCubiertasInviernoSearch = sqlFile.execAndReturnFirstDouble(flowCubiertasInviernoQuery)
-    energianetaInvierno = OpenStudio.convert(flowCubiertasInviernoSearch.get, 'J', 'kWh').get
-
-    flowCubiertasVeranoQuery = "SELECT SUM(variableValue) FROM (#{flowCubiertasQuery}) WHERE month IN (6,7,8,9)"
-    flowCubiertasVeranoSearch = sqlFile.execAndReturnFirstDouble(flowCubiertasVeranoQuery)
-    energianetaVerano = OpenStudio.convert(flowCubiertasVeranoSearch.get, 'J', 'kWh').get
-
-    return [energianetaInvierno, energianetaVerano]
-  end
-
-  def self.flowSuelosTerreno(sqlFile)
-    flowSuelosTerrenoQuery = "SELECT * FROM (#{ CTE_Query::ZONASHABITABLES_SUPERFICIES }) AS surf
-INNER JOIN ReportVariableData rvd  USING (ReportVariableDataDictionaryIndex)
-INNER JOIN Time time USING (TimeIndex)
-WHERE surf.VariableName == 'Surface Inside Face Conduction Heat Transfer Energy'
-AND surf.ClassName == 'Floor' AND surf.ExtBoundCond == -1 "
-
-    flowSuelosTerrenoInviernoQuery = "SELECT SUM(VariableValue) FROM (#{flowSuelosTerrenoQuery}) WHERE month IN (1,2,3,4,5,10,11,12)"
-    flowSuelosTerrenoInviernoSearch = sqlFile.execAndReturnFirstDouble(flowSuelosTerrenoInviernoQuery)
-    energianetaInvierno = OpenStudio.convert(flowSuelosTerrenoInviernoSearch.get, 'J', 'kWh').get
-
-    flowSuelosTerrenoVeranoQuery = "SELECT SUM(variableValue) FROM (#{flowSuelosTerrenoQuery}) WHERE month IN (6,7,8,9)"
-    flowSuelosTerrenoVeranoSearch = sqlFile.execAndReturnFirstDouble(flowSuelosTerrenoVeranoQuery)
-    energianetaVerano = OpenStudio.convert(flowSuelosTerrenoVeranoSearch.get, 'J', 'kWh').get
-
-    return [energianetaInvierno, energianetaVerano]
-  end
-
-  def self.flowVentanas(sqlFile)
-    variable =   {  'heat gain' => 'Surface Window Heat Gain Energy',
-                    'heat loss' => 'Surface Window Heat Loss Energy',
-                    'transmitted solar' => 'Surface Window Transmitted Solar Radiation Energy'}
-
-    flowVentanasInvierno = lambda do | var | "SELECT SUM(variableValue) FROM
-    (#{ CTE_Query::ZONASHABITABLES_SUPERFICIES }) AS surf
-    INNER JOIN ReportVariableData rvd  USING (ReportVariableDataDictionaryIndex)
-    INNER JOIN Time time USING (TimeIndex)
-    WHERE surf.VariableName == '#{variable[var]}'
-    AND surf.ClassName == 'Window'
-    AND month IN (1,2,3,4,5,10,11,12)"
+    registraValores = lambda do | value, label, label_x |
+      medicion_general[:chart] << JSON.generate(label: label, label_x: label_x, value: value, color: color)
+      valores_fila << value.round
+      valores_data << value
+      orden_eje_x << label_x
     end
 
-    flowVentanasVerano = lambda do | var | "SELECT SUM(variableValue) FROM
-    (#{ CTE_Query::ZONASHABITABLES_SUPERFICIES }) AS surf
-    INNER JOIN ReportVariableData rvd  USING (ReportVariableDataDictionaryIndex)
-    INNER JOIN Time time USING (TimeIndex)
-    WHERE surf.VariableName == '#{variable[var]}'
-    AND surf.ClassName == 'Window'
-    AND month IN (6,7,8,9)"
-    end
+    # paredes aire ext.
+    airWallHeat = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy', periodo, 'Wall', 0) / superficiehabitable
+    registraValores.call(airWallHeat, temporada, 'Paredes Exteriores')
+    # paredes terreno
+    groundWallHeat = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy', periodo, 'Wall', -1) / superficiehabitable
+    registraValores.call(groundWallHeat, temporada, 'Paredes Terreno')
+    # paredes interiores
+    # XXX: no tenemos el balance de las particiones interiores entre zonas
+    # cubiertas
+    roofHeat = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy', periodo, 'Roof', 0) / superficiehabitable
+    registraValores.call(roofHeat, temporada, 'Cubiertas')
+    # suelos aire ext
+    airFloorHeat = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy', periodo, 'Floor', 0) / superficiehabitable
+    registraValores.call(airFloorHeat, temporada, 'Suelos Aire')
+    # suelos terreno
+    groundFloorHeat = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy', periodo, 'Floor', -1) / superficiehabitable
+    registraValores.call(groundFloorHeat, temporada, 'Suelos Terreno')
+    # puentes termicos
+    #valores_fila << 'sin calcular'
+    # #solar y transmisión ventanas
+    windowRadiation = _componentValueForPeriod(sqlFile, 'Surface Window Transmitted Solar Radiation Energy', periodo, 'Window', 0) / superficiehabitable
+    registraValores.call(windowRadiation, temporada, 'Solar Ventanas')
+    windowTransmissionGain = _componentValueForPeriod(sqlFile, 'Surface Window Heat Gain Energy', periodo, 'Window', 0) / superficiehabitable
+    windowTransmissionLoss = _componentValueForPeriod(sqlFile, 'Surface Window Heat Loss Energy', periodo, 'Window', 0) / superficiehabitable
+    windowTransmission = windowTransmissionGain - windowTransmissionLoss - windowRadiation
+    registraValores.call(windowTransmission, temporada, 'Transmision Ventanas')
+    # fuentes internas
+    internalHeating = _zoneValueForPeriod(sqlFile, "Zone Total Internal Total Heating Energy", periodo) / superficiehabitable
+    registraValores.call(internalHeating, temporada, 'Fuentes Internas')
+    # ventilacion + infiltraciones
+    ventGain = _zoneValueForPeriod(sqlFile, "Zone Combined Outdoor Air Total Heat Gain Energy", periodo) / superficiehabitable
+    ventLoss = _zoneValueForPeriod(sqlFile, "Zone Combined Outdoor Air Total Heat Loss Energy", periodo) / superficiehabitable
+    airHeatBalance = ventGain - ventLoss
+    registraValores.call(airHeatBalance, temporada, 'Ventilación + Infiltraciones')
+    #total
+    value = valores_data.reduce(:+)
+    registraValores.call(value, temporada, 'Total')
 
-    heatGainInviernoSearch = sqlFile.execAndReturnFirstDouble(flowVentanasInvierno.call('heat gain'))
-    heatGainInvierno = OpenStudio.convert(heatGainInviernoSearch.get, 'J', 'kWh').get
-
-    heatGainVeranoSearch = sqlFile.execAndReturnFirstDouble(flowVentanasVerano.call('heat gain'))
-    heatGainVerano = OpenStudio.convert(heatGainVeranoSearch.get, 'J', 'kWh').get
-
-    heatLossInviernoSearch = sqlFile.execAndReturnFirstDouble(flowVentanasInvierno.call('heat loss'))
-    heatLossInvierno = OpenStudio.convert(heatLossInviernoSearch.get, 'J', 'kWh').get
-
-    heatLossVeranoSearch = sqlFile.execAndReturnFirstDouble(flowVentanasVerano.call('heat loss'))
-    heatLossVerano = OpenStudio.convert(heatLossVeranoSearch.get, 'J', 'kWh').get
-
-    transmittedInviernoSearch = sqlFile.execAndReturnFirstDouble(flowVentanasInvierno.call('transmitted solar'))
-    transmittedInvierno = OpenStudio.convert(transmittedInviernoSearch.get, 'J', 'kWh').get
-
-    transmittedVeranoSearch = sqlFile.execAndReturnFirstDouble(flowVentanasVerano.call('transmitted solar'))
-    transmittedVerano = OpenStudio.convert(transmittedVeranoSearch.get, 'J', 'kWh').get
-
-    return {'HGi' => heatGainInvierno, 'HGv' => heatGainVerano,
-            'HLi' => heatLossInvierno, 'HLv' => heatLossVerano,
-            'TSi' => transmittedInvierno, 'TSv' => transmittedVerano,}
+    medicion_general[:data] << valores_fila
+    return medicion_general
   end
 
-  def self.valoresZonas(sqlFile, variable, runner)
-    runner.registerInfo("\n.. variable: '#{variable}'\n")
-    #, ZoneName, VariableName, month, VariableValue, variableUnits, reportingfrequency FROM
-    respuesta = "SELECT SUM(VariableValue) FROM (#{ CTE_Query::ZONASHABITABLES })
+  def self._componentValueForPeriod(sqlFile, variableName, periodo, className, extBoundCond, unitsSource='J', unitsTarget='kWh')
+    # XXX: Esto no funciona porque no se limitan las superficies a las que forman parte de la envolvente sino que son todas las
+    # XXX: de las zonas habitables
+    meses = (periodo == 'invierno') ? "(1,2,3,4,5,10,11,12)" : "(6,7,8,9)"
+    query = "SELECT SUM(VariableValue) FROM (#{ CTE_Query::ZONASHABITABLES_SUPERFICIES }) AS surf
+    INNER JOIN ReportVariableDataDictionary rvdd
+    INNER JOIN ReportVariableData USING (ReportVariableDataDictionaryIndex)
+    INNER JOIN Time AS time USING (TimeIndex)
+    WHERE rvdd.VariableName == '#{ variableName }'
+    AND surf.ClassName == '#{ className }'
+    AND surf.ExtBoundCond == #{ extBoundCond }
+    AND Month IN #{ meses }"
+    return OpenStudio.convert(sqlFile.execAndReturnFirstDouble(query).get, unitsSource, unitsTarget).get
+  end
+
+  def self._zoneValueForPeriod(sqlFile, variableName, periodo, unitsSource='J', unitsTarget='kWh')
+    meses = (periodo == 'invierno') ? "(1,2,3,4,5,10,11,12)" : "(6,7,8,9)"
+    query = "SELECT SUM(VariableValue) FROM (#{ CTE_Query::ZONASHABITABLES })
     INNER JOIN ReportVariableDataDictionary rvdd
     INNER JOIN ReportVariableData USING (ReportVariableDataDictionaryIndex)
     INNER JOIN (SELECT TimeIndex, Month, Day, Hour FROM ReportVariableDataDictionary
@@ -297,110 +281,9 @@ AND surf.ClassName == 'Floor' AND surf.ExtBoundCond == -1 "
                 AND ReportingFrequency == 'Hourly'
                 AND VariableValue < 95
                 AND VariableValue > -45) USING (TimeIndex)
-    WHERE rvdd.variableName == '#{variable}' "
-
-    queryInvierno = respuesta + "AND month IN (1,2,3,4,5,10,11,12)"
-    queryVerano = respuesta + "AND month IN (6,7,8,9)"
-
-    searchInvierno = sqlFile.execAndReturnFirstDouble(queryInvierno)
-    searchVerano = sqlFile.execAndReturnFirstDouble(queryVerano)
-
-    salida = {'valInv' => OpenStudio.convert(searchInvierno.get, 'J', 'kWh').get,
-              'valVer' => OpenStudio.convert(searchVerano.get,   'J', 'kWh').get   }
-    runner.registerInfo("     salida #{salida}\n")
-    return [salida['valInv'], salida['valVer']]
+    WHERE rvdd.variableName == '#{ variableName }'
+    AND Month IN #{ meses }"
+    return OpenStudio.convert(sqlFile.execAndReturnFirstDouble(query).get, unitsSource, unitsTarget).get
   end
 
-  def self.tabla_demanda_por_componentes_invierno(model, sqlFile, runner)
-    return demanda_por_componentes(model, sqlFile, runner, 'invierno')
-  end
-
-  def self.tabla_demanda_por_componentes_verano(model, sqlFile, runner)
-    return demanda_por_componentes(model, sqlFile, runner, 'verano')
-  end
-
-  def self.demanda_por_componentes(model, sqlFile, runner, periodo)
-    runner.registerInfo("__ inicidada demanda por componentes__#{periodo}\n")
-
-    superficiehabitable =  CTE_Query.superficieHabitable(sqlFile).round(2)
-
-    orden_eje_x = []
-    medicion_general = {}
-    medicion_general[:title] = "Demandas por componentes en #{periodo}"
-    medicion_general[:header] = ['', 'Paredes E', 'Cubiertas', 'SuelosT', 'PuentesT','SolarVen', 'TransVen', 'FuentesI', 'Infiltr', 'Ventil', 'Total']
-
-    medicion_general[:units] = [] #vacio porque son distintas
-    medicion_general[:data] = []
-    medicion_general[:chart_type] = 'vertical_stacked_bar'
-    medicion_general[:chart_attributes] = { value: medicion_general[:title], label_x: 'Componente', sort_yaxis: [], sort_xaxis: orden_eje_x }
-    medicion_general[:chart] = []
-
-    valores_fila = [periodo] #la fila de la tabla en cuestión
-    valores_data = []
-    indice = {'invierno' => 0, 'verano' => 1}
-    temporada = {'invierno' => 'calefaccion',
-                 'verano'   => 'refrigeracion' }
-    colores = {'invierno' => '#EF1C21',
-               'verano'   => '#008FF0' }
-
-    registraValores = lambda do | value, label, label_x |
-      medicion_general[:chart] << JSON.generate(label: label, label_x: label_x, value: value, color: colores[periodo])
-      valores_fila << value.round
-      valores_data << value
-      orden_eje_x << label_x
-    end
-
-    # paredes exteriores
-    value = flowMurosExteriores(sqlFile, periodo) / superficiehabitable
-    registraValores.call(value, temporada[periodo], 'Paredes Exteriores')
-    # cubiertas
-    values = flowCubiertas(sqlFile)
-    value = values[indice[periodo]] / superficiehabitable
-    registraValores.call(value, temporada[periodo], 'Cubiertas')
-    # suelos terreno
-    values = flowSuelosTerreno(sqlFile)
-    value = values[indice[periodo]] / superficiehabitable
-    registraValores.call(value, temporada[periodo], 'SuelosT')
-    # puentes termicos
-    valores_fila << 'sin calcular'
-    #solar y transmisión ventanas
-    energiaVentanas = flowVentanas(sqlFile)
-    values = [energiaVentanas['TSi'], energiaVentanas['TSv']]
-    value = values[indice[periodo]] / superficiehabitable
-    registraValores.call(value, temporada[periodo], 'Solar Ventanas')
-
-    transmisionVentanasInvierno = energiaVentanas['HGi'] - energiaVentanas['HLi'] - energiaVentanas['TSi']
-    transmisionVentanaVerano = energiaVentanas['HGv'] - energiaVentanas['HLv'] - energiaVentanas['TSv']
-    values = [transmisionVentanasInvierno, transmisionVentanaVerano]
-    value = values[indice[periodo]] / superficiehabitable
-    registraValores.call(value, temporada[periodo], 'Transmision Ventanas')
-
-    # suelos terreno
-    values = valoresZonas(sqlFile, "Zone Total Internal Total Heating Energy", runner)
-    value = values[indice[periodo]] / superficiehabitable
-    registraValores.call(value, temporada[periodo], 'Fuentes Internas')
-
-    # infiltracion
-    heatGain = valoresZonas(sqlFile, "Zone Infiltration Total Heat Gain Energy", runner)
-    heatLoss = valoresZonas(sqlFile, "Zone Infiltration Total Heat Loss Energy", runner)
-    values = [heatGain[0] - heatLoss[0], heatGain[1] - heatLoss[1]]
-    registraValores.call(values[indice[periodo]] / superficiehabitable, temporada[periodo], 'Infiltación')
-
-    # ventilacion + infiltraciones
-    ventGain = valoresZonas(sqlFile, "Zone Combined Outdoor Air Total Heat Gain Energy", runner)
-    ventLoss = valoresZonas(sqlFile, "Zone Combined Outdoor Air Total Heat Loss Energy", runner)
-    values = [ventGain[0] - ventLoss[0], ventGain[1] - ventLoss[1]]
-    value = values[indice[periodo]] / superficiehabitable
-    registraValores.call(value, temporada[periodo], 'Ventilación')
-
-    #total
-    total = superficieHabitable * valores_data.reduce(:+)
-    values = [total, total]
-    value = values[indice[periodo]] / superficiehabitable
-    registraValores.call(value, temporada[periodo], 'Total')
-
-    medicion_general[:data] << valores_fila
-    return medicion_general
-
-  end
 end
