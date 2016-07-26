@@ -19,13 +19,11 @@
 
 require 'openstudio'
 require 'openstudio/ruleset/ShowRunnerOutput'
-
-require "#{File.dirname(__FILE__)}/../measure.rb"
-
 require 'minitest/autorun'
 
-class CambioHorarioVeranoInvierno_Test < MiniTest::Unit::TestCase
+require_relative "../measure.rb"
 
+class CambioHorarioVeranoInvierno_Test < MiniTest::Unit::TestCase
 
   def test_CambioHorarioVeranoInvierno
 
@@ -37,7 +35,7 @@ class CambioHorarioVeranoInvierno_Test < MiniTest::Unit::TestCase
 
     # load the test model
     translator = OpenStudio::OSVersion::VersionTranslator.new
-    path = OpenStudio::Path.new(File.dirname(__FILE__) + "/EnvelopeAndLoadTestModel_01.osm")
+    path = OpenStudio::Path.new(File.dirname(__FILE__) + "/cubito+garaje_NH.osm")
     model = translator.loadModel(path)
     assert((not model.empty?))
     model = model.get
@@ -47,14 +45,7 @@ class CambioHorarioVeranoInvierno_Test < MiniTest::Unit::TestCase
     workspace = ft.translateModel(model)
 
     # get arguments and test that they are what we are expecting
-    arguments = measure.arguments(workspace)
     argument_map = OpenStudio::Ruleset::OSArgumentMap.new
-
-    count = -1
-
-    source_idf_path = arguments[count += 1].clone
-    assert(source_idf_path.setValue(File.dirname(__FILE__) + "/Example B - BlockEnergyCharge.idf"))
-    argument_map["source_idf_path"] = source_idf_path
 
     measure.run(workspace, runner, argument_map)
     result = runner.result
