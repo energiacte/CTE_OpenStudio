@@ -81,17 +81,12 @@ module CTE_tables
   end
 
   def self.tabla_mediciones_envolvente(model, sqlFile, runner)
-    contenedor_general = {}
-    contenedor_general[:title] = "Mediciones elementos de la envolvente"
-    contenedor_general[:header] = ['Construcción', 'Superficie', 'U']
-    contenedor_general[:units] = ['', 'm²', 'W/m²K']
-    contenedor_general[:data] = []
-
     indicesquery = "SELECT ConstructionIndex FROM (#{ CTE_Query::ENVOLVENTE_SUPERFICIES_EXTERIORES })
                     UNION
                     SELECT ConstructionIndex FROM (#{ CTE_Query::ENVOLVENTE_SUPERFICIES_INTERIORES })"
     indices  = sqlFile.execAndReturnVectorOfString(indicesquery).get
 
+    data = []
     indices.each do | indiceconstruccion |
       query = "SELECT SUM(Area) FROM
                    (SELECT Area, ConstructionIndex FROM (#{ CTE_Query::ENVOLVENTE_SUPERFICIES_EXTERIORES })
@@ -101,7 +96,16 @@ module CTE_tables
       area = sqlFile.execAndReturnFirstDouble(query).get
       nombre = sqlFile.execAndReturnFirstString("SELECT Name FROM Constructions WHERE ConstructionIndex == #{indiceconstruccion} ").get
       uvalue = sqlFile.execAndReturnFirstDouble("SELECT Uvalue FROM Constructions WHERE ConstructionIndex == #{indiceconstruccion} ").get
-      contenedor_general[:data] << ["#{ nombre }".encode("UTF-8", invalid: :replace, undef: :replace), area.round(2), uvalue.round(3)]
+      data << ["#{ nombre }".encode("UTF-8", invalid: :replace, undef: :replace), area, uvalue]
+    end
+
+    contenedor_general = {}
+    contenedor_general[:title] = "Mediciones elementos de la envolvente"
+    contenedor_general[:header] = ['Construcción', 'Superficie', 'U']
+    contenedor_general[:units] = ['', 'm²', 'W/m²K']
+    contenedor_general[:data] = []
+    data.each do | nombre, area, uvalue |
+      contenedor_general[:data] << [nombre, area.round(2), uvalue.round(3)]
     end
 
     return contenedor_general
