@@ -8,7 +8,7 @@ module CTE_tables
   # variablesdisponiblesquery = "SELECT DISTINCT VariableName, ReportingFrequency FROM ReportVariableDataDictionary "
 
   #======== Tabla general de mediciones =====
-  def self.CTE_tabla_general_de_mediciones(model, sqlFile, runner)
+  def self.tabla_mediciones_generales(model, sqlFile, runner)
     # TODO: descomponer superficies externas de la envolvente por tipos (muros, cubiertas, huecos, lucernarios, etc)
     buildingName = model.getBuilding.name.get
     # Zonas habitables
@@ -60,7 +60,7 @@ module CTE_tables
     return medicion_general
   end
 
-  def self.CTE_tabla_de_energias(model, sqlFile, runner)
+  def self.tabla_de_energias(model, sqlFile, runner)
     # Basada en una tabla del report SI
     energianeta = OpenStudio.convert(sqlFile.netSiteEnergy.get, 'GJ', 'kWh').get
     superficiehabitable = CTE_Query.superficieHabitable(sqlFile)
