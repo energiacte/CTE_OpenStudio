@@ -188,69 +188,82 @@ module CTE_tables
     runner.registerInfo("__ inicidada demanda por componentes__#{periodo}\n")
 
     superficiehabitable =  CTE_Query.superficieHabitable(sqlFile).round(2)
-
-    orden_eje_x = []
-    medicion_general = {}
-    medicion_general[:title] = "Demandas por componentes en #{periodo}"
-    medicion_general[:header] = ['', 'Paredes Exteriores', 'Paredes Terreno', 'Cubiertas', 'Suelos Aire', 'Suelos Terreno', 'Solar Ventanas', 'Transmisión Ventanas', 'Fuentes Internas', 'Ventilación + Infiltraciones', 'Total']
-
-    medicion_general[:units] = [''] + ['kWh/m²'] * 10 #vacio porque son distintas
-    medicion_general[:data] = []
-    medicion_general[:chart_type] = 'vertical_stacked_bar'
-    medicion_general[:chart_attributes] = { value: medicion_general[:title], label_x: 'Componente', sort_yaxis: [], sort_xaxis: orden_eje_x }
-    medicion_general[:chart] = []
-
-    valores_fila = [periodo] #la fila de la tabla en cuestión
-    valores_data = []
     temporada = {'invierno' => 'calefaccion', 'verano'   => 'refrigeracion' }[periodo]
     color = {'invierno' => '#EF1C21', 'verano'   => '#008FF0' }[periodo]
 
-    registraValores = lambda do | value, label, label_x |
-      medicion_general[:chart] << JSON.generate(label: label, label_x: label_x, value: value, color: color)
-      valores_fila << value.round
-      valores_data << value
-      orden_eje_x << label_x
-    end
-
+    data = []
     # paredes aire ext.
     airWallHeat = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy', periodo, 'Wall', 0) / superficiehabitable
-    registraValores.call(airWallHeat, temporada, 'Paredes Exteriores')
+    data << [airWallHeat, temporada, 'Paredes Exteriores']
     # paredes terreno
     groundWallHeat = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy', periodo, 'Wall', -1) / superficiehabitable
-    registraValores.call(groundWallHeat, temporada, 'Paredes Terreno')
+    data << [groundWallHeat, temporada, 'Paredes Terreno']
     # paredes interiores
     # XXX: no tenemos el balance de las particiones interiores entre zonas
     # cubiertas
     roofHeat = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy', periodo, 'Roof', 0) / superficiehabitable
-    registraValores.call(roofHeat, temporada, 'Cubiertas')
+    data << [roofHeat, temporada, 'Cubiertas']
     # suelos aire ext
     airFloorHeat = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy', periodo, 'Floor', 0) / superficiehabitable
-    registraValores.call(airFloorHeat, temporada, 'Suelos Aire')
+    data << [airFloorHeat, temporada, 'Suelos Aire']
     # suelos terreno
     groundFloorHeat = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy', periodo, 'Floor', -1) / superficiehabitable
-    registraValores.call(groundFloorHeat, temporada, 'Suelos Terreno')
+    data << [groundFloorHeat, temporada, 'Suelos Terreno']
     # puentes termicos
     #valores_fila << 'sin calcular'
     # #solar y transmisión ventanas
     windowRadiation = _componentValueForPeriod(sqlFile, 'Surface Window Transmitted Solar Radiation Energy', periodo, 'Window', 0) / superficiehabitable
-    registraValores.call(windowRadiation, temporada, 'Solar Ventanas')
+    data << [windowRadiation, temporada, 'Solar Ventanas']
     windowTransmissionGain = _componentValueForPeriod(sqlFile, 'Surface Window Heat Gain Energy', periodo, 'Window', 0) / superficiehabitable
     windowTransmissionLoss = _componentValueForPeriod(sqlFile, 'Surface Window Heat Loss Energy', periodo, 'Window', 0) / superficiehabitable
     windowTransmission = windowTransmissionGain - windowTransmissionLoss - windowRadiation
-    registraValores.call(windowTransmission, temporada, 'Transmision Ventanas')
+    data << [windowTransmission, temporada, 'Transmision Ventanas']
     # fuentes internas
     internalHeating = _zoneValueForPeriod(sqlFile, "Zone Total Internal Total Heating Energy", periodo) / superficiehabitable
-    registraValores.call(internalHeating, temporada, 'Fuentes Internas')
+    data << [internalHeating, temporada, 'Fuentes Internas']
     # ventilacion + infiltraciones
     ventGain = _zoneValueForPeriod(sqlFile, "Zone Combined Outdoor Air Total Heat Gain Energy", periodo) / superficiehabitable
     ventLoss = _zoneValueForPeriod(sqlFile, "Zone Combined Outdoor Air Total Heat Loss Energy", periodo) / superficiehabitable
     airHeatBalance = ventGain - ventLoss
-    registraValores.call(airHeatBalance, temporada, 'Ventilación + Infiltraciones')
-    #total
-    value = valores_data.reduce(:+)
-    registraValores.call(value, temporada, 'Total')
+    data << [airHeatBalance, temporada, 'Ventilación + Infiltraciones']
 
-    medicion_general[:data] << valores_fila
+    # total
+    total = data.map{ | value, label, label_x | value }.reduce(:+)
+    data << [total, temporada, 'Total']
+
+    orden_eje_x = []
+    medicion_general = {}
+    medicion_general[:title] = "Demandas por componentes en #{periodo} [kWh/m²]"
+    medicion_general[:header] = [
+      '', 'Paredes Exteriores', 'Paredes Terreno',
+      'Cubiertas', 'Suelos Aire', 'Suelos Terreno',
+      'Solar Ventanas', 'Transmisión Ventanas',
+      'Fuentes Internas',
+      'Ventilación + Infiltraciones', 'Total'
+    ]
+    medicion_general[:units] = [''] + ['kWh/m²'] * (medicion_general[:header].size - 1)
+    medicion_general[:chart_type] = 'vertical_stacked_bar'
+    medicion_general[:chart_attributes] = {
+      value: medicion_general[:title],
+      label_x: 'Componente',
+      sort_yaxis: [],
+      sort_xaxis: orden_eje_x
+    }
+    medicion_general[:chart] = []
+
+    valores_fila = [periodo] #la fila de la tabla en cuestión
+    data.each do | value, label, label_x |
+      medicion_general[:chart] << JSON.generate(
+        label: label,
+        label_x: label_x,
+        value: value,
+        color: color
+      )
+      valores_fila << value.round(2)
+      orden_eje_x << label_x
+    end
+    medicion_general[:data] = [] << valores_fila
+
     return medicion_general
   end
 
