@@ -296,27 +296,14 @@ WHERE
     meses = (periodo == 'invierno') ? "(1,2,3,4,5,10,11,12)" : "(6,7,8,9)"
     query = "
 WITH
-    zonashabitables AS (#{ CTE_Query::ZONASHABITABLES }),
-    demandatime AS (
-        SELECT
-           TimeIndex, Month, Day, Hour
-        FROM
-           ReportVariableDataDictionary
-           INNER JOIN  ReportVariableData USING (ReportVariableDataDictionaryIndex)
-           INNER JOIN Time USING (TimeIndex)
-        WHERE
-           VariableName = 'Zone Thermostat Cooling Setpoint Temperature'
-           OR VariableName = 'Zone Thermostat Heating Setpoint Temperature'
-           AND ReportingFrequency = 'Hourly'
-           AND VariableValue < 95
-           AND VariableValue > -45)
+    zonashabitables AS (#{ CTE_Query::ZONASHABITABLES })
 SELECT
     SUM(VariableValue)
 FROM
     zonashabitables
     INNER JOIN ReportVariableDataDictionary
     INNER JOIN ReportVariableData USING (ReportVariableDataDictionaryIndex)
-    INNER JOIN demandatime USING (TimeIndex)
+    INNER JOIN Time USING (TimeIndex)
 WHERE
     VariableName = '#{ variableName }'
     AND ReportingFrequency = 'Hourly'
