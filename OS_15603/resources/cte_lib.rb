@@ -277,12 +277,13 @@ WITH
 SELECT
     SUM(VariableValue)
 FROM
-    superficieshabitables AS surf
-    INNER JOIN ReportVariableDataDictionary rvdd
+    superficieshabitables
+    INNER JOIN ReportVariableDataDictionary
     INNER JOIN ReportVariableData USING (ReportVariableDataDictionaryIndex)
     INNER JOIN Time AS time USING (TimeIndex)
 WHERE
     VariableName = '#{ variableName }'
+    AND ReportingFrequency = 'Hourly'
     AND SurfaceName = KeyValue
     AND ClassName = '#{ className }'
     AND ExtBoundCond = #{ extBoundCond }
@@ -313,11 +314,12 @@ SELECT
     SUM(VariableValue)
 FROM
     zonashabitables
-    INNER JOIN ReportVariableDataDictionary rvdd
+    INNER JOIN ReportVariableDataDictionary
     INNER JOIN ReportVariableData USING (ReportVariableDataDictionaryIndex)
     INNER JOIN demandatime USING (TimeIndex)
 WHERE
     VariableName = '#{ variableName }'
+    AND ReportingFrequency = 'Hourly'
     AND KeyValue = ZoneName
     AND Month IN #{ meses }
 "
