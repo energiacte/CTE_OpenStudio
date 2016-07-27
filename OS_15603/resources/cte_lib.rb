@@ -271,31 +271,54 @@ module CTE_tables
     # XXX: Esto no funciona porque no se limitan las superficies a las que forman parte de la envolvente sino que son todas las
     # XXX: de las zonas habitables
     meses = (periodo == 'invierno') ? "(1,2,3,4,5,10,11,12)" : "(6,7,8,9)"
-    query = "SELECT SUM(VariableValue) FROM (#{ CTE_Query::ZONASHABITABLES_SUPERFICIES }) AS surf
+    query = "
+WITH
+    superficieshabitables AS (#{ CTE_Query::ZONASHABITABLES_SUPERFICIES })
+SELECT
+    SUM(VariableValue)
+FROM
+    superficieshabitables AS surf
     INNER JOIN ReportVariableDataDictionary rvdd
     INNER JOIN ReportVariableData USING (ReportVariableDataDictionaryIndex)
     INNER JOIN Time AS time USING (TimeIndex)
-    WHERE rvdd.VariableName == '#{ variableName }'
-    AND surf.ClassName == '#{ className }'
-    AND surf.ExtBoundCond == #{ extBoundCond }
-    AND Month IN #{ meses }"
+WHERE
+    rvdd.VariableName = '#{ variableName }'
+    AND surf.ClassName = '#{ className }'
+    AND surf.ExtBoundCond = #{ extBoundCond }
+    AND Month IN #{ meses }
+"
     return OpenStudio.convert(sqlFile.execAndReturnFirstDouble(query).get, unitsSource, unitsTarget).get
   end
 
   def self._zoneValueForPeriod(sqlFile, variableName, periodo, unitsSource='J', unitsTarget='kWh')
     meses = (periodo == 'invierno') ? "(1,2,3,4,5,10,11,12)" : "(6,7,8,9)"
-    query = "SELECT SUM(VariableValue) FROM (#{ CTE_Query::ZONASHABITABLES })
+    query = "
+WITH
+    zonashabitables AS (#{ CTE_Query::ZONASHABITABLES }),
+    demandatime AS (
+        SELECT
+           TimeIndex, Month, Day, Hour
+        FROM
+           ReportVariableDataDictionary
+           INNER JOIN  ReportVariableData USING (ReportVariableDataDictionaryIndex)
+           INNER JOIN Time USING (TimeIndex)
+        WHERE
+           VariableName = 'Zone Thermostat Cooling Setpoint Temperature'
+           OR VariableName = 'Zone Thermostat Heating Setpoint Temperature'
+           AND ReportingFrequency = 'Hourly'
+           AND VariableValue < 95
+           AND VariableValue > -45)
+SELECT
+    SUM(VariableValue)
+FROM
+    zonashabitables
     INNER JOIN ReportVariableDataDictionary rvdd
     INNER JOIN ReportVariableData USING (ReportVariableDataDictionaryIndex)
-    INNER JOIN (SELECT TimeIndex, Month, Day, Hour FROM ReportVariableDataDictionary
-                INNER JOIN  ReportVariableData USING (ReportVariableDataDictionaryIndex)
-                INNER JOIN Time USING (TimeIndex)
-                WHERE (VariableName = 'Zone Thermostat Cooling Setpoint Temperature' OR VariableName = 'Zone Thermostat Heating Setpoint Temperature')
-                AND ReportingFrequency == 'Hourly'
-                AND VariableValue < 95
-                AND VariableValue > -45) USING (TimeIndex)
-    WHERE rvdd.variableName == '#{ variableName }'
-    AND Month IN #{ meses }"
+    INNER JOIN demandatime USING (TimeIndex)
+WHERE
+    rvdd.variableName == '#{ variableName }'
+    AND Month IN #{ meses }
+"
     return OpenStudio.convert(sqlFile.execAndReturnFirstDouble(query).get, unitsSource, unitsTarget).get
   end
 

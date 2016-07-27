@@ -11,48 +11,69 @@ SELECT
 FROM Zones
     LEFT OUTER JOIN ZoneInfoZoneLists zizl USING (ZoneIndex)
     LEFT OUTER JOIN ZoneLists zl USING (ZoneListIndex)
-WHERE zl.Name NOT LIKE 'CTE_N%' "
+WHERE
+    zl.Name NOT LIKE 'CTE_N%'
+"
 
   ZONASNOHABITABLES = "
 SELECT
     ZoneIndex, ZoneName, Volume, FloorArea, ZoneListIndex, Name
-FROM Zones
+FROM
+    Zones
     LEFT OUTER JOIN ZoneInfoZoneLists zizl USING (ZoneIndex)
     LEFT OUTER JOIN ZoneLists zl USING (ZoneListIndex)
-WHERE zl.Name LIKE 'CTE_N%' "
+WHERE
+    zl.Name LIKE 'CTE_N%'
+"
 
   ZONASHABITABLES_SUPERFICIES = "
+WITH
+    zonashabitables AS (#{ CTE_Query::ZONASHABITABLES })
 SELECT
     SurfaceIndex, SurfaceName, ConstructionIndex, ClassName, Area, GrossArea,
     ExtBoundCond, surf.ZoneIndex AS ZoneIndex
 FROM
     Surfaces surf
-    INNER JOIN ( #{ CTE_Query::ZONASHABITABLES } ) AS zones
-        ON surf.ZoneIndex = zones.ZoneIndex"
+    INNER JOIN zonashabitables AS zones USING (ZoneIndex)
+"
 
   # XXX: No está claro que Internal Mass sea un SurfaceType
   ENVOLVENTE_SUPERFICIES_EXTERIORES = "
+WITH
+    superficieshabitables AS (#{ CTE_Query::ZONASHABITABLES_SUPERFICIES })
 SELECT
     SurfaceIndex, SurfaceName, ConstructionIndex, ClassName, Area,
     GrossArea, ExtBoundCond, ZoneIndex
 FROM
-    (#{ CTE_Query::ZONASHABITABLES_SUPERFICIES }) AS surf
-    WHERE (surf.ClassName NOT IN ('Internal Mass', 'Shading') AND surf.ExtBoundCond IN (-1, 0)) "
+    superficieshabitables AS surf
+WHERE
+    surf.ClassName NOT IN ('Internal Mass', 'Shading')
+    AND surf.ExtBoundCond IN (-1, 0)
+"
 
 
   ENVOLVENTE_SUPERFICIES_INTERIORES = "
+WITH
+    superficieshabitables AS (#{ CTE_Query::ZONASHABITABLES_SUPERFICIES }),
+    zonasnohabitables AS (#{ CTE_Query::ZONASNOHABITABLES }),
+    superficiesinternas AS (
+        SELECT
+            SurfaceIndex
+        FROM
+            superficieshabitables AS surf
+        WHERE
+            surf.ClassName NOT IN ('Internal Mass', 'Shading')
+            AND ExtBoundCond NOT IN (-1, 0)
+     )
 SELECT
     surf.SurfaceIndex AS SurfaceIndex, SurfaceName,
     ConstructionIndex, ClassName, Area, GrossArea, ExtBoundCond,
     surf.ZoneIndex AS ZoneIndex
-FROM (  SELECT
-            SurfaceIndex
-        FROM
-            (#{ CTE_Query::ZONASHABITABLES_SUPERFICIES }) AS surf
-            WHERE (surf.ClassName NOT IN ('Internal Mass', 'Shading') AND ExtBoundCond NOT IN (-1, 0))
-            ) AS internas
+FROM
+    superficiesinternas AS internas
     INNER JOIN Surfaces surf ON surf.ExtBoundCond = internas.SurfaceIndex
-    INNER JOIN (#{ CTE_Query::ZONASNOHABITABLES }) AS znh ON surf.ZoneIndex = znh.ZoneIndex"
+    INNER JOIN zonasnohabitables AS znh ON surf.ZoneIndex = znh.ZoneIndex
+"
 
   def CTE_Query.getValueOrFalse(search)
     return (if search.empty? then false else search.get end)
