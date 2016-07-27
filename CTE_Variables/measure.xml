@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>cte_variables</name>
   <uid>1adcd9ca-53a5-427e-9662-424d35b7de33</uid>
-  <version_id>4a08a958-dc4e-4cfa-a4bb-f1ae0bec1456</version_id>
-  <version_modified>20160722T150055Z</version_modified>
+  <version_id>e3d45a3e-1b45-487b-9378-e819105215e0</version_id>
+  <version_modified>20160727T110946Z</version_modified>
   <xml_checksum>9E530B22</xml_checksum>
   <class_name>CTE_Variables</class_name>
   <display_name>Variables CTE</display_name>
@@ -52,7 +52,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>B4FEF4A9</checksum>
+      <checksum>870E7C78</checksum>
     </file>
   </files>
 </measure>

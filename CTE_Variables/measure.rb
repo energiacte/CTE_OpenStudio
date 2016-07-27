@@ -67,29 +67,17 @@ class CTE_Variables < OpenStudio::Ruleset::ModelUserScript
 
     new_oputput_variables = [
       # Monthly variables
+      ["Site Outdoor Air Drybulb Temperature", "monthly", "*"],
       ["Surface Inside Face Conduction Heat Transfer Energy", "monthly", "*"],
       ["Surface Window Heat Gain Energy", "monthly", "*"],
       ["Surface Window Heat Loss Energy", "monthly", "*"],
-      ["Surface Window Transmitted Solar Radiation Energy", "monthly", "*"],
       ["Surface Window Transmitted Solar Radiation Energy", "monthly", "*"],
       ["Zone Total Internal Total Heating Energy", "monthly", "*"],
       #["Zone Total Internal Convective Heating Energy", "monthly", "*"], # parte convectiva de la carga total de la zona
       ["Zone Ideal Loads Zone Total Heating Energy", "monthly", "*"],
       ["Zone Ideal Loads Zone Total Cooling Energy", "monthly", "*"],
-      ["Zone Infiltration Total Heat Gain Energy", "monthly", "*"],
-      ["Zone Infiltration Total Heat Loss Energy", "monthly", "*"],
-      ["Zone Mechanical Ventilation Current Density Volume", "monthly", "*"],
-      ["Zone Ventilation Total Heat Gain Energy", "monthly", "*"],
-      ["Zone Ventilation Total Heat Loss Energy", "monthly", "*"],
-      ["Zone Infiltration Standard Density Volume Flow Rate", "monthly", "*"],
-      ["Zone Infiltration Current Density Volume", "monthly", "*"],
-      ["Zone Ventilation Standard Density Volume Flow Rate", "monthly", "*"],
-      ["Zone Ideal Loads Outdoor Air Standard Density Volume Flow Rate", "monthly", "*"],
-      ["Zone Ideal Loads Supply Air Standard Density Volume Flow Rate", "monthly", "*"],
-      ["Site Outdoor Air Drybulb Temperature", "monthly", "*"],
-      ["Zone Combined Outdoor Air Total Heat Loss Energy", "monthly", "*"],
-      ["Zone Combined Outdoor Air Total Heat Gain Energy", "monthly", "*"],
-      ["Zone Combined Outdoor Air Changes per Hour", "monthly", "*"],
+      #["Zone Ideal Loads Outdoor Air Standard Density Volume Flow Rate", "monthly", "*"],
+      #["Zone Ideal Loads Supply Air Standard Density Volume Flow Rate", "monthly", "*"],
       # Hourly variables
       ["Surface Inside Face Conduction Heat Transfer Energy", "hourly", "*"],
       ["Surface Inside Face Conduction Heat Transfer Energy", "hourly", "*"],
@@ -100,14 +88,10 @@ class CTE_Variables < OpenStudio::Ruleset::ModelUserScript
       ["Zone Thermostat Cooling Setpoint Temperature", "hourly", "*"],
       ["Zone Thermostat Heating Setpoint Temperature", "hourly", "*"],
       ["Zone Total Internal Total Heating Energy", "hourly", "*"],
-      ["Zone Infiltration Total Heat Gain Energy", "hourly", "*"],
-      ["Zone Infiltration Total Heat Loss Energy", "hourly", "*"],
-      ["Zone Ventilation Total Heat Gain Energy", "hourly", "*"],
-      ["Zone Ventilation Total Heat Loss Energy", "hourly", "*"],
-      ["Zone Infiltration Current Density Volume", "hourly", "*"],
+      #["Zone Total Internal Convective Heating Energy", "hourly", "*"], # parte convectiva de la carga total de la zona
       ["Zone Mechanical Ventilation Current Density Volume", "hourly", "*"],
-      ["Zone Combined Outdoor Air Total Heat Loss Energy", "hourly", "*"],
-      ["Zone Combined Outdoor Air Total Heat Gain Energy", "hourly", "*"],
+      ["Zone Combined Outdoor Air Sensible Heat Loss Energy", "hourly", "*"],
+      ["Zone Combined Outdoor Air Sensible Heat Gain Energy", "hourly", "*"],
       ["Zone Combined Outdoor Air Changes per Hour", "hourly", "*"]
     ]
 

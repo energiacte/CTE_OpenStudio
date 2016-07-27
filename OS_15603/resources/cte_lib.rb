@@ -222,8 +222,8 @@ module CTE_tables
     internalHeating = _zoneValueForPeriod(sqlFile, "Zone Total Internal Total Heating Energy", periodo) / superficiehabitable
     data << [internalHeating, temporada, 'Fuentes Internas']
     # ventilacion + infiltraciones
-    ventGain = _zoneValueForPeriod(sqlFile, "Zone Combined Outdoor Air Total Heat Gain Energy", periodo) / superficiehabitable
-    ventLoss = _zoneValueForPeriod(sqlFile, "Zone Combined Outdoor Air Total Heat Loss Energy", periodo) / superficiehabitable
+    ventGain = _zoneValueForPeriod(sqlFile, "Zone Combined Outdoor Air Sensible Heat Gain Energy", periodo) / superficiehabitable
+    ventLoss = _zoneValueForPeriod(sqlFile, "Zone Combined Outdoor Air Sensible Heat Loss Energy", periodo) / superficiehabitable
     airHeatBalance = ventGain - ventLoss
     data << [airHeatBalance, temporada, 'Ventilación + Infiltraciones']
 

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>open_studio_results_copy</name>
   <uid>6d91a3a6-5fcd-4f37-bcd7-9080493a5799</uid>
-  <version_id>091db681-9fe5-4351-9429-ff99c15befd3</version_id>
-  <version_modified>20160722T145619Z</version_modified>
+  <version_id>679eda19-ee6b-4a4e-a946-5323775b4784</version_id>
+  <version_modified>20160727T113313Z</version_modified>
   <xml_checksum>69BA4D91</xml_checksum>
   <class_name>OpenStudioResultsCopy</class_name>
   <display_name>Informe 15603</display_name>
@@ -14,6 +14,24 @@
     <argument>
       <name>mediciones_de_superficies_segun_CTE</name>
       <display_name>Mediciones de superficies segun CTE</display_name>
+      <type>Boolean</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>true</default_value>
+      <choices>
+        <choice>
+          <value>true</value>
+          <display_name>true</display_name>
+        </choice>
+        <choice>
+          <value>false</value>
+          <display_name>false</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>demandas_por_componentes</name>
+      <display_name>Demandas por componentes</display_name>
       <type>Boolean</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -478,23 +496,6 @@
       <checksum>CB625626</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.7.5</identifier>
-        <min_compatible>1.7.5</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>996E4AA1</checksum>
-    </file>
-    <file>
-      <filename>cubito+garaje_NH-out.idf</filename>
-      <filetype>idf</filetype>
-      <usage_type>test</usage_type>
-      <checksum>6BC9BADB</checksum>
-    </file>
-    <file>
       <filename>cubito+garaje_NH-report.html</filename>
       <filetype>html</filetype>
       <usage_type>test</usage_type>
@@ -505,12 +506,6 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>73D99CA3</checksum>
-    </file>
-    <file>
-      <filename>cubito+garaje_NH.sql</filename>
-      <filetype>sql</filetype>
-      <usage_type>test</usage_type>
-      <checksum>0E699055</checksum>
     </file>
     <file>
       <filename>os_lib_schedules.rb</filename>
@@ -531,40 +526,57 @@
       <checksum>6EB900DD</checksum>
     </file>
     <file>
-      <filename>inspeccionvariables.rb</filename>
+      <filename>cte_query.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>B5064DE9</checksum>
+      <checksum>627A5D76</checksum>
     </file>
     <file>
-      <filename>ctelib.rb</filename>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.7.5</identifier>
+        <min_compatible>1.7.5</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
       <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>68221156</checksum>
+      <usage_type>script</usage_type>
+      <checksum>D2EF062F</checksum>
     </file>
     <file>
       <filename>os_lib_reporting_SI.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>638C8F1B</checksum>
+      <checksum>951D02B5</checksum>
     </file>
     <file>
       <filename>test_cteLib.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>D018F118</checksum>
+      <checksum>822BA77E</checksum>
+    </file>
+    <file>
+      <filename>cte_lib.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BFDA2B8C</checksum>
+    </file>
+    <file>
+      <filename>cubito+garaje_NH-out.idf</filename>
+      <filetype>idf</filetype>
+      <usage_type>test</usage_type>
+      <checksum>AA0C2984</checksum>
+    </file>
+    <file>
+      <filename>cubito+garaje_NH.sql</filename>
+      <filetype>sql</filetype>
+      <usage_type>test</usage_type>
+      <checksum>DB770CBB</checksum>
     </file>
     <file>
       <filename>report.html</filename>
       <filetype>html</filetype>
       <usage_type>test</usage_type>
-      <checksum>DA8D05EA</checksum>
-    </file>
-    <file>
-      <filename>cte_query.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>5C18BFDC</checksum>
+      <checksum>8F8E0D1F</checksum>
     </file>
   </files>
 </measure>
