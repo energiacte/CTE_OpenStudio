@@ -160,8 +160,8 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
        LEFT OUTER JOIN ZoneLists zl USING (ZoneListIndex)
      WHERE zl.Name NOT LIKE 'CTE_N%' ").get
    
-    consumosFinales = procesedEPBFinalEnergyConsumptionByMonth(areaHabitable, runner)
-    exportComsumptionList(sqlFile, consumosFinales)     
+    consumosFinales = procesedEPBFinalEnergyConsumptionByMonth(sqlFile, runner)
+    exportComsumptionList(areaHabitable, consumosFinales)     
 
     return true
 
