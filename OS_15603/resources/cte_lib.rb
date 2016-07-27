@@ -193,29 +193,31 @@ module CTE_tables
 
     data = []
     # paredes aire ext.
-    airWallHeat = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy', periodo, 'Wall', 0) / superficiehabitable
+    airWallHeat = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy', periodo, 'Wall', "AND ExtBoundCond = 0") / superficiehabitable
     data << [airWallHeat, temporada, 'Paredes Exteriores']
     # paredes terreno
-    groundWallHeat = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy', periodo, 'Wall', -1) / superficiehabitable
+    groundWallHeat = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy', periodo, 'Wall', "AND ExtBoundCond = -1") / superficiehabitable
     data << [groundWallHeat, temporada, 'Paredes Terreno']
     # paredes interiores
+    indoorWallHeat = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy', periodo, 'Wall', "AND ExtBoundCond NOT IN (0, -1)") / superficiehabitable
+    data << [indoorWallHeat, temporada, 'Paredes Interiores']
     # XXX: no tenemos el balance de las particiones interiores entre zonas
     # cubiertas
-    roofHeat = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy', periodo, 'Roof', 0) / superficiehabitable
+    roofHeat = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy', periodo, 'Roof', "AND ExtBoundCond = 0") / superficiehabitable
     data << [roofHeat, temporada, 'Cubiertas']
     # suelos aire ext
-    airFloorHeat = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy', periodo, 'Floor', 0) / superficiehabitable
+    airFloorHeat = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy', periodo, 'Floor', "AND ExtBoundCond = 0") / superficiehabitable
     data << [airFloorHeat, temporada, 'Suelos Aire']
     # suelos terreno
-    groundFloorHeat = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy', periodo, 'Floor', -1) / superficiehabitable
+    groundFloorHeat = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy', periodo, 'Floor', "AND ExtBoundCond = -1") / superficiehabitable
     data << [groundFloorHeat, temporada, 'Suelos Terreno']
     # puentes termicos
     #valores_fila << 'sin calcular'
     # #solar y transmisión ventanas
-    windowRadiation = _componentValueForPeriod(sqlFile, 'Surface Window Transmitted Solar Radiation Energy', periodo, 'Window', 0) / superficiehabitable
+    windowRadiation = _componentValueForPeriod(sqlFile, 'Surface Window Transmitted Solar Radiation Energy', periodo, 'Window', "AND ExtBoundCond = 0") / superficiehabitable
     data << [windowRadiation, temporada, 'Solar Ventanas']
-    windowTransmissionGain = _componentValueForPeriod(sqlFile, 'Surface Window Heat Gain Energy', periodo, 'Window', 0) / superficiehabitable
-    windowTransmissionLoss = _componentValueForPeriod(sqlFile, 'Surface Window Heat Loss Energy', periodo, 'Window', 0) / superficiehabitable
+    windowTransmissionGain = _componentValueForPeriod(sqlFile, 'Surface Window Heat Gain Energy', periodo, 'Window', "AND ExtBoundCond = 0") / superficiehabitable
+    windowTransmissionLoss = _componentValueForPeriod(sqlFile, 'Surface Window Heat Loss Energy', periodo, 'Window', "AND ExtBoundCond = 0") / superficiehabitable
     windowTransmission = windowTransmissionGain - windowTransmissionLoss - windowRadiation
     data << [windowTransmission, temporada, 'Transmision Ventanas']
     # fuentes internas
@@ -235,7 +237,7 @@ module CTE_tables
     medicion_general = {}
     medicion_general[:title] = "Demandas por componentes en #{periodo} [kWh/m²]"
     medicion_general[:header] = [
-      '', 'Paredes Exteriores', 'Paredes Terreno',
+      '', 'Paredes Exteriores', 'Paredes Terreno', 'Paredes Interiores',
       'Cubiertas', 'Suelos Aire', 'Suelos Terreno',
       'Solar Ventanas', 'Transmisión Ventanas',
       'Fuentes Internas',
@@ -267,7 +269,7 @@ module CTE_tables
     return medicion_general
   end
 
-  def self._componentValueForPeriod(sqlFile, variableName, periodo, className, extBoundCond, unitsSource='J', unitsTarget='kWh')
+  def self._componentValueForPeriod(sqlFile, variableName, periodo, className, extraCond, unitsSource='J', unitsTarget='kWh')
     # XXX: Esto no funciona porque no se limitan las superficies a las que forman parte de la envolvente sino que son todas las
     # XXX: de las zonas habitables
     meses = (periodo == 'invierno') ? "(1,2,3,4,5,10,11,12)" : "(6,7,8,9)"
@@ -286,8 +288,8 @@ WHERE
     AND ReportingFrequency = 'Hourly'
     AND SurfaceName = KeyValue
     AND ClassName = '#{ className }'
-    AND ExtBoundCond = #{ extBoundCond }
     AND Month IN #{ meses }
+    #{ extraCond }
 "
     return OpenStudio.convert(sqlFile.execAndReturnFirstDouble(query).get, unitsSource, unitsTarget).get
   end
