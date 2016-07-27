@@ -135,7 +135,7 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     
     outFile = File.open(nombreFichero, 'w')
     outFile.write("vector,tipo,src_dst\n")
-    outFile.write("# A_ref: #{ areaHabitable }\n")
+    outFile.write("# Area_ref: #{ areaHabitable }\n")
     listaConsumos.each do | vectorConsumo |
       outFile.write(vectorConsumo[0..-2].join(',') + vectorConsumo[-1] + "\n")
     end    
