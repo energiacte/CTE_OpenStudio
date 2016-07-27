@@ -45,10 +45,10 @@ SELECT
     SurfaceIndex, SurfaceName, ConstructionIndex, ClassName, Area,
     GrossArea, ExtBoundCond, ZoneIndex
 FROM
-    superficieshabitables AS surf
+    superficieshabitables
 WHERE
-    surf.ClassName NOT IN ('Internal Mass', 'Shading')
-    AND surf.ExtBoundCond IN (-1, 0)
+    ClassName NOT IN ('Internal Mass', 'Shading')
+    AND ExtBoundCond IN (-1, 0)
 "
 
 
@@ -56,13 +56,13 @@ WHERE
 WITH
     superficieshabitables AS (#{ CTE_Query::ZONASHABITABLES_SUPERFICIES }),
     zonasnohabitables AS (#{ CTE_Query::ZONASNOHABITABLES }),
-    superficiesinternas AS (
+    superficiesinternasindex AS (
         SELECT
             SurfaceIndex
         FROM
-            superficieshabitables AS surf
+            superficieshabitables
         WHERE
-            surf.ClassName NOT IN ('Internal Mass', 'Shading')
+            ClassName NOT IN ('Internal Mass', 'Shading')
             AND ExtBoundCond NOT IN (-1, 0)
      )
 SELECT
@@ -70,9 +70,9 @@ SELECT
     ConstructionIndex, ClassName, Area, GrossArea, ExtBoundCond,
     surf.ZoneIndex AS ZoneIndex
 FROM
-    superficiesinternas AS internas
+    superficiesinternasindex AS internas
     INNER JOIN Surfaces surf ON surf.ExtBoundCond = internas.SurfaceIndex
-    INNER JOIN zonasnohabitables AS znh ON surf.ZoneIndex = znh.ZoneIndex
+    INNER JOIN zonasnohabitables AS znh USING (ZoneIndex)
 "
 
   def CTE_Query.getValueOrFalse(search)

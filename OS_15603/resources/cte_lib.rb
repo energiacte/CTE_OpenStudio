@@ -282,9 +282,10 @@ FROM
     INNER JOIN ReportVariableData USING (ReportVariableDataDictionaryIndex)
     INNER JOIN Time AS time USING (TimeIndex)
 WHERE
-    rvdd.VariableName = '#{ variableName }'
-    AND surf.ClassName = '#{ className }'
-    AND surf.ExtBoundCond = #{ extBoundCond }
+    VariableName = '#{ variableName }'
+    AND SurfaceName = KeyValue
+    AND ClassName = '#{ className }'
+    AND ExtBoundCond = #{ extBoundCond }
     AND Month IN #{ meses }
 "
     return OpenStudio.convert(sqlFile.execAndReturnFirstDouble(query).get, unitsSource, unitsTarget).get
@@ -316,7 +317,8 @@ FROM
     INNER JOIN ReportVariableData USING (ReportVariableDataDictionaryIndex)
     INNER JOIN demandatime USING (TimeIndex)
 WHERE
-    rvdd.variableName == '#{ variableName }'
+    VariableName = '#{ variableName }'
+    AND KeyValue = ZoneName
     AND Month IN #{ meses }
 "
     return OpenStudio.convert(sqlFile.execAndReturnFirstDouble(query).get, unitsSource, unitsTarget).get
