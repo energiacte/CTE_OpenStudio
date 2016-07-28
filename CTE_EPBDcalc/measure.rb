@@ -8,12 +8,15 @@ require 'openstudio'
 class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
 
   TECNOLOGIAS = {
-        gas_boiler: {  descripcion: 'caldera de gas',
-                        combustibles: [['GASNATURAL', 0.95]]},
-        hp_heat:    {   descripcion: 'bomba de calor en calefaccion',
-                        combustibles: [['ELECTRICIDAD', 1], ['MEDIOAMBIENTE', 2.0]]}, # COP_ma = COP -1 -> COP = 3.0
-        hp_cool:    {   descripcion: 'bomba de calor en refrigeracion',
-                        combustibles: [['ELECTRICIDAD', 1], ['MEDIOAMBIENTE', 3.5]]}, # COP_ma = COP +1 -> COP = 2.5
+        gas_boiler: { descripcion: 'caldera de gas',
+                      combustibles: [['GASNATURAL', 0.95]],
+                      servicios: ['waterSystem', 'heating']},                      
+        hp_heat:    { descripcion: 'bomba de calor en calefaccion',
+                      combustibles: [['ELECTRICIDAD', 1], ['MEDIOAMBIENTE', 2.0]], # COP_ma = COP -1 -> COP = 3.0
+                      servicios: ['waterSystem', 'heating']},                      
+        hp_cool:    { descripcion: 'bomba de calor en refrigeracion',
+                      combustibles: [['ELECTRICIDAD', 1], ['MEDIOAMBIENTE', 3.5]], # COP_ma = COP +1 -> COP = 2.5
+                      servicios: ['cooling']},                      
         }
 
     #TODO: hay que ver como se recoge en los consumos si tenemos WaterSystems
@@ -42,19 +45,39 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     provincias_display = OpenStudio::StringVector.new
     provincias_chs = OpenStudio::StringVector.new
     
-    nombre_tecnologias = TECNOLOGIAS.keys.map{|v| v.to_s}
+    acs_tech = []
+    acs_desc = []
+    heat_tech = []
+    heat_desc = []
+    cool_tech = []
+    cool_desc = []
+    TECNOLOGIAS.each do | clave, valor |
+      if valor[:servicios].include? 'waterSystem'
+        acs_tech << clave.to_s
+        acs_desc << TECNOLOGIAS[clave][:descripcion]
+      end
+      if valor[:servicios].include? 'heating'
+        heat_tech << clave.to_s
+        heat_desc << TECNOLOGIAS[clave][:descripcion]
+      end
+      if valor[:servicios].include? 'cooling'
+        cool_tech << clave.to_s
+        cool_desc << TECNOLOGIAS[clave][:descripcion]
+      end
+    end
     
-    agua_caliente_sanitaria = OpenStudio::Ruleset::OSArgument::makeChoiceArgument('waterSystems', nombre_tecnologias, true)
+    
+    agua_caliente_sanitaria = OpenStudio::Ruleset::OSArgument::makeChoiceArgument('waterSystem', acs_tech,acs_desc, true)
     agua_caliente_sanitaria.setDisplayName("Agua Caliente Sanitaria")
     agua_caliente_sanitaria.setDefaultValue("gas_boiler")
     args << agua_caliente_sanitaria
     
-    calefaccion = OpenStudio::Ruleset::OSArgument::makeChoiceArgument('heating', nombre_tecnologias, true)
+    calefaccion = OpenStudio::Ruleset::OSArgument::makeChoiceArgument('heating', heat_tech, heat_desc, true)
     calefaccion.setDisplayName("Calefacción")
     calefaccion.setDefaultValue("hp_heat")
     args << calefaccion
 
-    refrigeracion = OpenStudio::Ruleset::OSArgument::makeChoiceArgument('cooling', nombre_tecnologias, true)
+    refrigeracion = OpenStudio::Ruleset::OSArgument::makeChoiceArgument('cooling', cool_tech, cool_desc, true)
     refrigeracion.setDisplayName("Refrigeración")
     refrigeracion.setDefaultValue("hp_cool")
     args << refrigeracion
@@ -128,13 +151,6 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
   def procesedEPBFinalEnergyConsumptionByMonth(sqlFile, runner, servicios)      
     if not _comprobacionDeConsistencia(sqlFile, runner) then return false end
     
-    
-    
-    #~ servicios = [['WATERSYSTEMS', :gas_boiler],
-                 #~ ['HEATING', :hp_heat],
-                 #~ ['COOLING', :hp_cool]]
-                
-
     result = []
     servicios.each do | servicio, tecnologia |
       vectorOrigen = SERVICIOS[servicio][0]
@@ -176,7 +192,7 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     sqlFile = sqlFile.get
     
     
-    waterSystemsTech = runner.getStringArgumentValue('waterSystems', user_arguments)
+    waterSystemsTech = runner.getStringArgumentValue('waterSystem', user_arguments)
     heatingTech = runner.getStringArgumentValue('heating', user_arguments)
     coolingTech = runner.getStringArgumentValue('cooling', user_arguments)
     
