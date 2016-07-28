@@ -21,8 +21,9 @@ class TemperaturaDelAguaDeRedTest < MiniTest::Unit::TestCase
 
     # get arguments and test that they are what we are expecting
     arguments = measure.arguments(model)
-    assert_equal(1, arguments.size)
-    assert_equal("space_name", arguments[0].name)
+    assert_equal(2, arguments.size)
+    assert_equal("provincia", arguments[0].name)
+    assert_equal("altitud", arguments[1].name)
   end
 
   def test_bad_argument_values
@@ -41,8 +42,10 @@ class TemperaturaDelAguaDeRedTest < MiniTest::Unit::TestCase
 
     # create hash of argument values
     args_hash = {}
-    args_hash["space_name"] = ""
+    args_hash["provincia"] = "XXX"
+    args_hash["altitud"] = 0
 
+    puts "arguments: ", arguments
     # populate argument with specified hash value if specified
     arguments.each do |arg|
       temp_arg_var = arg.clone
@@ -72,13 +75,10 @@ class TemperaturaDelAguaDeRedTest < MiniTest::Unit::TestCase
 
     # load the test model
     translator = OpenStudio::OSVersion::VersionTranslator.new
-    path = OpenStudio::Path.new(File.dirname(__FILE__) + "/example_model.osm")
+    path = OpenStudio::Path.new(File.dirname(__FILE__) + "/test_CTE.osm")
     model = translator.loadModel(path)
     assert((not model.empty?))
     model = model.get
-
-    # store the number of spaces in the seed model
-    num_spaces_seed = model.getSpaces.size
 
     # get arguments
     arguments = measure.arguments(model)
@@ -87,7 +87,8 @@ class TemperaturaDelAguaDeRedTest < MiniTest::Unit::TestCase
     # create hash of argument values.
     # If the argument has a default that you want to use, you don't need it in the hash
     args_hash = {}
-    args_hash["space_name"] = "New Space"
+    args_hash["provincia"] = "Madrid"
+    args_hash["altitud"] = 650
     # using defaults values from measure.rb for other arguments
 
     # populate argument with specified hash value if specified
@@ -108,11 +109,8 @@ class TemperaturaDelAguaDeRedTest < MiniTest::Unit::TestCase
 
     # assert that it ran correctly
     assert_equal("Success", result.value.valueName)
-    assert(result.info.size == 1)
+    assert(result.info.size == 3)
     assert(result.warnings.size == 0)
-
-    # check that there is now 1 space
-    assert_equal(1, model.getSpaces.size - num_spaces_seed)
 
     # save the model to test output directory
     output_file_path = OpenStudio::Path.new(File.dirname(__FILE__) + "/output/test_output.osm")
