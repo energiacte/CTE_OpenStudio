@@ -10,19 +10,14 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
   TECNOLOGIAS = {
         gas_boiler: { descripcion: 'caldera de gas',
                       combustibles: [['GASNATURAL', 0.95]],
-                      servicios: ['waterSystem', 'heating']},                      
+                      servicios: ['WATERSYSTEMS', 'HEATING']},
         hp_heat:    { descripcion: 'bomba de calor en calefaccion',
                       combustibles: [['ELECTRICIDAD', 1], ['MEDIOAMBIENTE', 2.0]], # COP_ma = COP -1 -> COP = 3.0
-                      servicios: ['waterSystem', 'heating']},                      
+                      servicios: ['WATERSYSTEMS', 'HEATING']},
         hp_cool:    { descripcion: 'bomba de calor en refrigeracion',
                       combustibles: [['ELECTRICIDAD', 1], ['MEDIOAMBIENTE', 3.5]], # COP_ma = COP +1 -> COP = 2.5
-                      servicios: ['cooling']},                      
+                      servicios: ['COOLING']},
         }
-
-    #TODO: hay que ver como se recoge en los consumos si tenemos WaterSystems
-  SERVICIOS = { 'WATERSYSTEMS'    => ['DISTRICTHEATING', '# DH WS'],
-                        'HEATING' => ['DISTRICTHEATING', '# DH HEAT'],
-                        'COOLING' => ['DISTRICTCOOLING', '# DH COOL']}
 
   # human readable name
   def name
@@ -44,7 +39,7 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     args = OpenStudio::Ruleset::OSArgumentVector.new
     provincias_display = OpenStudio::StringVector.new
     provincias_chs = OpenStudio::StringVector.new
-    
+
     acs_tech = []
     acs_desc = []
     heat_tech = []
@@ -52,32 +47,32 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     cool_tech = []
     cool_desc = []
     TECNOLOGIAS.each do | clave, valor |
-      if valor[:servicios].include? 'waterSystem'
+      if valor[:servicios].include? 'WATERSYSTEMS'
         acs_tech << clave.to_s
         acs_desc << TECNOLOGIAS[clave][:descripcion]
       end
-      if valor[:servicios].include? 'heating'
+      if valor[:servicios].include? 'HEATING'
         heat_tech << clave.to_s
         heat_desc << TECNOLOGIAS[clave][:descripcion]
       end
-      if valor[:servicios].include? 'cooling'
+      if valor[:servicios].include? 'COOLING'
         cool_tech << clave.to_s
         cool_desc << TECNOLOGIAS[clave][:descripcion]
       end
     end
-    
-    
-    agua_caliente_sanitaria = OpenStudio::Ruleset::OSArgument::makeChoiceArgument('waterSystem', acs_tech,acs_desc, true)
+
+
+    agua_caliente_sanitaria = OpenStudio::Ruleset::OSArgument::makeChoiceArgument('WATERSYSTEMS', acs_tech,acs_desc, true)
     agua_caliente_sanitaria.setDisplayName("Agua Caliente Sanitaria")
     agua_caliente_sanitaria.setDefaultValue("gas_boiler")
     args << agua_caliente_sanitaria
-    
-    calefaccion = OpenStudio::Ruleset::OSArgument::makeChoiceArgument('heating', heat_tech, heat_desc, true)
+
+    calefaccion = OpenStudio::Ruleset::OSArgument::makeChoiceArgument('HEATING', heat_tech, heat_desc, true)
     calefaccion.setDisplayName("Calefacción")
     calefaccion.setDefaultValue("hp_heat")
     args << calefaccion
 
-    refrigeracion = OpenStudio::Ruleset::OSArgument::makeChoiceArgument('cooling', cool_tech, cool_desc, true)
+    refrigeracion = OpenStudio::Ruleset::OSArgument::makeChoiceArgument('COOLING', cool_tech, cool_desc, true)
     refrigeracion.setDisplayName("Refrigeración")
     refrigeracion.setDefaultValue("hp_cool")
     args << refrigeracion
@@ -86,7 +81,7 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     # this measure does not require any user arguments, return an empty list
 
     return args
-  end  
+  end
 
   def performancereportnames(sqlFile)
     reportname_query = "SELECT DISTINCT ReportName FROM TabularDataWithStrings
@@ -115,13 +110,13 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
       endusecategory = OpenStudio::EndUseCategoryType.new(useName)
       monthofyear    = OpenStudio::MonthOfYear.new(mesNumber)
       valor = sqlFile.energyConsumptionByMonth(
-                    endfueltype, endusecategory, monthofyear).to_f                    
+                    endfueltype, endusecategory, monthofyear).to_f
       result[mesNumber-1] += valor
     end
     return result
   end
 
- 
+
   def _comprobacionDeConsistencia(sqlFile, runner)
     ### búsqueda de errores, que es independiente de los servicios y vectores
     # si todo está simulado con DISTRICT
@@ -142,64 +137,66 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
           runner.registerError("ERROR: el consumo debería ser cero,
             combustible:#{fuel}, y uso: #{enduse}")
           return false
-        end        
-    end 
-    return true      
+        end
+    end
+    return true
   end
 
 
-  def procesedEPBFinalEnergyConsumptionByMonth(sqlFile, runner, servicios)      
+  def procesedEPBFinalEnergyConsumptionByMonth(sqlFile, runner, servicios)
     if not _comprobacionDeConsistencia(sqlFile, runner) then return false end
-    
+
+    vectoresOrigen = {'WATERSYSTEMS' => 'DISTRICTHEATING', 'HEATING' => 'DISTRICTHEATING',
+                      'COOLING' =>'DISTRICTCOOLING' }
     result = []
     servicios.each do | servicio, tecnologia |
-      vectorOrigen = SERVICIOS[servicio][0]
-      comentario   = SERVICIOS[servicio][1]
+      vectorOrigen = vectoresOrigen[servicio]
       vector = energyConsumptionByVectorAndUse(sqlFile, vectorOrigen , servicio)
       vector = vector.map{ |v| OpenStudio.convert(v, 'J', 'kWh').get }
-      
+
       TECNOLOGIAS[tecnologia][:combustibles].each do | combustible, rendimiento |
+        comentario   = "# #{servicio} #{tecnologia} #{vectorOrigen}-->#{combustible} #{rendimiento}"
         if vector.reduce(0, :+) != 0
           result << [combustible, 'CONSUMO', 'EPB'] + vector.map { |v| (v * rendimiento).round(2) } + [comentario]
-        end        
+        end
       end
 
     end
     return result
   end
-  
+
   def exportComsumptionList(areaHabitable, listaConsumos)
     # TODO: añadir una cabecera con datos del edifico como la superficie acondicionada
     nombreFichero = 'consumoParaEPBDcalc.csv'
-    
+
     outFile = File.open(nombreFichero, 'w')
     outFile.write("vector,tipo,src_dst\n")
     outFile.write("# Area_ref: #{ areaHabitable }\n")
     listaConsumos.each do | vectorConsumo |
       outFile.write(vectorConsumo[0..-2].join(',') + vectorConsumo[-1] + "\n")
-    end    
+    end
   end
 
   # define what happens when the measure is run
   def run(runner, user_arguments)
     super(runner, user_arguments)
-    
+
     sqlFile = runner.lastEnergyPlusSqlFile
     if sqlFile.empty?
       runner.registerError("Cannot find last sql file.")
       return false
     end
     sqlFile = sqlFile.get
-    
-    
-    waterSystemsTech = runner.getStringArgumentValue('waterSystem', user_arguments)
-    heatingTech = runner.getStringArgumentValue('heating', user_arguments)
-    coolingTech = runner.getStringArgumentValue('cooling', user_arguments)
-    
+
+
+    waterSystemsTech = runner.getStringArgumentValue('WATERSYSTEMS', user_arguments)
+    heatingTech = runner.getStringArgumentValue('HEATING', user_arguments)
+    coolingTech = runner.getStringArgumentValue('COOLING', user_arguments)
+
     servicios = [['WATERSYSTEMS', waterSystemsTech.to_sym],
                  ['HEATING', heatingTech.to_sym],
                  ['COOLING', coolingTech.to_sym]]
-        
+
     areaHabitable = sqlFile.execAndReturnFirstDouble(
     "SELECT
        SUM(FloorArea)
@@ -207,9 +204,9 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
        LEFT OUTER JOIN ZoneInfoZoneLists zizl USING (ZoneIndex)
        LEFT OUTER JOIN ZoneLists zl USING (ZoneListIndex)
      WHERE zl.Name NOT LIKE 'CTE_N%' ").get
-   
+
     consumosFinales = procesedEPBFinalEnergyConsumptionByMonth(sqlFile, runner, servicios)
-    exportComsumptionList(areaHabitable, consumosFinales)     
+    exportComsumptionList(areaHabitable, consumosFinales)
 
     return true
 
