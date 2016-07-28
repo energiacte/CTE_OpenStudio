@@ -39,6 +39,26 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
   # define the arguments that the user will input
   def arguments()
     args = OpenStudio::Ruleset::OSArgumentVector.new
+    provincias_display = OpenStudio::StringVector.new
+    provincias_chs = OpenStudio::StringVector.new
+    
+    nombre_tecnologias = TECNOLOGIAS.keys.map{|v| v.to_s}
+    
+    agua_caliente_sanitaria = OpenStudio::Ruleset::OSArgument::makeChoiceArgument('waterSystems', nombre_tecnologias, true)
+    agua_caliente_sanitaria.setDisplayName("Agua Caliente Sanitaria")
+    agua_caliente_sanitaria.setDefaultValue("gas_boiler")
+    args << agua_caliente_sanitaria
+    
+    calefaccion = OpenStudio::Ruleset::OSArgument::makeChoiceArgument('heating', nombre_tecnologias, true)
+    calefaccion.setDisplayName("Calefacción")
+    calefaccion.setDefaultValue("hp_heat")
+    args << calefaccion
+
+    refrigeracion = OpenStudio::Ruleset::OSArgument::makeChoiceArgument('cooling', nombre_tecnologias, true)
+    refrigeracion.setDisplayName("Refrigeración")
+    refrigeracion.setDefaultValue("hp_cool")
+    args << refrigeracion
+
 
     # this measure does not require any user arguments, return an empty list
 
@@ -105,12 +125,15 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
   end
 
 
-  def procesedEPBFinalEnergyConsumptionByMonth(sqlFile, runner)      
+  def procesedEPBFinalEnergyConsumptionByMonth(sqlFile, runner, servicios)      
     if not _comprobacionDeConsistencia(sqlFile, runner) then return false end
-
-    servicios = [['WATERSYSTEMS', :gas_boiler],
-                 ['HEATING', :hp_heat],
-                 ['COOLING', :hp_cool]]
+    
+    
+    
+    #~ servicios = [['WATERSYSTEMS', :gas_boiler],
+                 #~ ['HEATING', :hp_heat],
+                 #~ ['COOLING', :hp_cool]]
+                
 
     result = []
     servicios.each do | servicio, tecnologia |
@@ -152,6 +175,15 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     end
     sqlFile = sqlFile.get
     
+    
+    waterSystemsTech = runner.getStringArgumentValue('waterSystems', user_arguments)
+    heatingTech = runner.getStringArgumentValue('heating', user_arguments)
+    coolingTech = runner.getStringArgumentValue('cooling', user_arguments)
+    
+    servicios = [['WATERSYSTEMS', waterSystemsTech.to_sym],
+                 ['HEATING', heatingTech.to_sym],
+                 ['COOLING', coolingTech.to_sym]]
+        
     areaHabitable = sqlFile.execAndReturnFirstDouble(
     "SELECT
        SUM(FloorArea)
@@ -160,7 +192,7 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
        LEFT OUTER JOIN ZoneLists zl USING (ZoneListIndex)
      WHERE zl.Name NOT LIKE 'CTE_N%' ").get
    
-    consumosFinales = procesedEPBFinalEnergyConsumptionByMonth(sqlFile, runner)
+    consumosFinales = procesedEPBFinalEnergyConsumptionByMonth(sqlFile, runner, servicios)
     exportComsumptionList(areaHabitable, consumosFinales)     
 
     return true
