@@ -37,7 +37,6 @@ def cte_tempaguafria(model, runner, user_arguments)
   end
 
   if temperaturasAguaDeRed.has_key?(provincia)
-    puts temperaturasAguaDeRed[provincia]
     altitudCapital, temperaturasAguaDeRed = temperaturasAguaDeRed[provincia]
     runner.registerInfo("Altitud de la provincia: #{ altitudCapital }")
     runner.registerInfo("Temperatura de agua de red: #{ temperaturasAguaDeRed }")
@@ -50,6 +49,7 @@ def cte_tempaguafria(model, runner, user_arguments)
 
   factoresCorreccionMensual = [0.0066 * diffAltitud] * 3 + [0.0033 * diffAltitud] * 6 + [0.0066 * diffAltitud] * 3
   temperaturasAguaDeRedCorregidas = temperaturasAguaDeRed.zip(factoresCorreccionMensual).map { |x, y| x - y }
+  runner.registerValue('CTE Temperaturas de agua de red', "[" + temperaturasAguaDeRedCorregidas.join(',') + "]")
 
   cte_horariosAgua = "CTE_ACS_Temperatura_agua_fria"
   conjuntoDeReglas = nil

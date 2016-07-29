@@ -7,6 +7,8 @@
 
 require_relative "resources/cte_lib_measures_addvars.rb"
 require_relative "resources/cte_lib_measures_tempaguafria.rb"
+require_relative "resources/cte_lib_measures_ventresidencial.rb"
+require_relative "resources/cte_lib_measures_infiltraresidencial.rb"
 
 # Define parámetros y aplica medidas para uso con el CTE
 class CTE_Model < OpenStudio::Ruleset::ModelUserScript
@@ -25,6 +27,15 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
 
   def arguments(model)
     args = OpenStudio::Ruleset::OSArgumentVector.new
+
+    tipoEdificio = OpenStudio::StringVector.new
+    tipoEdificio << 'Nuevo'
+    tipoEdificio << 'Existente'
+    tipo = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("tipoEdificio", tipoEdificio, true)
+    tipo.setDisplayName("¿Edificio nuevo o existente?")
+    tipo.setDefaultValue('Nuevo')
+    args << tipo
+
     provincias_chs = OpenStudio::StringVector.new
 
     ['A_Coruna', 'Albacete', 'Alicante_Alacant', 'Almeria', 'Avila', 'Badajoz', 'Barcelona', 'Bilbao_Bilbo',
@@ -47,6 +58,32 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
     altitud.setDefaultValue(650)
     args << altitud
 
+    design_flow_rate = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("design_flow_rate", true)
+    design_flow_rate.setDisplayName("Caudal de diseno de ventilacion del edificio")
+    design_flow_rate.setUnits("ren/h")
+    design_flow_rate.setDefaultValue(0.63)
+    args << design_flow_rate
+
+    claseVentana = OpenStudio::StringVector.new
+    claseVentana << 'Clase 1'
+    claseVentana << 'Clase 2'
+    claseVentana << 'Clase 3'
+    claseVentana << 'Clase 4'
+    permeabilidad = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("permeabilidadVentanas", claseVentana, true)
+    permeabilidad.setDisplayName("Permeabilidad de la carpintería.")
+    permeabilidad.setDefaultValue('Clase 1')
+    args << permeabilidad
+
+    coefStack = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("coefStack", true)
+    coefStack.setDisplayName("Coeficiente de Stack")
+    coefStack.setDefaultValue(0.00029)
+    args << coefStack
+
+    coefWind = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("coefWind", true)
+    coefWind.setDisplayName("Coeficiente de Viento")
+    coefWind.setDefaultValue(0.000231)
+    args << coefWind
+
     return args
   end
 
@@ -61,8 +98,14 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
       return false
     end
 
-    cte_addvars(model, runner, user_arguments) # Nuevas variables y meters
-    cte_tempaguafria(model, runner, user_arguments) # temperatura de agua de red
+    result = cte_addvars(model, runner, user_arguments) # Nuevas variables y meters
+    return result unless result == true
+    result = cte_tempaguafria(model, runner, user_arguments) # temperatura de agua de red
+    return result unless result == true
+    result = cte_ventresidencial(model, runner, user_arguments) # modelo de ventilación e infiltraciones para residencial
+    return result unless result == true
+    result = cte_infiltraresidencial(model, runner, user_arguments) # modelo de ventilación e infiltraciones para residencial
+    return result unless result == true
 
     # Get final condition ================================================
     runner.registerFinalCondition("CTE: Finalizada la aplicación de medidas de modelo.")
