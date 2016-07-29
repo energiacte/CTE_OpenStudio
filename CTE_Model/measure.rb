@@ -31,7 +31,7 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
     usoedificio_chs = OpenStudio::StringVector.new
     usoedificio_chs << 'Residencial'
     usoedificio_chs << 'Terciario'
-    usoedificio = OpenStudio::Ruleset::OSArgument::makeChoiceArgument('usoedificio', usoedificio_chs, true)
+    usoedificio = OpenStudio::Ruleset::OSArgument::makeChoiceArgument('usoEdificio', usoedificio_chs, true)
     usoedificio.setDisplayName("Uso del edificio")
     usoedificio.setDefaultValue('Residencial')
     args << usoedificio
