@@ -106,6 +106,8 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
       return false
     end
 
+    usoEdificio = runner.getStringArgumentValue('usoEdificio', user_arguments)
+
     result = cte_addvars(model, runner, user_arguments) # Nuevas variables y meters
     return result unless result == true
 
