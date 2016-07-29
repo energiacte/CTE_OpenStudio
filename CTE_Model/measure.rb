@@ -70,11 +70,7 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
     design_flow_rate.setDefaultValue(0.63)
     args << design_flow_rate
 
-    claseVentana = OpenStudio::StringVector.new
-    claseVentana << 'Clase 1'
-    claseVentana << 'Clase 2'
-    claseVentana << 'Clase 3'
-    claseVentana << 'Clase 4'
+    claseVentana = OpenStudio::StringVector.new << 'Clase 1' << 'Clase 2' << 'Clase 3' << 'Clase 4'
     permeabilidad = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("permeabilidadVentanas", claseVentana, true)
     permeabilidad.setDisplayName("Permeabilidad de la carpintería.")
     permeabilidad.setDefaultValue('Clase 1')
