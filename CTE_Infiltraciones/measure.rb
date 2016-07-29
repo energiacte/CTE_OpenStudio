@@ -132,9 +132,9 @@ class CTE_Infiltraciones < OpenStudio::Ruleset::ModelUserScript
       end
 
       # q_total en m3/h a 4 Pa
-      q_total = 4 ** 0.67 * (C_OP[tipoEdificio] * areaOpacos +
-                             C_HU[claseVentana] * areaVentanas +
-                             C_PU * areaPuertas +
+      q_total = 4 ** 0.67 * (0.50 * C_OP[tipoEdificio] * areaOpacos + # 50% opacos
+                             0.50 * C_HU[claseVentana] * areaVentanas + # 50% huecos
+                             0.50 * C_PU * areaPuertas + # 50% puertas
                              # microventilación al 50% de apertura
                              0.50 * c_ven * areaVentanas / (4 ** 0.5))
 
