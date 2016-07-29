@@ -14,7 +14,7 @@ require_relative "resources/cte_lib_measures_infiltraresidencial.rb"
 class CTE_Model < OpenStudio::Ruleset::ModelUserScript
 
   def name
-    return "Variables CTE"
+    return "CTE Model"
   end
 
   def description
