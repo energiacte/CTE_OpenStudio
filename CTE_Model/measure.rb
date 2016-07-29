@@ -29,14 +29,16 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
     args = OpenStudio::Ruleset::OSArgumentVector.new
 
     usoedificio_chs = OpenStudio::StringVector.new
-    usoedificio_chs << 'Residencial' << 'Terciario'
+    usoedificio_chs << 'Residencial'
+    usoedificio_chs << 'Terciario'
     usoedificio = OpenStudio::Ruleset::OSArgument::makeChoiceArgument('usoedificio', usoedificio_chs, true)
     usoedificio.setDisplayName("Uso del edificio")
     usoedificio.setDefaultValue('Residencial')
     args << usoedificio
 
     tipoEdificio = OpenStudio::StringVector.new
-    tipoEdificio << 'Nuevo' << 'Existente'
+    tipoEdificio << 'Nuevo'
+    tipoEdificio << 'Existente'
     tipo = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("tipoEdificio", tipoEdificio, true)
     tipo.setDisplayName("¿Edificio nuevo o existente?")
     tipo.setDefaultValue('Nuevo')
@@ -71,7 +73,10 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
     args << design_flow_rate
 
     claseVentana = OpenStudio::StringVector.new
-    claseVentana << 'Clase 1' << 'Clase 2' << 'Clase 3' << 'Clase 4'
+    claseVentana << 'Clase 1'
+    claseVentana << 'Clase 2'
+    claseVentana << 'Clase 3'
+    claseVentana << 'Clase 4'
     permeabilidad = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("permeabilidadVentanas", claseVentana, true)
     permeabilidad.setDisplayName("Permeabilidad de la carpintería.")
     permeabilidad.setDefaultValue('Clase 1')
