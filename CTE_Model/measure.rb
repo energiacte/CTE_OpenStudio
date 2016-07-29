@@ -28,6 +28,12 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
   def arguments(model)
     args = OpenStudio::Ruleset::OSArgumentVector.new
 
+    esResVector = OpenStudio::StringVector.new << 'Residencial' << 'Terciario'
+    usoEdificio = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("esResidencial", esResVector, true)
+    usoEdificio.setDisplayName("Uso del edificio")
+    usoEdificio.setDefaultValue('Residencial')
+    args << usoEdificio
+
     tipoEdificio = OpenStudio::StringVector.new
     tipoEdificio << 'Nuevo'
     tipoEdificio << 'Existente'
@@ -100,12 +106,17 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
 
     result = cte_addvars(model, runner, user_arguments) # Nuevas variables y meters
     return result unless result == true
+
+    #TODO: comprobar si hay equipo de ACS
     result = cte_tempaguafria(model, runner, user_arguments) # temperatura de agua de red
     return result unless result == true
-    result = cte_ventresidencial(model, runner, user_arguments) # modelo de ventilación e infiltraciones para residencial
-    return result unless result == true
-    result = cte_infiltraresidencial(model, runner, user_arguments) # modelo de ventilación e infiltraciones para residencial
-    return result unless result == true
+
+    if usoEdificio == 'Residencial'
+      result = cte_ventresidencial(model, runner, user_arguments) # modelo de ventilación e infiltraciones para residencial
+      return result unless result == true
+      result = cte_infiltraresidencial(model, runner, user_arguments) # modelo de ventilación e infiltraciones para residencial
+      return result unless result == true
+    end
 
     # Get final condition ================================================
     runner.registerFinalCondition("CTE: Finalizada la aplicación de medidas de modelo.")
