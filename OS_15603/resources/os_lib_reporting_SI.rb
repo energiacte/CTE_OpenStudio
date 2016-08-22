@@ -313,13 +313,18 @@ module OsLib_Reporting
   # create table with general building information
   # this just makes a table, and not a full section. It feeds into another method that makes a full section
 
-  def self.general_building_information_table(model, sqlFile, runner)
+  def self.general_building_information_table(model, sqlFile, runner, name_only=false)
     # general building information type data output
     general_building_information = {}
     general_building_information[:title] = 'Resumen del Edificio' # 'Building Summary' # name will be with section
     general_building_information[:header] = %w(Informacion Valor Unidades)
     general_building_information[:units] = [] # won't populate for this table since each row has different units
     general_building_information[:data] = []
+
+    # stop here if only name is requested this is used to populate display name for arguments
+    if name_only == true
+      return @general_building_information
+    end
 
     # structure ID / building name
     display = 'Building Name'
