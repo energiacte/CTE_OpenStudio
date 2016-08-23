@@ -111,6 +111,79 @@ module CTE_tables
     return contenedor_general
   end
 
+  # Tabla de aire exterior
+  def self.tabla_de_aire_exterior(model, sqlFile, runner)  
+    
+    # Zone Combined Outdoor Air Changes per Hour is not includen in the OutdoorAirSummary, 
+    # it has to be read from general variable data in the SQL file.    
+    variableName = 'Zone Combined Outdoor Air Changes per Hour'
+    
+
+    # data for query
+    report_name = 'OutdoorAirSummary'
+    table_name = 'Average Outdoor Air During Occupied Hours'
+    #~ min_table_name = 'Minimum Outdoor Air During Occupied Hours'    
+    #~ columns = ['', 'Average Number of Occupants', 'Avg. Mechanical Ventilation', 'Min. Mechanical Ventilation',
+          #~ 'Avg. Infiltration', 'Min. Infiltration', 'Avg. Simple Ventilation', 'Min. Simple Ventilation']
+    columns = ['', 'Ventilación mecánica media', 
+          'Infiltración media', 'Ventilación simple media', 'Ventilación combinada media']
+
+    # populate dynamic rows
+    rows_name_query = "SELECT DISTINCT  RowName FROM tabulardatawithstrings WHERE ReportName='#{report_name}' and TableName='#{table_name}'"
+    row_names = sqlFile.execAndReturnVectorOfString(rows_name_query).get
+    rows = []
+    row_names.each do |row_name|
+      rows << row_name
+    end
+
+    # create table
+    table = {}
+    table[:title] = 'Renovación del aire exterior (medias)'
+    table[:header] = columns    
+    table[:units] = ['', 'ach', 'ach', 'ach', 'ach']    
+    table[:source_units] = [ '', 'ach', 'ach', 'ach', 'ach']
+    table[:data] = []
+
+    # run query and populate table
+    rows.each do |row|
+      row_data = [row]
+      column_counter = -1
+      table[:header].each do |header|
+        column_counter += 1
+        next if header == ''
+        
+        if header.include? 'combinada'
+          query = "SELECT 
+              AVG(VariableValue) 
+            FROM  
+              ReportVariableData AS rvd
+              INNER JOIN ReportVariableDataDictionary AS rvdd ON rvdd.ReportVariableDataDictionaryIndex = rvd.ReportVariableDataDictionaryIndex 
+            WHERE 
+              rvdd.VariableName = 'Zone Combined Outdoor Air Changes per Hour'
+              AND ReportingFrequency ='Hourly'
+              AND KeyValue = '#{row}'"
+        else  header.include? 'media'
+          query = "SELECT 
+              Value 
+            FROM 
+              tabulardatawithstrings 
+            WHERE 
+              ReportName='#{report_name}' and TableName='#{table_name}' 
+              and RowName= '#{row}' and ColumnName= '#{header.gsub('Avg. ', '')}'"
+        end
+        
+        results = sqlFile.execAndReturnFirstDouble(query)
+        row_data_ip = OpenStudio.convert(results.to_f, 
+                      table[:source_units][column_counter], 
+                      table[:units][column_counter]).get
+        row_data << row_data_ip.round(4)  
+      end
+
+      table[:data] << row_data
+    end
+    return table  
+  end
+
   # Tabla y gráfica con variables seleccionadas
   def self.tabla_variables_inspeccionadas(model, sqlFile, runner)
 

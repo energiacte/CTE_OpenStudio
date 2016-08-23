@@ -168,6 +168,26 @@ module OsLib_Reporting
   ### -----------------------------------------------------------------------------------
   ### Métodos propios -------------------------------------------------------------------
   ### -----------------------------------------------------------------------------------
+  
+  def self.cte_outdoor_air_section(model, sqlFile, runner, name_only = false)
+    # array to hold tables
+    general_tables = []
+    
+    # gather data for section
+    @aire_exterior = {}
+    @aire_exterior[:title] = 'Aire exterior'
+    @aire_exterior[:tables] = general_tables
+    
+    if name_only == true
+      return @aire_exterior
+    end
+    
+    # add in general information from method
+    general_tables << CTE_tables.tabla_de_aire_exterior(model, sqlFile, runner)
+                                 
+    
+    return @aire_exterior
+  end 
 
   def self.demandas_por_componentes(model, sqlFile, runner, name_only = false)
     # array to hold tables
@@ -3387,6 +3407,11 @@ module OsLib_Reporting
     if name_only == true
       return @outdoor_air_section
     end
+    
+    # Zone Combined Outdoor Air Changes per Hour is not includen in the OutdoorAirSummary, 
+    # it has to be read from general variable data in the SQL file.    
+    variableName = 'Zone Combined Outdoor Air Changes per Hour'
+    
 
     # data for query
     report_name = 'OutdoorAirSummary'
