@@ -15,6 +15,8 @@ class CTE_Workspace_Test < MiniTest::Unit::TestCase
 
     # load the test model
     path = OpenStudio::Path.new(File.dirname(__FILE__) + "/cubitoygarajenhideal.idf")
+    modelPath = "#{File.dirname(__FILE__)}/7_plurif_BLOQUE_4_ALTURAS.osm"
+    
     workspace = OpenStudio::Workspace.load(path)
     if workspace.empty?
       runner.registerError("Cannot load #{ path }")
@@ -37,6 +39,8 @@ class CTE_Workspace_Test < MiniTest::Unit::TestCase
     #   end
     #   argument_map[arg.name] = temp_arg_var
     # end
+    
+    runner.setLastOpenStudioModelPath(OpenStudio::Path.new(modelPath))
 
     measure.run(workspace, runner, argument_map)
     result = runner.result
