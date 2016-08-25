@@ -10036,15 +10036,15 @@ ZoneHVAC:IdealLoadsAirSystem,
   0.65;                                   !- Latent Heat Recovery Effectiveness {dimensionless}
 
 ZoneAirBalance:OutdoorAir,
-  garaje OutdoorAir Balance,              !- Name
-  garaje,                                 !- Zone Name
+  vivienda OutdoorAir Balance,            !- Name
+  vivienda,                               !- Zone Name
   Quadrature,                             !- Air Balance Method
   0.00,                                   !- Induced Outdoor Air Due to Unbalanced Duct Leakage {m3/s}
   CTER24B_HINF;                           !- Induced Outdoor Air Schedule Name
 
 ZoneAirBalance:OutdoorAir,
-  vivienda OutdoorAir Balance,            !- Name
-  vivienda,                               !- Zone Name
+  garaje OutdoorAir Balance,              !- Name
+  garaje,                                 !- Zone Name
   Quadrature,                             !- Air Balance Method
   0.00,                                   !- Induced Outdoor Air Due to Unbalanced Duct Leakage {m3/s}
   CTER24B_HINF;                           !- Induced Outdoor Air Schedule Name
