@@ -1,8 +1,10 @@
 # coding: utf-8
 
+require_relative "resources/cte_lib_measures_ventresidencial.rb"
+
 CTE_SCHEDULE_NAME = "CTER24B_HVEN"
 
-class CTE_VentilacionResidencialEP < OpenStudio::Ruleset::WorkspaceUserScript
+class CTE_Workspace < OpenStudio::Ruleset::WorkspaceUserScript
   # 1 - Corrección de horarios de ventilación nocturna y caudal de diseño (HS3)
   # OpenStudio genera un objeto ZoneVentilation:DesignFlowRate con horario Always_On cuando se introducen
   # sistemas ideales. Puesto que usamos objetos ZoneVentilation:DesignFlowRate para introducir el caudal
@@ -35,34 +37,27 @@ class CTE_VentilacionResidencialEP < OpenStudio::Ruleset::WorkspaceUserScript
     args = OpenStudio::Ruleset::OSArgumentVector.new
     return args
   end
+  
+  def es_residencial()
+    return true
+  end
 
   def run(workspace, runner, user_arguments)
     super(workspace, runner, user_arguments)
-
-    runner.registerInitialCondition("CTE: Ventilacion en uso residencial")
-
-    # --------------------------------------------------------------------------------------------------------
-    # **** 1 - Corrección de horarios de ventilación en objetos ZoneVentilation:DesignFlowRate es CTER24B_HVEN
-    # --------------------------------------------------------------------------------------------------------
-    runner.registerInfo("[1/2] - Cambio de horarios en objetos ZoneVentilation_DesignFlowRate a #{ CTE_SCHEDULE_NAME }")
-    idfObjects = workspace.getObjectsByType("ZoneVentilation_DesignFlowRate".to_IddObjectType)
-    if idfObjects.empty?
-      runner.registerInfo("* No se han encontrado objetos ZoneVentilation_DesignFlowRate")
-    else
-      runner.registerInfo("* Encontrado(s) #{ idfObjects.size } objeto(s) ZoneVentilation_DesignFlowRate")
-      changeCounter = 0
-      idfObjects.each do | obj |
-        currentSchedule = obj.getString(2)
-        if currentSchedule == CTE_SCHEDULE_NAME then continue end
-        changeCounter += 1
-        runner.registerInfo("- Cambiando horario #{ currentSchedule } del objeto '#{ obj.getString(0) }'")
-        result = obj.setString(2, CTE_SCHEDULE_NAME) # Correccion de nombre de horario
-        if not result
-          runner.registerInfo("ERROR al modificar el nombre del horario")
-        end
-      end
-      runner.registerInfo("* Cambiado(s) #{ changeCounter } horario(s) de #{ idfObjects.size } objeto(s) ZoneVentilation_DesignFlowRate")
-    end
+    
+    runner.registerInitialCondition("CTE: aplicando medidas de Workspace")
+    
+    # use the built-in error checking
+    if !runner.validateUserArguments(arguments(workspace), user_arguments)
+      runner.registerError("Parámetros incorrectos")
+      return false
+    end    
+        
+    if es_residencial
+      result = cte_ventresidencial(workspace, runner, user_arguments)
+      return result unless result == true
+      
+      
     # ****
 
 
@@ -105,11 +100,12 @@ class CTE_VentilacionResidencialEP < OpenStudio::Ruleset::WorkspaceUserScript
     end
 
     runner.registerFinalCondition("Finalizada la configuración de la ventilación residencial")
-
+    
+    end
     return true
   end
 
 end #end the measure
 
 #this allows the measure to be use by the application
-CTE_VentilacionResidencialEP.new.registerWithApplication
+CTE_Workspace.new.registerWithApplication

@@ -6,11 +6,11 @@ require 'fileutils'
 require_relative "../measure.rb"
 
 
-class CTE_VentilacionResidencialEP_Test < MiniTest::Unit::TestCase
+class CTE_Workspace_Test < MiniTest::Unit::TestCase
 
-  def test_VentilacionResidencialEP
+  def test_Workspace
 
-    measure = CTE_VentilacionResidencialEP.new
+    measure = CTE_Workspace.new
     runner = OpenStudio::Ruleset::OSRunner.new
 
     # load the test model
