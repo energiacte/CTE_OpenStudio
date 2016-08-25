@@ -1640,6 +1640,7 @@ module OsLib_Reporting
     ext_const_base = {}
     model.getSurfaces.each do |surface|
       next if surface.outsideBoundaryCondition != 'Outdoors'
+      next if surface.construction.empty?
       if ext_const_base.include? surface.construction.get
         ext_const_base[surface.construction.get] += 1
       else
