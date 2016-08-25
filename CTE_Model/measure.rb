@@ -7,8 +7,8 @@
 
 require_relative "resources/cte_lib_measures_addvars.rb"
 require_relative "resources/cte_lib_measures_tempaguafria.rb"
-require_relative "resources/cte_lib_measures_ventresidencial.rb"
-require_relative "resources/cte_lib_measures_infiltraresidencial.rb"
+require_relative "resources/cte_lib_measures_ventilacion.rb"
+require_relative "resources/cte_lib_measures_infiltracion.rb"
 
 # Define parámetros y aplica medidas para uso con el CTE
 class CTE_Model < OpenStudio::Ruleset::ModelUserScript
@@ -33,7 +33,8 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
     usoedificio_chs << 'Terciario'
     usoEdificio = OpenStudio::Ruleset::OSArgument::makeChoiceArgument('usoEdificio', usoedificio_chs, true)
     usoEdificio.setDisplayName("Uso del edificio")
-    usoEdificio.setDefaultValue('Residencial')
+    #~ usoEdificio.setDefaultValue('Residencial')
+    usoEdificio.setDefaultValue('Terciario')
     args << usoEdificio
 
     tipoEdificio = OpenStudio::StringVector.new
@@ -116,11 +117,12 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
     return result unless result == true
 
     if usoEdificio == 'Residencial'
-      result = cte_ventresidencial(model, runner, user_arguments) # modelo de ventilación e infiltraciones para residencial
-      return result unless result == true
-      result = cte_infiltraresidencial(model, runner, user_arguments) # modelo de ventilación e infiltraciones para residencial
-      return result unless result == true
+      result = cte_ventresidencial(model, runner, user_arguments) # modelo de ventilación para residencial
+      return result unless result == true    
     end
+    
+    result = cte_infiltracion(model, runner, user_arguments) 
+    return result unless result == true      
 
     # Get final condition ================================================
     runner.registerFinalCondition("CTE: Finalizada la aplicación de medidas de modelo.")
