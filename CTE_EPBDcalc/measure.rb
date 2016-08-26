@@ -183,6 +183,18 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
       outFile.write(vectorConsumo[0..-2].join(',') + vectorConsumo[-1] + "\n")
     end
   end
+  
+  def get_servicios(runner, user_arguments)
+    waterSystemsTech = runner.getStringArgumentValue('WATERSYSTEMS', user_arguments)
+    heatingTech = runner.getStringArgumentValue('HEATING', user_arguments)
+    coolingTech = runner.getStringArgumentValue('COOLING', user_arguments)
+
+    servicios = [['WATERSYSTEMS', waterSystemsTech.to_sym],
+                 ['HEATING', heatingTech.to_sym],
+                 ['COOLING', coolingTech.to_sym]]
+    return servicios
+    
+  end
 
   # define what happens when the measure is run
   def run(runner, user_arguments)
@@ -196,13 +208,7 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     sqlFile = sqlFile.get
 
 
-    waterSystemsTech = runner.getStringArgumentValue('WATERSYSTEMS', user_arguments)
-    heatingTech = runner.getStringArgumentValue('HEATING', user_arguments)
-    coolingTech = runner.getStringArgumentValue('COOLING', user_arguments)
-
-    servicios = [['WATERSYSTEMS', waterSystemsTech.to_sym],
-                 ['HEATING', heatingTech.to_sym],
-                 ['COOLING', coolingTech.to_sym]]
+    servicios = get_servicios(runner, user_arguments)
 
     # BUG: Esta superficie incluye los espacios habitables no acondicionados que no deberían 
     # BUG: formar parte del área de referencia. 
