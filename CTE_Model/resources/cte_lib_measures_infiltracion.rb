@@ -83,6 +83,7 @@ def cte_infiltracion(model, runner, user_arguments) #copiado del residencial
     areaOpacos = 0
     areaVentanas = 0
     areaPuertas = 0
+    # TODO: filtrar superficies NoMass, que son superficies auxiliares
     space.surfaces.each do |surface|
       if surface.outsideBoundaryCondition == 'Outdoors'
         surfArea = surface.netArea
