@@ -1,6 +1,10 @@
 # see the URL below for information on how to write OpenStudio measures
 # http://nrel.github.io/OpenStudio-user-documentation/reference/measure_writing_guide/
 
+# XXX: la medida asume que WATERSYSTEMS es equivalente a ACS, pero no es correcto porque
+# XXX: un sistema real con distribución por agua (radiadores) podría estar incluído ahí.
+
+
 require 'erb'
 require 'openstudio'
 
@@ -11,6 +15,9 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
         gas_boiler: { descripcion: 'caldera de gas',
                       combustibles: [['GASNATURAL', 0.95]],
                       servicios: ['WATERSYSTEMS', 'HEATING']},
+        acs_generico:{descripcion: 'equipo genérico ACS',
+                      combustibles: [['RED1', 1]],
+                      servicios: ['WATERSYSTEMS']},
         hp_heat:    { descripcion: 'bomba de calor en calefaccion',
                       combustibles: [['ELECTRICIDAD', 1], ['MEDIOAMBIENTE', 2.0]], # COP_ma = COP -1 -> COP = 3.0
                       servicios: ['WATERSYSTEMS', 'HEATING']},
@@ -40,8 +47,8 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     provincias_display = OpenStudio::StringVector.new
     provincias_chs = OpenStudio::StringVector.new
 
-    acs_tech = []
-    acs_desc = []
+    acs_tech = [] # teconología
+    acs_desc = [] # descripción
     heat_tech = []
     heat_desc = []
     cool_tech = []
@@ -165,13 +172,13 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     return result
   end
 
-  def exportComsumptionList(areaHabitable, listaConsumos)
+  def exportComsumptionList(areaReferencia, listaConsumos)
     # TODO: añadir una cabecera con datos del edifico como la superficie acondicionada
     nombreFichero = 'consumoParaEPBDcalc.csv'
 
     outFile = File.open(nombreFichero, 'w')
     outFile.write("vector,tipo,src_dst\n")
-    outFile.write("# Area_ref: #{ areaHabitable }\n")
+    outFile.write("# CTE_area_refer: #{ areaReferencia }\n")
     listaConsumos.each do | vectorConsumo |
       outFile.write(vectorConsumo[0..-2].join(',') + vectorConsumo[-1] + "\n")
     end
@@ -197,7 +204,9 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
                  ['HEATING', heatingTech.to_sym],
                  ['COOLING', coolingTech.to_sym]]
 
-    areaHabitable = sqlFile.execAndReturnFirstDouble(
+    # BUG: Esta superficie incluye los espacios habitables no acondicionados que no deberían 
+    # BUG: formar parte del área de referencia. 
+    areaReferencia = sqlFile.execAndReturnFirstDouble(
     "SELECT
        SUM(FloorArea)
      FROM Zones
@@ -206,7 +215,7 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
      WHERE zl.Name NOT LIKE 'CTE_N%' ").get
 
     consumosFinales = procesedEPBFinalEnergyConsumptionByMonth(sqlFile, runner, servicios)
-    exportComsumptionList(areaHabitable, consumosFinales)
+    exportComsumptionList(areaReferencia, consumosFinales)
 
     return true
 
