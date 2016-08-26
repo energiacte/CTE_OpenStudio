@@ -3,6 +3,7 @@
 require_relative "resources/cte_lib_measures_ventresidencial.rb"
 require_relative "resources/cte_lib_measures_zoneairbalance.rb"
 require_relative "resources/cte_lib_measures_groundtemperature.rb"
+require_relative "resources/cte_lib_measures_horarioestacional.rb"                            
 
 class CTE_Workspace < OpenStudio::Ruleset::WorkspaceUserScript
 
@@ -39,7 +40,7 @@ class CTE_Workspace < OpenStudio::Ruleset::WorkspaceUserScript
     end
 
     if es_residencial
-      runner.registerInfo("[1/3] - Corrección de horarios de ventilación en objetos
+      runner.registerInfo("[1/5] - Corrección de horarios de ventilación en objetos
                                 ZoneVentilation:DesignFlowRate es CTER24B_HVEN")
       result = cte_ventresidencial(workspace, runner, user_arguments)
       return result unless result == true
@@ -47,22 +48,26 @@ class CTE_Workspace < OpenStudio::Ruleset::WorkspaceUserScript
 
     string_objects = []
 
-    runner.registerInfo("[2/3] - Introducción de balance de aire exterior")
+    runner.registerInfo("[2/5] - Introducción de balance de aire exterior")
     result = cte_addAirBalance(runner, workspace, string_objects)
     return result unless result == true
 
-    runner.registerInfo("[3/4] - Fija la temperatura del terreno")
+    runner.registerInfo("[3/5] - Fija la temperatura del terreno")
     result = cte_groundTemperature(runner, workspace, string_objects)            
     return result unless result == true
 
 
-    runner.registerInfo("[3/3] - Incorpora objetos definidos en cadenas al workspace")
+    runner.registerInfo("[4/5] - Incorpora objetos definidos en cadenas al workspace")
     string_objects.each do |string_object|
       idfObject = OpenStudio::IdfObject::load(string_object)
       object = idfObject.get
       workspace.addObject(object)
     end
-
+    
+    runner.registerInfo("[5/5] - Introduce el cambio de hora los últimos domingos de marzo y octubre")
+    result = cte_horarioestacional(runner, workspace)
+    return result unless result == true
+    
     return true
   end
 
