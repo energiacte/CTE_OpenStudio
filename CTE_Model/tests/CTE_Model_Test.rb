@@ -15,7 +15,7 @@ class CTE_Model_Test < MiniTest::Unit::TestCase
 
     # load the test model
     translator = OpenStudio::OSVersion::VersionTranslator.new    
-    path = OpenStudio::Path.new(File.dirname(__FILE__) + "/01_oficinas_B+2.osm")
+    path = OpenStudio::Path.new(File.dirname(__FILE__) + "/01_OFICINAS_B+2.osm")
     model = translator.loadModel(path)
     assert((not model.empty?))
     model = model.get
