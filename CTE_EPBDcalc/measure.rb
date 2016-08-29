@@ -7,6 +7,7 @@
 
 require 'erb'
 require 'openstudio'
+require 'date'
 
 #start the measure
 class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
@@ -151,8 +152,15 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
 
 
   def procesedEPBFinalEnergyConsumptionByMonth(sqlFile, runner, servicios)
-    if not _comprobacionDeConsistencia(sqlFile, runner) then return false end
-
+  
+    if not _comprobacionDeConsistencia(sqlFile, runner)      
+      runner.registerInfo("Error de consistencia, hay consumo distinto de Distrito")      
+    end
+    
+    salida = []
+    salida << "vector,tipo,src_dst"
+        
+    # TODO: aplicar a terciario
     vectoresOrigen = {'WATERSYSTEMS' => 'DISTRICTHEATING', 'HEATING' => 'DISTRICTHEATING',
                       'COOLING' =>'DISTRICTCOOLING' }
     result = []
@@ -162,28 +170,35 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
       vector = vector.map{ |v| OpenStudio.convert(v, 'J', 'kWh').get }
 
       TECNOLOGIAS[tecnologia][:combustibles].each do | combustible, rendimiento |
-        comentario   = "# #{servicio} #{tecnologia} #{vectorOrigen}-->#{combustible} #{rendimiento}"
+        comentario   = "# #{servicio}, #{tecnologia}, #{vectorOrigen}-->#{combustible}, #{rendimiento}"
         if vector.reduce(0, :+) != 0
           result << [combustible, 'CONSUMO', 'EPB'] + vector.map { |v| (v * rendimiento).round(2) } + [comentario]
+          salida << [combustible, 'CONSUMO', 'EPB'] + 
+              vector.map { |v| (v * rendimiento).round(2) } + [comentario]
         end
       end
-
     end
-    return result
+    
+    return salida
   end
 
-  def exportComsumptionList(areaReferencia, listaConsumos)
-    # TODO: añadir una cabecera con datos del edifico como la superficie acondicionada
+  def exportStringRows(runner, string_rows)
+    
     nombreFichero = 'consumoParaEPBDcalc.csv'
 
-    outFile = File.open(nombreFichero, 'w')
-    outFile.write("vector,tipo,src_dst\n")
-    outFile.write("# CTE_area_refer: #{ areaReferencia }\n")
-    listaConsumos.each do | vectorConsumo |
-      outFile.write(vectorConsumo[0..-2].join(',') + vectorConsumo[-1] + "\n")
+    outFile = File.open(nombreFichero, 'w')        
+    runner.registerInfo("string_rows = #{string_rows}")
+    
+    string_rows.each do | string |
+      runner.registerInfo("row: #{string}")      
+      if string.is_a? String
+        outFile.write(string + "\n")
+      elsif string.is_a? Array
+        outFile.write(string[0..-2].join(',') + string[-1] + "\n")
+      end
     end
   end
-  
+
   def get_servicios(runner, user_arguments)
     waterSystemsTech = runner.getStringArgumentValue('WATERSYSTEMS', user_arguments)
     heatingTech = runner.getStringArgumentValue('HEATING', user_arguments)
@@ -193,8 +208,9 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
                  ['HEATING', heatingTech.to_sym],
                  ['COOLING', coolingTech.to_sym]]
     return servicios
-    
+
   end
+
 
   # define what happens when the measure is run
   def run(runner, user_arguments)
@@ -207,21 +223,51 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     end
     sqlFile = sqlFile.get
 
+    # get the last model
+    model = runner.lastOpenStudioModel
+    if model.empty?
+      runner.registerError('Cannot find last model.')
+      return false
+    end
+    model = model.get
 
+    string_rows = []
+
+
+    # BUG: Esta superficie incluye los espacios habitables no acondicionados que no deberían
+    # BUG: formar parte del área de referencia.
+    cte_areareferencia = sqlFile.execAndReturnFirstDouble("
+    SELECT
+      SUM(FloorArea)
+    FROM Zones
+      LEFT OUTER JOIN ZoneInfoZoneLists zizl USING (ZoneIndex)
+      LEFT OUTER JOIN ZoneLists zl USING (ZoneListIndex)
+    WHERE zl.Name NOT LIKE 'CTE_N%' ").get
+
+    string_rows << "#CTE_Area_ref: #{cte_areareferencia.round(0)}"
+
+    cte_name = model.building.get.name
+    string_rows << "#CTE_Name: #{cte_name}"
+    runner.registerInfo("CTE_Name: #{cte_name}")
+
+    cte_datetime = DateTime.now.strftime "%d/%m/%Y %H:%M"
+    string_rows << "#CTE_Datetime: #{cte_datetime}"
+    runner.registerInfo("CTE_Datetime: #{cte_datetime}")
+
+    cte_clima = model.weatherFile.get.path.get
+    string_rows << "#CTE_Weather_file: #{cte_clima}"
+    runner.registerInfo("CTE_Weather_file: #{cte_clima}")
+    
     servicios = get_servicios(runner, user_arguments)
-
-    # BUG: Esta superficie incluye los espacios habitables no acondicionados que no deberían 
-    # BUG: formar parte del área de referencia. 
-    areaReferencia = sqlFile.execAndReturnFirstDouble(
-    "SELECT
-       SUM(FloorArea)
-     FROM Zones
-       LEFT OUTER JOIN ZoneInfoZoneLists zizl USING (ZoneIndex)
-       LEFT OUTER JOIN ZoneLists zl USING (ZoneListIndex)
-     WHERE zl.Name NOT LIKE 'CTE_N%' ").get
-
-    consumosFinales = procesedEPBFinalEnergyConsumptionByMonth(sqlFile, runner, servicios)
-    exportComsumptionList(areaReferencia, consumosFinales)
+    result = procesedEPBFinalEnergyConsumptionByMonth(sqlFile, runner, servicios)
+    if result != false
+      string_rows = string_rows + result
+    else
+      return false
+    end
+    
+        
+    exportStringRows(runner, string_rows)
 
     return true
 
