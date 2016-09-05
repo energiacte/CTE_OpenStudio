@@ -9,6 +9,7 @@ require_relative "resources/cte_lib_measures_addvars.rb"
 require_relative "resources/cte_lib_measures_tempaguafria.rb"
 require_relative "resources/cte_lib_measures_ventilacion.rb"
 require_relative "resources/cte_lib_measures_infiltracion.rb"
+require_relative "resources/cte_lib_measures_puentestermicos.rb"
 
 # Define parámetros y aplica medidas para uso con el CTE
 class CTE_Model < OpenStudio::Ruleset::ModelUserScript
@@ -82,6 +83,33 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
     permeabilidad.setDisplayName("Permeabilidad de la carpintería.")
     permeabilidad.setDefaultValue('Clase 1')
     args << permeabilidad
+    
+    psiForjadoCubierta = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("psiForjadoCubierta", true)
+    psiForjadoCubierta.setDisplayName("TTL forjado con cubierta")
+    psiForjadoCubierta.setDefaultValue(0.24)
+    args << psiForjadoCubierta
+    
+    psiFrenteForjado = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("psiFrenteForjado", true)
+    psiFrenteForjado.setDisplayName("TTL frente forjado")
+    psiFrenteForjado.setDefaultValue(0.1)
+    args << psiFrenteForjado
+    
+    psiSoleraTerreno = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("psiSoleraTerreno", true)
+    psiSoleraTerreno.setDisplayName("TTL forjado con solera")
+    psiSoleraTerreno.setDefaultValue(0.28)
+    args << psiSoleraTerreno
+    
+    psiForjadoExterior = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("psiForjadoExterior", true)
+    psiForjadoExterior.setDisplayName("TTL forjado con suelo exterior")
+    psiForjadoExterior.setDefaultValue(0.23)
+    args << psiForjadoExterior
+    
+        
+    psiContornoHuecos = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("psiContornoHuecos", true)
+    psiContornoHuecos.setDisplayName("TTL contorno de huecos")
+    psiContornoHuecos.setDefaultValue(0.05)
+    args << psiContornoHuecos
+    
 
     coefStack = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("coefStack", true)
     coefStack.setDisplayName("Coeficiente de Stack")
@@ -108,7 +136,8 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
     end
 
     usoEdificio = runner.getStringArgumentValue('usoEdificio', user_arguments)
-
+    
+    result = true
     result = cte_addvars(model, runner, user_arguments) # Nuevas variables y meters
     return result unless result == true
 
@@ -123,6 +152,9 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
     
     result = cte_infiltracion(model, runner, user_arguments) 
     return result unless result == true      
+    
+    result = cte_puentestermicos(model, runner, user_arguments)
+    return result unless result == true
 
     # Get final condition ================================================
     runner.registerFinalCondition("CTE: Finalizada la aplicación de medidas de modelo.")

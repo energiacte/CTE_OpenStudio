@@ -88,7 +88,9 @@ class CTE_Model_Test < MiniTest::Unit::TestCase
     end
 
     # set argument values to good values and run the measure on model with spaces
-    measure.run(model, runner, argument_map)
+    salida = measure.run(model, runner, argument_map)
+    assert(salida, "algo falló")
+    
     result = runner.result
 
     show_output(result)

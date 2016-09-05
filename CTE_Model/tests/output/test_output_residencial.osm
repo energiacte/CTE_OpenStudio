@@ -12715,12 +12715,12 @@ OS:Schedule:Rule,
 
 OS:Schedule:Day,
   {3d675e59-c641-474d-927a-8a501ffe82fb}, !- Handle
-  dia_diciembre,                          !- Name
+  Schedule Day 1,                         !- Name
   {ae0a9df5-cb98-4c78-bce5-3089e79621ec}, !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   24,                                     !- Hour 1
   0,                                      !- Minute 1
-  7.5974;                                 !- Value Until Time 1
+  -99;                                    !- Value Until Time 1
 
 OS:Schedule:Rule,
   {6f7eeb91-86d4-4cad-a76c-1c12d4c9ef81}, !- Handle
@@ -12744,12 +12744,12 @@ OS:Schedule:Rule,
 
 OS:Schedule:Day,
   {3c4eca43-3d43-4ce1-b173-b521238ee459}, !- Handle
-  dia_noviembre,                          !- Name
+  Schedule Day 62,                        !- Name
   {ae0a9df5-cb98-4c78-bce5-3089e79621ec}, !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   24,                                     !- Hour 1
   0,                                      !- Minute 1
-  9.5974;                                 !- Value Until Time 1
+  -99;                                    !- Value Until Time 1
 
 OS:Schedule:Rule,
   {98bc346c-7ee4-4035-a2be-474d48e8ed19}, !- Handle
@@ -12773,12 +12773,12 @@ OS:Schedule:Rule,
 
 OS:Schedule:Day,
   {fe86e562-a291-497b-90ec-79313a052033}, !- Handle
-  dia_octubre,                            !- Name
+  Schedule Day 97,                        !- Name
   {ae0a9df5-cb98-4c78-bce5-3089e79621ec}, !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   24,                                     !- Hour 1
   0,                                      !- Minute 1
-  12.5974;                                !- Value Until Time 1
+  -99;                                    !- Value Until Time 1
 
 OS:Schedule:Rule,
   {488f7656-59f4-402c-8374-c5cc6845bdf4}, !- Handle
@@ -12802,12 +12802,12 @@ OS:Schedule:Rule,
 
 OS:Schedule:Day,
   {027a59d8-1b54-434d-a42e-d7be4424ab0f}, !- Handle
-  dia_septiembre,                         !- Name
+  Schedule Day 98,                        !- Name
   {ae0a9df5-cb98-4c78-bce5-3089e79621ec}, !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   24,                                     !- Hour 1
   0,                                      !- Minute 1
-  16.7987;                                !- Value Until Time 1
+  -99;                                    !- Value Until Time 1
 
 OS:Schedule:Rule,
   {78a583a0-6d65-4381-bc9b-9ea3ac84f654}, !- Handle
@@ -12831,12 +12831,12 @@ OS:Schedule:Rule,
 
 OS:Schedule:Day,
   {e413a8fc-02b3-4c76-9d19-002fa83e420a}, !- Handle
-  dia_agosto,                             !- Name
+  Schedule Day 99,                        !- Name
   {ae0a9df5-cb98-4c78-bce5-3089e79621ec}, !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   24,                                     !- Hour 1
   0,                                      !- Minute 1
-  18.7987;                                !- Value Until Time 1
+  -99;                                    !- Value Until Time 1
 
 OS:Schedule:Rule,
   {cda807e5-8b84-451f-b5fb-4a765279fde7}, !- Handle
@@ -12860,12 +12860,12 @@ OS:Schedule:Rule,
 
 OS:Schedule:Day,
   {430cc2af-b0f1-472b-be90-4ea8debc7ef0}, !- Handle
-  dia_julio,                              !- Name
+  Schedule Day 100,                       !- Name
   {ae0a9df5-cb98-4c78-bce5-3089e79621ec}, !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   24,                                     !- Hour 1
   0,                                      !- Minute 1
-  19.7987;                                !- Value Until Time 1
+  -99;                                    !- Value Until Time 1
 
 OS:Schedule:Rule,
   {01bb7123-380d-459b-b507-080b3e9b7306}, !- Handle
@@ -12889,12 +12889,12 @@ OS:Schedule:Rule,
 
 OS:Schedule:Day,
   {8fa8f6bf-8697-4e99-9061-b8580ca93a72}, !- Handle
-  dia_junio,                              !- Name
+  Schedule Day 101,                       !- Name
   {ae0a9df5-cb98-4c78-bce5-3089e79621ec}, !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   24,                                     !- Hour 1
   0,                                      !- Minute 1
-  16.7987;                                !- Value Until Time 1
+  -99;                                    !- Value Until Time 1
 
 OS:Schedule:Rule,
   {6d240eec-bc10-42b2-88fa-1dcaf869a93c}, !- Handle
@@ -12918,12 +12918,12 @@ OS:Schedule:Rule,
 
 OS:Schedule:Day,
   {86869285-824d-4448-b7f3-d17f41c9ff3a}, !- Handle
-  dia_mayo,                               !- Name
+  Schedule Day 102,                       !- Name
   {ae0a9df5-cb98-4c78-bce5-3089e79621ec}, !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   24,                                     !- Hour 1
   0,                                      !- Minute 1
-  13.7987;                                !- Value Until Time 1
+  -99;                                    !- Value Until Time 1
 
 OS:Schedule:Rule,
   {eea84dff-7f3d-490e-a3f8-81f452deb8bf}, !- Handle
@@ -12947,12 +12947,12 @@ OS:Schedule:Rule,
 
 OS:Schedule:Day,
   {3807599f-00d3-4eef-98a8-98a23b638b0b}, !- Handle
-  dia_abril,                              !- Name
+  Schedule Day 103,                       !- Name
   {ae0a9df5-cb98-4c78-bce5-3089e79621ec}, !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   24,                                     !- Hour 1
   0,                                      !- Minute 1
-  11.7987;                                !- Value Until Time 1
+  -99.0000076293945;                      !- Value Until Time 1
 
 OS:Schedule:Rule,
   {f9356a46-aca4-45db-888f-248ca0b55e5d}, !- Handle
@@ -12976,12 +12976,12 @@ OS:Schedule:Rule,
 
 OS:Schedule:Day,
   {d9e01688-8fbe-4ead-b0d1-2c4dd2f0e1c5}, !- Handle
-  dia_marzo,                              !- Name
+  Schedule Day 104,                       !- Name
   {ae0a9df5-cb98-4c78-bce5-3089e79621ec}, !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   24,                                     !- Hour 1
   0,                                      !- Minute 1
-  9.5974;                                 !- Value Until Time 1
+  -99;                                    !- Value Until Time 1
 
 OS:Schedule:Rule,
   {69f33cc2-aff7-4d2b-849e-fa05d8cfb36d}, !- Handle
@@ -13005,12 +13005,12 @@ OS:Schedule:Rule,
 
 OS:Schedule:Day,
   {455bc4e7-ead0-4a8b-85f6-b7ce413ed4f4}, !- Handle
-  dia_febrero,                            !- Name
+  Schedule Day 105,                       !- Name
   {ae0a9df5-cb98-4c78-bce5-3089e79621ec}, !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   24,                                     !- Hour 1
   0,                                      !- Minute 1
-  7.5974;                                 !- Value Until Time 1
+  -99;                                    !- Value Until Time 1
 
 OS:Schedule:Rule,
   {14b97cf6-ea53-463a-8101-85cc5cb37096}, !- Handle
@@ -13034,12 +13034,12 @@ OS:Schedule:Rule,
 
 OS:Schedule:Day,
   {2dd5188f-f8f6-434e-b209-a50e6f7f72a3}, !- Handle
-  dia_enero,                              !- Name
+  Schedule Day 106,                       !- Name
   {ae0a9df5-cb98-4c78-bce5-3089e79621ec}, !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   24,                                     !- Hour 1
   0,                                      !- Minute 1
-  7.5974;                                 !- Value Until Time 1
+  -99;                                    !- Value Until Time 1
 
 OS:DesignSpecification:OutdoorAir,
   {d83b4fa5-78ec-4cba-b2ee-80c326d2c5ad}, !- Handle
@@ -26567,349 +26567,992 @@ OS:Schedule:Day,
   0,                                      ! Minute 1
   67;                                     ! Value Until Time 1
 
-OS:Meter,
-  {400c489b-bee3-46f9-b53c-f971684ba2d6}, !- Handle
-  DistrictHeating:Facility,               !- Name
-  RunPeriod;                              !- Reporting Frequency
+OS:Material:NoMass,
+  {76016fce-002a-4a90-b79a-e517c422d739}, !- Handle
+  materialPT,                             !- Name
+  Smooth,                                 !- Roughness
+  1,                                      !- Thermal Resistance {m2-K/W}
+  0.9,                                    !- Thermal Absorptance
+  0.7,                                    !- Solar Absorptance
+  0.7;                                    !- Visible Absorptance
 
-OS:Meter,
-  {07328564-43a6-433b-a2ab-56be60e08435}, !- Handle
-  DistrictCooling:Facility,               !- Name
-  RunPeriod;                              !- Reporting Frequency
+OS:Construction,
+  {97146663-3867-49d4-a03c-1710f7172e6b}, !- Handle
+  PT_ForjadoCubierta,                     !- Name
+  ,                                       !- Surface Rendering Name
+  {76016fce-002a-4a90-b79a-e517c422d739}; !- Layer 1
 
-OS:Output:Variable,
-  {1513d08c-b5fe-4b44-b458-43fe68b87ece}, !- Handle
-  Output Variable 1,                      !- Name
-  *,                                      !- Key Value
-  Site Outdoor Air Drybulb Temperature,   !- Variable Name
-  monthly;                                !- Reporting Frequency
+OS:StandardsInformation:Construction,
+  {a95c98a5-e15d-4c61-abfe-a797db5b5c27}, !- Handle
+  {97146663-3867-49d4-a03c-1710f7172e6b}, !- Construction Name
+  ,                                       !- Intended Surface Type
+  ;                                       !- Standards Construction Type
 
-OS:Output:Variable,
-  {0a438d6d-4452-485c-82db-1fbe67f82870}, !- Handle
-  Output Variable 2,                      !- Name
-  *,                                      !- Key Value
-  Surface Inside Face Conduction Heat Transfer Energy, !- Variable Name
-  monthly;                                !- Reporting Frequency
+OS:Material:NoMass,
+  {34061a84-eb53-4ff5-99f6-fb4e3dac9716}, !- Handle
+  materialPT 1,                           !- Name
+  Smooth,                                 !- Roughness
+  1,                                      !- Thermal Resistance {m2-K/W}
+  0.9,                                    !- Thermal Absorptance
+  0.7,                                    !- Solar Absorptance
+  0.7;                                    !- Visible Absorptance
 
-OS:Output:Variable,
-  {33635ca3-57ee-4b86-8196-ed523dc45334}, !- Handle
-  Output Variable 3,                      !- Name
-  *,                                      !- Key Value
-  Surface Window Heat Gain Energy,        !- Variable Name
-  monthly;                                !- Reporting Frequency
+OS:Construction,
+  {79bc1510-932c-42ca-8555-6fb9b0c473e9}, !- Handle
+  PT_FrenteForjado,                       !- Name
+  ,                                       !- Surface Rendering Name
+  {34061a84-eb53-4ff5-99f6-fb4e3dac9716}; !- Layer 1
 
-OS:Output:Variable,
-  {6872c41e-b07d-4daf-b3df-199965f74613}, !- Handle
-  Output Variable 4,                      !- Name
-  *,                                      !- Key Value
-  Surface Window Heat Loss Energy,        !- Variable Name
-  monthly;                                !- Reporting Frequency
+OS:StandardsInformation:Construction,
+  {60600a11-661c-47f4-9d56-1ee93d2c768d}, !- Handle
+  {79bc1510-932c-42ca-8555-6fb9b0c473e9}, !- Construction Name
+  ,                                       !- Intended Surface Type
+  ;                                       !- Standards Construction Type
 
-OS:Output:Variable,
-  {5876ff5b-5c91-499d-a48d-0db86580d4d7}, !- Handle
-  Output Variable 5,                      !- Name
-  *,                                      !- Key Value
-  Surface Window Transmitted Solar Radiation Energy, !- Variable Name
-  monthly;                                !- Reporting Frequency
+OS:Material:NoMass,
+  {7bf5fb05-3bd0-4896-b894-1a4934b0ee7a}, !- Handle
+  materialPT 2,                           !- Name
+  Smooth,                                 !- Roughness
+  1,                                      !- Thermal Resistance {m2-K/W}
+  0.9,                                    !- Thermal Absorptance
+  0.7,                                    !- Solar Absorptance
+  0.7;                                    !- Visible Absorptance
 
-OS:Output:Variable,
-  {d6ff8139-2c85-4a52-bc60-f4988e925dcb}, !- Handle
-  Output Variable 6,                      !- Name
-  *,                                      !- Key Value
-  Zone Total Internal Total Heating Energy, !- Variable Name
-  monthly;                                !- Reporting Frequency
+OS:Construction,
+  {f4a93c68-3feb-4a79-aa11-c58d699ded65}, !- Handle
+  PT_SoleraTerreno,                       !- Name
+  ,                                       !- Surface Rendering Name
+  {7bf5fb05-3bd0-4896-b894-1a4934b0ee7a}; !- Layer 1
 
-OS:Output:Variable,
-  {6e56b5b4-67c4-4f76-8144-3cd4541ada5d}, !- Handle
-  Output Variable 7,                      !- Name
-  *,                                      !- Key Value
-  Zone Ideal Loads Zone Total Heating Energy, !- Variable Name
-  monthly;                                !- Reporting Frequency
+OS:StandardsInformation:Construction,
+  {b9ce87ca-1191-42cf-860d-285972ded701}, !- Handle
+  {f4a93c68-3feb-4a79-aa11-c58d699ded65}, !- Construction Name
+  ,                                       !- Intended Surface Type
+  ;                                       !- Standards Construction Type
 
-OS:Output:Variable,
-  {a956d7a6-1943-4238-8b0c-6d27060eda71}, !- Handle
-  Output Variable 8,                      !- Name
-  *,                                      !- Key Value
-  Zone Ideal Loads Zone Total Cooling Energy, !- Variable Name
-  monthly;                                !- Reporting Frequency
+OS:Material:NoMass,
+  {ef423eed-2fa6-4a9e-9744-f03fa8179a02}, !- Handle
+  materialPT 3,                           !- Name
+  Smooth,                                 !- Roughness
+  1,                                      !- Thermal Resistance {m2-K/W}
+  0.9,                                    !- Thermal Absorptance
+  0.7,                                    !- Solar Absorptance
+  0.7;                                    !- Visible Absorptance
 
-OS:Output:Variable,
-  {b9395645-438c-4d9a-8f46-e405a5e13ea3}, !- Handle
-  Output Variable 9,                      !- Name
-  *,                                      !- Key Value
-  Surface Inside Face Conduction Heat Transfer Energy, !- Variable Name
-  hourly;                                 !- Reporting Frequency
+OS:Construction,
+  {50f29556-b110-4b75-a587-794749c2176f}, !- Handle
+  PT_ForjadoExterior,                     !- Name
+  ,                                       !- Surface Rendering Name
+  {ef423eed-2fa6-4a9e-9744-f03fa8179a02}; !- Layer 1
 
-OS:Output:Variable,
-  {29245c17-065d-486e-838e-c336008e9acd}, !- Handle
-  Output Variable 10,                     !- Name
-  *,                                      !- Key Value
-  Surface Inside Face Conduction Heat Transfer Energy, !- Variable Name
-  hourly;                                 !- Reporting Frequency
+OS:StandardsInformation:Construction,
+  {6f7d559e-3cec-4b2e-8f9a-62230c3556c5}, !- Handle
+  {50f29556-b110-4b75-a587-794749c2176f}, !- Construction Name
+  ,                                       !- Intended Surface Type
+  ;                                       !- Standards Construction Type
 
-OS:Output:Variable,
-  {bfac4fb3-790b-406e-969a-ec1205787cb4}, !- Handle
-  Output Variable 11,                     !- Name
-  *,                                      !- Key Value
-  Surface Inside Face Conduction Heat Transfer Energy, !- Variable Name
-  hourly;                                 !- Reporting Frequency
+OS:Material:NoMass,
+  {17b969f9-ab28-4d5f-8774-d40d0df738f8}, !- Handle
+  materialPT 4,                           !- Name
+  Smooth,                                 !- Roughness
+  1,                                      !- Thermal Resistance {m2-K/W}
+  0.9,                                    !- Thermal Absorptance
+  0.7,                                    !- Solar Absorptance
+  0.7;                                    !- Visible Absorptance
 
-OS:Output:Variable,
-  {bd8decea-a086-4099-b394-4582b8e456a7}, !- Handle
-  Output Variable 12,                     !- Name
-  *,                                      !- Key Value
-  Surface Window Heat Gain Energy,        !- Variable Name
-  hourly;                                 !- Reporting Frequency
+OS:Construction,
+  {9814052f-08a8-425b-a3dd-b0c5ee5c549f}, !- Handle
+  PT_ContornoHuecos,                      !- Name
+  ,                                       !- Surface Rendering Name
+  {17b969f9-ab28-4d5f-8774-d40d0df738f8}; !- Layer 1
 
-OS:Output:Variable,
-  {d87bf8a3-04fd-4a73-bde9-a0a391b95d45}, !- Handle
-  Output Variable 13,                     !- Name
-  *,                                      !- Key Value
-  Surface Window Heat Loss Energy,        !- Variable Name
-  hourly;                                 !- Reporting Frequency
+OS:StandardsInformation:Construction,
+  {f70a3db3-4341-466d-8942-851532ba6ab2}, !- Handle
+  {9814052f-08a8-425b-a3dd-b0c5ee5c549f}, !- Construction Name
+  ,                                       !- Intended Surface Type
+  ;                                       !- Standards Construction Type
 
-OS:Output:Variable,
-  {5a28ef58-6f92-4c86-9511-e7817474e0ee}, !- Handle
-  Output Variable 14,                     !- Name
-  *,                                      !- Key Value
-  Surface Window Transmitted Solar Radiation Energy, !- Variable Name
-  hourly;                                 !- Reporting Frequency
+OS:Surface,
+  {7f38d982-aefe-4942-8b3c-d4615789cafc}, !- Handle
+  1_VIV1_ptFrenteForjado,                 !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {3ad42160-eca4-4177-8513-35d33509f496}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -62.105632036891, 6.2524821046045, -48.5, !- X,Y,Z Vertex 1 {m}
+  -60.918132036891, 6.2524821046045, -48.5, !- X,Y,Z Vertex 2 {m}
+  -60.918132036891, 6.2524821046045, -46.5, !- X,Y,Z Vertex 3 {m}
+  -62.105632036891, 6.2524821046045, -46.5; !- X,Y,Z Vertex 4 {m}
 
-OS:Output:Variable,
-  {51509133-e787-4d80-b408-7440024c2d73}, !- Handle
-  Output Variable 15,                     !- Name
-  *,                                      !- Key Value
-  Zone Thermostat Cooling Setpoint Temperature, !- Variable Name
-  hourly;                                 !- Reporting Frequency
+OS:Surface,
+  {8cd3b76e-32d6-439a-8e33-7b7a3a8ae615}, !- Handle
+  VIV4_ptFrenteForjado,                   !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {3cdc680d-d39f-4ef8-a4f7-c76f95772194}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -5.920609073782, 3.338860209209, -52,   !- X,Y,Z Vertex 1 {m}
+  -5.327109073782, 3.338860209209, -52,   !- X,Y,Z Vertex 2 {m}
+  -5.327109073782, 3.338860209209, -50,   !- X,Y,Z Vertex 3 {m}
+  -5.920609073782, 3.338860209209, -50;   !- X,Y,Z Vertex 4 {m}
 
-OS:Output:Variable,
-  {5d60852f-bb6d-41ef-b86d-5c72b83043a4}, !- Handle
-  Output Variable 16,                     !- Name
-  *,                                      !- Key Value
-  Zone Thermostat Heating Setpoint Temperature, !- Variable Name
-  hourly;                                 !- Reporting Frequency
+OS:Surface,
+  {7bc94217-6883-4d06-b785-35730b98b538}, !- Handle
+  VIV4_ptSoleraTerreno,                   !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {3cdc680d-d39f-4ef8-a4f7-c76f95772194}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -5.920609073782, 3.338860209209, -52,   !- X,Y,Z Vertex 1 {m}
+  -9.244209073782, 3.338860209209, -52,   !- X,Y,Z Vertex 2 {m}
+  -9.244209073782, 3.338860209209, -50,   !- X,Y,Z Vertex 3 {m}
+  -5.920609073782, 3.338860209209, -50;   !- X,Y,Z Vertex 4 {m}
 
-OS:Output:Variable,
-  {1d310eda-c501-451c-9134-218be8e71fba}, !- Handle
-  Output Variable 17,                     !- Name
-  *,                                      !- Key Value
-  Zone Total Internal Total Heating Energy, !- Variable Name
-  hourly;                                 !- Reporting Frequency
+OS:Surface,
+  {768d763c-34dd-4c1b-9a2f-00f8930e2769}, !- Handle
+  1_VIV2_ptFrenteForjado,                 !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {3ed52a4c-6a01-42bb-9e43-49ab7fe31e2b}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -38.702483049188, 9.56694817434083, -48.5, !- X,Y,Z Vertex 1 {m}
+  -37.514983049188, 9.56694817434083, -48.5, !- X,Y,Z Vertex 2 {m}
+  -37.514983049188, 9.56694817434083, -46.5, !- X,Y,Z Vertex 3 {m}
+  -38.702483049188, 9.56694817434083, -46.5; !- X,Y,Z Vertex 4 {m}
 
-OS:Output:Variable,
-  {7c57dd2b-21bc-4959-9476-84e702a16d19}, !- Handle
-  Output Variable 18,                     !- Name
-  *,                                      !- Key Value
-  Zone Mechanical Ventilation Current Density Volume, !- Variable Name
-  hourly;                                 !- Reporting Frequency
+OS:Surface,
+  {21c53436-15ad-4c19-b82e-239181c4c3fa}, !- Handle
+  1_VIV4_ptFrenteForjado,                 !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {50fdaafd-1488-4699-a4f9-bc1a80840edc}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -27.040661073782, -3.453960790791, -48.5, !- X,Y,Z Vertex 1 {m}
+  -25.853661073782, -3.453960790791, -48.5, !- X,Y,Z Vertex 2 {m}
+  -25.853661073782, -3.453960790791, -46.5, !- X,Y,Z Vertex 3 {m}
+  -27.040661073782, -3.453960790791, -46.5; !- X,Y,Z Vertex 4 {m}
 
-OS:Output:Variable,
-  {bebab6fb-237b-4a00-9196-0e17eafc06ec}, !- Handle
-  Output Variable 19,                     !- Name
-  *,                                      !- Key Value
-  Zone Combined Outdoor Air Sensible Heat Loss Energy, !- Variable Name
-  hourly;                                 !- Reporting Frequency
+OS:Surface,
+  {f03f5769-dcaa-480b-9d49-94c5362e851c}, !- Handle
+  ACCESO_ptFrenteForjado,                 !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {6222e3bf-2614-41b2-bd13-aaa1ea2eef5e}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  1.82, 5.695, -52,                       !- X,Y,Z Vertex 1 {m}
+  1.911, 5.695, -52,                      !- X,Y,Z Vertex 2 {m}
+  1.911, 5.695, -50,                      !- X,Y,Z Vertex 3 {m}
+  1.82, 5.695, -50;                       !- X,Y,Z Vertex 4 {m}
 
-OS:Output:Variable,
-  {cea8f3c8-9a43-4c1a-bbcd-60a305cd1bc9}, !- Handle
-  Output Variable 20,                     !- Name
-  *,                                      !- Key Value
-  Zone Combined Outdoor Air Sensible Heat Gain Energy, !- Variable Name
-  hourly;                                 !- Reporting Frequency
+OS:Surface,
+  {68bcab15-8265-41ef-8bc0-7f202c4fadcd}, !- Handle
+  ACCESO_ptSoleraTerreno,                 !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {6222e3bf-2614-41b2-bd13-aaa1ea2eef5e}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  1.82, 5.695, -52,                       !- X,Y,Z Vertex 1 {m}
+  1.3104, 5.695, -52,                     !- X,Y,Z Vertex 2 {m}
+  1.3104, 5.695, -50,                     !- X,Y,Z Vertex 3 {m}
+  1.82, 5.695, -50;                       !- X,Y,Z Vertex 4 {m}
 
-OS:Output:Variable,
-  {92a17762-dfae-4892-ac44-87d363554647}, !- Handle
-  Output Variable 21,                     !- Name
-  *,                                      !- Key Value
-  Zone Combined Outdoor Air Changes per Hour, !- Variable Name
-  hourly;                                 !- Reporting Frequency
+OS:Surface,
+  {4aeeda6e-6a60-410c-a12d-1b12b8a60a5f}, !- Handle
+  3_VIV3_ptFrenteForjado,                 !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {6e1b06f2-33c4-4d4c-8caf-f4073ec3b3d6}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -14.857651073782, 19.231156209209, -41.5, !- X,Y,Z Vertex 1 {m}
+  -14.264151073782, 19.231156209209, -41.5, !- X,Y,Z Vertex 2 {m}
+  -14.264151073782, 19.231156209209, -39.5, !- X,Y,Z Vertex 3 {m}
+  -14.857651073782, 19.231156209209, -39.5; !- X,Y,Z Vertex 4 {m}
 
-OS:SpaceInfiltration:EffectiveLeakageArea,
-  {75ea9ff0-a142-4eac-a0c3-4eb1d12644d2}, !- Handle
-  CTE_ELA_#{ space.name },                !- Name
-  {3ad42160-eca4-4177-8513-35d33509f496}, !- Space or SpaceType Name
-  {5faae3d7-5df8-48a9-9ceb-58554d53b50c}, !- Schedule Name
-  269.463602819377,                       !- Effective Air Leakage Area {cm2}
-  0.00029,                                !- Stack Coefficient
-  0.000231;                               !- Wind Coefficient
+OS:Surface,
+  {72002da9-23f5-48e4-99be-e3dd45acfe8f}, !- Handle
+  3_VIV3_ptForjadoCubierta,               !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {6e1b06f2-33c4-4d4c-8caf-f4073ec3b3d6}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -14.857651073782, 19.231156209209, -41.5, !- X,Y,Z Vertex 1 {m}
+  -17.706451073782, 19.231156209209, -41.5, !- X,Y,Z Vertex 2 {m}
+  -17.706451073782, 19.231156209209, -39.5, !- X,Y,Z Vertex 3 {m}
+  -14.857651073782, 19.231156209209, -39.5; !- X,Y,Z Vertex 4 {m}
 
-OS:SpaceInfiltration:EffectiveLeakageArea,
-  {0c49c0b7-0301-42e6-a655-4b5bd164e2ad}, !- Handle
-  CTE_ELA_#{ space.name } 1,              !- Name
-  {3cdc680d-d39f-4ef8-a4f7-c76f95772194}, !- Space or SpaceType Name
-  {5faae3d7-5df8-48a9-9ceb-58554d53b50c}, !- Schedule Name
-  274.538914907633,                       !- Effective Air Leakage Area {cm2}
-  0.00029,                                !- Stack Coefficient
-  0.000231;                               !- Wind Coefficient
+OS:Surface,
+  {44742ee9-938f-4379-912e-11f3c6a52cfc}, !- Handle
+  VIV1_ptFrenteForjado,                   !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {7f5c487d-b278-4b20-a458-726b7988298d}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  3.82333333333333, 6.81, -52,            !- X,Y,Z Vertex 1 {m}
+  4.37333333333333, 6.81, -52,            !- X,Y,Z Vertex 2 {m}
+  4.37333333333333, 6.81, -50,            !- X,Y,Z Vertex 3 {m}
+  3.82333333333333, 6.81, -50;            !- X,Y,Z Vertex 4 {m}
 
-OS:SpaceInfiltration:EffectiveLeakageArea,
-  {420f7429-37f6-470a-a69a-c76067edb11a}, !- Handle
-  CTE_ELA_#{ space.name } 2,              !- Name
-  {3ed52a4c-6a01-42bb-9e43-49ab7fe31e2b}, !- Space or SpaceType Name
-  {5faae3d7-5df8-48a9-9ceb-58554d53b50c}, !- Schedule Name
-  274.606687512863,                       !- Effective Air Leakage Area {cm2}
-  0.00029,                                !- Stack Coefficient
-  0.000231;                               !- Wind Coefficient
+OS:Surface,
+  {4883260b-9a97-449e-92e9-d24fa244a054}, !- Handle
+  VIV1_ptSoleraTerreno,                   !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {7f5c487d-b278-4b20-a458-726b7988298d}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  3.82333333333333, 6.81, -52,            !- X,Y,Z Vertex 1 {m}
+  0.743333333333334, 6.81, -52,           !- X,Y,Z Vertex 2 {m}
+  0.743333333333334, 6.81, -50,           !- X,Y,Z Vertex 3 {m}
+  3.82333333333333, 6.81, -50;            !- X,Y,Z Vertex 4 {m}
 
-OS:SpaceInfiltration:EffectiveLeakageArea,
-  {5227c8f8-678d-4495-8e4b-87cf0ba09d22}, !- Handle
-  CTE_ELA_#{ space.name } 3,              !- Name
-  {50fdaafd-1488-4699-a4f9-bc1a80840edc}, !- Space or SpaceType Name
-  {5faae3d7-5df8-48a9-9ceb-58554d53b50c}, !- Schedule Name
-  274.538914907633,                       !- Effective Air Leakage Area {cm2}
-  0.00029,                                !- Stack Coefficient
-  0.000231;                               !- Wind Coefficient
+OS:Surface,
+  {c3a0dc70-f97c-4bcc-afb9-c259320d4763}, !- Handle
+  1_VIV3_ptFrenteForjado,                 !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {82d1d190-0e2d-4ac1-bea2-1c15539f7e3d}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -14.857651073782, 19.231156209209, -48.5, !- X,Y,Z Vertex 1 {m}
+  -13.670651073782, 19.231156209209, -48.5, !- X,Y,Z Vertex 2 {m}
+  -13.670651073782, 19.231156209209, -46.5, !- X,Y,Z Vertex 3 {m}
+  -14.857651073782, 19.231156209209, -46.5; !- X,Y,Z Vertex 4 {m}
 
-OS:SpaceInfiltration:EffectiveLeakageArea,
-  {fe3d60e3-05db-4693-844c-6382190297ed}, !- Handle
-  CTE_ELA_#{ space.name } 4,              !- Name
-  {6222e3bf-2614-41b2-bd13-aaa1ea2eef5e}, !- Space or SpaceType Name
-  {5faae3d7-5df8-48a9-9ceb-58554d53b50c}, !- Schedule Name
-  59.3992522765786,                       !- Effective Air Leakage Area {cm2}
-  0.00029,                                !- Stack Coefficient
-  0.000231;                               !- Wind Coefficient
+OS:Surface,
+  {2f7b5040-ec35-40b2-800f-d35baaa8a3a3}, !- Handle
+  ZONAS COMUNES_ptFrenteForjado,          !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {ab0094cd-d2d7-4a69-835e-450c49a32ca0}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  11.546427926218, -3.761198790791, -52,  !- X,Y,Z Vertex 1 {m}
+  12.283427926218, -3.761198790791, -52,  !- X,Y,Z Vertex 2 {m}
+  12.283427926218, -3.761198790791, -50,  !- X,Y,Z Vertex 3 {m}
+  11.546427926218, -3.761198790791, -50;  !- X,Y,Z Vertex 4 {m}
 
-OS:SpaceInfiltration:EffectiveLeakageArea,
-  {40827b53-594e-4c1e-9167-975291f40da6}, !- Handle
-  CTE_ELA_#{ space.name } 5,              !- Name
-  {6e1b06f2-33c4-4d4c-8caf-f4073ec3b3d6}, !- Space or SpaceType Name
-  {5faae3d7-5df8-48a9-9ceb-58554d53b50c}, !- Schedule Name
-  509.932561455237,                       !- Effective Air Leakage Area {cm2}
-  0.00029,                                !- Stack Coefficient
-  0.000231;                               !- Wind Coefficient
+OS:Surface,
+  {f6ae3357-b4fd-4bce-8f58-e7b5a03ca2be}, !- Handle
+  ZONAS COMUNES_ptSoleraTerreno,          !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {ab0094cd-d2d7-4a69-835e-450c49a32ca0}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  11.546427926218, -3.761198790791, -52,  !- X,Y,Z Vertex 1 {m}
+  7.419227926218, -3.761198790791, -52,   !- X,Y,Z Vertex 2 {m}
+  7.419227926218, -3.761198790791, -50,   !- X,Y,Z Vertex 3 {m}
+  11.546427926218, -3.761198790791, -50;  !- X,Y,Z Vertex 4 {m}
 
-OS:SpaceInfiltration:EffectiveLeakageArea,
-  {9e4d0b6b-2f9c-4f3e-be9b-f63f0101876b}, !- Handle
-  CTE_ELA_#{ space.name } 6,              !- Name
-  {7f5c487d-b278-4b20-a458-726b7988298d}, !- Space or SpaceType Name
-  {5faae3d7-5df8-48a9-9ceb-58554d53b50c}, !- Schedule Name
-  240.62829341656,                        !- Effective Air Leakage Area {cm2}
-  0.00029,                                !- Stack Coefficient
-  0.000231;                               !- Wind Coefficient
+OS:Surface,
+  {259c04e0-c6a4-4052-9289-b040d6d2e0ce}, !- Handle
+  VIV3_ptFrenteForjado,                   !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {aec6dfa8-986f-4269-9fd9-45b5ab690061}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -10.684371073782, -0.0181287907910002, -52, !- X,Y,Z Vertex 1 {m}
+  -10.090871073782, -0.0181287907910002, -52, !- X,Y,Z Vertex 2 {m}
+  -10.090871073782, -0.0181287907910002, -50, !- X,Y,Z Vertex 3 {m}
+  -10.684371073782, -0.0181287907910002, -50; !- X,Y,Z Vertex 4 {m}
 
-OS:SpaceInfiltration:EffectiveLeakageArea,
-  {16a0b9a8-0426-4cc4-8819-382b80eb4c09}, !- Handle
-  CTE_ELA_#{ space.name } 7,              !- Name
-  {82d1d190-0e2d-4ac1-bea2-1c15539f7e3d}, !- Space or SpaceType Name
-  {5faae3d7-5df8-48a9-9ceb-58554d53b50c}, !- Schedule Name
-  269.375363621205,                       !- Effective Air Leakage Area {cm2}
-  0.00029,                                !- Stack Coefficient
-  0.000231;                               !- Wind Coefficient
+OS:Surface,
+  {4b4f7d70-6c97-4e9c-922f-02df55dbaa01}, !- Handle
+  VIV3_ptSoleraTerreno,                   !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {aec6dfa8-986f-4269-9fd9-45b5ab690061}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -10.684371073782, -0.0181287907910002, -52, !- X,Y,Z Vertex 1 {m}
+  -14.007971073782, -0.0181287907910002, -52, !- X,Y,Z Vertex 2 {m}
+  -14.007971073782, -0.0181287907910002, -50, !- X,Y,Z Vertex 3 {m}
+  -10.684371073782, -0.0181287907910002, -50; !- X,Y,Z Vertex 4 {m}
 
-OS:SpaceInfiltration:EffectiveLeakageArea,
-  {d2827cb5-645b-458d-9cb5-d568d1805ef7}, !- Handle
-  CTE_ELA_#{ space.name } 8,              !- Name
-  {ab0094cd-d2d7-4a69-835e-450c49a32ca0}, !- Space or SpaceType Name
-  {5faae3d7-5df8-48a9-9ceb-58554d53b50c}, !- Schedule Name
-  64.8684162565675,                       !- Effective Air Leakage Area {cm2}
-  0.00029,                                !- Stack Coefficient
-  0.000231;                               !- Wind Coefficient
+OS:Surface,
+  {16437873-1ddd-46c4-b6be-6d6842190ad9}, !- Handle
+  2_VIV4_ptFrenteForjado,                 !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {b7f9f5df-3acf-4545-ad20-f9065a42df03}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -27.040661073782, -3.453960790791, -45, !- X,Y,Z Vertex 1 {m}
+  -25.853661073782, -3.453960790791, -45, !- X,Y,Z Vertex 2 {m}
+  -25.853661073782, -3.453960790791, -43, !- X,Y,Z Vertex 3 {m}
+  -27.040661073782, -3.453960790791, -43; !- X,Y,Z Vertex 4 {m}
 
-OS:SpaceInfiltration:EffectiveLeakageArea,
-  {97836e2b-8b08-4ab5-8cf2-ae443358c137}, !- Handle
-  CTE_ELA_#{ space.name } 9,              !- Name
-  {aec6dfa8-986f-4269-9fd9-45b5ab690061}, !- Space or SpaceType Name
-  {5faae3d7-5df8-48a9-9ceb-58554d53b50c}, !- Schedule Name
-  269.375363621205,                       !- Effective Air Leakage Area {cm2}
-  0.00029,                                !- Stack Coefficient
-  0.000231;                               !- Wind Coefficient
+OS:Surface,
+  {0c972aca-7a42-4448-a02b-0a61a0975eda}, !- Handle
+  1_ZC_ptFrenteForjado,                   !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {bb76a1a9-5e85-41ee-832a-c40bf6715a52}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -29.148605073782, 9.884793209209, -48.5, !- X,Y,Z Vertex 1 {m}
+  -27.674605073782, 9.884793209209, -48.5, !- X,Y,Z Vertex 2 {m}
+  -27.674605073782, 9.884793209209, -46.5, !- X,Y,Z Vertex 3 {m}
+  -29.148605073782, 9.884793209209, -46.5; !- X,Y,Z Vertex 4 {m}
 
-OS:SpaceInfiltration:EffectiveLeakageArea,
-  {f0517be8-0139-4ad8-9262-618272e820ae}, !- Handle
-  CTE_ELA_#{ space.name } 10,             !- Name
-  {b7f9f5df-3acf-4545-ad20-f9065a42df03}, !- Space or SpaceType Name
-  {5faae3d7-5df8-48a9-9ceb-58554d53b50c}, !- Schedule Name
-  274.538914907634,                       !- Effective Air Leakage Area {cm2}
-  0.00029,                                !- Stack Coefficient
-  0.000231;                               !- Wind Coefficient
+OS:Surface,
+  {3b131229-4ebe-4a8a-ac93-7b4294070b44}, !- Handle
+  2_VIV1_ptFrenteForjado,                 !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {bea903c1-03bd-4807-bf31-b31aa5d6f0f5}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -55.032649073782, 6.803730209209, -45,  !- X,Y,Z Vertex 1 {m}
+  -53.845149073782, 6.803730209209, -45,  !- X,Y,Z Vertex 2 {m}
+  -53.845149073782, 6.803730209209, -43,  !- X,Y,Z Vertex 3 {m}
+  -55.032649073782, 6.803730209209, -43;  !- X,Y,Z Vertex 4 {m}
 
-OS:SpaceInfiltration:EffectiveLeakageArea,
-  {755aad08-e203-4b4e-8923-d59fccfa5837}, !- Handle
-  CTE_ELA_#{ space.name } 11,             !- Name
-  {bb76a1a9-5e85-41ee-832a-c40bf6715a52}, !- Space or SpaceType Name
-  {5faae3d7-5df8-48a9-9ceb-58554d53b50c}, !- Schedule Name
-  72.502682598461,                        !- Effective Air Leakage Area {cm2}
-  0.00029,                                !- Stack Coefficient
-  0.000231;                               !- Wind Coefficient
+OS:Surface,
+  {50515e80-2b66-4a55-8008-769bfb8f99c9}, !- Handle
+  3_VIV1_ptFrenteForjado,                 !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {c422d0eb-ac75-4aae-9b49-5f9222fbe23c}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -55.032649073782, 6.803730209209, -41.5, !- X,Y,Z Vertex 1 {m}
+  -54.438899073782, 6.803730209209, -41.5, !- X,Y,Z Vertex 2 {m}
+  -54.438899073782, 6.803730209209, -39.5, !- X,Y,Z Vertex 3 {m}
+  -55.032649073782, 6.803730209209, -39.5; !- X,Y,Z Vertex 4 {m}
 
-OS:SpaceInfiltration:EffectiveLeakageArea,
-  {ba7b5338-e4f1-4057-a980-d1388f6212e1}, !- Handle
-  CTE_ELA_#{ space.name } 12,             !- Name
-  {bea903c1-03bd-4807-bf31-b31aa5d6f0f5}, !- Space or SpaceType Name
-  {5faae3d7-5df8-48a9-9ceb-58554d53b50c}, !- Schedule Name
-  269.463602819377,                       !- Effective Air Leakage Area {cm2}
-  0.00029,                                !- Stack Coefficient
-  0.000231;                               !- Wind Coefficient
+OS:Surface,
+  {7c916875-1ed8-49c1-ba76-2cddc97317fb}, !- Handle
+  3_VIV1_ptForjadoCubierta,               !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {c422d0eb-ac75-4aae-9b49-5f9222fbe23c}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -55.032649073782, 6.803730209209, -41.5, !- X,Y,Z Vertex 1 {m}
+  -57.882649073782, 6.803730209209, -41.5, !- X,Y,Z Vertex 2 {m}
+  -57.882649073782, 6.803730209209, -39.5, !- X,Y,Z Vertex 3 {m}
+  -55.032649073782, 6.803730209209, -39.5; !- X,Y,Z Vertex 4 {m}
 
-OS:SpaceInfiltration:EffectiveLeakageArea,
-  {04884631-4a05-4e50-b4bd-272130fe333c}, !- Handle
-  CTE_ELA_#{ space.name } 13,             !- Name
-  {c422d0eb-ac75-4aae-9b49-5f9222fbe23c}, !- Space or SpaceType Name
-  {5faae3d7-5df8-48a9-9ceb-58554d53b50c}, !- Schedule Name
-  513.735923008469,                       !- Effective Air Leakage Area {cm2}
-  0.00029,                                !- Stack Coefficient
-  0.000231;                               !- Wind Coefficient
+OS:Surface,
+  {2c843bb8-1560-4a2d-bc65-f7167e1f3ac4}, !- Handle
+  2_VIV2_ptFrenteForjado,                 !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {c5db0a49-73d4-461a-a2bb-111b76078902}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -38.072483073782, 9.566948209209, -45,  !- X,Y,Z Vertex 1 {m}
+  -36.884983073782, 9.566948209209, -45,  !- X,Y,Z Vertex 2 {m}
+  -36.884983073782, 9.566948209209, -43,  !- X,Y,Z Vertex 3 {m}
+  -38.072483073782, 9.566948209209, -43;  !- X,Y,Z Vertex 4 {m}
 
-OS:SpaceInfiltration:EffectiveLeakageArea,
-  {fe0efbaf-bfe5-450b-b8ef-c275156f65a6}, !- Handle
-  CTE_ELA_#{ space.name } 14,             !- Name
-  {c5db0a49-73d4-461a-a2bb-111b76078902}, !- Space or SpaceType Name
-  {5faae3d7-5df8-48a9-9ceb-58554d53b50c}, !- Schedule Name
-  274.60668751287,                        !- Effective Air Leakage Area {cm2}
-  0.00029,                                !- Stack Coefficient
-  0.000231;                               !- Wind Coefficient
+OS:Surface,
+  {9c32efdb-edcc-499e-aeb9-0514d038dd42}, !- Handle
+  3_VIV2_ptFrenteForjado,                 !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {c7ef5444-e741-491d-8d99-7fed11938b44}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -38.072483073782, 9.566948209209, -41.5, !- X,Y,Z Vertex 1 {m}
+  -37.478733073782, 9.566948209209, -41.5, !- X,Y,Z Vertex 2 {m}
+  -37.478733073782, 9.566948209209, -39.5, !- X,Y,Z Vertex 3 {m}
+  -38.072483073782, 9.566948209209, -39.5; !- X,Y,Z Vertex 4 {m}
 
-OS:SpaceInfiltration:EffectiveLeakageArea,
-  {02574f35-0aeb-4d0d-8897-77abc5b5fe51}, !- Handle
-  CTE_ELA_#{ space.name } 15,             !- Name
-  {c7ef5444-e741-491d-8d99-7fed11938b44}, !- Space or SpaceType Name
-  {5faae3d7-5df8-48a9-9ceb-58554d53b50c}, !- Schedule Name
-  516.950350941904,                       !- Effective Air Leakage Area {cm2}
-  0.00029,                                !- Stack Coefficient
-  0.000231;                               !- Wind Coefficient
+OS:Surface,
+  {fa81a531-5a8b-4800-b1d8-9b519171ae2e}, !- Handle
+  3_VIV2_ptForjadoCubierta,               !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {c7ef5444-e741-491d-8d99-7fed11938b44}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -38.072483073782, 9.566948209209, -41.5, !- X,Y,Z Vertex 1 {m}
+  -40.922483073782, 9.566948209209, -41.5, !- X,Y,Z Vertex 2 {m}
+  -40.922483073782, 9.566948209209, -39.5, !- X,Y,Z Vertex 3 {m}
+  -38.072483073782, 9.566948209209, -39.5; !- X,Y,Z Vertex 4 {m}
 
-OS:SpaceInfiltration:EffectiveLeakageArea,
-  {e01aea28-e243-4b93-b2a0-bd4a9c28dd7f}, !- Handle
-  CTE_ELA_#{ space.name } 16,             !- Name
-  {ce90cdf0-9b08-4fe3-98af-e19eb4d70beb}, !- Space or SpaceType Name
-  {5faae3d7-5df8-48a9-9ceb-58554d53b50c}, !- Schedule Name
-  515.096112741666,                       !- Effective Air Leakage Area {cm2}
-  0.00029,                                !- Stack Coefficient
-  0.000231;                               !- Wind Coefficient
+OS:Surface,
+  {6621ff11-bd98-41e7-bbbc-07c66e39cd22}, !- Handle
+  3_VIV4_ptFrenteForjado,                 !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {ce90cdf0-9b08-4fe3-98af-e19eb4d70beb}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -27.040661073782, -3.453960790791, -41.5, !- X,Y,Z Vertex 1 {m}
+  -26.447161073782, -3.453960790791, -41.5, !- X,Y,Z Vertex 2 {m}
+  -26.447161073782, -3.453960790791, -39.5, !- X,Y,Z Vertex 3 {m}
+  -27.040661073782, -3.453960790791, -39.5; !- X,Y,Z Vertex 4 {m}
 
-OS:SpaceInfiltration:EffectiveLeakageArea,
-  {011f3bb7-5dcb-46eb-943a-4a301ea19341}, !- Handle
-  CTE_ELA_#{ space.name } 17,             !- Name
-  {d3fc6ac4-31c2-4ed7-a92f-07ebc9b87dd4}, !- Space or SpaceType Name
-  {5faae3d7-5df8-48a9-9ceb-58554d53b50c}, !- Schedule Name
-  161.736210478424,                       !- Effective Air Leakage Area {cm2}
-  0.00029,                                !- Stack Coefficient
-  0.000231;                               !- Wind Coefficient
+OS:Surface,
+  {fd74390b-5a6e-486a-9e87-6306761e94b5}, !- Handle
+  3_VIV4_ptForjadoCubierta,               !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {ce90cdf0-9b08-4fe3-98af-e19eb4d70beb}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -27.040661073782, -3.453960790791, -41.5, !- X,Y,Z Vertex 1 {m}
+  -29.889461073782, -3.453960790791, -41.5, !- X,Y,Z Vertex 2 {m}
+  -29.889461073782, -3.453960790791, -39.5, !- X,Y,Z Vertex 3 {m}
+  -27.040661073782, -3.453960790791, -39.5; !- X,Y,Z Vertex 4 {m}
 
-OS:SpaceInfiltration:EffectiveLeakageArea,
-  {d32f7216-2c05-44b9-8286-1d1d00403c7d}, !- Handle
-  CTE_ELA_#{ space.name } 18,             !- Name
-  {d8cd0dd7-9fed-47d1-9a1e-7b5c79f58cb6}, !- Space or SpaceType Name
-  {5faae3d7-5df8-48a9-9ceb-58554d53b50c}, !- Schedule Name
-  269.375363621205,                       !- Effective Air Leakage Area {cm2}
-  0.00029,                                !- Stack Coefficient
-  0.000231;                               !- Wind Coefficient
+OS:Surface,
+  {22ec041a-9362-4e7f-9083-f70353a42399}, !- Handle
+  3_ZC_ptFrenteForjado,                   !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {d3fc6ac4-31c2-4ed7-a92f-07ebc9b87dd4}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -29.148605073782, 9.884793209209, -41.5, !- X,Y,Z Vertex 1 {m}
+  -28.411605073782, 9.884793209209, -41.5, !- X,Y,Z Vertex 2 {m}
+  -28.411605073782, 9.884793209209, -39.5, !- X,Y,Z Vertex 3 {m}
+  -29.148605073782, 9.884793209209, -39.5; !- X,Y,Z Vertex 4 {m}
 
-OS:SpaceInfiltration:EffectiveLeakageArea,
-  {5729e2cd-09ad-4fe5-82aa-311f6ddf7b85}, !- Handle
-  CTE_ELA_#{ space.name } 19,             !- Name
-  {e365e66d-e66e-45e9-b46e-daeccad1cc69}, !- Space or SpaceType Name
-  {5faae3d7-5df8-48a9-9ceb-58554d53b50c}, !- Schedule Name
-  72.502682598461,                        !- Effective Air Leakage Area {cm2}
-  0.00029,                                !- Stack Coefficient
-  0.000231;                               !- Wind Coefficient
+OS:Surface,
+  {3308d401-2392-4462-8d4e-d87d27eab7d9}, !- Handle
+  3_ZC_ptForjadoCubierta,                 !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {d3fc6ac4-31c2-4ed7-a92f-07ebc9b87dd4}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -29.148605073782, 9.884793209209, -41.5, !- X,Y,Z Vertex 1 {m}
+  -32.686205073782, 9.884793209209, -41.5, !- X,Y,Z Vertex 2 {m}
+  -32.686205073782, 9.884793209209, -39.5, !- X,Y,Z Vertex 3 {m}
+  -29.148605073782, 9.884793209209, -39.5; !- X,Y,Z Vertex 4 {m}
 
-OS:SpaceInfiltration:EffectiveLeakageArea,
-  {97e87d46-bd1b-4ea5-a35c-388f248e008b}, !- Handle
-  CTE_ELA_#{ space.name } 20,             !- Name
-  {f8080944-cc1c-47c6-be58-113a6ff1c11c}, !- Space or SpaceType Name
-  {5faae3d7-5df8-48a9-9ceb-58554d53b50c}, !- Schedule Name
-  244.53602933563,                        !- Effective Air Leakage Area {cm2}
-  0.00029,                                !- Stack Coefficient
-  0.000231;                               !- Wind Coefficient
+OS:Surface,
+  {94af873c-a3b7-42ef-b1b4-a8490040aae1}, !- Handle
+  2_VIV3_ptFrenteForjado,                 !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {d8cd0dd7-9fed-47d1-9a1e-7b5c79f58cb6}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -14.857651073782, 19.231156209209, -45, !- X,Y,Z Vertex 1 {m}
+  -13.670651073782, 19.231156209209, -45, !- X,Y,Z Vertex 2 {m}
+  -13.670651073782, 19.231156209209, -43, !- X,Y,Z Vertex 3 {m}
+  -14.857651073782, 19.231156209209, -43; !- X,Y,Z Vertex 4 {m}
+
+OS:Surface,
+  {e98e2117-3770-4baa-96fb-0f03fa73e784}, !- Handle
+  2_ZC_ptFrenteForjado,                   !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {e365e66d-e66e-45e9-b46e-daeccad1cc69}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -29.148605073782, 9.884793209209, -45,  !- X,Y,Z Vertex 1 {m}
+  -27.674605073782, 9.884793209209, -45,  !- X,Y,Z Vertex 2 {m}
+  -27.674605073782, 9.884793209209, -43,  !- X,Y,Z Vertex 3 {m}
+  -29.148605073782, 9.884793209209, -43;  !- X,Y,Z Vertex 4 {m}
+
+OS:Surface,
+  {5afa691c-c2c5-41b8-9e5f-ad5b38923df7}, !- Handle
+  VIV2_ptFrenteForjado,                   !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {f8080944-cc1c-47c6-be58-113a6ff1c11c}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  6.231910926218, 7.259310209209, -52,    !- X,Y,Z Vertex 1 {m}
+  6.778410926218, 7.259310209209, -52,    !- X,Y,Z Vertex 2 {m}
+  6.778410926218, 7.259310209209, -50,    !- X,Y,Z Vertex 3 {m}
+  6.231910926218, 7.259310209209, -50;    !- X,Y,Z Vertex 4 {m}
+
+OS:Surface,
+  {41bda683-e8f0-4ff0-b530-26efe4b3ad1b}, !- Handle
+  VIV2_ptSoleraTerreno,                   !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {f8080944-cc1c-47c6-be58-113a6ff1c11c}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  6.231910926218, 7.259310209209, -52,    !- X,Y,Z Vertex 1 {m}
+  3.171510926218, 7.259310209209, -52,    !- X,Y,Z Vertex 2 {m}
+  3.171510926218, 7.259310209209, -50,    !- X,Y,Z Vertex 3 {m}
+  6.231910926218, 7.259310209209, -50;    !- X,Y,Z Vertex 4 {m}
+
+OS:Surface,
+  {f2f23035-4067-4787-be00-e8363bdf6bcf}, !- Handle
+  1_VIV1_PTHuecos,                        !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {3ad42160-eca4-4177-8513-35d33509f496}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -62.105632036891, 6.2524821046045, -48.5, !- X,Y,Z Vertex 1 {m}
+  -62.105632036891, 5.5149821046045, -48.5, !- X,Y,Z Vertex 2 {m}
+  -62.105632036891, 5.5149821046045, -46.5, !- X,Y,Z Vertex 3 {m}
+  -62.105632036891, 6.2524821046045, -46.5; !- X,Y,Z Vertex 4 {m}
+
+OS:Surface,
+  {a195a88c-191d-477c-a24f-e1a3567dd9aa}, !- Handle
+  VIV4_PTHuecos,                          !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {3cdc680d-d39f-4ef8-a4f7-c76f95772194}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -5.920609073782, 3.338860209209, -52,   !- X,Y,Z Vertex 1 {m}
+  -5.920609073782, 2.5162510588761, -52,  !- X,Y,Z Vertex 2 {m}
+  -5.920609073782, 2.5162510588761, -50,  !- X,Y,Z Vertex 3 {m}
+  -5.920609073782, 3.338860209209, -50;   !- X,Y,Z Vertex 4 {m}
+
+OS:Surface,
+  {e33ea898-582f-4e1b-9545-bf78686d223e}, !- Handle
+  1_VIV2_PTHuecos,                        !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {3ed52a4c-6a01-42bb-9e43-49ab7fe31e2b}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -38.702483049188, 9.56694817434083, -48.5, !- X,Y,Z Vertex 1 {m}
+  -38.702483049188, 8.74444817434083, -48.5, !- X,Y,Z Vertex 2 {m}
+  -38.702483049188, 8.74444817434083, -46.5, !- X,Y,Z Vertex 3 {m}
+  -38.702483049188, 9.56694817434083, -46.5; !- X,Y,Z Vertex 4 {m}
+
+OS:Surface,
+  {194390dd-ff7c-4117-af93-4b2e76282fd6}, !- Handle
+  1_VIV4_PTHuecos,                        !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {50fdaafd-1488-4699-a4f9-bc1a80840edc}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -27.040661073782, -3.453960790791, -48.5, !- X,Y,Z Vertex 1 {m}
+  -27.040661073782, -4.2765699411239, -48.5, !- X,Y,Z Vertex 2 {m}
+  -27.040661073782, -4.2765699411239, -46.5, !- X,Y,Z Vertex 3 {m}
+  -27.040661073782, -3.453960790791, -46.5; !- X,Y,Z Vertex 4 {m}
+
+OS:Surface,
+  {6afb96d6-1a93-4c29-85db-07f0b71c6e9b}, !- Handle
+  3_VIV3_PTHuecos,                        !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {6e1b06f2-33c4-4d4c-8caf-f4073ec3b3d6}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -14.857651073782, 19.231156209209, -41.5, !- X,Y,Z Vertex 1 {m}
+  -14.857651073782, 18.493656209209, -41.5, !- X,Y,Z Vertex 2 {m}
+  -14.857651073782, 18.493656209209, -39.5, !- X,Y,Z Vertex 3 {m}
+  -14.857651073782, 19.231156209209, -39.5; !- X,Y,Z Vertex 4 {m}
+
+OS:Surface,
+  {b43e3543-1e2c-436e-a568-a6c485055c7b}, !- Handle
+  VIV1_PTHuecos,                          !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {7f5c487d-b278-4b20-a458-726b7988298d}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  3.82333333333333, 6.81, -52,            !- X,Y,Z Vertex 1 {m}
+  3.82333333333333, 6.14, -52,            !- X,Y,Z Vertex 2 {m}
+  3.82333333333333, 6.14, -50,            !- X,Y,Z Vertex 3 {m}
+  3.82333333333333, 6.81, -50;            !- X,Y,Z Vertex 4 {m}
+
+OS:Surface,
+  {740c29d9-b3ac-4f30-b4a5-ebc257ebde5b}, !- Handle
+  1_VIV3_PTHuecos,                        !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {82d1d190-0e2d-4ac1-bea2-1c15539f7e3d}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -14.857651073782, 19.231156209209, -48.5, !- X,Y,Z Vertex 1 {m}
+  -14.857651073782, 18.493656209209, -48.5, !- X,Y,Z Vertex 2 {m}
+  -14.857651073782, 18.493656209209, -46.5, !- X,Y,Z Vertex 3 {m}
+  -14.857651073782, 19.231156209209, -46.5; !- X,Y,Z Vertex 4 {m}
+
+OS:Surface,
+  {ed66243b-df52-4bfb-ae37-75609cdc3d0e}, !- Handle
+  ZONAS COMUNES_PTHuecos,                 !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {ab0094cd-d2d7-4a69-835e-450c49a32ca0}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  11.546427926218, -3.761198790791, -52,  !- X,Y,Z Vertex 1 {m}
+  11.546427926218, -3.971198790791, -52,  !- X,Y,Z Vertex 2 {m}
+  11.546427926218, -3.971198790791, -50,  !- X,Y,Z Vertex 3 {m}
+  11.546427926218, -3.761198790791, -50;  !- X,Y,Z Vertex 4 {m}
+
+OS:Surface,
+  {7a9f16a1-da3d-4790-8ed9-325d7201839f}, !- Handle
+  VIV3_PTHuecos,                          !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {aec6dfa8-986f-4269-9fd9-45b5ab690061}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -10.684371073782, -0.0181287907910002, -52, !- X,Y,Z Vertex 1 {m}
+  -10.684371073782, -0.755628790791, -52, !- X,Y,Z Vertex 2 {m}
+  -10.684371073782, -0.755628790791, -50, !- X,Y,Z Vertex 3 {m}
+  -10.684371073782, -0.0181287907910002, -50; !- X,Y,Z Vertex 4 {m}
+
+OS:Surface,
+  {c9cc6652-2519-4374-89f6-329eeba6b180}, !- Handle
+  2_VIV4_PTHuecos,                        !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {b7f9f5df-3acf-4545-ad20-f9065a42df03}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -27.040661073782, -3.453960790791, -45, !- X,Y,Z Vertex 1 {m}
+  -27.040661073782, -4.2765699411239, -45, !- X,Y,Z Vertex 2 {m}
+  -27.040661073782, -4.2765699411239, -43, !- X,Y,Z Vertex 3 {m}
+  -27.040661073782, -3.453960790791, -43; !- X,Y,Z Vertex 4 {m}
+
+OS:Surface,
+  {a026a17c-a8b9-40f2-bdad-21dcec5ed209}, !- Handle
+  1_ZC_PTHuecos,                          !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {bb76a1a9-5e85-41ee-832a-c40bf6715a52}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -29.148605073782, 9.884793209209, -48.5, !- X,Y,Z Vertex 1 {m}
+  -29.148605073782, 9.542293209209, -48.5, !- X,Y,Z Vertex 2 {m}
+  -29.148605073782, 9.542293209209, -46.5, !- X,Y,Z Vertex 3 {m}
+  -29.148605073782, 9.884793209209, -46.5; !- X,Y,Z Vertex 4 {m}
+
+OS:Surface,
+  {8cc11e20-b5bf-400f-b729-272d4d404b4a}, !- Handle
+  2_VIV1_PTHuecos,                        !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {bea903c1-03bd-4807-bf31-b31aa5d6f0f5}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -55.032649073782, 6.803730209209, -45,  !- X,Y,Z Vertex 1 {m}
+  -55.032649073782, 6.066230209209, -45,  !- X,Y,Z Vertex 2 {m}
+  -55.032649073782, 6.066230209209, -43,  !- X,Y,Z Vertex 3 {m}
+  -55.032649073782, 6.803730209209, -43;  !- X,Y,Z Vertex 4 {m}
+
+OS:Surface,
+  {6f13746b-ec49-4d63-bf27-9d2e8ea1c83a}, !- Handle
+  3_VIV1_PTHuecos,                        !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {c422d0eb-ac75-4aae-9b49-5f9222fbe23c}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -55.032649073782, 6.803730209209, -41.5, !- X,Y,Z Vertex 1 {m}
+  -55.032649073782, 6.006230209209, -41.5, !- X,Y,Z Vertex 2 {m}
+  -55.032649073782, 6.006230209209, -39.5, !- X,Y,Z Vertex 3 {m}
+  -55.032649073782, 6.803730209209, -39.5; !- X,Y,Z Vertex 4 {m}
+
+OS:Surface,
+  {5ec99ada-6daf-42a4-98d8-d3a3cde0b8de}, !- Handle
+  2_VIV2_PTHuecos,                        !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {c5db0a49-73d4-461a-a2bb-111b76078902}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -38.072483073782, 9.566948209209, -45,  !- X,Y,Z Vertex 1 {m}
+  -38.072483073782, 8.74444820920895, -45, !- X,Y,Z Vertex 2 {m}
+  -38.072483073782, 8.74444820920895, -43, !- X,Y,Z Vertex 3 {m}
+  -38.072483073782, 9.566948209209, -43;  !- X,Y,Z Vertex 4 {m}
+
+OS:Surface,
+  {7be38653-1523-4e93-8779-1da26b4c148b}, !- Handle
+  3_VIV2_PTHuecos,                        !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {c7ef5444-e741-491d-8d99-7fed11938b44}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -38.072483073782, 9.566948209209, -41.5, !- X,Y,Z Vertex 1 {m}
+  -38.072483073782, 8.74444820920895, -41.5, !- X,Y,Z Vertex 2 {m}
+  -38.072483073782, 8.74444820920895, -39.5, !- X,Y,Z Vertex 3 {m}
+  -38.072483073782, 9.566948209209, -39.5; !- X,Y,Z Vertex 4 {m}
+
+OS:Surface,
+  {a949b337-8a0f-40f5-884a-4f031f423e73}, !- Handle
+  3_VIV4_PTHuecos,                        !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {ce90cdf0-9b08-4fe3-98af-e19eb4d70beb}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -27.040661073782, -3.453960790791, -41.5, !- X,Y,Z Vertex 1 {m}
+  -27.040661073782, -4.2765699411239, -41.5, !- X,Y,Z Vertex 2 {m}
+  -27.040661073782, -4.2765699411239, -39.5, !- X,Y,Z Vertex 3 {m}
+  -27.040661073782, -3.453960790791, -39.5; !- X,Y,Z Vertex 4 {m}
+
+OS:Surface,
+  {1f0a101e-84e1-4629-9c0b-ec3ca2ea4f7c}, !- Handle
+  3_ZC_PTHuecos,                          !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {d3fc6ac4-31c2-4ed7-a92f-07ebc9b87dd4}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -29.148605073782, 9.884793209209, -41.5, !- X,Y,Z Vertex 1 {m}
+  -29.148605073782, 9.542293209209, -41.5, !- X,Y,Z Vertex 2 {m}
+  -29.148605073782, 9.542293209209, -39.5, !- X,Y,Z Vertex 3 {m}
+  -29.148605073782, 9.884793209209, -39.5; !- X,Y,Z Vertex 4 {m}
+
+OS:Surface,
+  {e989f269-7686-42cf-a444-8d4e210c4711}, !- Handle
+  2_VIV3_PTHuecos,                        !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {d8cd0dd7-9fed-47d1-9a1e-7b5c79f58cb6}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -14.857651073782, 19.231156209209, -45, !- X,Y,Z Vertex 1 {m}
+  -14.857651073782, 18.493656209209, -45, !- X,Y,Z Vertex 2 {m}
+  -14.857651073782, 18.493656209209, -43, !- X,Y,Z Vertex 3 {m}
+  -14.857651073782, 19.231156209209, -43; !- X,Y,Z Vertex 4 {m}
+
+OS:Surface,
+  {9024b9f2-d9df-48cd-a973-6bd00b2d5172}, !- Handle
+  2_ZC_PTHuecos,                          !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {e365e66d-e66e-45e9-b46e-daeccad1cc69}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -29.148605073782, 9.884793209209, -45,  !- X,Y,Z Vertex 1 {m}
+  -29.148605073782, 9.542293209209, -45,  !- X,Y,Z Vertex 2 {m}
+  -29.148605073782, 9.542293209209, -43,  !- X,Y,Z Vertex 3 {m}
+  -29.148605073782, 9.884793209209, -43;  !- X,Y,Z Vertex 4 {m}
+
+OS:Surface,
+  {8a93c0c4-76e7-40a2-99ea-132d532b5310}, !- Handle
+  VIV2_PTHuecos,                          !- Name
+  Wall,                                   !- Surface Type
+  ,                                       !- Construction Name
+  {f8080944-cc1c-47c6-be58-113a6ff1c11c}, !- Space Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  6.231910926218, 7.259310209209, -52,    !- X,Y,Z Vertex 1 {m}
+  6.231910926218, 6.504310209209, -52,    !- X,Y,Z Vertex 2 {m}
+  6.231910926218, 6.504310209209, -50,    !- X,Y,Z Vertex 3 {m}
+  6.231910926218, 7.259310209209, -50;    !- X,Y,Z Vertex 4 {m}
 

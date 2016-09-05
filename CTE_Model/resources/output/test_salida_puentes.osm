@@ -23699,7 +23699,7 @@ OS:WeatherFile,
   65D14084;                               !- Checksum
 
 OS:Material:NoMass,
-  {bd566bd0-d93f-454e-8d59-950f0ac4a0b9}, !- Handle
+  {fcc4633d-af53-4bef-8f71-a751b29cd48c}, !- Handle
   materialPT,                             !- Name
   Smooth,                                 !- Roughness
   1,                                      !- Thermal Resistance {m2-K/W}
@@ -23708,19 +23708,19 @@ OS:Material:NoMass,
   0.7;                                    !- Visible Absorptance
 
 OS:Construction,
-  {dbf50e48-3cb7-4f7f-a2fe-28059d02573c}, !- Handle
+  {59c1e263-f2ab-4918-b2f5-bd765ab68cde}, !- Handle
   PT_ForjadoCubierta,                     !- Name
   ,                                       !- Surface Rendering Name
-  {bd566bd0-d93f-454e-8d59-950f0ac4a0b9}; !- Layer 1
+  {fcc4633d-af53-4bef-8f71-a751b29cd48c}; !- Layer 1
 
 OS:StandardsInformation:Construction,
-  {9a068578-0b33-4172-9f42-6f079dca1bee}, !- Handle
-  {dbf50e48-3cb7-4f7f-a2fe-28059d02573c}, !- Construction Name
+  {8da17ed6-bb47-4fbe-8918-f57ef833eafe}, !- Handle
+  {59c1e263-f2ab-4918-b2f5-bd765ab68cde}, !- Construction Name
   ,                                       !- Intended Surface Type
   ;                                       !- Standards Construction Type
 
 OS:Material:NoMass,
-  {70385d31-f77b-45e9-bf33-15fdc82603a7}, !- Handle
+  {6b0b6606-37ad-4729-8455-186c82c47f8f}, !- Handle
   materialPT 1,                           !- Name
   Smooth,                                 !- Roughness
   1,                                      !- Thermal Resistance {m2-K/W}
@@ -23729,19 +23729,19 @@ OS:Material:NoMass,
   0.7;                                    !- Visible Absorptance
 
 OS:Construction,
-  {f3c193eb-6e79-4543-8d63-e752d8636625}, !- Handle
+  {d2d07c84-6670-48d5-b718-de74580929c0}, !- Handle
   PT_FrenteForjado,                       !- Name
   ,                                       !- Surface Rendering Name
-  {70385d31-f77b-45e9-bf33-15fdc82603a7}; !- Layer 1
+  {6b0b6606-37ad-4729-8455-186c82c47f8f}; !- Layer 1
 
 OS:StandardsInformation:Construction,
-  {bf01ee8d-8f77-413d-b126-83213cebd051}, !- Handle
-  {f3c193eb-6e79-4543-8d63-e752d8636625}, !- Construction Name
+  {8326cd55-4e69-41af-8063-60047cb99c72}, !- Handle
+  {d2d07c84-6670-48d5-b718-de74580929c0}, !- Construction Name
   ,                                       !- Intended Surface Type
   ;                                       !- Standards Construction Type
 
 OS:Material:NoMass,
-  {0be00956-c5bb-462e-9425-d2bb76940196}, !- Handle
+  {616a93d7-d768-480b-8269-34ea7cc0fc97}, !- Handle
   materialPT 2,                           !- Name
   Smooth,                                 !- Roughness
   1,                                      !- Thermal Resistance {m2-K/W}
@@ -23750,19 +23750,19 @@ OS:Material:NoMass,
   0.7;                                    !- Visible Absorptance
 
 OS:Construction,
-  {946ab64e-ffe1-4c98-b70e-b77e341f046d}, !- Handle
+  {3f583a51-c9e3-4276-9444-5c9ad2a12d6f}, !- Handle
   PT_SoleraTerreno,                       !- Name
   ,                                       !- Surface Rendering Name
-  {0be00956-c5bb-462e-9425-d2bb76940196}; !- Layer 1
+  {616a93d7-d768-480b-8269-34ea7cc0fc97}; !- Layer 1
 
 OS:StandardsInformation:Construction,
-  {37b1c0d2-7cce-40b2-8a3f-65a37a9f56c4}, !- Handle
-  {946ab64e-ffe1-4c98-b70e-b77e341f046d}, !- Construction Name
+  {11e215b7-a7a1-45d7-a98c-1150280b04a1}, !- Handle
+  {3f583a51-c9e3-4276-9444-5c9ad2a12d6f}, !- Construction Name
   ,                                       !- Intended Surface Type
   ;                                       !- Standards Construction Type
 
 OS:Material:NoMass,
-  {d2b9114a-a4d1-4638-9371-e48ba0908b68}, !- Handle
+  {34658df7-3097-43de-b5b5-51f0ec6d1ed6}, !- Handle
   materialPT 3,                           !- Name
   Smooth,                                 !- Roughness
   1,                                      !- Thermal Resistance {m2-K/W}
@@ -23771,19 +23771,19 @@ OS:Material:NoMass,
   0.7;                                    !- Visible Absorptance
 
 OS:Construction,
-  {cc074bc1-ccad-4d69-b9e1-f802a84e4e30}, !- Handle
+  {5e824a22-5e6d-430c-ae69-abd61131214e}, !- Handle
   PT_ForjadoExterior,                     !- Name
   ,                                       !- Surface Rendering Name
-  {d2b9114a-a4d1-4638-9371-e48ba0908b68}; !- Layer 1
+  {34658df7-3097-43de-b5b5-51f0ec6d1ed6}; !- Layer 1
 
 OS:StandardsInformation:Construction,
-  {58dd8f96-6cc7-4a67-b9f5-684f83443d9e}, !- Handle
-  {cc074bc1-ccad-4d69-b9e1-f802a84e4e30}, !- Construction Name
+  {8b07a228-5322-4a49-bab9-d4f28f44cef5}, !- Handle
+  {5e824a22-5e6d-430c-ae69-abd61131214e}, !- Construction Name
   ,                                       !- Intended Surface Type
   ;                                       !- Standards Construction Type
 
 OS:Material:NoMass,
-  {14d9b4a0-d694-4f52-8dfa-e4ff9f6432e6}, !- Handle
+  {cf31b832-c1d1-46b5-9cb5-0f451f3e24a7}, !- Handle
   materialPT 4,                           !- Name
   Smooth,                                 !- Roughness
   1,                                      !- Thermal Resistance {m2-K/W}
@@ -23792,19 +23792,19 @@ OS:Material:NoMass,
   0.7;                                    !- Visible Absorptance
 
 OS:Construction,
-  {4516501e-54cd-4a1a-8592-0443347e0182}, !- Handle
+  {d4cb5119-c1c3-4fe8-9e0c-6cc87274e6fa}, !- Handle
   PT_ContornoHuecos,                      !- Name
   ,                                       !- Surface Rendering Name
-  {14d9b4a0-d694-4f52-8dfa-e4ff9f6432e6}; !- Layer 1
+  {cf31b832-c1d1-46b5-9cb5-0f451f3e24a7}; !- Layer 1
 
 OS:StandardsInformation:Construction,
-  {fd18cd43-2049-4ecf-8d94-eabf68eea270}, !- Handle
-  {4516501e-54cd-4a1a-8592-0443347e0182}, !- Construction Name
+  {019b029c-dcd7-47a0-90a3-845dabf0df28}, !- Handle
+  {d4cb5119-c1c3-4fe8-9e0c-6cc87274e6fa}, !- Construction Name
   ,                                       !- Intended Surface Type
   ;                                       !- Standards Construction Type
 
 OS:Surface,
-  {c9f111f1-fc7a-4e75-bb2d-c8579d288283}, !- Handle
+  {b623ee95-c66a-4b2a-8283-e607467c685b}, !- Handle
   0_ZC2_ptFrenteForjado,                  !- Name
   Wall,                                   !- Surface Type
   ,                                       !- Construction Name
@@ -23815,13 +23815,13 @@ OS:Surface,
   NoWind,                                 !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  1.46000000000002, -1.79999999999999, -52, !- X,Y,Z Vertex 1 {m}
-  1.53300000000002, -1.79999999999999, -52, !- X,Y,Z Vertex 2 {m}
-  1.53300000000002, -1.79999999999999, -50, !- X,Y,Z Vertex 3 {m}
+  1.46000000000002, -1.79999999999999, -50.4526, !- X,Y,Z Vertex 1 {m}
+  1.91260000000002, -1.79999999999999, -50.4526, !- X,Y,Z Vertex 2 {m}
+  1.91260000000002, -1.79999999999999, -50, !- X,Y,Z Vertex 3 {m}
   1.46000000000002, -1.79999999999999, -50; !- X,Y,Z Vertex 4 {m}
 
 OS:Surface,
-  {d7d67203-c802-4929-be32-f8a1df532341}, !- Handle
+  {b000e535-9e4b-44c2-a3ba-1248e853952f}, !- Handle
   0_ZC2_ptSoleraTerreno,                  !- Name
   Wall,                                   !- Surface Type
   ,                                       !- Construction Name
@@ -23832,13 +23832,13 @@ OS:Surface,
   NoWind,                                 !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  1.46000000000002, -1.79999999999999, -52, !- X,Y,Z Vertex 1 {m}
-  1.05120000000001, -1.79999999999999, -52, !- X,Y,Z Vertex 2 {m}
-  1.05120000000001, -1.79999999999999, -50, !- X,Y,Z Vertex 3 {m}
+  1.46000000000002, -1.79999999999999, -49.0802, !- X,Y,Z Vertex 1 {m}
+  0.540200000000006, -1.79999999999999, -49.0802, !- X,Y,Z Vertex 2 {m}
+  0.540200000000006, -1.79999999999999, -50, !- X,Y,Z Vertex 3 {m}
   1.46000000000002, -1.79999999999999, -50; !- X,Y,Z Vertex 4 {m}
 
 OS:Surface,
-  {405717e6-ecaf-4e35-8557-6be01240711c}, !- Handle
+  {c9980dfb-0f43-4e34-915b-245cbc48acba}, !- Handle
   2_ZC2_ptFrenteForjado,                  !- Name
   Wall,                                   !- Surface Type
   ,                                       !- Construction Name
@@ -23849,13 +23849,13 @@ OS:Surface,
   NoWind,                                 !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -1.46, -1.8, -52,                       !- X,Y,Z Vertex 1 {m}
-  -1.387, -1.8, -52,                      !- X,Y,Z Vertex 2 {m}
-  -1.387, -1.8, -50,                      !- X,Y,Z Vertex 3 {m}
+  -1.46, -1.8, -50.4526,                  !- X,Y,Z Vertex 1 {m}
+  -1.0074, -1.8, -50.4526,                !- X,Y,Z Vertex 2 {m}
+  -1.0074, -1.8, -50,                     !- X,Y,Z Vertex 3 {m}
   -1.46, -1.8, -50;                       !- X,Y,Z Vertex 4 {m}
 
 OS:Surface,
-  {b46ce864-f9b8-484c-8cd0-2f43fe014a23}, !- Handle
+  {6dcd1d71-a595-4fa1-aa3e-2173709cc675}, !- Handle
   2_ZC2_ptForjadoCubierta,                !- Name
   Wall,                                   !- Surface Type
   ,                                       !- Construction Name
@@ -23866,13 +23866,13 @@ OS:Surface,
   NoWind,                                 !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -1.46, -1.8, -52,                       !- X,Y,Z Vertex 1 {m}
-  -1.81039999999999, -1.8, -52,           !- X,Y,Z Vertex 2 {m}
-  -1.81039999999999, -1.8, -50,           !- X,Y,Z Vertex 3 {m}
+  -1.46, -1.8, -49.1094,                  !- X,Y,Z Vertex 1 {m}
+  -2.35059999999999, -1.8, -49.1094,      !- X,Y,Z Vertex 2 {m}
+  -2.35059999999999, -1.8, -50,           !- X,Y,Z Vertex 3 {m}
   -1.46, -1.8, -50;                       !- X,Y,Z Vertex 4 {m}
 
 OS:Surface,
-  {ffc082e0-8430-42e9-829f-eead7f138362}, !- Handle
+  {7d8b8a32-5f7a-47e7-ad0e-5249d137f5d6}, !- Handle
   0_ACCESO2_ptFrenteForjado,              !- Name
   Wall,                                   !- Surface Type
   ,                                       !- Construction Name
@@ -23883,13 +23883,13 @@ OS:Surface,
   NoWind,                                 !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -9.91, -4.22500000000001, -52,          !- X,Y,Z Vertex 1 {m}
-  -8.7605, -4.22500000000001, -52,        !- X,Y,Z Vertex 2 {m}
-  -8.7605, -4.22500000000001, -50,        !- X,Y,Z Vertex 3 {m}
+  -9.91, -4.22500000000001, -57.1269,     !- X,Y,Z Vertex 1 {m}
+  -2.7831, -4.22500000000001, -57.1269,   !- X,Y,Z Vertex 2 {m}
+  -2.7831, -4.22500000000001, -50,        !- X,Y,Z Vertex 3 {m}
   -9.91, -4.22500000000001, -50;          !- X,Y,Z Vertex 4 {m}
 
 OS:Surface,
-  {89c1e8e6-6689-4b6b-abd2-41353212153c}, !- Handle
+  {955e6441-e8a6-40fc-91ac-dc1236cf8adf}, !- Handle
   0_ACCESO2_ptSoleraTerreno,              !- Name
   Wall,                                   !- Surface Type
   ,                                       !- Construction Name
@@ -23900,13 +23900,13 @@ OS:Surface,
   NoWind,                                 !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -9.91, -4.22500000000001, -52,          !- X,Y,Z Vertex 1 {m}
-  -16.3472, -4.22500000000001, -52,       !- X,Y,Z Vertex 2 {m}
-  -16.3472, -4.22500000000001, -50,       !- X,Y,Z Vertex 3 {m}
+  -9.91, -4.22500000000001, -35.5163,     !- X,Y,Z Vertex 1 {m}
+  -24.3937, -4.22500000000001, -35.5163,  !- X,Y,Z Vertex 2 {m}
+  -24.3937, -4.22500000000001, -50,       !- X,Y,Z Vertex 3 {m}
   -9.91, -4.22500000000001, -50;          !- X,Y,Z Vertex 4 {m}
 
 OS:Surface,
-  {2945728a-b872-4812-b520-5b466432876d}, !- Handle
+  {e873fd41-2df3-4883-a857-5c009fd9f01b}, !- Handle
   1_ZC1_ptFrenteForjado,                  !- Name
   Wall,                                   !- Surface Type
   ,                                       !- Construction Name
@@ -23917,13 +23917,13 @@ OS:Surface,
   NoWind,                                 !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -3.685, -1.8, -52,                      !- X,Y,Z Vertex 1 {m}
-  -3.2265, -1.8, -52,                     !- X,Y,Z Vertex 2 {m}
-  -3.2265, -1.8, -50,                     !- X,Y,Z Vertex 3 {m}
+  -3.685, -1.8, -52.8427,                 !- X,Y,Z Vertex 1 {m}
+  -0.8423, -1.8, -52.8427,                !- X,Y,Z Vertex 2 {m}
+  -0.8423, -1.8, -50,                     !- X,Y,Z Vertex 3 {m}
   -3.685, -1.8, -50;                      !- X,Y,Z Vertex 4 {m}
 
 OS:Surface,
-  {d99d4ffc-ecb3-4591-85f0-0f363b5bab24}, !- Handle
+  {e466d183-8b2b-44fe-a54a-07594652690b}, !- Handle
   2_ZC1_ptFrenteForjado,                  !- Name
   Wall,                                   !- Surface Type
   ,                                       !- Construction Name
@@ -23934,13 +23934,13 @@ OS:Surface,
   NoWind,                                 !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -3.685, -1.8, -52,                      !- X,Y,Z Vertex 1 {m}
-  -3.50075, -1.8, -52,                    !- X,Y,Z Vertex 2 {m}
-  -3.50075, -1.8, -50,                    !- X,Y,Z Vertex 3 {m}
+  -3.685, -1.8, -51.14235,                !- X,Y,Z Vertex 1 {m}
+  -2.54265, -1.8, -51.14235,              !- X,Y,Z Vertex 2 {m}
+  -2.54265, -1.8, -50,                    !- X,Y,Z Vertex 3 {m}
   -3.685, -1.8, -50;                      !- X,Y,Z Vertex 4 {m}
 
 OS:Surface,
-  {593e4a1d-4344-4a02-ab11-faedbdbace63}, !- Handle
+  {74520fa0-5288-48d2-927a-7dfca211b68c}, !- Handle
   2_ZC1_ptForjadoCubierta,                !- Name
   Wall,                                   !- Surface Type
   ,                                       !- Construction Name
@@ -23951,13 +23951,13 @@ OS:Surface,
   NoWind,                                 !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -3.685, -1.8, -52,                      !- X,Y,Z Vertex 1 {m}
-  -4.5694, -1.8, -52,                     !- X,Y,Z Vertex 2 {m}
-  -4.5694, -1.8, -50,                     !- X,Y,Z Vertex 3 {m}
+  -3.685, -1.8, -47.75215,                !- X,Y,Z Vertex 1 {m}
+  -5.93285, -1.8, -47.75215,              !- X,Y,Z Vertex 2 {m}
+  -5.93285, -1.8, -50,                    !- X,Y,Z Vertex 3 {m}
   -3.685, -1.8, -50;                      !- X,Y,Z Vertex 4 {m}
 
 OS:Surface,
-  {f83d9468-445a-4f74-8f7b-7599ffc9e74f}, !- Handle
+  {fffb76a4-eb03-4a7e-aee4-eeb3777954d8}, !- Handle
   1_ZC3_ptFrenteForjado,                  !- Name
   Wall,                                   !- Surface Type
   ,                                       !- Construction Name
@@ -23968,13 +23968,13 @@ OS:Surface,
   NoWind,                                 !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  0.849999999999995, -1.725, -52,         !- X,Y,Z Vertex 1 {m}
-  0.934999999999995, -1.725, -52,         !- X,Y,Z Vertex 2 {m}
-  0.934999999999995, -1.725, -50,         !- X,Y,Z Vertex 3 {m}
+  0.849999999999995, -1.725, -50.527,     !- X,Y,Z Vertex 1 {m}
+  1.37699999999999, -1.725, -50.527,      !- X,Y,Z Vertex 2 {m}
+  1.37699999999999, -1.725, -50,          !- X,Y,Z Vertex 3 {m}
   0.849999999999995, -1.725, -50;         !- X,Y,Z Vertex 4 {m}
 
 OS:Surface,
-  {02977a41-8acc-46db-89f1-e8e56d6fd6a0}, !- Handle
+  {8476cd6c-83ab-43a4-ad63-288b2b9ff482}, !- Handle
   2_ZC3_ptFrenteForjado,                  !- Name
   Wall,                                   !- Surface Type
   ,                                       !- Construction Name
@@ -23985,13 +23985,13 @@ OS:Surface,
   NoWind,                                 !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  0.849999999999995, -1.725, -52,         !- X,Y,Z Vertex 1 {m}
-  0.892499999999995, -1.725, -52,         !- X,Y,Z Vertex 2 {m}
-  0.892499999999995, -1.725, -50,         !- X,Y,Z Vertex 3 {m}
+  0.849999999999995, -1.725, -50.2635,    !- X,Y,Z Vertex 1 {m}
+  1.11349999999999, -1.725, -50.2635,     !- X,Y,Z Vertex 2 {m}
+  1.11349999999999, -1.725, -50,          !- X,Y,Z Vertex 3 {m}
   0.849999999999995, -1.725, -50;         !- X,Y,Z Vertex 4 {m}
 
 OS:Surface,
-  {dc33a8ab-a88b-4d80-aed5-1d8c95015a97}, !- Handle
+  {340beeff-c743-42c8-b5a5-8f8881f26b74}, !- Handle
   2_ZC3_ptForjadoCubierta,                !- Name
   Wall,                                   !- Surface Type
   ,                                       !- Construction Name
@@ -24002,13 +24002,13 @@ OS:Surface,
   NoWind,                                 !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  0.849999999999995, -1.725, -52,         !- X,Y,Z Vertex 1 {m}
-  0.645999999999996, -1.725, -52,         !- X,Y,Z Vertex 2 {m}
-  0.645999999999996, -1.725, -50,         !- X,Y,Z Vertex 3 {m}
+  0.849999999999995, -1.725, -49.4815,    !- X,Y,Z Vertex 1 {m}
+  0.331499999999998, -1.725, -49.4815,    !- X,Y,Z Vertex 2 {m}
+  0.331499999999998, -1.725, -50,         !- X,Y,Z Vertex 3 {m}
   0.849999999999995, -1.725, -50;         !- X,Y,Z Vertex 4 {m}
 
 OS:Surface,
-  {5de77e44-01e7-4b11-9965-76e2189d77e1}, !- Handle
+  {bee617fd-a660-422d-a925-9fa5b9df898b}, !- Handle
   2_OFICINAS_ptFrenteForjado,             !- Name
   Wall,                                   !- Surface Type
   ,                                       !- Construction Name
@@ -24019,13 +24019,13 @@ OS:Surface,
   NoWind,                                 !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -6.43125, -4.84375000000003, -52,       !- X,Y,Z Vertex 1 {m}
-  -3.856, -4.84375000000003, -52,         !- X,Y,Z Vertex 2 {m}
-  -3.856, -4.84375000000003, -50,         !- X,Y,Z Vertex 3 {m}
+  -6.43125, -4.84375000000003, -65.96655, !- X,Y,Z Vertex 1 {m}
+  9.53530000000002, -4.84375000000003, -65.96655, !- X,Y,Z Vertex 2 {m}
+  9.53530000000002, -4.84375000000003, -50, !- X,Y,Z Vertex 3 {m}
   -6.43125, -4.84375000000003, -50;       !- X,Y,Z Vertex 4 {m}
 
 OS:Surface,
-  {22748598-a987-47af-8675-4a168ae0995d}, !- Handle
+  {b1f568fb-9588-4d3e-b24e-f6ebab4f6803}, !- Handle
   2_OFICINAS_ptForjadoCubierta,           !- Name
   Wall,                                   !- Surface Type
   ,                                       !- Construction Name
@@ -24036,13 +24036,13 @@ OS:Surface,
   NoWind,                                 !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -6.43125, -4.84375000000003, -52,       !- X,Y,Z Vertex 1 {m}
-  -18.79245, -4.84375000000003, -52,      !- X,Y,Z Vertex 2 {m}
-  -18.79245, -4.84375000000003, -50,      !- X,Y,Z Vertex 3 {m}
+  -6.43125, -4.84375000000003, -18.58195, !- X,Y,Z Vertex 1 {m}
+  -37.8493, -4.84375000000003, -18.58195, !- X,Y,Z Vertex 2 {m}
+  -37.8493, -4.84375000000003, -50,       !- X,Y,Z Vertex 3 {m}
   -6.43125, -4.84375000000003, -50;       !- X,Y,Z Vertex 4 {m}
 
 OS:Surface,
-  {b931ca85-b73d-45de-9570-cc8339c4cb8f}, !- Handle
+  {8f45f455-d924-4b88-b5d7-01e5410fa154}, !- Handle
   1_OFICINAS_ptFrenteForjado,             !- Name
   Wall,                                   !- Surface Type
   ,                                       !- Construction Name
@@ -24053,13 +24053,13 @@ OS:Surface,
   NoWind,                                 !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -15.6666666666667, -4.46666666666671, -52, !- X,Y,Z Vertex 1 {m}
-  -11.2186666666667, -4.46666666666671, -52, !- X,Y,Z Vertex 2 {m}
-  -11.2186666666667, -4.46666666666671, -50, !- X,Y,Z Vertex 3 {m}
+  -15.6666666666667, -4.46666666666671, -77.5776, !- X,Y,Z Vertex 1 {m}
+  11.9109333333333, -4.46666666666671, -77.5776, !- X,Y,Z Vertex 2 {m}
+  11.9109333333333, -4.46666666666671, -50, !- X,Y,Z Vertex 3 {m}
   -15.6666666666667, -4.46666666666671, -50; !- X,Y,Z Vertex 4 {m}
 
 OS:Surface,
-  {4cd9ece3-b126-463d-9048-394412aa21cf}, !- Handle
+  {ee36bf64-a88e-4f60-8266-5c7ed5a4b8d4}, !- Handle
   1_OFICINAS_ptForjadoExterior,           !- Name
   Wall,                                   !- Surface Type
   ,                                       !- Construction Name
@@ -24070,13 +24070,13 @@ OS:Surface,
   NoWind,                                 !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -15.6666666666667, -4.46666666666671, -52, !- X,Y,Z Vertex 1 {m}
-  -15.6666666666667, 6.1708333333333, -52, !- X,Y,Z Vertex 2 {m}
-  -15.6666666666667, 6.1708333333333, -50, !- X,Y,Z Vertex 3 {m}
+  -15.6666666666667, -4.46666666666671, -79.6, !- X,Y,Z Vertex 1 {m}
+  -15.6666666666667, 25.1333333333333, -79.6, !- X,Y,Z Vertex 2 {m}
+  -15.6666666666667, 25.1333333333333, -50, !- X,Y,Z Vertex 3 {m}
   -15.6666666666667, -4.46666666666671, -50; !- X,Y,Z Vertex 4 {m}
 
 OS:Surface,
-  {a43bc3dc-febd-4c16-9b6c-59a3e59276bb}, !- Handle
+  {f3333fa0-876c-4b2f-9d06-0e77742418b0}, !- Handle
   0_ZC1_ptFrenteForjado,                  !- Name
   Wall,                                   !- Surface Type
   ,                                       !- Construction Name
@@ -24087,13 +24087,13 @@ OS:Surface,
   NoWind,                                 !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  3.685, 1.8, -52,                        !- X,Y,Z Vertex 1 {m}
-  3.95925, 1.8, -52,                      !- X,Y,Z Vertex 2 {m}
-  3.95925, 1.8, -50,                      !- X,Y,Z Vertex 3 {m}
+  3.685, 1.8, -51.70035,                  !- X,Y,Z Vertex 1 {m}
+  5.38535, 1.8, -51.70035,                !- X,Y,Z Vertex 2 {m}
+  5.38535, 1.8, -50,                      !- X,Y,Z Vertex 3 {m}
   3.685, 1.8, -50;                        !- X,Y,Z Vertex 4 {m}
 
 OS:Surface,
-  {15280b84-c207-480e-9b32-8016c85fb953}, !- Handle
+  {c2cfe9fe-13ec-4964-aa36-a28673a09d00}, !- Handle
   0_ZC1_ptSoleraTerreno,                  !- Name
   Wall,                                   !- Surface Type
   ,                                       !- Construction Name
@@ -24104,13 +24104,13 @@ OS:Surface,
   NoWind,                                 !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  3.685, 1.8, -52,                        !- X,Y,Z Vertex 1 {m}
-  2.1492, 1.8, -52,                       !- X,Y,Z Vertex 2 {m}
-  2.1492, 1.8, -50,                       !- X,Y,Z Vertex 3 {m}
+  3.685, 1.8, -46.54445,                  !- X,Y,Z Vertex 1 {m}
+  0.22945, 1.8, -46.54445,                !- X,Y,Z Vertex 2 {m}
+  0.22945, 1.8, -50,                      !- X,Y,Z Vertex 3 {m}
   3.685, 1.8, -50;                        !- X,Y,Z Vertex 4 {m}
 
 OS:Surface,
-  {0be7a3db-f646-4ff7-98e0-bb63ee12d97b}, !- Handle
+  {5c9cdb81-0783-4221-a344-891f8841520b}, !- Handle
   1_ZC2_ptFrenteForjado,                  !- Name
   Wall,                                   !- Surface Type
   ,                                       !- Construction Name
@@ -24121,13 +24121,13 @@ OS:Surface,
   NoWind,                                 !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -1.46, -1.8, -52,                       !- X,Y,Z Vertex 1 {m}
-  -1.314, -1.8, -52,                      !- X,Y,Z Vertex 2 {m}
-  -1.314, -1.8, -50,                      !- X,Y,Z Vertex 3 {m}
+  -1.46, -1.8, -50.9052,                  !- X,Y,Z Vertex 1 {m}
+  -0.554799999999998, -1.8, -50.9052,     !- X,Y,Z Vertex 2 {m}
+  -0.554799999999998, -1.8, -50,          !- X,Y,Z Vertex 3 {m}
   -1.46, -1.8, -50;                       !- X,Y,Z Vertex 4 {m}
 
 OS:Surface,
-  {5f42e6c8-cd51-4bbb-b4e4-e881d9c98a06}, !- Handle
+  {059914c7-5fba-467b-878d-55b7d2316f33}, !- Handle
   0_ZC3_ptFrenteForjado,                  !- Name
   Wall,                                   !- Surface Type
   ,                                       !- Construction Name
@@ -24138,13 +24138,13 @@ OS:Surface,
   NoWind,                                 !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  0.849999999999995, -1.725, -52,         !- X,Y,Z Vertex 1 {m}
-  0.892499999999995, -1.725, -52,         !- X,Y,Z Vertex 2 {m}
-  0.892499999999995, -1.725, -50,         !- X,Y,Z Vertex 3 {m}
+  0.849999999999995, -1.725, -50.2635,    !- X,Y,Z Vertex 1 {m}
+  1.11349999999999, -1.725, -50.2635,     !- X,Y,Z Vertex 2 {m}
+  1.11349999999999, -1.725, -50,          !- X,Y,Z Vertex 3 {m}
   0.849999999999995, -1.725, -50;         !- X,Y,Z Vertex 4 {m}
 
 OS:Surface,
-  {f7b021e9-3d4d-4934-802c-27dc15c151b8}, !- Handle
+  {a8c56227-e99b-472b-856e-85334a663508}, !- Handle
   0_ZC3_ptSoleraTerreno,                  !- Name
   Wall,                                   !- Surface Type
   ,                                       !- Construction Name
@@ -24155,13 +24155,13 @@ OS:Surface,
   NoWind,                                 !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  0.849999999999995, -1.725, -52,         !- X,Y,Z Vertex 1 {m}
-  0.611999999999996, -1.725, -52,         !- X,Y,Z Vertex 2 {m}
-  0.611999999999996, -1.725, -50,         !- X,Y,Z Vertex 3 {m}
+  0.849999999999995, -1.725, -49.4645,    !- X,Y,Z Vertex 1 {m}
+  0.314499999999998, -1.725, -49.4645,    !- X,Y,Z Vertex 2 {m}
+  0.314499999999998, -1.725, -50,         !- X,Y,Z Vertex 3 {m}
   0.849999999999995, -1.725, -50;         !- X,Y,Z Vertex 4 {m}
 
 OS:Surface,
-  {dccdec7a-c02a-493a-85af-ba73e8a4c269}, !- Handle
+  {c4533314-2f1a-4adf-b628-258b593e5fee}, !- Handle
   0_ACCESO_ptFrenteForjado,               !- Name
   Wall,                                   !- Surface Type
   ,                                       !- Construction Name
@@ -24172,13 +24172,13 @@ OS:Surface,
   NoWind,                                 !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -5.17666666666667, 4.03333333333334, -52, !- X,Y,Z Vertex 1 {m}
-  -4.45341666666667, 4.03333333333334, -52, !- X,Y,Z Vertex 2 {m}
-  -4.45341666666667, 4.03333333333334, -50, !- X,Y,Z Vertex 3 {m}
+  -5.17666666666667, 4.03333333333334, -54.48415, !- X,Y,Z Vertex 1 {m}
+  -0.692516666666664, 4.03333333333334, -54.48415, !- X,Y,Z Vertex 2 {m}
+  -0.692516666666664, 4.03333333333334, -50, !- X,Y,Z Vertex 3 {m}
   -5.17666666666667, 4.03333333333334, -50; !- X,Y,Z Vertex 4 {m}
 
 OS:Surface,
-  {5cb844b2-c502-4a48-9b78-36cb9143c7b7}, !- Handle
+  {47ba64b6-6a1c-4d55-a73f-5b15c47a7114}, !- Handle
   0_ACCESO_ptSoleraTerreno,               !- Name
   Wall,                                   !- Surface Type
   ,                                       !- Construction Name
@@ -24189,13 +24189,13 @@ OS:Surface,
   NoWind,                                 !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -5.17666666666667, 4.03333333333334, -52, !- X,Y,Z Vertex 1 {m}
-  -9.22686666666667, 4.03333333333334, -52, !- X,Y,Z Vertex 2 {m}
-  -9.22686666666667, 4.03333333333334, -50, !- X,Y,Z Vertex 3 {m}
+  -5.17666666666667, 4.03333333333334, -40.88705, !- X,Y,Z Vertex 1 {m}
+  -14.2896166666667, 4.03333333333334, -40.88705, !- X,Y,Z Vertex 2 {m}
+  -14.2896166666667, 4.03333333333334, -50, !- X,Y,Z Vertex 3 {m}
   -5.17666666666667, 4.03333333333334, -50; !- X,Y,Z Vertex 4 {m}
 
 OS:Surface,
-  {77aab743-25c1-4893-a2a0-e4507171619f}, !- Handle
+  {2958bf1e-25c3-412d-be72-d5e1357c8c23}, !- Handle
   0_ACCESO2_PTHuecos,                     !- Name
   Wall,                                   !- Surface Type
   ,                                       !- Construction Name
@@ -24206,13 +24206,13 @@ OS:Surface,
   NoWind,                                 !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -9.91, -4.22500000000001, -52,          !- X,Y,Z Vertex 1 {m}
-  -9.91, -7.00503644975222, -52,          !- X,Y,Z Vertex 2 {m}
-  -9.91, -7.00503644975222, -50,          !- X,Y,Z Vertex 3 {m}
+  -9.91, -4.22500000000001, -14.4155334431718, !- X,Y,Z Vertex 1 {m}
+  -9.91, -39.8094665568282, -14.4155334431718, !- X,Y,Z Vertex 2 {m}
+  -9.91, -39.8094665568282, -50,          !- X,Y,Z Vertex 3 {m}
   -9.91, -4.22500000000001, -50;          !- X,Y,Z Vertex 4 {m}
 
 OS:Surface,
-  {d9e915c6-5098-408a-8edb-039195850d47}, !- Handle
+  {5c52bee1-4c91-442f-9df9-7a559cce2e37}, !- Handle
   1_ZC1_PTHuecos,                         !- Name
   Wall,                                   !- Surface Type
   ,                                       !- Construction Name
@@ -24223,13 +24223,13 @@ OS:Surface,
   NoWind,                                 !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -3.685, -1.8, -52,                      !- X,Y,Z Vertex 1 {m}
-  -3.685, -1.94431226160799, -52,         !- X,Y,Z Vertex 2 {m}
-  -3.685, -1.94431226160799, -50,         !- X,Y,Z Vertex 3 {m}
+  -3.685, -1.8, -48.1528030514177,        !- X,Y,Z Vertex 1 {m}
+  -3.685, -3.64719694858232, -48.1528030514177, !- X,Y,Z Vertex 2 {m}
+  -3.685, -3.64719694858232, -50,         !- X,Y,Z Vertex 3 {m}
   -3.685, -1.8, -50;                      !- X,Y,Z Vertex 4 {m}
 
 OS:Surface,
-  {d9d4a412-173b-42ba-bda7-bd157b7bace1}, !- Handle
+  {0d02fab6-666d-4241-b9a4-3d83f6cadad0}, !- Handle
   2_ZC1_PTHuecos,                         !- Name
   Wall,                                   !- Surface Type
   ,                                       !- Construction Name
@@ -24240,13 +24240,13 @@ OS:Surface,
   NoWind,                                 !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -3.685, -1.8, -52,                      !- X,Y,Z Vertex 1 {m}
-  -3.685, -1.94431226160799, -52,         !- X,Y,Z Vertex 2 {m}
-  -3.685, -1.94431226160799, -50,         !- X,Y,Z Vertex 3 {m}
+  -3.685, -1.8, -48.1528030514177,        !- X,Y,Z Vertex 1 {m}
+  -3.685, -3.64719694858232, -48.1528030514177, !- X,Y,Z Vertex 2 {m}
+  -3.685, -3.64719694858232, -50,         !- X,Y,Z Vertex 3 {m}
   -3.685, -1.8, -50;                      !- X,Y,Z Vertex 4 {m}
 
 OS:Surface,
-  {8fc4c097-80d9-46da-9f9e-3a9327add356}, !- Handle
+  {b2f231cb-f79c-4dcc-99e2-c45dc5e578cd}, !- Handle
   2_OFICINAS_PTHuecos,                    !- Name
   Wall,                                   !- Surface Type
   ,                                       !- Construction Name
@@ -24257,13 +24257,13 @@ OS:Surface,
   NoWind,                                 !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -6.43125, -4.84375000000003, -52,       !- X,Y,Z Vertex 1 {m}
-  -6.43125, -10.4422660458943, -52,       !- X,Y,Z Vertex 2 {m}
-  -6.43125, -10.4422660458943, -50,       !- X,Y,Z Vertex 3 {m}
+  -6.43125, -4.84375000000003, 21.6610053874465, !- X,Y,Z Vertex 1 {m}
+  -6.43125, -76.5047553874465, 21.6610053874465, !- X,Y,Z Vertex 2 {m}
+  -6.43125, -76.5047553874465, -50,       !- X,Y,Z Vertex 3 {m}
   -6.43125, -4.84375000000003, -50;       !- X,Y,Z Vertex 4 {m}
 
 OS:Surface,
-  {93820302-9fbe-46ec-96d7-0a8e46190282}, !- Handle
+  {5567db70-5850-4700-b03e-55c9843d4b2a}, !- Handle
   1_OFICINAS_PTHuecos,                    !- Name
   Wall,                                   !- Surface Type
   ,                                       !- Construction Name
@@ -24274,13 +24274,13 @@ OS:Surface,
   NoWind,                                 !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -15.6666666666667, -4.46666666666671, -52, !- X,Y,Z Vertex 1 {m}
-  -15.6666666666667, -10.065182712561, -52, !- X,Y,Z Vertex 2 {m}
-  -15.6666666666667, -10.065182712561, -50, !- X,Y,Z Vertex 3 {m}
+  -15.6666666666667, -4.46666666666671, 21.6610053874465, !- X,Y,Z Vertex 1 {m}
+  -15.6666666666667, -76.1276720541132, 21.6610053874465, !- X,Y,Z Vertex 2 {m}
+  -15.6666666666667, -76.1276720541132, -50, !- X,Y,Z Vertex 3 {m}
   -15.6666666666667, -4.46666666666671, -50; !- X,Y,Z Vertex 4 {m}
 
 OS:Surface,
-  {a105524f-3efa-43e3-aca7-b22f0e099d55}, !- Handle
+  {d70baa3b-4566-4216-8b81-b9334624361a}, !- Handle
   0_ZC1_PTHuecos,                         !- Name
   Wall,                                   !- Surface Type
   ,                                       !- Construction Name
@@ -24291,13 +24291,13 @@ OS:Surface,
   NoWind,                                 !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  3.685, 1.8, -52,                        !- X,Y,Z Vertex 1 {m}
-  3.685, 1.645, -52,                      !- X,Y,Z Vertex 2 {m}
-  3.685, 1.645, -50,                      !- X,Y,Z Vertex 3 {m}
+  3.685, 1.8, -48.016,                    !- X,Y,Z Vertex 1 {m}
+  3.685, -0.184, -48.016,                 !- X,Y,Z Vertex 2 {m}
+  3.685, -0.184, -50,                     !- X,Y,Z Vertex 3 {m}
   3.685, 1.8, -50;                        !- X,Y,Z Vertex 4 {m}
 
 OS:Surface,
-  {cb81b628-8192-453f-86df-afda6c8c40b7}, !- Handle
+  {813bd90e-a359-4495-b2eb-c99e86b08632}, !- Handle
   0_ACCESO_PTHuecos,                      !- Name
   Wall,                                   !- Surface Type
   ,                                       !- Construction Name
@@ -24308,8 +24308,8 @@ OS:Surface,
   NoWind,                                 !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -5.17666666666667, 4.03333333333334, -52, !- X,Y,Z Vertex 1 {m}
-  -5.17666666666667, 2.25267695339964, -52, !- X,Y,Z Vertex 2 {m}
-  -5.17666666666667, 2.25267695339964, -50, !- X,Y,Z Vertex 3 {m}
+  -5.17666666666667, 4.03333333333334, -27.2075983368486, !- X,Y,Z Vertex 1 {m}
+  -5.17666666666667, -18.759068329818, -27.2075983368486, !- X,Y,Z Vertex 2 {m}
+  -5.17666666666667, -18.759068329818, -50, !- X,Y,Z Vertex 3 {m}
   -5.17666666666667, 4.03333333333334, -50; !- X,Y,Z Vertex 4 {m}
 
