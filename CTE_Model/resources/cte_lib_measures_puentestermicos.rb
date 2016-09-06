@@ -108,13 +108,25 @@ def getFloors(runner, spaces)
   return forjadosEspacios
 end
 
+
+def getSpaceByName(runner, model, spaceName)
+  model.getModelObjectsByName(spaceName, true).each do | objeto |
+      puts " es espacio #{objeto.iddObjectType.valueDescription == "OS:Space"}"
+      if objeto.iddObjectType.valueDescription == "OS:Space"          
+          #~ space = objeto.to_Space.get          
+          return objeto.to_Space.get
+      end
+    end
+end
+
 def medicionPTForjados(runner, model)
   runner.registerInfo("-- medición de forjados (medicionPTForjados) -- ")
   verticesExteriores = getExteriorVertices(runner, model.getSpaces)
   forjadosPorEspacios = getFloors(runner, model.getSpaces)
   salida = []    
-  forjadosPorEspacios.each do | spaceName, forjadosPorTipo |      
-    space = model.getModelObjectByName(spaceName).get.to_Space.get
+  forjadosPorEspacios.each do | spaceName, forjadosPorTipo |
+    puts "procesando #{spaceName}"
+    space = getSpaceByName(runner, model, spaceName)
     origen = OpenStudio::Vector3d.new(space.xOrigin, space.yOrigin, space.zOrigin)      
     longHash = Hash.new
     forjadosPorTipo.each do | tipo, forjados |
@@ -229,7 +241,7 @@ end
       :ptForjadoExterior => 'y+',
       :ptSoleraTerreno => 'x-'}
     ptForjados.each do | spaceName, longHash|
-      space = model.getModelObjectByName(spaceName).get.to_Space.get       
+      space = getSpaceByName(runner, model, spaceName)
       longHash.each do | key, longitud |
          next if longitud == 0.0
          area = longitud * ttl_puentesTermicos[key] * RESISTENCIA_PT
@@ -241,7 +253,7 @@ end
     # para huecos
     ptHuecos.each do | spaceName, longitud |      
       next if longitud == 0.0      
-      space = model.getModelObjectByName(spaceName).get.to_Space.get
+      space = getSpaceByName(runner, model, spaceName)
       area = longitud * ttl_puentesTermicos[:ptContornoHuecos] / 1.0
       superficiePT = creaSuperficiePT(model, space, area, construcciones[:ptContornoHuecos], 'y-')
       superficiePT.setName("#{spaceName}_PTHuecos")
