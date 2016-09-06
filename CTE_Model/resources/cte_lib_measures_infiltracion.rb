@@ -10,18 +10,18 @@ C_HU = { 'Clase 1' => 50 * TO4PA,
          'Clase 4' => 3 * TO4PA }
 
 def cte_horario_de_infiltracion(runner, space, horario_allways_on)
-    spaceName = space.name.get    
+    spaceName = space.name.get
     spaceType = space.spaceType.get.name.get
     habitable = !spaceType.start_with?('CTE_N')
-    runner.registerInfo("___ spaceName #{spaceName}, habitable: #{habitable}")    
+    runner.registerInfo("___ spaceName #{spaceName}, habitable: #{habitable}")
     runner.registerInfo("    spaceType #{spaceType}")
-    
+
     if habitable
-      thermalZone = space.thermalZone.get 
+      thermalZone = space.thermalZone.get
       thermalZoneName = thermalZone.name.get
       runner.registerInfo("    thermal zone #{thermalZoneName}")
       idealLoads = thermalZone.useIdealAirLoads
-      runner.registerInfo("    cargas ideales: #{idealLoads}")      
+      runner.registerInfo("    cargas ideales: #{idealLoads}")
       if !idealLoads
         listaDeEquipos = thermalZone.zoneConditioningEquipmentListName
         if listaDeEquipos.empty?
@@ -29,27 +29,31 @@ def cte_horario_de_infiltracion(runner, space, horario_allways_on)
           horarioInfiltracion = horario_allways_on
         else
           runner.registerInfo ("  habitable acondicionado")
-          horarios = space.defaultScheduleSet.get
+          horarios =  space.defaultScheduleSet.empty?  ?
+                      space.spaceType.get.defaultScheduleSet.get :
+                      space.defaultScheduleSet.get
           horarioInfiltracion = horarios.infiltrationSchedule.get
         end
       else
         runner.registerInfo ("  habitable acondicionado")
-        horarios = space.defaultScheduleSet.get
-        horarioInfiltracion = horarios.infiltrationSchedule.get        
+        horarios =  space.defaultScheduleSet.empty?  ?
+                    space.spaceType.get.defaultScheduleSet.get :
+                    space.defaultScheduleSet.get
+        horarioInfiltracion = horarios.infiltrationSchedule.get
       end
     else
       runner.registerInfo ("  no habitable")
-      horarios = space.defaultScheduleSet.get      
-      horarioInfiltracion = horarios.infiltrationSchedule.get      
+      horarios = space.defaultScheduleSet.get
+      horarioInfiltracion = horarios.infiltrationSchedule.get
     end
-    return horarioInfiltracion    
+    return horarioInfiltracion
 end
 
 
-#Se modelan las infiltraciones usando el método ELA y las permeabilidades 
+#Se modelan las infiltraciones usando el método ELA y las permeabilidades
 # y parámetros del documento de condic. técnicas
 def cte_infiltracion(model, runner, user_arguments) #copiado del residencial
-   
+
   # busca el horario para hacer allways_on
   horarios = model.getScheduleRulesets
   horario_allways_on = false
@@ -59,7 +63,7 @@ def cte_infiltracion(model, runner, user_arguments) #copiado del residencial
       break
     end
   end
-  
+
   #hay que tomar el horario del espacio -> zona -> tipo de zona
 
   tipoEdificio = runner.getStringArgumentValue('tipoEdificio', user_arguments)
@@ -77,7 +81,7 @@ def cte_infiltracion(model, runner, user_arguments) #copiado del residencial
 
   runner.registerInfo("** Superficies para ELA **")
   # XXX: pensar como interactúa con los espacios distintos a los acondicionados
-  spaces.each do |space|    
+  spaces.each do |space|
     runner.registerInfo("* Espacio '#{ space.name }'")
     horarioInfiltracion = cte_horario_de_infiltracion(runner, space, horario_allways_on)
     areaOpacos = 0
