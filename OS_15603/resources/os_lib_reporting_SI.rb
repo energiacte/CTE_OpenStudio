@@ -932,7 +932,7 @@ module OsLib_Reporting
     model.getAirLoopHVACs.sort.each do |air_loop|
       # air loop data output
       output_data_air_loops = {}
-      output_data_air_loops[:title] = air_loop.name.get # TODO: - confirm first that it has name
+      output_data_air_loops[:title] = Utils.sanitize(runner, air_loop.name.get) # TODO: - confirm first that it has name
       output_data_air_loops[:header] = ['Object', 'Sizing', 'Sizing Units', 'Description', 'Value', 'Value Units', 'Count']
       output_data_air_loops[:units] = [] # not using units for these tables
       output_data_air_loops[:data] = []
@@ -1775,7 +1775,7 @@ module OsLib_Reporting
     water_use_equipment.sort.each do |instance|
       water_use_equipment_def = instance.waterUseEquipmentDefinition
       if instance.waterUseConnections.is_initialized && instance.waterUseConnections.get.plantLoop.is_initialized
-        plant_loop = instance.waterUseConnections.get.plantLoop.get.name
+        plant_loop = Utils.sanitize(runner, instance.waterUseConnections.get.plantLoop.get.name.get)
       else
         plant_loop = ''
       end
@@ -1801,8 +1801,8 @@ module OsLib_Reporting
       else
         target_temp_range = ''
       end
-      water_use_data[:data] << [instance.name, plant_loop, water_use_equipment_def.name, space, peak_flow_rate_ip_neat, water_use_equipment_flow_rate_sch, target_temp_range]
-      runner.registerValue(instance.name.to_s, peak_flow_rate_ip, target_units)
+      water_use_data[:data] << [Utils.sanitize(runner, instance.name.get), plant_loop, Utils.sanitize(runner, water_use_equipment_def.name.get), space, peak_flow_rate_ip_neat, water_use_equipment_flow_rate_sch, target_temp_range]
+      runner.registerValue(Utils.sanitize(runner, instance.name.to_s), peak_flow_rate_ip, target_units)
     end
 
     # don't create empty table

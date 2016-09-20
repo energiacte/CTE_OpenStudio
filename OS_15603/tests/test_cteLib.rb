@@ -24,6 +24,7 @@ class Cte_lib_Test < MiniTest::Unit::TestCase
       modelPath = "#{File.dirname(__FILE__)}/cubito+garaje_NH.osm"
       idfPath = "#{File.dirname(__FILE__)}/cubito+garaje_NH-out.idf"
       sqlPath = "#{File.dirname(__FILE__)}/cubito+garaje_NH.sql"
+      sqlPath = "#{File.dirname(__FILE__)}/4_plurif_JUAN_TORNERO_corregido.sql"
       reportPath = "#{File.dirname(__FILE__)}/report.html"
 
       assert(File.exist?(modelPath))
@@ -53,6 +54,8 @@ class Cte_lib_Test < MiniTest::Unit::TestCase
       arguments = measure.arguments()
       argument_map = OpenStudio::Ruleset.convertOSArgumentVectorToMap(arguments)
 
+      correr = true
+      if correr
       measure.run(runner, argument_map)
 
       result = runner.result
@@ -86,7 +89,7 @@ class Cte_lib_Test < MiniTest::Unit::TestCase
       # assert(CTEgeo.envolventeSuperficiesInteriores.count() == 49)
       # assert(CTEgeo.envolventeAreaExterior == 49)
       # assert(CTEgeo.envolventeAreaInterior == 49)
-
+      end
     end
 
     # def test_variables_disponibles
@@ -142,7 +145,72 @@ class Cte_lib_Test < MiniTest::Unit::TestCase
     #~ stm = @cur.prepare CTE_lib.flowmurosexterioresquery
     #~ rs = stm.execute
     #~ end
+    
+    def test_consumo_electrico
+      # create an instance of the measure
+      puts
+      puts 'test_consumo_electrico'
+      puts 'create measure'
+      measure = OpenStudioResultsCopy.new
 
+      # create an instance of a runner
+      puts 'create runner'
+      runner = OpenStudio::Ruleset::OSRunner.new
+      modelPath = "#{File.dirname(__FILE__)}/4_plurif_JUAN_TORNERO_corregido.osm"
+      idfPath = "#{File.dirname(__FILE__)}/cubito+garaje_NH-out.idf"
+      sqlPath = "#{File.dirname(__FILE__)}/cubito+garaje_NH.sql"
+      sqlPath = "#{File.dirname(__FILE__)}/4_plurif_JUAN_TORNERO_corregido.sql"
+      reportPath = "#{File.dirname(__FILE__)}/report.html"      
+      
+      runner.setLastOpenStudioModelPath(OpenStudio::Path.new(modelPath))
+      #~ runner.setLastEnergyPlusWorkspacePath(OpenStudio::Path.new(idfPath))
+      runner.setLastEnergyPlusSqlFilePath(OpenStudio::Path.new(sqlPath))
+      
+      model = runner.setLastEnergyPlusSqlFilePath(OpenStudio::Path.new(sqlPath))
+      
+      model = runner.lastOpenStudioModel
+      if model.empty?
+        runner.registerError("Cannot find last model.")
+        return false
+      end
+      model = model.get
+      #puts model.getSpaces.size
+      sqlFile = model.setSqlFile(runner.lastEnergyPlusSqlFile.get)
+      sqlFile = model.sqlFile.get
+      
+      model.getThermalZones.each do | thermalZone |
+        puts thermalZone.name
+        valueJ = sqlFile.execAndReturnFirstDouble(zonelightselectricenergymonthlyentry(thermalZone.name.to_s.upcase)).get
+        value = OpenStudio.convert(valueJ, 'J', 'kWh').get
+        puts "consumo electrico anual: #{value.round(1)} J"
+      end
+      
+      valor = sqlFile.execAndReturnFirstDouble(zonelightselectricenergymonthlyentry('THERMAL ZONE 1'))
+            
+      puts valor
+      
+      #~ arguments = measure.arguments()
+      #~ argument_map = OpenStudio::Ruleset.convertOSArgumentVectorToMap(arguments)
+      
+      #~ measure.run(runner, argument_map)
+
+      result = runner.result
+      show_output(result)
+    
+    end
+    
+    def zonelightselectricenergymonthlyentry(thermalzonename)      
+      return "
+SELECT 
+    SUM(VariableValue) 
+FROM 
+    reportvariabledatadictionary as rvdd
+    INNER JOIN ReportVariableData AS rvd 
+    ON rvdd.ReportVariableDataDictionaryIndex == rvd.ReportVariableDataDictionaryIndex 
+    WHERE VariableName == 'Zone Lights Electric Energy' 
+    AND KeyValue == '#{thermalzonename}' "
+    end
+    
     def murosexterioresenvolventequery
       return "
 SELECT

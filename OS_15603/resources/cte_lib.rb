@@ -3,10 +3,42 @@
 require "openstudio"
 require_relative "cte_query"
 
+# TODO: acabar la tabla de remplazo
+REPLACEMENTS = { 
+  'Ñ' => 'N',
+  'ñ' => 'N'}
+ENCODING_OPTIONS = {
+  :invalid           => :replace,  # Replace invalid byte sequences
+  :replace           => "",        # Use a blank for those replacements
+  :universal_newline => true,       # Always break lines with \n
+  :fallback => lambda { |char|
+  	REPLACEMENTS.fetch(char, "")}}
+
+# TODO: aplicar sanitize a todos los name.get que se vayan (sólo) a representar
+module Utils
+  def self.sanitizestring(runner, inputstring)
+    runner.registerInfo(" para sanitize, recibido |#{inputstring}|")
+    return inputstring.encode(Encoding.find('ASCII'), ENCODING_OPTIONS)
+  end
+  
+  def self.sanitize(runner, input)
+  	if input.class == Array
+  		salida = []
+  		input.each do | elemento |
+  			salida << sanitizestring(runner, elemento)
+  		end
+  	else
+  		salida = sanitizestring(runner, input)
+  	end    
+  	return salida    
+  end
+end
+
+
 module CTE_tables
   #======== Elementos generales  ============
-  # variablesdisponiblesquery = "SELECT DISTINCT VariableName, ReportingFrequency FROM ReportVariableDataDictionary "
-
+  # variablesdisponiblesquery = "SELECT DISTINCT VariableName, ReportingFrequency FROM ReportVariableDataDictionary "  
+  
   #======== Tabla general de mediciones =====
   def self.tabla_mediciones_generales(model, sqlFile, runner)
     # TODO: descomponer superficies externas de la envolvente por tipos (muros, cubiertas, huecos, lucernarios, etc)

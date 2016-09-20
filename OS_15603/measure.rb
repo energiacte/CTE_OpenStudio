@@ -114,27 +114,27 @@ class OpenStudioResultsCopy < OpenStudio::Ruleset::ReportingUserScript
     args
   end # end the arguments method
 
-  def energyPlusOutputRequests(runner, user_arguments)
-    super(runner, user_arguments)
+  #~ def energyPlusOutputRequests(runner, user_arguments)
+    #~ super(runner, user_arguments)
 
-    result = OpenStudio::IdfObjectVector.new
+    #~ result = OpenStudio::IdfObjectVector.new
 
-    # use the built-in error checking
-    unless runner.validateUserArguments(arguments, user_arguments)
-      return result
-    end
+    #~ # use the built-in error checking
+    #~ unless runner.validateUserArguments(arguments, user_arguments)
+      #~ return result
+    #~ end
 
-    if runner.getBoolArgumentValue('hvac_load_profile', user_arguments)
-      result << OpenStudio::IdfObject.load('Output:Variable,,Site Outdoor Air Drybulb Temperature,monthly;').get
-    end
+    #~ if runner.getBoolArgumentValue('hvac_load_profile', user_arguments)
+      #~ result << OpenStudio::IdfObject.load('Output:Variable,,Site Outdoor Air Drybulb Temperature,monthly;').get
+    #~ end
 
-    if runner.getBoolArgumentValue('zone_condition_section', user_arguments)
-      result << OpenStudio::IdfObject.load('Output:Variable,,Zone Air Temperature,hourly;').get
-      result << OpenStudio::IdfObject.load('Output:Variable,,Zone Air Relative Humidity,hourly;').get
-    end
+    #~ if runner.getBoolArgumentValue('zone_condition_section', user_arguments)
+      #~ result << OpenStudio::IdfObject.load('Output:Variable,,Zone Air Temperature,hourly;').get
+      #~ result << OpenStudio::IdfObject.load('Output:Variable,,Zone Air Relative Humidity,hourly;').get
+    #~ end
 
-    result
-  end
+    #~ result
+  #~ end
 
   # define what happens when the measure is run
   def run(runner, user_arguments)
@@ -188,17 +188,19 @@ class OpenStudioResultsCopy < OpenStudio::Ruleset::ReportingUserScript
       html_in_path = "#{File.dirname(__FILE__)}/report.html.erb"
     end
     html_in = ''
-    File.open(html_in_path, 'r') do |file|
+    File.open(html_in_path, 'r:UTF-8') do |file|
       html_in = file.read
     end
 
     # configure template with variable values
     renderer = ERB.new(html_in)
+    #~ puts " encoding #{renderer.encoding}"
+    #~ runner.registerInfo(" encoding #{renderer.encoding}")
     html_out = renderer.result(binding)
 
     # write html file
     html_out_path = './report.html'
-    File.open(html_out_path, 'w') do |file|
+    File.open(html_out_path, 'w:UTF-8') do |file|
       file << html_out
       # make sure data is written to the disk one way or the other
       begin
