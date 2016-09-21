@@ -73,7 +73,7 @@ class OpenStudioResultsCopy < OpenStudio::Ruleset::ReportingUserScript
     #-- result << 'plant_loop_summary_section' # TODO: - stub only
     result << 'plant_loops_detail_section'
     #-- result << 'outdoor_air_section'
-    result << 'cte_outdoor_air_section'
+    result << 'cte_outdoor_air_section' #Renovación del aire exterior (medias)
 
     # result << 'cost_summary_section'
     # find out how to get lifecycle cost with utility escalation

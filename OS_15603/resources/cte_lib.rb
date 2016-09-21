@@ -153,14 +153,18 @@ module CTE_tables
 
     # data for query
     report_name = 'OutdoorAirSummary'
-    table_name = 'Average Outdoor Air During Occupied Hours'
-    #~ min_table_name = 'Minimum Outdoor Air During Occupied Hours'    
-    #~ columns = ['', 'Average Number of Occupants', 'Avg. Mechanical Ventilation', 'Min. Mechanical Ventilation',
-          #~ 'Avg. Infiltration', 'Min. Infiltration', 'Avg. Simple Ventilation', 'Min. Simple Ventilation']
+    table_name = 'Average Outdoor Air During Occupied Hours'    
     columns = ['', 'Ventilación mecánica media', 
           'Infiltración media', 'Ventilación simple media', 'Ventilación combinada media']
-
+    
+    variableNamesForColumns = {
+      'Ventilación mecánica media' => 'Avg. Mechanical Ventilation', 
+      'Infiltración media' => 'Avg. Infiltration', 
+      'Ventilación simple media' => 'Avg. Simple Ventilation',
+      'Ventilación combinada media' => 'Zone Combined Outdoor Air Changes per Hour'}
+    
     # populate dynamic rows
+    # los rows son las filas, es decir las zonas térmicas
     rows_name_query = "SELECT DISTINCT  RowName FROM tabulardatawithstrings WHERE ReportName='#{report_name}' and TableName='#{table_name}'"
     row_names = sqlFile.execAndReturnVectorOfString(rows_name_query).get
     rows = []
@@ -176,11 +180,20 @@ module CTE_tables
     table[:source_units] = [ '', 'ach', 'ach', 'ach', 'ach']
     table[:data] = []
 
+    medias = {}
+    table[:header].each do | columna|
+      medias[columna] = 0
+    end
+    totalVolume = 0
+    
     # run query and populate table
-    rows.each do |row|
-      row_data = [row]
+    rows.each do |row| # va zona a zona
+      query = "SELECT Volume FROM Zones WHERE ZoneName='#{row}' "
+      zoneVolume = sqlFile.execAndReturnFirstDouble(query).to_f
+      totalVolume += zoneVolume
+      row_data = [row]      
       column_counter = -1
-      table[:header].each do |header|
+      table[:header].each do |header| #va columna a columna
         column_counter += 1
         next if header == ''
         
@@ -201,18 +214,29 @@ module CTE_tables
               tabulardatawithstrings 
             WHERE 
               ReportName='#{report_name}' and TableName='#{table_name}' 
-              and RowName= '#{row}' and ColumnName= '#{header.gsub('Avg. ', '')}'"
+              and RowName= '#{row}' and ColumnName= '#{variableNamesForColumns[header].gsub('Avg. ', '')}'"
         end
         
         results = sqlFile.execAndReturnFirstDouble(query)
         row_data_ip = OpenStudio.convert(results.to_f, 
                       table[:source_units][column_counter], 
                       table[:units][column_counter]).get
-        row_data << row_data_ip.round(4)  
+        row_data << row_data_ip.round(2)
+        
+        # para la media de todo el edificio
+        medias[header] += row_data_ip*zoneVolume
       end
 
       table[:data] << row_data
     end
+    
+    row_data = ['Total edificio']
+    table[:header].each do |header|
+      next if header == ''
+      row_data << (medias[header]/totalVolume).round(2)
+    end
+    table[:data] << row_data
+    
     return table  
   end
 
