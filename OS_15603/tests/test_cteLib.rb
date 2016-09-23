@@ -21,10 +21,9 @@ class Cte_lib_Test < MiniTest::Unit::TestCase
     end
 
     def test_StandardReports
-      modelPath = "#{File.dirname(__FILE__)}/cubito+garaje_NH.osm"
-      idfPath = "#{File.dirname(__FILE__)}/cubito+garaje_NH-out.idf"
-      sqlPath = "#{File.dirname(__FILE__)}/cubito+garaje_NH.sql"
-      sqlPath = "#{File.dirname(__FILE__)}/4_plurif_JUAN_TORNERO_corregido.sql"
+      modelPath = "#{File.dirname(__FILE__)}/out.osm"
+      idfPath = "#{File.dirname(__FILE__)}/out.idf"
+      sqlPath = "#{File.dirname(__FILE__)}/eplusout.sql"      
       reportPath = "#{File.dirname(__FILE__)}/report.html"
 
       assert(File.exist?(modelPath))
@@ -53,8 +52,30 @@ class Cte_lib_Test < MiniTest::Unit::TestCase
       #arguments = measure.arguments(model)
       arguments = measure.arguments()
       argument_map = OpenStudio::Ruleset.convertOSArgumentVectorToMap(arguments)
-
-      correr = true
+      
+      translator = OpenStudio::OSVersion::VersionTranslator.new    
+      model = translator.loadModel(modelPath)      
+      model = model.get
+      areaPuentesTermicos = {}
+      
+  coeficienteAcoplamiento = {}
+    model.getSurfaces.each do |surface|
+      if surface.name.get.include? "_pt"        
+        tipoPT = surface.name.get.split('_pt')[1]
+        unless coeficienteAcoplamiento.keys.include?(tipoPT)
+          coeficienteAcoplamiento[tipoPT] = 0.0
+        end
+        construccion = surface.construction.get
+        puts "Surface #{surface.name.get}"
+        puts "construccion #{construccion.name.get.split('PSI')[1].to_f}"
+        psi = surface.construction.get.name.get.split('PSI')[1].to_f
+        puts "PSI: #{psi}"
+        
+        coeficienteAcoplamiento[tipoPT] += surface.grossArea.round(2)
+      end
+    end
+      puts "___ fino filipino___"
+      correr = false
       if correr
       measure.run(runner, argument_map)
 

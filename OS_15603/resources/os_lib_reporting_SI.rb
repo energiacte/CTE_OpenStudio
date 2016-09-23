@@ -225,6 +225,7 @@ module OsLib_Reporting
 
     # add in general information from method
     general_tables << CTE_tables.tabla_mediciones_envolvente(model, sqlfile, runner)
+    general_tables << CTE_tables.tabla_mediciones_puentes_termicos(model, runner)
 
     return @mediciones
   end

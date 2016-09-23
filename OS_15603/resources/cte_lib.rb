@@ -128,7 +128,9 @@ module CTE_tables
       area = sqlFile.execAndReturnFirstDouble(query).get
       nombre = sqlFile.execAndReturnFirstString("SELECT Name FROM Constructions WHERE ConstructionIndex == #{indiceconstruccion} ").get
       uvalue = sqlFile.execAndReturnFirstDouble("SELECT Uvalue FROM Constructions WHERE ConstructionIndex == #{indiceconstruccion} ").get
-      data << ["#{ nombre }".encode("UTF-8", invalid: :replace, undef: :replace), area, uvalue]
+      unless nombre.include?("_PSI")
+        data << ["#{ nombre }".encode("UTF-8", invalid: :replace, undef: :replace), area, uvalue]
+      end
     end
 
     contenedor_general = {}
@@ -141,6 +143,37 @@ module CTE_tables
     end
 
     return contenedor_general
+  end
+  
+  def self.tabla_mediciones_puentes_termicos(model, runner)
+  
+    coeficienteAcoplamiento = {}
+    ttl_puenteTermico = {}
+    model.getSurfaces.each do |surface|
+      if surface.name.get.include? "_pt"
+        tipoPT = surface.name.get.split('_pt')[1]
+        unless coeficienteAcoplamiento.keys.include?(tipoPT)
+          coeficienteAcoplamiento[tipoPT] = 0.0
+          ttl_puenteTermico[tipoPT] = 0.0
+        end          
+        coeficienteAcoplamiento[tipoPT] += surface.grossArea.round(2)
+        ttl_puenteTermico[tipoPT] = surface.construction.get.name.get.split('_PSI')[1].to_f
+      end
+    end
+    
+    contenedor_general = {}
+    contenedor_general[:title] = "Mediciones de puentes térmicos"
+    contenedor_general[:header] = ['Tipo', 'Coef. acoplamiento', 'Longitud', 'PSI']
+    contenedor_general[:units] = ['', 'W/K', 'm', 'W/mK']
+    contenedor_general[:data] = []
+    coeficienteAcoplamiento.each do | key, value |
+      psi = ttl_puenteTermico[key]
+      contenedor_general[:data] << [key, value.round(0), (value/psi).round(0), psi.round(2)]
+    end
+
+    return contenedor_general
+    
+  
   end
 
   # Tabla de aire exterior
@@ -319,29 +352,44 @@ module CTE_tables
     superficiehabitable =  CTE_Query.superficieHabitable(sqlFile).round(2)
     temporada = {'invierno' => 'calefaccion', 'verano'   => 'refrigeracion' }[periodo]
     color = {'invierno' => '#EF1C21', 'verano'   => '#008FF0' }[periodo]
-
     data = []
+    
     # paredes aire ext.
-    airWallHeat = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy', periodo, 'Wall', "AND ExtBoundCond = 0") / superficiehabitable
+    airWallHeat =   _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy', 
+                    periodo, 'Wall', "AND ExtBoundCond = 0 AND SurfaceName NOT LIKE '%_PT%'") / superficiehabitable
     data << [airWallHeat, temporada, 'Paredes Exteriores']
+        
     # paredes terreno
-    groundWallHeat = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy', periodo, 'Wall', "AND ExtBoundCond = -1") / superficiehabitable
+    groundWallHeat = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy', 
+                                    periodo, 'Wall', "AND ExtBoundCond = -1") / superficiehabitable
     data << [groundWallHeat, temporada, 'Paredes Terreno']
+    
     # paredes interiores
-    indoorWallHeat = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy', periodo, 'Wall', "AND ExtBoundCond NOT IN (0, -1)") / superficiehabitable
+    indoorWallHeat = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy', 
+                                        periodo, 'Wall', "AND ExtBoundCond NOT IN (0, -1)") / superficiehabitable
     data << [indoorWallHeat, temporada, 'Paredes Interiores']
+    
     # XXX: no tenemos el balance de las particiones interiores entre zonas
     # cubiertas
-    roofHeat = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy', periodo, 'Roof', "AND ExtBoundCond = 0") / superficiehabitable
+    roofHeat = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy', 
+                                        periodo, 'Roof', "AND ExtBoundCond = 0") / superficiehabitable
     data << [roofHeat, temporada, 'Cubiertas']
+    
     # suelos aire ext
-    airFloorHeat = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy', periodo, 'Floor', "AND ExtBoundCond = 0") / superficiehabitable
+    airFloorHeat = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy', 
+                                          periodo, 'Floor', "AND ExtBoundCond = 0") / superficiehabitable
     data << [airFloorHeat, temporada, 'Suelos Aire']
+    
     # suelos terreno
-    groundFloorHeat = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy', periodo, 'Floor', "AND ExtBoundCond = -1") / superficiehabitable
+    groundFloorHeat = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy', 
+                                              periodo, 'Floor', "AND ExtBoundCond = -1") / superficiehabitable
     data << [groundFloorHeat, temporada, 'Suelos Terreno']
+    
     # puentes termicos
-    #valores_fila << 'sin calcular'
+    thermalBridges = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy', 
+                                    periodo, 'Wall', "AND SurfaceName LIKE '%_PT%'") / superficiehabitable
+    data << [thermalBridges, temporada, 'Puentes Termicos']
+    
     # #solar y transmisión ventanas
     windowRadiation = _componentValueForPeriod(sqlFile, 'Surface Window Transmitted Solar Radiation Energy', periodo, 'Window', "AND ExtBoundCond = 0") / superficiehabitable
     data << [windowRadiation, temporada, 'Solar Ventanas']
@@ -404,22 +452,22 @@ module CTE_tables
     meses = (periodo == 'invierno') ? "(1,2,3,4,5,10,11,12)" : "(6,7,8,9)"
     query = "
 WITH
-    superficieshabitables AS (#{ CTE_Query::ZONASHABITABLES_SUPERFICIES })
+    supHab AS (#{ CTE_Query::ZONASHABITABLES_SUPERFICIES })
 SELECT
     SUM(VariableValue)
 FROM
-    superficieshabitables
-    INNER JOIN ReportVariableDataDictionary
+    supHab
+    INNER JOIN ReportVariableDataDictionary AS rvdd ON supHab.SurfaceName = rvdd.KeyValue
     INNER JOIN ReportVariableData USING (ReportVariableDataDictionaryIndex)
     INNER JOIN Time AS time USING (TimeIndex)
 WHERE
     VariableName = '#{ variableName }'
     AND ReportingFrequency = 'Hourly'
-    AND SurfaceName = KeyValue
     AND ClassName = '#{ className }'
     AND Month IN #{ meses }
     #{ extraCond }
-"
+" 
+    
     return OpenStudio.convert(sqlFile.execAndReturnFirstDouble(query).get, unitsSource, unitsTarget).get
   end
 
