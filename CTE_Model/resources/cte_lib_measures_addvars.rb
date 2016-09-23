@@ -52,8 +52,6 @@ def cte_addvars(model, runner, user_arguments)
     #["Zone Ideal Loads Supply Air Standard Density Volume Flow Rate", "monthly", "*"],
     # Hourly variables
     ["Surface Inside Face Conduction Heat Transfer Energy", "hourly", "*"],
-    ["Surface Inside Face Conduction Heat Transfer Energy", "hourly", "*"],
-    ["Surface Inside Face Conduction Heat Transfer Energy", "hourly", "*"],
     ["Surface Window Heat Gain Energy", "hourly", "*"],
     ["Surface Window Heat Loss Energy", "hourly", "*"],
     ["Surface Window Transmitted Solar Radiation Energy", "hourly", "*"],
