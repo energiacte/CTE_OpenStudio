@@ -30,7 +30,7 @@ end
 
 
 
-def creaConstruccionPT(model, nombre)
+def creaConstruccionPT(model, nombre, ttl)
   # Crear un nuevo material
   material = OpenStudio::Model::MasslessOpaqueMaterial.new(model)
   material.setName("materialPT")
@@ -42,9 +42,9 @@ def creaConstruccionPT(model, nombre)
   # Creamos una nueva construccion
   layers = OpenStudio::Model::MaterialVector.new
   layers << material
+  nombreconstruction = nombre + "_PSI#{ttl.round(2)}"
   construction = OpenStudio::Model::Construction.new(model)
-  construction.setName(nombre)
-
+  construction.setName(nombreconstruction)
   standards_info = construction.standardsInformation
   standards_info.setIntendedSurfaceType("")
   standards_info.setStandardsConstructionType("")
@@ -163,7 +163,6 @@ end
 def medicionPTContornoHuecos(runner, model)
   salida = []
   model.getSpaces.each do | space |
-    ver = space.name.to_s.include?('1_VIV4')
     long = 0
     space.surfaces.each do | surface |
       surface.subSurfaces.each do | subSurface |          
@@ -174,6 +173,7 @@ def medicionPTContornoHuecos(runner, model)
     end
     salida << [space.name.to_s, long]
   end
+  runner.registerInfo("Puentes térmicos de contorno de huecos: #{salida}")
   return salida
 end
 
@@ -228,7 +228,8 @@ end
     superficie.setSunExposure('NoSun')
     superficie.setWindExposure('NoWind')
     superficie.setOutsideBoundaryCondition('Exterior')
-    superficie.setSpace(space)    
+    superficie.setSpace(space)
+    superficie.setConstruction(construccionPT)
     return superficie
   end
 
@@ -256,7 +257,7 @@ end
       space = getSpaceByName(runner, model, spaceName)
       area = longitud * ttl_puentesTermicos[:ptContornoHuecos] / 1.0
       superficiePT = creaSuperficiePT(model, space, area, construcciones[:ptContornoHuecos], 'y-')
-      superficiePT.setName("#{spaceName}_PTHuecos")
+      superficiePT.setName("#{spaceName}_ptContornoHuecos")
     end
   end
 
@@ -268,11 +269,11 @@ def cte_puentestermicos(model, runner, user_arguments)
   ptHuecos = medicionPTContornoHuecos(runner, model)
   
   construcciones = {  
-      :ptForjadoCubierta => creaConstruccionPT(model, "PT_ForjadoCubierta"),
-      :ptFrenteForjado => creaConstruccionPT(model, "PT_FrenteForjado"),
-      :ptSoleraTerreno => creaConstruccionPT(model, "PT_SoleraTerreno"),
-      :ptForjadoExterior => creaConstruccionPT(model, "PT_ForjadoExterior"),
-      :ptContornoHuecos =>creaConstruccionPT(model, "PT_ContornoHuecos")
+      :ptForjadoCubierta => creaConstruccionPT(model, "PT_ForjadoCubierta", ttl_puentesTermicos[:ptForjadoCubierta]),
+      :ptFrenteForjado => creaConstruccionPT(model, "PT_FrenteForjado", ttl_puentesTermicos[:ptFrenteForjado]),
+      :ptSoleraTerreno => creaConstruccionPT(model, "PT_SoleraTerreno", ttl_puentesTermicos[:ptSoleraTerreno]),
+      :ptForjadoExterior => creaConstruccionPT(model, "PT_ForjadoExterior", ttl_puentesTermicos[:ptForjadoExterior]),
+      :ptContornoHuecos =>creaConstruccionPT(model, "PT_ContornoHuecos", ttl_puentesTermicos[:ptContornoHuecos])
     }
     
     setThermalBridges(runner, model, ptForjados, ptHuecos, ttl_puentesTermicos, construcciones)
