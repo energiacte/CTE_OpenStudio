@@ -415,7 +415,7 @@ module CTE_tables
     medicion_general[:title] = "Demandas por componentes en #{periodo} [kWh/m²]"
     medicion_general[:header] = [
       '', 'Paredes Exteriores', 'Paredes Terreno', 'Paredes Interiores',
-      'Cubiertas', 'Suelos Aire', 'Suelos Terreno',
+      'Cubiertas', 'Suelos Aire', 'Suelos Terreno', 'Puentes Termicos',
       'Solar Ventanas', 'Transmisión Ventanas',
       'Fuentes Internas',
       'Ventilación + Infiltraciones', 'Total'
