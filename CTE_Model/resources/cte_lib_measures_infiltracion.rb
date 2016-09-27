@@ -89,7 +89,7 @@ def cte_infiltracion(model, runner, user_arguments) #copiado del residencial
     areaPuertas = 0
     # TODO: filtrar superficies NoMass, que son superficies auxiliares
     space.surfaces.each do |surface|
-      if surface.outsideBoundaryCondition == 'Outdoors'
+      if surface.outsideBoundaryCondition == 'Outdoors' and surface.windExposure == 'WindExposed'
         surfArea = surface.netArea
         areaOpacos += surfArea
         runner.registerInfo("- '#{ surface.name }', #{ surface.surfaceType }, #{ surfArea.round(2) }")
@@ -115,13 +115,13 @@ def cte_infiltracion(model, runner, user_arguments) #copiado del residencial
     end
 
     # q_total en m3/h a 4 Pa
-    q_total = 4 ** 0.67 * (C_OP[tipoEdificio] * areaOpacos +
-                           C_HU[claseVentana] * areaVentanas +
-                           C_PU * areaPuertas +
-                           # microventilación al 50% de apertura
-                           0.50 * c_ven * areaVentanas / (4 ** 0.5))
+    q_total = 4.0 ** 0.67 * (C_OP[tipoEdificio] * areaOpacos +
+                             C_HU[claseVentana] * areaVentanas +
+                             C_PU * areaPuertas +
+                             # microventilación al 50% de apertura
+                             0.50 * c_ven * areaVentanas / (4.0 ** 0.5))
 
-    areaEquivalente = 1.0758287 * q_total * 0.50 # area ELA en cm2 al 50% de exposición
+    areaEquivalente = 1.0758287 * q_total # area ELA en cm2
     runner.registerValue("CTE ELA ('#{ space.name }')", areaEquivalente.round(2), "cm2 a 4Pa")
 
     # Elimina todos los objetos ELA que pueda haber
