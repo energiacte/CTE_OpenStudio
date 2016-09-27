@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>open_studio_results_copy</name>
   <uid>6d91a3a6-5fcd-4f37-bcd7-9080493a5799</uid>
-  <version_id>679eda19-ee6b-4a4e-a946-5323775b4784</version_id>
-  <version_modified>20160727T113313Z</version_modified>
+  <version_id>23cbdc86-f488-4e7c-9c60-43130d0a3028</version_id>
+  <version_modified>20160927T152909Z</version_modified>
   <xml_checksum>69BA4D91</xml_checksum>
   <class_name>OpenStudioResultsCopy</class_name>
   <display_name>Informe 15603</display_name>
@@ -49,7 +49,7 @@
     </argument>
     <argument>
       <name>variables_de_inspeccion</name>
-      <display_name>Inspecci?n de variables</display_name>
+      <display_name>Inspección de variables</display_name>
       <type>Boolean</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -372,8 +372,8 @@
       </choices>
     </argument>
     <argument>
-      <name>outdoor_air_section</name>
-      <display_name>Outdoor Air</display_name>
+      <name>cte_outdoor_air_section</name>
+      <display_name>Aire exterior</display_name>
       <type>Boolean</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -508,57 +508,10 @@
       <checksum>73D99CA3</checksum>
     </file>
     <file>
-      <filename>os_lib_schedules.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>2F758AA5</checksum>
-    </file>
-    <file>
-      <filename>os_lib_helper_methods.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>0EB4E42A</checksum>
-    </file>
-    <file>
       <filename>os_lib_reporting.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>6EB900DD</checksum>
-    </file>
-    <file>
-      <filename>cte_query.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>627A5D76</checksum>
-    </file>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.7.5</identifier>
-        <min_compatible>1.7.5</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>D2EF062F</checksum>
-    </file>
-    <file>
-      <filename>os_lib_reporting_SI.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>951D02B5</checksum>
-    </file>
-    <file>
-      <filename>test_cteLib.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>822BA77E</checksum>
-    </file>
-    <file>
-      <filename>cte_lib.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>BFDA2B8C</checksum>
     </file>
     <file>
       <filename>cubito+garaje_NH-out.idf</filename>
@@ -576,7 +529,54 @@
       <filename>report.html</filename>
       <filetype>html</filetype>
       <usage_type>test</usage_type>
-      <checksum>8F8E0D1F</checksum>
+      <checksum>E4E9491B</checksum>
+    </file>
+    <file>
+      <filename>os_lib_schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>23C2D011</checksum>
+    </file>
+    <file>
+      <filename>os_lib_helper_methods.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>34FB017D</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.7.5</identifier>
+        <min_compatible>1.7.5</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>5584D38E</checksum>
+    </file>
+    <file>
+      <filename>os_lib_reporting_SI.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>681CCE2C</checksum>
+    </file>
+    <file>
+      <filename>test_cteLib.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>FCC3196B</checksum>
+    </file>
+    <file>
+      <filename>cte_query.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B364975F</checksum>
+    </file>
+    <file>
+      <filename>cte_lib.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>363DC5E0</checksum>
     </file>
   </files>
 </measure>

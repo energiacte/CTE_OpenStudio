@@ -56,26 +56,9 @@ class Cte_lib_Test < MiniTest::Unit::TestCase
       translator = OpenStudio::OSVersion::VersionTranslator.new    
       model = translator.loadModel(modelPath)      
       model = model.get
-      areaPuentesTermicos = {}
-      
-  coeficienteAcoplamiento = {}
-    model.getSurfaces.each do |surface|
-      if surface.name.get.include? "_pt"        
-        tipoPT = surface.name.get.split('_pt')[1]
-        unless coeficienteAcoplamiento.keys.include?(tipoPT)
-          coeficienteAcoplamiento[tipoPT] = 0.0
-        end
-        construccion = surface.construction.get
-        puts "Surface #{surface.name.get}"
-        puts "construccion #{construccion.name.get.split('PSI')[1].to_f}"
-        psi = surface.construction.get.name.get.split('PSI')[1].to_f
-        puts "PSI: #{psi}"
-        
-        coeficienteAcoplamiento[tipoPT] += surface.grossArea.round(2)
-      end
-    end
-      puts "___ fino filipino___"
-      correr = false
+      areaPuentesTermicos = {}      
+  
+      correr = true
       if correr
       measure.run(runner, argument_map)
 

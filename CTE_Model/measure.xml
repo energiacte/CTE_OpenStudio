@@ -2,13 +2,13 @@
   <schema_version>3.0</schema_version>
   <name>cte_model</name>
   <uid>1f30359f-b316-49d1-b799-73b16ff79478</uid>
-  <version_id>e6d02945-f33a-40d8-896f-295d5bfc0fdd</version_id>
-  <version_modified>20160902T144826Z</version_modified>
+  <version_id>14cf6535-f5aa-44fe-93ad-62f47c8f1568</version_id>
+  <version_modified>20160927T152900Z</version_modified>
   <xml_checksum>7C017197</xml_checksum>
   <class_name>CTE_Model</class_name>
   <display_name>CTE Model</display_name>
-  <description>Define par?metros y aplica medidas para la simulaci?n en condiciones CTE.</description>
-  <modeler_description>Introduce variables de salida y aplica medidas para c?lculo CTE.</modeler_description>
+  <description>Define parámetros y aplica medidas para la simulación en condiciones CTE.</description>
+  <modeler_description>Introduce variables de salida y aplica medidas para cálculo CTE.</modeler_description>
   <arguments>
     <argument>
       <name>usoEdificio</name>
@@ -30,7 +30,7 @@
     </argument>
     <argument>
       <name>tipoEdificio</name>
-      <display_name>?Edificio nuevo o existente?</display_name>
+      <display_name>¿Edificio nuevo o existente?</display_name>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -283,8 +283,17 @@
       <default_value>0.63</default_value>
     </argument>
     <argument>
+      <name>heat_recovery</name>
+      <display_name>Eficiencia del recuperador de calor</display_name>
+      <type>Double</type>
+      <units>adimensional</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0</default_value>
+    </argument>
+    <argument>
       <name>permeabilidadVentanas</name>
-      <display_name>Permeabilidad de la carpinter?a.</display_name>
+      <display_name>Permeabilidad de la carpintería.</display_name>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -312,6 +321,7 @@
       <name>psiForjadoCubierta</name>
       <display_name>TTL forjado con cubierta</display_name>
       <type>Double</type>
+      <units>W/mK</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>0.24</default_value>
@@ -320,6 +330,7 @@
       <name>psiFrenteForjado</name>
       <display_name>TTL frente forjado</display_name>
       <type>Double</type>
+      <units>W/mK</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>0.1</default_value>
@@ -328,6 +339,7 @@
       <name>psiSoleraTerreno</name>
       <display_name>TTL forjado con solera</display_name>
       <type>Double</type>
+      <units>W/mK</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>0.28</default_value>
@@ -344,6 +356,7 @@
       <name>psiContornoHuecos</name>
       <display_name>TTL contorno de huecos</display_name>
       <type>Double</type>
+      <units>W/mK</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>0.05</default_value>
@@ -393,70 +406,58 @@
   </attributes>
   <files>
     <file>
-      <filename>cte_lib_measures_addvars.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>D31897A6</checksum>
-    </file>
-    <file>
-      <filename>test_model_cubito.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>42E5B313</checksum>
-    </file>
-    <file>
       <filename>temperaturas_agua_fria.csv</filename>
       <filetype>csv</filetype>
       <usage_type>resource</usage_type>
       <checksum>C90703A0</checksum>
     </file>
     <file>
+      <filename>residencial.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>9CB50B9F</checksum>
+    </file>
+    <file>
+      <filename>terciario.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>73186073</checksum>
+    </file>
+    <file>
       <filename>cte_lib_measures_tempaguafria.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>F9F28AE4</checksum>
+      <checksum>9BA15B37</checksum>
     </file>
     <file>
-      <filename>01_OFICINAS_B+2.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>55620DF4</checksum>
-    </file>
-    <file>
-      <filename>plurif_bloque4alturas_Virginia.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>B447ED4E</checksum>
-    </file>
-    <file>
-      <filename>cte_lib_measures_infiltracion.rb</filename>
+      <filename>cte_lib_measures_addvars.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>7C99DE4C</checksum>
-    </file>
-    <file>
-      <filename>cte_lib_measures_ventilacion.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>E3081F9D</checksum>
-    </file>
-    <file>
-      <filename>1_unif_en_L.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>6056710B</checksum>
+      <checksum>A123EB86</checksum>
     </file>
     <file>
       <filename>CTE_Model_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>C44A13C2</checksum>
+      <checksum>331884D1</checksum>
     </file>
     <file>
-      <filename>puente.rb</filename>
+      <filename>cte_lib_measures_infiltracion.rb</filename>
       <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>D0C570A2</checksum>
+      <usage_type>resource</usage_type>
+      <checksum>F0A02764</checksum>
+    </file>
+    <file>
+      <filename>cte_lib_measures_puentestermicos.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>61DEBC77</checksum>
+    </file>
+    <file>
+      <filename>cte_lib_measures_ventilacion.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>84E3F03E</checksum>
     </file>
     <file>
       <version>
@@ -467,13 +468,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>A405CB7B</checksum>
-    </file>
-    <file>
-      <filename>cte_lib_measures_puentestermicos.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>F680CBEC</checksum>
+      <checksum>9B67DD25</checksum>
     </file>
   </files>
 </measure>

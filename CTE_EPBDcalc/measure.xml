@@ -2,14 +2,77 @@
   <schema_version>3.0</schema_version>
   <name>conexion_epdb</name>
   <uid>648a813c-f8d9-44f9-912f-53b891198a35</uid>
-  <version_id>5a51c777-db93-4991-938b-a65d73436a7a</version_id>
-  <version_modified>20160713T100914Z</version_modified>
+  <version_id>22628dcc-4f1e-47f2-8694-0c271b27a301</version_id>
+  <version_modified>20160927T150140Z</version_modified>
   <xml_checksum>9BF1E6AC</xml_checksum>
   <class_name>ConexionEPDB</class_name>
   <display_name>Conexion con EPBDcalc</display_name>
   <description>Prepara el resultado de la simulacion para la conexion con EPBDcalc</description>
   <modeler_description>Es necesasrio agrupar los consumos y producciones por usos y vectores energeticos</modeler_description>
-  <arguments/>
+  <arguments>
+    <argument>
+      <name>WATERSYSTEMS</name>
+      <display_name>Agua Caliente Sanitaria</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>gas_boiler</default_value>
+      <choices>
+        <choice>
+          <value>gas_boiler</value>
+          <display_name>caldera de gas</display_name>
+        </choice>
+        <choice>
+          <value>generic_acs</value>
+          <display_name>equipo genérico ACS</display_name>
+        </choice>
+        <choice>
+          <value>hp_heat</value>
+          <display_name>bomba de calor en calefaccion</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>HEATING</name>
+      <display_name>Calefacción</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>hp_heat</default_value>
+      <choices>
+        <choice>
+          <value>gas_boiler</value>
+          <display_name>caldera de gas</display_name>
+        </choice>
+        <choice>
+          <value>hp_heat</value>
+          <display_name>bomba de calor en calefaccion</display_name>
+        </choice>
+        <choice>
+          <value>generic_heat</value>
+          <display_name>equipo genérico en calefaccion</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>COOLING</name>
+      <display_name>Refrigeración</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>hp_cool</default_value>
+      <choices>
+        <choice>
+          <value>hp_cool</value>
+          <display_name>bomba de calor en refrigeracion</display_name>
+        </choice>
+        <choice>
+          <value>generic_cool</value>
+          <display_name>equipo genérico en refrigeración</display_name>
+        </choice>
+      </choices>
+    </argument>
+  </arguments>
   <provenances/>
   <tags>
     <tag>Reporting.QAQC</tag>
@@ -33,16 +96,34 @@
   </attributes>
   <files>
     <file>
-      <filename>example_model.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>A0199A45</checksum>
-    </file>
-    <file>
       <filename>report.html.in</filename>
       <filetype>in</filetype>
       <usage_type>resource</usage_type>
       <checksum>3501204C</checksum>
+    </file>
+    <file>
+      <filename>consumoParaEPBDcalc.csv</filename>
+      <filetype>csv</filetype>
+      <usage_type>test</usage_type>
+      <checksum>4C808133</checksum>
+    </file>
+    <file>
+      <filename>cubito+garaje_NH_ideal.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>5212C4C7</checksum>
+    </file>
+    <file>
+      <filename>cubito+garaje_NH_ideal.sql</filename>
+      <filetype>sql</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E5126B44</checksum>
+    </file>
+    <file>
+      <filename>ConexionEPBD_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>53227DDA</checksum>
     </file>
     <file>
       <version>
@@ -53,19 +134,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>2E7EC525</checksum>
-    </file>
-    <file>
-      <filename>ConexionEPBD_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>B272B8A7</checksum>
-    </file>
-    <file>
-      <filename>eplusout.sql</filename>
-      <filetype>sql</filetype>
-      <usage_type>test</usage_type>
-      <checksum>DBCE26EC</checksum>
+      <checksum>4311A23F</checksum>
     </file>
   </files>
 </measure>

@@ -138,6 +138,7 @@ module CTE_tables
   end
 
   def self.tabla_mediciones_envolvente(model, sqlFile, runner)
+      
     indicesquery = "SELECT ConstructionIndex FROM (#{ CTE_Query::ENVOLVENTE_SUPERFICIES_EXTERIORES })
                     UNION
                     SELECT ConstructionIndex FROM (#{ CTE_Query::ENVOLVENTE_SUPERFICIES_INTERIORES })"
@@ -176,13 +177,13 @@ module CTE_tables
     ttl_puenteTermico = {}
     model.getSurfaces.each do |surface|
       if surface.name.get.include? "_pt"
-        tipoPT = surface.name.get.split('_pt')[1]
+        tipoPT = surface.name.get.split('_pt')[1]        
         unless coeficienteAcoplamiento.keys.include?(tipoPT)
           coeficienteAcoplamiento[tipoPT] = 0.0
           ttl_puenteTermico[tipoPT] = 0.0
         end
         coeficienteAcoplamiento[tipoPT] += surface.grossArea.round(2)
-        ttl_puenteTermico[tipoPT] = surface.construction.get.name.get.split('_PSI')[1].to_f
+        ttl_puenteTermico[tipoPT] = surface.construction.get.name.get.split('PSI')[1].to_f
       end
     end
 
