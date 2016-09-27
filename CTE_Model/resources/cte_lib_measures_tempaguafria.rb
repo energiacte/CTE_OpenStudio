@@ -29,6 +29,7 @@ require 'csv'
 require 'fileutils'
 
 # Introduce perfiles mensuales de la temperatura de agua de red en funcion de la provincia y corregida con la altitud
+# TODO: Detectar caso en el que no está definida la demanda de ACS (no hay circuito) para evitar el fallo (¿Localizar WaterEquipment?).
 def cte_tempaguafria(model, runner, user_arguments)
 
   runner.registerInfo("CTE: fijando temperatura de agua de red")
