@@ -1,0 +1,11 @@
+.. Archivo de Novedades con las notas de cada versión
+
+News
+====
+
+1.0
+---
+
+*27-sep-2016*
+
+* Versión pública inicial

@@ -1,0 +1,19 @@
+- CTE_Model:
+    - temperatura_del_agua_de_red: 
+      Detectar el caso en el que no hay definida demanda de ACS (no hay
+      circuito) y evitar el fallo en ese caso.
+      Usar WaterEquipment detectando objetos por tipo (los objetos del model
+      son subtipo del workspace?)
+- CTE_Workspace:
+    - parsear el archivo climático para obtener la zona y asignar
+      correctamente temperaturas del suelo
+- OS_15603:
+    - Limpiar plantilla de report y dejar solamente lo que nos interesa
+    - Renombrar a CTE_Report
+- Otros:
+    Ver posibilidad de pasar datos entre medidas a través de comentarios
+    model.building.setComment(commentstring), serializando a JSON.
+    Se accede posteriormente leyendo el lastRunModel y con
+    model.building.getComments[2..-1] deserializando el JSON.
+
+
