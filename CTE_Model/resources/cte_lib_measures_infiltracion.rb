@@ -121,7 +121,7 @@ def cte_infiltracion(model, runner, user_arguments) #copiado del residencial
                              # microventilación al 50% de apertura
                              0.50 * c_ven * areaVentanas / (4.0 ** 0.5))
 
-    areaEquivalente = 1.0758287 * q_total # area ELA en cm2
+    areaEquivalente = 1.0758287 * 0.50 * q_total # area ELA en cm2 con el 50% del área expuesta
     runner.registerValue("CTE ELA ('#{ space.name }')", areaEquivalente.round(2), "cm2 a 4Pa")
 
     # Elimina todos los objetos ELA que pueda haber
