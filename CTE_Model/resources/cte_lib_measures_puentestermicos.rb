@@ -16,10 +16,10 @@ def verticeID(point3d, origenEspacio)
   puntoCero = OpenStudio::Point3d.new(0, 0, 0)
   vectorLocal = point3d - puntoCero
   vGlob = vectorLocal + origenEspacio
-  
+
   return Digest::MD5.hexdigest("#{vGlob.x.round(2)} #{vGlob.y.round(2)} #{vGlob.z.round(2)}")
 end
-  
+
 def generarHashEspacioPTForjados()
   return {:ptFrenteForjado   => Array.new,
           :ptForjadoExterior => Array.new,
@@ -54,22 +54,21 @@ def creaConstruccionPT(model, nombre, ttl)
   return construction
 end
 
-def getExteriorVertices(runner, spaces) # hacer un set  
+def getExteriorVertices(runner, spaces) # hacer un set
   runner.registerInfo("-- captura de vertices exteriores (getExteriorVertices)--")
   verticesExteriores = Set.new
   spaces.each do | space |
     # tiene que ser un vector porque lo voy a sumar
-    origen = OpenStudio::Vector3d.new(space.xOrigin, space.yOrigin, space.zOrigin)           
+    origen = OpenStudio::Vector3d.new(space.xOrigin, space.yOrigin, space.zOrigin)
     ver = false
-    ver = true if space.name.get == "ACCESO"      
+    ver = true if space.name.get == "ACCESO"
     runner.registerInfo("  space: #{space.name.get}") if ver
     space.surfaces.each do | surface |
-      
       if surface.surfaceType == 'Wall' and
              surface.outsideBoundaryCondition == 'Outdoors'
         runner.registerInfo("   surface: #{surface.name}") if ver
-        surface.vertices.each do | point3d | 
-          verticesExteriores << verticeID(point3d, origen)            
+        surface.vertices.each do | point3d |
+          verticesExteriores << verticeID(point3d, origen)
         end
       end
     end
@@ -104,16 +103,14 @@ def getFloors(runner, spaces)
         runner.registerWarning("No se incluye puente térmico para la superficie '#{surface.name}': #{surface.surfaceType} -> #{surface.outsideBoundaryCondition}")
       end
     end
-  end  
+  end
   return forjadosEspacios
 end
 
 
 def getSpaceByName(runner, model, spaceName)
   model.getModelObjectsByName(spaceName, true).each do | objeto |
-      puts " es espacio #{objeto.iddObjectType.valueDescription == "OS:Space"}"
-      if objeto.iddObjectType.valueDescription == "OS:Space"          
-          #~ space = objeto.to_Space.get          
+      if objeto.iddObjectType.valueDescription == "OS:Space"
           return objeto.to_Space.get
       end
     end
@@ -123,21 +120,21 @@ def medicionPTForjados(runner, model)
   runner.registerInfo("-- medición de forjados (medicionPTForjados) -- ")
   verticesExteriores = getExteriorVertices(runner, model.getSpaces)
   forjadosPorEspacios = getFloors(runner, model.getSpaces)
-  salida = []    
+  salida = []
   forjadosPorEspacios.each do | spaceName, forjadosPorTipo |
-    puts "procesando #{spaceName}"
+    runner.registerInfo("PTs: procesando #{spaceName}")
     space = getSpaceByName(runner, model, spaceName)
-    origen = OpenStudio::Vector3d.new(space.xOrigin, space.yOrigin, space.zOrigin)      
+    origen = OpenStudio::Vector3d.new(space.xOrigin, space.yOrigin, space.zOrigin)
     longHash = Hash.new
     forjadosPorTipo.each do | tipo, forjados |
       longitudPuente = 0
-      forjados.each do | forjado |          
+      forjados.each do | forjado |
         verticePrevio = forjado.vertices[-1]
         forjado.vertices.each do | verticeActual |
           esExterior = verticesExteriores.include?(verticeID(verticeActual, origen))
           esPrevioExterior = verticesExteriores.include?(verticeID(verticePrevio, origen))
           if esPrevioExterior and esExterior  # los dos son exteriores
-            coef = (tipo == :ptFrenteForjado) ? 0.5 : 1.0              
+            coef = (tipo == :ptFrenteForjado) ? 0.5 : 1.0
             longitudPuente += coef * (verticeActual-verticePrevio).length
           end
           verticePrevio = verticeActual
@@ -165,9 +162,9 @@ def medicionPTContornoHuecos(runner, model)
   model.getSpaces.each do | space |
     long = 0
     space.surfaces.each do | surface |
-      surface.subSurfaces.each do | subSurface |          
+      surface.subSurfaces.each do | subSurface |
         if subSurface.subSurfaceType.include?('Window')
-          long += getPerimeter(subSurface)            
+          long += getPerimeter(subSurface)
         end
       end
     end
@@ -188,7 +185,7 @@ def ttlinealusuario(runner, user_arguments)
       :ptFrenteForjado => psiFrenteForjado,
       :ptSoleraTerreno => psiSoleraTerreno,
       :ptForjadoExterior => psiForjadoExterior,
-      :ptContornoHuecos => psiContornoHuecos      
+      :ptContornoHuecos => psiContornoHuecos
       }
   return ttl_puentesTermicos
 end
@@ -237,7 +234,7 @@ end
   def setThermalBridges(runner, model, ptForjados, ptHuecos, ttl_puentesTermicos, construcciones)
     # para forjados
     direccion = {
-      :ptFrenteForjado => 'x+', 
+      :ptFrenteForjado => 'x+',
       :ptForjadoCubierta => 'x-',
       :ptForjadoExterior => 'y+',
       :ptSoleraTerreno => 'x-'}
@@ -252,8 +249,8 @@ end
     end
 
     # para huecos
-    ptHuecos.each do | spaceName, longitud |      
-      next if longitud == 0.0      
+    ptHuecos.each do | spaceName, longitud |
+      next if longitud == 0.0
       space = getSpaceByName(runner, model, spaceName)
       area = longitud * ttl_puentesTermicos[:ptContornoHuecos] / 1.0
       superficiePT = creaSuperficiePT(model, space, area, construcciones[:ptContornoHuecos], 'y-')
@@ -263,19 +260,19 @@ end
 
 def cte_puentestermicos(model, runner, user_arguments)
   ttl_puentesTermicos = ttlinealusuario(runner, user_arguments)
-  
+
   ptForjados = medicionPTForjados(runner, model)
-  
+
   ptHuecos = medicionPTContornoHuecos(runner, model)
-  
-  construcciones = {  
+
+  construcciones = {
       :ptForjadoCubierta => creaConstruccionPT(model, "PT_ForjadoCubierta", ttl_puentesTermicos[:ptForjadoCubierta]),
       :ptFrenteForjado => creaConstruccionPT(model, "PT_FrenteForjado", ttl_puentesTermicos[:ptFrenteForjado]),
       :ptSoleraTerreno => creaConstruccionPT(model, "PT_SoleraTerreno", ttl_puentesTermicos[:ptSoleraTerreno]),
       :ptForjadoExterior => creaConstruccionPT(model, "PT_ForjadoExterior", ttl_puentesTermicos[:ptForjadoExterior]),
       :ptContornoHuecos =>creaConstruccionPT(model, "PT_ContornoHuecos", ttl_puentesTermicos[:ptContornoHuecos])
     }
-    
+
     setThermalBridges(runner, model, ptForjados, ptHuecos, ttl_puentesTermicos, construcciones)
 
   return true
