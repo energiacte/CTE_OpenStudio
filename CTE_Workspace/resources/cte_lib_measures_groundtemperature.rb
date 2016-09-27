@@ -28,8 +28,9 @@
 require 'csv'
 
 def parseweatherfilename(weatherfile)
-  # TODO: implementar
-  return 'D', '3', 'peninsula'
+  zc, peninsulaocanarias = weatherfile.filename.to_s.sub(/.epw$/, '').split('_')
+  zci, zcv = zc[0..-2], zc[-1]
+  return zci, zcv, peninsulaocanarias
 end
 
 def cte_groundTemperature(runner, workspace, string_objects)
@@ -44,11 +45,12 @@ def cte_groundTemperature(runner, workspace, string_objects)
   weatherfile = model.weatherFile.get.path.get
   runner.registerInfo("weather file = #{weatherfile}")
   zonaClimaticaInvierno, zonaClimaticaVerano, canarias = parseweatherfilename(weatherfile)
-
-  runner.registerInfo("El parser lee #{weatherfile} y entiende #{zonaClimaticaInvierno}, #{zonaClimaticaVerano} y #{canarias}")
+  runner.registerValue("ZCI", zonaClimaticaInvierno)
+  runner.registerValue("ZCV", zonaClimaticaVerano)
+  runner.registerValue("penisulaocanarias", canarias)
   temperaturaSuelo = getTemperaturasSuelo(runner, zonaClimaticaInvierno, zonaClimaticaVerano, canarias)
   if not temperaturaSuelo
-    runner.registerError("No tengo zona climática #{zonaClimaticaInvierno}#{zonaClimaticaVerano} en #{canarias}")
+    runner.registerError("No se ha encontrado la temperatura del suelo para la zona climática #{zonaClimaticaInvierno}#{zonaClimaticaVerano} en #{canarias}")
     return false
   end
 
@@ -58,9 +60,7 @@ def cte_groundTemperature(runner, workspace, string_objects)
     #{temperaturaSuelo},#{temperaturaSuelo},#{temperaturaSuelo},#{temperaturaSuelo},#{temperaturaSuelo},#{temperaturaSuelo},
     #{temperaturaSuelo},#{temperaturaSuelo},#{temperaturaSuelo},#{temperaturaSuelo},#{temperaturaSuelo},#{temperaturaSuelo};
     "
-
   return true
-
 end
 
 def getTemperaturasSuelo(runner, zonaClimaticaInvierno, zonaClimaticaVerano, canarias)
@@ -77,28 +77,17 @@ def getTemperaturasSuelo(runner, zonaClimaticaInvierno, zonaClimaticaVerano, can
       valor = csv_line[1].to_f
       temperaturasPorZona[clave] = valor
     rescue
-      runner.registerInfo("error con:#{line}\n")
+      runner.registerInfo("Error al leer datos de temperatura de suelo en línea: #{ line }\n")
     end
-  end
-
-  verdatosleidos =
-  if verdatosleidos
-    runner.registerInfo("\n__recorro la lectura_\n")
-    temperaturasPorZona.each do |key, value|
-      runner.registerInfo("  clave #{key}, valor #{value}\n")
-    end
-    runner.registerInfo(runner.registerInfo, "__fin lectura__\n")
   end
 
   if temperaturasPorZona.has_key?(clavedezona)
     temperaturasuelo = temperaturasPorZona[clavedezona]
   else
-    runner.registerInfo( "no encuentro temp para la clave de zona: #{clavedezona}\n")
+    runner.registerInfo( "No se localizan las temperaturas para la clave de zona: #{ clavedezona }\n")
     return false
   end
 
-  runner.registerInfo("temperatura suelo --> #{temperaturasuelo}\n")
-
+  runner.registerInfo("Temperaturas del suelo: #{temperaturasuelo}")
   return temperaturasuelo
-
 end
