@@ -64,7 +64,7 @@ def creaConstruccionPT(model, nombre, ttl)
   # Creamos una nueva construccion
   layers = OpenStudio::Model::MaterialVector.new
   layers << material
-  nombreconstruction = nombre + "_PSI#{ttl.round(2)}"
+  nombreconstruction = nombre + '_' + "PSI#{ttl.round(2)}"
   construction = OpenStudio::Model::Construction.new(model)
   construction.setName(nombreconstruction)
   standards_info = construction.standardsInformation
