@@ -83,33 +83,33 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
     permeabilidad.setDisplayName("Permeabilidad de la carpintería.")
     permeabilidad.setDefaultValue('Clase 1')
     args << permeabilidad
-    
+
     psiForjadoCubierta = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("psiForjadoCubierta", true)
     psiForjadoCubierta.setDisplayName("TTL forjado con cubierta")
     psiForjadoCubierta.setDefaultValue(0.24)
     args << psiForjadoCubierta
-    
+
     psiFrenteForjado = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("psiFrenteForjado", true)
     psiFrenteForjado.setDisplayName("TTL frente forjado")
     psiFrenteForjado.setDefaultValue(0.1)
     args << psiFrenteForjado
-    
+
     psiSoleraTerreno = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("psiSoleraTerreno", true)
     psiSoleraTerreno.setDisplayName("TTL forjado con solera")
     psiSoleraTerreno.setDefaultValue(0.28)
     args << psiSoleraTerreno
-    
+
     psiForjadoExterior = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("psiForjadoExterior", true)
     psiForjadoExterior.setDisplayName("TTL forjado con suelo exterior")
     psiForjadoExterior.setDefaultValue(0.23)
     args << psiForjadoExterior
-    
-        
+
+
     psiContornoHuecos = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("psiContornoHuecos", true)
     psiContornoHuecos.setDisplayName("TTL contorno de huecos")
     psiContornoHuecos.setDefaultValue(0.05)
     args << psiContornoHuecos
-    
+
 
     coefStack = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("coefStack", true)
     coefStack.setDisplayName("Coeficiente de Stack")
@@ -136,7 +136,7 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
     end
 
     usoEdificio = runner.getStringArgumentValue('usoEdificio', user_arguments)
-    
+
     result = true
     result = cte_addvars(model, runner, user_arguments) # Nuevas variables y meters
     return result unless result == true
@@ -147,12 +147,12 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
 
     if usoEdificio == 'Residencial'
       result = cte_ventresidencial(model, runner, user_arguments) # modelo de ventilación para residencial
-      return result unless result == true    
+      return result unless result == true
     end
-    
-    result = cte_infiltracion(model, runner, user_arguments) 
-    return result unless result == true      
-    
+
+    result = cte_infiltracion(model, runner, user_arguments)
+    return result unless result == true
+
     result = cte_puentestermicos(model, runner, user_arguments)
     return result unless result == true
 
