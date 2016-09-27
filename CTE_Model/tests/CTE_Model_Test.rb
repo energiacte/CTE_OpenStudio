@@ -15,7 +15,7 @@ class CTE_Model_Test < MiniTest::Unit::TestCase
 
     # load the test model
     translator = OpenStudio::OSVersion::VersionTranslator.new    
-    path = OpenStudio::Path.new(File.dirname(__FILE__) + "/01_OFICINAS_B+2.osm")
+    path = OpenStudio::Path.new(File.dirname(__FILE__) + "/terciario.osm")
     model = translator.loadModel(path)
     assert((not model.empty?))
     model = model.get
@@ -62,7 +62,7 @@ class CTE_Model_Test < MiniTest::Unit::TestCase
 
     # load the test model
     translator = OpenStudio::OSVersion::VersionTranslator.new    
-    path = OpenStudio::Path.new(File.dirname(__FILE__) + "/plurif_bloque4alturas_Virginia.osm")
+    path = OpenStudio::Path.new(File.dirname(__FILE__) + "/residencial.osm")
     model = translator.loadModel(path)
     assert((not model.empty?))
     model = model.get
@@ -74,7 +74,7 @@ class CTE_Model_Test < MiniTest::Unit::TestCase
     # create hash of argument values.
     # If the argument has a default that you want to use, you don't need it in the hash
     args_hash = {}
-    #args_hash["provincia"] = "Madrid"
+    args_hash["usoEdificio"] = "Residencial"
     #args_hash["altitud"] = 650.0
     # using defaults values from measure.rb for other arguments
 

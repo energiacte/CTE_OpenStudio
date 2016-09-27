@@ -108,18 +108,21 @@ def cte_ventresidencial(model, runner, user_arguments)
   zoneVentilationCounter = 0
   zones.each do | zone |
     zoneName = zone.name.get
-    if zone.useIdealAirLoads
-      # Las zonas con Ideal Air Loads incorporan ya su objeto ZoneVentilation:DesignFlowRate
-      runner.registerInfo("+ La zona '#{ zoneName }' usa equipos ideales.")
-      next
-    end
+    zoneIsIdeal = zone.useIdealAirLoads ? true : false
     spaces = zone.spaces()
     runner.registerInfo("+ Localizado(s) #{ spaces.count } espacio(s) en la zona '#{ zoneName }'")
     # Solamente usamos el primer espacio de la zona? suponemos que solo hay uno?
     spaces.each do |space|
       spaceName = space.name.get
-      spaceType = space.spaceType.get.name.get
-      if spaceType.start_with?('CTE_HR') or spaceType.start_with?('CTE_AR')
+      spaceType = space.spaceType.get
+      spaceTypeName = spaceType.name.get
+      # Las zonas con Ideal Air Loads incorporan un objeto ZoneVentilation:DesignFlowRate si la
+      # plantilla define para ese tipo de espacio un objeto 'Design Specification Outdoor Air'
+      if zoneIsIdeal and not spaceType.isDesignSpecificationOutdoorAirDefaulted
+          runner.registerInfo("- El espacio '#{ spaceName }' de la zona '#{ zoneName }' tiene sistemas ideales y ZoneVentilation:DesignFlowRate definido en el tipo '#{ spaceTypeName }")
+          next
+      end
+      if spaceTypeName.start_with?('CTE_HR') or spaceTypeName.start_with?('CTE_AR')
         zoneVentilationCounter += 1
         # TODO: permitir usar tipo 'Exhaust' para obtener consumo de ventiladores
         # TODO: necesita diferencia de presión del ventilador y rendimiento total del ventilador
@@ -135,14 +138,13 @@ def cte_ventresidencial(model, runner, user_arguments)
         zone_ventilation.setMinimumIndoorTemperature(-100)
         zone_ventilation.setDeltaTemperature(-100)
         zone_ventilation.setSchedule(ventilationRuleset)
-        runner.registerInfo("- Creando objeto ZoneVentilation:DesignFlowRate en espacio '#{ spaceName }' del tipo '#{ spaceType }' en la zona '#{ zoneName }'")
+        runner.registerInfo("- Creando objeto ZoneVentilation:DesignFlowRate en espacio '#{ spaceName }' del tipo '#{ spaceTypeName }' en la zona '#{ zoneName }'")
       else
-        runner.registerInfo("- El espacio '#{ spaceName }' de la zona '#{ zoneName }' no es habitable (tipo: '#{ spaceType }')")
+        runner.registerInfo("- El espacio '#{ spaceName }' de la zona '#{ zoneName }' no es habitable (tipo: '#{ spaceTypeName }')")
       end
     end
   end
   runner.registerInfo("* Creado(s) #{ zoneVentilationCounter } objeto(s) ZoneVentilation:DesignFlowRate. ")
-
   runner.registerInfo("CTE: Finalizada definición de condiciones de ventilación de espacios habitables en edificios residenciales.")
   return true # OS necesita saber que todo acabó bien
 
