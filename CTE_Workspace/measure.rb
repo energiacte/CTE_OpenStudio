@@ -1,11 +1,39 @@
-# coding: utf-8
+# -*- coding: utf-8 -*-
+#
+# Copyright (c) 2016 Ministerio de Fomento
+#                    Instituto de Ciencias de la Construcción Eduardo Torroja (IETcc-CSIC)
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+#
+# Author(s): Rafael Villar Burke <pachi@ietcc.csic.es>,
+#            Daniel Jiménez González <dani@ietcc.csic.es>
+#            Marta Sorribes Gil <msorribes@ietcc.csic.es>
 
 require_relative "resources/cte_lib_measures_ventresidencial.rb"
 require_relative "resources/cte_lib_measures_zoneairbalance.rb"
 require_relative "resources/cte_lib_measures_groundtemperature.rb"
-require_relative "resources/cte_lib_measures_horarioestacional.rb"     
-require_relative "resources/cte_lib_measures_recuperadorcalor.rb"          
+require_relative "resources/cte_lib_measures_horarioestacional.rb"
+require_relative "resources/cte_lib_measures_recuperadorcalor.rb"
 
+# Medida de OpenStudio (WorkspaceUserScript) que modifica el modelo de EnergyPlus para uso con el CTE
+# Esta medida se aplica a modelos transformados por medidas de modelo CTE
+# y generados a partir de una plantilla apropiada
 class CTE_Workspace < OpenStudio::Ruleset::WorkspaceUserScript
 
   def name
@@ -22,7 +50,7 @@ class CTE_Workspace < OpenStudio::Ruleset::WorkspaceUserScript
 
   def arguments(workspace)
     args = OpenStudio::Ruleset::OSArgumentVector.new
-    
+
     # Heat Recovery Type
     recuperador_chs = OpenStudio::StringVector.new
     recuperador_chs << 'Ninguno'
@@ -31,22 +59,22 @@ class CTE_Workspace < OpenStudio::Ruleset::WorkspaceUserScript
     recuperador = OpenStudio::Ruleset::OSArgument::makeChoiceArgument('recuperador', recuperador_chs, true)
     recuperador.setDisplayName("Recuperador de calor")
     recuperador.setDefaultValue('Ninguno')
-    args << recuperador   
-    
-    #Sensible Heat Recovery Effectiveness 
+    args << recuperador
+
+    #Sensible Heat Recovery Effectiveness
     sensible_effectiveness = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("sensible_effectiveness", true)
     sensible_effectiveness.setDisplayName("efectividad de la recuperación sensible")
     sensible_effectiveness.setUnits("")
     sensible_effectiveness.setDefaultValue(0.7)
     args << sensible_effectiveness
-    
-    #Latent Heat Recovery Effectiveness 
+
+    #Latent Heat Recovery Effectiveness
     latente_effectiveness = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("latente_effectiveness", true)
     latente_effectiveness.setDisplayName("efectividad de la recuperación latente")
     latente_effectiveness.setUnits("")
     latente_effectiveness.setDefaultValue(0.65)
     args << latente_effectiveness
-    
+
     return args
   end
 
@@ -64,7 +92,7 @@ class CTE_Workspace < OpenStudio::Ruleset::WorkspaceUserScript
       runner.registerError("Parámetros incorrectos")
       return false
     end
-    
+
     num_part = '6'
 
     if es_residencial
@@ -81,7 +109,7 @@ class CTE_Workspace < OpenStudio::Ruleset::WorkspaceUserScript
     return result unless result == true
 
     runner.registerInfo("[3/#{num_part}] - Fija la temperatura del terreno")
-    result = cte_groundTemperature(runner, workspace, string_objects)            
+    result = cte_groundTemperature(runner, workspace, string_objects)
     return result unless result == true
 
 
@@ -91,17 +119,17 @@ class CTE_Workspace < OpenStudio::Ruleset::WorkspaceUserScript
       object = idfObject.get
       workspace.addObject(object)
     end
-    
+
     runner.registerInfo("[5/#{num_part}] - Introduce el cambio de hora los últimos domingos de marzo y octubre")
     result = cte_horarioestacional(runner, workspace)
     return result unless result == true
-    
-        
+
+
     runner.registerInfo("[6/#{num_part}] - Introduce, en su caso, los recuperadores de calor")
     result = cte_recuperadorcalor(runner, workspace, user_arguments)
     return result unless result == true
-    
-    
+
+
     return true
   end
 

@@ -1,10 +1,35 @@
-# coding: utf-8
+# -*- coding: utf-8 -*-
+#
+# Copyright (c) 2016 Ministerio de Fomento
+#                    Instituto de Ciencias de la Construcción Eduardo Torroja (IETcc-CSIC)
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+#
+# Author(s): Rafael Villar Burke <pachi@ietcc.csic.es>,
+#            Daniel Jiménez González <dani@ietcc.csic.es>
+#            Marta Sorribes Gil <msorribes@ietcc.csic.es>
 
 require "openstudio"
 require_relative "cte_query"
 
 # TODO: acabar la tabla de remplazo
-REPLACEMENTS = { 
+REPLACEMENTS = {
   'Ñ' => 'N',
   'ñ' => 'N'}
 ENCODING_OPTIONS = {
@@ -20,7 +45,7 @@ module Utils
     runner.registerInfo(" para sanitize, recibido |#{inputstring}|")
     return inputstring.encode(Encoding.find('ASCII'), ENCODING_OPTIONS)
   end
-  
+
   def self.sanitize(runner, input)
   	if input.class == Array
   		salida = []
@@ -29,16 +54,16 @@ module Utils
   		end
   	else
   		salida = sanitizestring(runner, input)
-  	end    
-  	return salida    
+  	end
+  	return salida
   end
 end
 
 
 module CTE_tables
   #======== Elementos generales  ============
-  # variablesdisponiblesquery = "SELECT DISTINCT VariableName, ReportingFrequency FROM ReportVariableDataDictionary "  
-  
+  # variablesdisponiblesquery = "SELECT DISTINCT VariableName, ReportingFrequency FROM ReportVariableDataDictionary "
+
   #======== Tabla general de mediciones =====
   def self.tabla_mediciones_generales(model, sqlFile, runner)
     # TODO: descomponer superficies externas de la envolvente por tipos (muros, cubiertas, huecos, lucernarios, etc)
@@ -144,9 +169,9 @@ module CTE_tables
 
     return contenedor_general
   end
-  
+
   def self.tabla_mediciones_puentes_termicos(model, runner)
-  
+
     coeficienteAcoplamiento = {}
     ttl_puenteTermico = {}
     model.getSurfaces.each do |surface|
@@ -155,12 +180,12 @@ module CTE_tables
         unless coeficienteAcoplamiento.keys.include?(tipoPT)
           coeficienteAcoplamiento[tipoPT] = 0.0
           ttl_puenteTermico[tipoPT] = 0.0
-        end          
+        end
         coeficienteAcoplamiento[tipoPT] += surface.grossArea.round(2)
         ttl_puenteTermico[tipoPT] = surface.construction.get.name.get.split('_PSI')[1].to_f
       end
     end
-    
+
     contenedor_general = {}
     contenedor_general[:title] = "Mediciones de puentes térmicos"
     contenedor_general[:header] = ['Tipo', 'Coef. acoplamiento', 'Longitud', 'PSI']
@@ -172,30 +197,30 @@ module CTE_tables
     end
 
     return contenedor_general
-    
-  
+
+
   end
 
   # Tabla de aire exterior
-  def self.tabla_de_aire_exterior(model, sqlFile, runner)  
-    
-    # Zone Combined Outdoor Air Changes per Hour is not includen in the OutdoorAirSummary, 
-    # it has to be read from general variable data in the SQL file.    
+  def self.tabla_de_aire_exterior(model, sqlFile, runner)
+
+    # Zone Combined Outdoor Air Changes per Hour is not includen in the OutdoorAirSummary,
+    # it has to be read from general variable data in the SQL file.
     variableName = 'Zone Combined Outdoor Air Changes per Hour'
-    
+
 
     # data for query
     report_name = 'OutdoorAirSummary'
-    table_name = 'Average Outdoor Air During Occupied Hours'    
-    columns = ['', 'Ventilación mecánica media', 
+    table_name = 'Average Outdoor Air During Occupied Hours'
+    columns = ['', 'Ventilación mecánica media',
           'Infiltración media', 'Ventilación simple media', 'Ventilación combinada media']
-    
+
     variableNamesForColumns = {
-      'Ventilación mecánica media' => 'Avg. Mechanical Ventilation', 
-      'Infiltración media' => 'Avg. Infiltration', 
+      'Ventilación mecánica media' => 'Avg. Mechanical Ventilation',
+      'Infiltración media' => 'Avg. Infiltration',
       'Ventilación simple media' => 'Avg. Simple Ventilation',
       'Ventilación combinada media' => 'Zone Combined Outdoor Air Changes per Hour'}
-    
+
     # populate dynamic rows
     # los rows son las filas, es decir las zonas térmicas
     rows_name_query = "SELECT DISTINCT  RowName FROM tabulardatawithstrings WHERE ReportName='#{report_name}' and TableName='#{table_name}'"
@@ -208,8 +233,8 @@ module CTE_tables
     # create table
     table = {}
     table[:title] = 'Renovación del aire exterior (medias)'
-    table[:header] = columns    
-    table[:units] = ['', 'ach', 'ach', 'ach', 'ach']    
+    table[:header] = columns
+    table[:units] = ['', 'ach', 'ach', 'ach', 'ach']
     table[:source_units] = [ '', 'ach', 'ach', 'ach', 'ach']
     table[:data] = []
 
@@ -218,59 +243,59 @@ module CTE_tables
       medias[columna] = 0
     end
     totalVolume = 0
-    
+
     # run query and populate table
     rows.each do |row| # va zona a zona
       query = "SELECT Volume FROM Zones WHERE ZoneName='#{row}' "
       zoneVolume = sqlFile.execAndReturnFirstDouble(query).to_f
       totalVolume += zoneVolume
-      row_data = [row]      
+      row_data = [row]
       column_counter = -1
       table[:header].each do |header| #va columna a columna
         column_counter += 1
         next if header == ''
-        
+
         if header.include? 'combinada'
-          query = "SELECT 
-              AVG(VariableValue) 
-            FROM  
+          query = "SELECT
+              AVG(VariableValue)
+            FROM
               ReportVariableData AS rvd
-              INNER JOIN ReportVariableDataDictionary AS rvdd ON rvdd.ReportVariableDataDictionaryIndex = rvd.ReportVariableDataDictionaryIndex 
-            WHERE 
+              INNER JOIN ReportVariableDataDictionary AS rvdd ON rvdd.ReportVariableDataDictionaryIndex = rvd.ReportVariableDataDictionaryIndex
+            WHERE
               rvdd.VariableName = 'Zone Combined Outdoor Air Changes per Hour'
               AND ReportingFrequency ='Hourly'
               AND KeyValue = '#{row}'"
         else  header.include? 'media'
-          query = "SELECT 
-              Value 
-            FROM 
-              tabulardatawithstrings 
-            WHERE 
-              ReportName='#{report_name}' and TableName='#{table_name}' 
+          query = "SELECT
+              Value
+            FROM
+              tabulardatawithstrings
+            WHERE
+              ReportName='#{report_name}' and TableName='#{table_name}'
               and RowName= '#{row}' and ColumnName= '#{variableNamesForColumns[header].gsub('Avg. ', '')}'"
         end
-        
+
         results = sqlFile.execAndReturnFirstDouble(query)
-        row_data_ip = OpenStudio.convert(results.to_f, 
-                      table[:source_units][column_counter], 
+        row_data_ip = OpenStudio.convert(results.to_f,
+                      table[:source_units][column_counter],
                       table[:units][column_counter]).get
         row_data << row_data_ip.round(2)
-        
+
         # para la media de todo el edificio
         medias[header] += row_data_ip*zoneVolume
       end
 
       table[:data] << row_data
     end
-    
+
     row_data = ['Total edificio']
     table[:header].each do |header|
       next if header == ''
       row_data << (medias[header]/totalVolume).round(2)
     end
     table[:data] << row_data
-    
-    return table  
+
+    return table
   end
 
   # Tabla y gráfica con variables seleccionadas
@@ -353,43 +378,43 @@ module CTE_tables
     temporada = {'invierno' => 'calefaccion', 'verano'   => 'refrigeracion' }[periodo]
     color = {'invierno' => '#EF1C21', 'verano'   => '#008FF0' }[periodo]
     data = []
-    
+
     # paredes aire ext.
-    airWallHeat =   _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy', 
+    airWallHeat =   _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy',
                     periodo, 'Wall', "AND ExtBoundCond = 0 AND SurfaceName NOT LIKE '%_PT%'") / superficiehabitable
     data << [airWallHeat, temporada, 'Paredes Exteriores']
-        
+
     # paredes terreno
-    groundWallHeat = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy', 
+    groundWallHeat = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy',
                                     periodo, 'Wall', "AND ExtBoundCond = -1") / superficiehabitable
     data << [groundWallHeat, temporada, 'Paredes Terreno']
-    
+
     # paredes interiores
-    indoorWallHeat = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy', 
+    indoorWallHeat = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy',
                                         periodo, 'Wall', "AND ExtBoundCond NOT IN (0, -1)") / superficiehabitable
     data << [indoorWallHeat, temporada, 'Paredes Interiores']
-    
+
     # XXX: no tenemos el balance de las particiones interiores entre zonas
     # cubiertas
-    roofHeat = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy', 
+    roofHeat = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy',
                                         periodo, 'Roof', "AND ExtBoundCond = 0") / superficiehabitable
     data << [roofHeat, temporada, 'Cubiertas']
-    
+
     # suelos aire ext
-    airFloorHeat = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy', 
+    airFloorHeat = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy',
                                           periodo, 'Floor', "AND ExtBoundCond = 0") / superficiehabitable
     data << [airFloorHeat, temporada, 'Suelos Aire']
-    
+
     # suelos terreno
-    groundFloorHeat = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy', 
+    groundFloorHeat = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy',
                                               periodo, 'Floor', "AND ExtBoundCond = -1") / superficiehabitable
     data << [groundFloorHeat, temporada, 'Suelos Terreno']
-    
+
     # puentes termicos
-    thermalBridges = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy', 
+    thermalBridges = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy',
                                     periodo, 'Wall', "AND SurfaceName LIKE '%_PT%'") / superficiehabitable
     data << [thermalBridges, temporada, 'Puentes Termicos']
-    
+
     # #solar y transmisión ventanas
     windowRadiation = _componentValueForPeriod(sqlFile, 'Surface Window Transmitted Solar Radiation Energy', periodo, 'Window', "AND ExtBoundCond = 0") / superficiehabitable
     data << [windowRadiation, temporada, 'Solar Ventanas']
@@ -466,8 +491,8 @@ WHERE
     AND ClassName = '#{ className }'
     AND Month IN #{ meses }
     #{ extraCond }
-" 
-    
+"
+
     return OpenStudio.convert(sqlFile.execAndReturnFirstDouble(query).get, unitsSource, unitsTarget).get
   end
 
