@@ -95,6 +95,13 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
     design_flow_rate.setUnits("ren/h")
     design_flow_rate.setDefaultValue(0.63)
     args << design_flow_rate
+    
+    heat_recovery = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("heat_recovery", true)
+    heat_recovery.setDisplayName("Eficiencia del recuperador de calor")
+    heat_recovery.setUnits("adimensional")
+    heat_recovery.setDefaultValue(0.0)
+    args << heat_recovery
+    
 
     claseVentana = OpenStudio::StringVector.new
     claseVentana << 'Clase 1'
@@ -108,16 +115,19 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
 
     psiForjadoCubierta = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("psiForjadoCubierta", true)
     psiForjadoCubierta.setDisplayName("TTL forjado con cubierta")
-    psiForjadoCubierta.setDefaultValue(0.24)
+    psiForjadoCubierta.setUnits("W/mK")
+    psiForjadoCubierta.setDefaultValue(0.24)    
     args << psiForjadoCubierta
 
     psiFrenteForjado = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("psiFrenteForjado", true)
     psiFrenteForjado.setDisplayName("TTL frente forjado")
+    psiFrenteForjado.setUnits("W/mK")
     psiFrenteForjado.setDefaultValue(0.1)
     args << psiFrenteForjado
 
     psiSoleraTerreno = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("psiSoleraTerreno", true)
     psiSoleraTerreno.setDisplayName("TTL forjado con solera")
+    psiSoleraTerreno.setUnits("W/mK")
     psiSoleraTerreno.setDefaultValue(0.28)
     args << psiSoleraTerreno
 
@@ -129,6 +139,7 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
 
     psiContornoHuecos = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("psiContornoHuecos", true)
     psiContornoHuecos.setDisplayName("TTL contorno de huecos")
+    psiContornoHuecos.setUnits("W/mK")
     psiContornoHuecos.setDefaultValue(0.05)
     args << psiContornoHuecos
 
@@ -167,6 +178,7 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
     result = cte_tempaguafria(model, runner, user_arguments) # temperatura de agua de red
     return result unless result == true
 
+    #TODO, en el caso de terciario entendemos que los recuperadores están incluídos en los sistemas
     if usoEdificio == 'Residencial'
       result = cte_ventresidencial(model, runner, user_arguments) # modelo de ventilación para residencial
       return result unless result == true
