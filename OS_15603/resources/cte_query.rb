@@ -56,7 +56,7 @@ WITH
     zonashabitables AS (#{ CTE_Query::ZONASHABITABLES })
 SELECT
     SurfaceIndex, SurfaceName, ConstructionIndex, ClassName, Area, GrossArea,
-    ExtBoundCond, surf.ZoneIndex AS ZoneIndex
+    ExtBoundCond, surf.ExtWind, surf.ZoneIndex AS ZoneIndex
 FROM
     Surfaces surf
     INNER JOIN zonashabitables AS zones USING (ZoneIndex)
@@ -68,12 +68,13 @@ WITH
     superficieshabitables AS (#{ CTE_Query::ZONASHABITABLES_SUPERFICIES })
 SELECT
     SurfaceIndex, SurfaceName, ConstructionIndex, ClassName, Area,
-    GrossArea, ExtBoundCond, ZoneIndex
+    GrossArea, ExtBoundCond, ZoneIndex, ExtWind
 FROM
     superficieshabitables
 WHERE
     ClassName NOT IN ('Internal Mass', 'Shading')
     AND ExtBoundCond IN (-1, 0)
+    AND SurfaceName NOT LIKE '%_pt%'
 "
 
 
@@ -89,6 +90,7 @@ WITH
         WHERE
             ClassName NOT IN ('Internal Mass', 'Shading')
             AND ExtBoundCond NOT IN (-1, 0)
+            AND SurfaceName NOT LIKE '%_pt%'
      )
 SELECT
     surf.SurfaceIndex AS SurfaceIndex, SurfaceName,
