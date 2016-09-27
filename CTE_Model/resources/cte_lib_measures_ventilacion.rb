@@ -45,7 +45,7 @@ def cte_ventresidencial(model, runner, user_arguments)
   return false if heat_recovery > 1.0
   
   runner.registerInfo("[1/2] Definiendo horario con ventilación nocturna en verano (4ren/h) y caudal de diseño: #{design_flow_rate*heat_recovery} [ren/h]")
-  frac_general_ventilacion = design_flow_rate * heat_recovery / 4
+  frac_general_ventilacion = design_flow_rate * (1 - heat_recovery) / 4
   frac_nocheverano_ventilacion = 1
   runner.registerValue("CTE Fracción de ventilación nocturna en verano", frac_nocheverano_ventilacion, "[ren/h]")
   runner.registerValue("CTE Fracción de ventilación con caudal de diseño", frac_general_ventilacion, "[ren/h]")
