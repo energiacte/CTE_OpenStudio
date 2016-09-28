@@ -148,7 +148,7 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     # Solamente usamos el primer espacio de la zona? suponemos que solo hay uno?
 
     model.getThermalZones.each do | thermalZone |
-      valores << [0]*12
+      valores << [0] * 12
       # hay que saber si esta zona se suma o no
       # depende de los tipos de los espacios que la forman
       # los tipos de los espacios deben ser coheretes entre si
@@ -180,7 +180,7 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     # las unidades son Julios a tenor de la informacion del SQL:
     # SELECT distinct  reportname, units FROM TabularDataWithStrings
     # los reports son LIKE 'BUILDING ENERGY PERFORMANCE - %'
-    result = [0.0]*12
+    result = [0.0] * 12
     meses = (1..12).to_a
     meses.each do | mesNumber |
       endfueltype    = OpenStudio::EndUseFuelType.new(vectorName)
@@ -211,8 +211,7 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     tienenquesercero.each do | fuel, enduse |
         consumomensual = energyConsumptionByVectorAndUse(sqlFile, fuel, enduse)
         if consumomensual.reduce(0, :+) != 0
-          runner.registerError("ERROR: el consumo debería ser cero,
-            combustible:#{fuel}, y uso: #{enduse}")
+          runner.registerError("ERROR: consumo inesperado de combustible '#{ fuel }' para el uso '#{ enduse }'")
           return false
         end
     end
@@ -221,17 +220,13 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
 
 
   def procesedEPBFinalEnergyConsumptionByMonth(model, sqlFile, runner, servicios)
-
-    if not _comprobacionDeConsistencia(sqlFile, runner)
-      runner.registerInfo("Error de consistencia, hay consumo distinto de Distrito")
-    end
-
-    salida = []
-    salida << "vector,tipo,src_dst"
+    _comprobacionDeConsistencia(sqlFile, runner)
 
     vectoresOrigen = {'WATERSYSTEMS' => 'DISTRICTHEATING', 'HEATING' => 'DISTRICTHEATING',
                       'COOLING' =>'DISTRICTCOOLING' }
-    result = []
+
+    salida = []
+    salida << "vector,tipo,src_dst"
 
     servicios.each do | servicio, tecnologia |
       vectorOrigen = vectoresOrigen[servicio]
@@ -242,18 +237,14 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
       TECNOLOGIAS[tecnologia][:combustibles].each do | combustible, rendimiento |
         comentario   = "# #{servicio}, #{tecnologia}, #{vectorOrigen}-->#{combustible}, #{rendimiento}"
         if vector.reduce(0, :+) != 0
-          result << [combustible, 'CONSUMO', 'EPB'] + vector.map { |v| (v * rendimiento).round(0) } + [comentario]
-          salida << [combustible, 'CONSUMO', 'EPB'] +
-              vector.map { |v| (v * rendimiento).round(0) } + [comentario]
+          salida << [combustible, 'CONSUMO', 'EPB'] + vector.map { |v| (v * rendimiento).round(0) } + [comentario]
         end
       end
     end
 
     consumoIluminacionPorMeses = consumoDeIluminacion(runner, model, sqlFile)
     if consumoIluminacionPorMeses.reduce(0, :+) != 0
-      salida << ['ELECTRICIDAD', 'CONSUMO', 'EPB'] +
-        consumoIluminacionPorMeses +
-            ['#LIGHTING']
+      salida << ['ELECTRICIDAD', 'CONSUMO', 'EPB'] + consumoIluminacionPorMeses + ['#LIGHTING']
     end
     runner.registerInfo("#{salida}")
 
@@ -268,7 +259,6 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     runner.registerInfo("string_rows = #{string_rows}")
 
     string_rows.each do | string |
-      runner.registerInfo("row: #{string}")
       if string.is_a? String
         outFile.write(string + "\n")
       elsif string.is_a? Array
@@ -307,9 +297,6 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     end
     model = model.get
 
-    string_rows = []
-
-
     # BUG: Esta superficie incluye los espacios habitables no acondicionados que no deberían
     # BUG: formar parte del área de referencia.
     cte_areareferencia = sqlFile.execAndReturnFirstDouble("
@@ -319,6 +306,8 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
       LEFT OUTER JOIN ZoneInfoZoneLists zizl USING (ZoneIndex)
       LEFT OUTER JOIN ZoneLists zl USING (ZoneListIndex)
     WHERE zl.Name NOT LIKE 'CTE_N%' ").get
+
+    string_rows = []
 
     string_rows << "#CTE_Area_ref: #{cte_areareferencia.round(0)}"
 
