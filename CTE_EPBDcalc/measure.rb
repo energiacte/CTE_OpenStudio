@@ -40,21 +40,21 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
         gas_boiler: { descripcion: 'caldera de gas',
                       combustibles: [['GASNATURAL', 0.95]],
                       servicios: ['WATERSYSTEMS', 'HEATING']},
-        generic_acs:{descripcion: 'equipo genérico ACS',
-                      combustibles: [['RED1', 1]],
-                      servicios: ['WATERSYSTEMS']},
-        hp_heat:    { descripcion: 'bomba de calor en calefaccion',
-                      combustibles: [['ELECTRICIDAD', 1], ['MEDIOAMBIENTE', 2.0]], # COP_ma = COP -1 -> COP = 3.0
-                      servicios: ['WATERSYSTEMS', 'HEATING']},
-        generic_heat:{descripcion: 'equipo genérico en calefaccion',
-                      combustibles: [['RED1', 1]],
-                      servicios: ['HEATING']},
-        hp_cool:    { descripcion: 'bomba de calor en refrigeracion',
-                      combustibles: [['ELECTRICIDAD', 1], ['MEDIOAMBIENTE', 3.5]], # COP_ma = COP +1 -> COP = 2.5
-                      servicios: ['COOLING']},
-        generic_cool:{descripcion: 'equipo genérico en refrigeración',
-                      combustibles: [['RED2', 1]],
-                      servicios: ['COOLING']},
+        generic_acs: { descripcion: 'equipo genérico ACS',
+                       combustibles: [['RED1', 1]],
+                       servicios: ['WATERSYSTEMS']},
+        hp_heat: { descripcion: 'bomba de calor en calefaccion',
+                   combustibles: [['ELECTRICIDAD', 1], ['MEDIOAMBIENTE', 2.0]], # COP_ma = COP -1 -> COP = 3.0
+                   servicios: ['WATERSYSTEMS', 'HEATING']},
+        generic_heat: { descripcion: 'equipo genérico en calefaccion',
+                        combustibles: [['RED1', 1]],
+                        servicios: ['HEATING']},
+        hp_cool: { descripcion: 'bomba de calor en refrigeracion',
+                   combustibles: [['ELECTRICIDAD', 1], ['MEDIOAMBIENTE', 3.5]], # COP_ma = COP +1 -> COP = 2.5
+                   servicios: ['COOLING']},
+        generic_cool: { descripcion: 'equipo genérico en refrigeración',
+                        combustibles: [['RED2', 1]],
+                        servicios: ['COOLING']},
         }
 
   # human readable name
@@ -219,7 +219,8 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
   def procesedEPBFinalEnergyConsumptionByMonth(model, sqlFile, runner, servicios)
     _comprobacionDeConsistencia(sqlFile, runner)
 
-    vectoresOrigen = {'WATERSYSTEMS' => 'DISTRICTHEATING', 'HEATING' => 'DISTRICTHEATING',
+    vectoresOrigen = {'WATERSYSTEMS' => 'DISTRICTHEATING',
+                      'HEATING' => 'DISTRICTHEATING',
                       'COOLING' =>'DISTRICTCOOLING' }
 
     salida = []
