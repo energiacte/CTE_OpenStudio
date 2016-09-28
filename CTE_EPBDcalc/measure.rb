@@ -47,13 +47,13 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
                       combustibles: [['ELECTRICIDAD', 1], ['MEDIOAMBIENTE', 2.0]], # COP_ma = COP -1 -> COP = 3.0
                       servicios: ['WATERSYSTEMS', 'HEATING']},
         generic_heat:{descripcion: 'equipo genérico en calefaccion',
-                      combustibles: [['RED 1', 1]],
+                      combustibles: [['RED1', 1]],
                       servicios: ['HEATING']},
         hp_cool:    { descripcion: 'bomba de calor en refrigeracion',
                       combustibles: [['ELECTRICIDAD', 1], ['MEDIOAMBIENTE', 3.5]], # COP_ma = COP +1 -> COP = 2.5
                       servicios: ['COOLING']},
         generic_cool:{descripcion: 'equipo genérico en refrigeración',
-                      combustibles: [['RED 2', 1]],
+                      combustibles: [['RED2', 1]],
                       servicios: ['COOLING']},
         }
 
