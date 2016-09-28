@@ -54,7 +54,7 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
                       servicios: ['COOLING']},
         generic_cool:{descripcion: 'equipo genérico en refrigeración',
                       combustibles: [['RED 2', 1]],
-                      servicios: ['COOLING']},        
+                      servicios: ['COOLING']},
         }
 
   # human readable name
@@ -102,17 +102,17 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
 
     agua_caliente_sanitaria = OpenStudio::Ruleset::OSArgument::makeChoiceArgument('WATERSYSTEMS', acs_tech,acs_desc, true)
     agua_caliente_sanitaria.setDisplayName("Agua Caliente Sanitaria")
-    agua_caliente_sanitaria.setDefaultValue("gas_boiler")
+    agua_caliente_sanitaria.setDefaultValue("generic_acs")
     args << agua_caliente_sanitaria
 
     calefaccion = OpenStudio::Ruleset::OSArgument::makeChoiceArgument('HEATING', heat_tech, heat_desc, true)
     calefaccion.setDisplayName("Calefacción")
-    calefaccion.setDefaultValue("hp_heat")
+    calefaccion.setDefaultValue("generic_heat")
     args << calefaccion
 
     refrigeracion = OpenStudio::Ruleset::OSArgument::makeChoiceArgument('COOLING', cool_tech, cool_desc, true)
     refrigeracion.setDisplayName("Refrigeración")
-    refrigeracion.setDefaultValue("hp_cool")
+    refrigeracion.setDefaultValue("generic_cool")
     args << refrigeracion
 
 
@@ -140,30 +140,30 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
   def consumoDeIluminacion(runner, model, sqlFile)
     runner.registerInfo("Consumo de iluminacion")
     valores = []
-    
-    # usaría espacios, pero es que la variable del consumo para sistemas de iluminación 
+
+    # usaría espacios, pero es que la variable del consumo para sistemas de iluminación
     # está por zonas.
     # TODO: analizar el caso en que hay más de un equipo de iluminación por espacio.
-  
+
     # Solamente usamos el primer espacio de la zona? suponemos que solo hay uno?
-    
+
     model.getThermalZones.each do | thermalZone |
       valores << [0]*12
       # hay que saber si esta zona se suma o no
       # depende de los tipos de los espacios que la forman
       # los tipos de los espacios deben ser coheretes entre si
-      # TODO: comprobar la coherencia y decidir si no lo son.      
+      # TODO: comprobar la coherencia y decidir si no lo son.
       spaces = thermalZone.spaces()
-      # vamos a tomar el tipo del primer espacio      
+      # vamos a tomar el tipo del primer espacio
       spaceType = spaces[0].spaceType.get.name.get
       runner.registerInfo("#{thermalZone.name}")
-      runner.registerInfo("#{spaces[0].name.get} tipo #{spaceType}")      
+      runner.registerInfo("#{spaces[0].name.get} tipo #{spaceType}")
       next if (spaceType.start_with?('CTE_AR') or
          spaceType.start_with?('CTE_NOHABs') )
-      
+
       valueJ = sqlFile.execAndReturnVectorOfDouble(
       zonelightselectricenergymonthlyentry(thermalZone.name.to_s.upcase)).get
-      
+
       valueJ.each do | valor |
         value << OpenStudio.convert(valor, 'J', 'kWh').get.round(1)
       end
@@ -221,54 +221,54 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
 
 
   def procesedEPBFinalEnergyConsumptionByMonth(model, sqlFile, runner, servicios)
-  
-    if not _comprobacionDeConsistencia(sqlFile, runner)      
-      runner.registerInfo("Error de consistencia, hay consumo distinto de Distrito")      
+
+    if not _comprobacionDeConsistencia(sqlFile, runner)
+      runner.registerInfo("Error de consistencia, hay consumo distinto de Distrito")
     end
-    
+
     salida = []
     salida << "vector,tipo,src_dst"
-    
+
     vectoresOrigen = {'WATERSYSTEMS' => 'DISTRICTHEATING', 'HEATING' => 'DISTRICTHEATING',
                       'COOLING' =>'DISTRICTCOOLING' }
-    result = []    
-    
+    result = []
+
     servicios.each do | servicio, tecnologia |
       vectorOrigen = vectoresOrigen[servicio]
       vector = energyConsumptionByVectorAndUse(sqlFile, vectorOrigen , servicio)
-      
+
       vector = vector.map{ |v| OpenStudio.convert(v, 'J', 'kWh').get }
 
       TECNOLOGIAS[tecnologia][:combustibles].each do | combustible, rendimiento |
         comentario   = "# #{servicio}, #{tecnologia}, #{vectorOrigen}-->#{combustible}, #{rendimiento}"
         if vector.reduce(0, :+) != 0
           result << [combustible, 'CONSUMO', 'EPB'] + vector.map { |v| (v * rendimiento).round(0) } + [comentario]
-          salida << [combustible, 'CONSUMO', 'EPB'] + 
+          salida << [combustible, 'CONSUMO', 'EPB'] +
               vector.map { |v| (v * rendimiento).round(0) } + [comentario]
-        end        
+        end
       end
     end
-    
+
     consumoIluminacionPorMeses = consumoDeIluminacion(runner, model, sqlFile)
     if consumoIluminacionPorMeses.reduce(0, :+) != 0
-      salida << ['ELECTRICIDAD', 'CONSUMO', 'EPB'] + 
+      salida << ['ELECTRICIDAD', 'CONSUMO', 'EPB'] +
         consumoIluminacionPorMeses +
             ['#LIGHTING']
     end
     runner.registerInfo("#{salida}")
-    
+
     return salida
   end
 
   def exportStringRows(runner, string_rows)
-    
+
     nombreFichero = 'consumoParaEPBDcalc.csv'
 
-    outFile = File.open(nombreFichero, 'w')        
+    outFile = File.open(nombreFichero, 'w')
     runner.registerInfo("string_rows = #{string_rows}")
-    
+
     string_rows.each do | string |
-      runner.registerInfo("row: #{string}")      
+      runner.registerInfo("row: #{string}")
       if string.is_a? String
         outFile.write(string + "\n")
       elsif string.is_a? Array
@@ -333,7 +333,7 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     cte_clima = model.weatherFile.get.path.get
     string_rows << "#CTE_Weather_file: #{cte_clima}"
     runner.registerInfo("CTE_Weather_file: #{cte_clima}")
-    
+
     servicios = get_servicios(runner, user_arguments)
     result = procesedEPBFinalEnergyConsumptionByMonth(model, sqlFile, runner, servicios)
     if result != false
@@ -341,26 +341,26 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     else
       return false
     end
-            
+
     exportStringRows(runner, string_rows)
     return true
 
   end
-  
-  def zonelightselectricenergymonthlyentry(thermalzonename)      
+
+  def zonelightselectricenergymonthlyentry(thermalzonename)
     return "
-SELECT 
+SELECT
     VariableValue
-FROM 
+FROM
     reportvariabledatadictionary as rvdd
-    INNER JOIN ReportVariableData AS rvd 
-    ON rvdd.ReportVariableDataDictionaryIndex == rvd.ReportVariableDataDictionaryIndex 
-    WHERE rvdd.VariableName == 'Zone Lights Electric Energy' 
-    AND rvdd.KeyValue == '#{thermalzonename}' 
+    INNER JOIN ReportVariableData AS rvd
+    ON rvdd.ReportVariableDataDictionaryIndex == rvd.ReportVariableDataDictionaryIndex
+    WHERE rvdd.VariableName == 'Zone Lights Electric Energy'
+    AND rvdd.KeyValue == '#{thermalzonename}'
     AND rvdd.ReportingFrequency == 'Monthly' "
     #~ ORDER BY rvd.TimeIndex ASC"
   end
-    
+
 end
 
 # register the measure to be used by the application
