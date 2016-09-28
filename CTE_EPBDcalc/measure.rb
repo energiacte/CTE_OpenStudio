@@ -121,17 +121,14 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     return args
   end
 
-  def performancereportnames(sqlFile)
+  def usedvectors(sqlFile)
     reportname_query = "SELECT DISTINCT ReportName FROM TabularDataWithStrings
       WHERE ReportName LIKE 'Building Energy Performance - %'
       AND ReportName NOT LIKE '% Peak Demand'"
-    performancereportnames = sqlFile.execAndReturnVectorOfString(reportname_query)
-    return performancereportnames
-  end
+    performancereportnames = sqlFile.execAndReturnVectorOfString(reportname_query).get
 
-  def usedvectors(sqlFile)
     result = []
-    performancereportnames(sqlFile).get.each do | report |
+    performancereportnames.each do | report |
       result << report.split(' - ')[1]
     end
     return result
