@@ -7,6 +7,14 @@
 - OS_15603:
     - Limpiar plantilla de report y dejar solamente lo que nos interesa
     - Renombrar a CTE_Report
+    - Cambiar "Energia por superficie habitable" en el apartado Energía según
+      CTE a "Consumo final neto total por superficie habitable", "Energia neta (net
+      site energy" a "Consumo final neto total" y el epígrafe a
+      "Consumo final total (EPB+NEPB)"
+    - Añadir en "Energia según CTE" epígrafe "Consumo EPB por
+      superficie habitable", y "Consumo NEPB por superficie habitable", con
+      desglose por servicios/usos (eligiendo apropiadamente según sea
+      Residencial o Terciario).
 - Otros:
     Ver posibilidad de pasar datos entre medidas a través de comentarios
     model.building.setComment(commentstring), serializando a JSON.
