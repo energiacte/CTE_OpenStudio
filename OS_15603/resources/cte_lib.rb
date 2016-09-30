@@ -195,21 +195,21 @@ module CTE_tables
     #~ runner.registerValue('Intensidad energética (EUI)', intensidadEnergetica, 'kWh/m^2')
 
     general_table = {}
-    general_table[:title] = 'Consumo Final'
-    general_table[:header] =['', 'Energía Final', 'Energía Final/Sup. Acond.']
-    general_table[:units] = ['', 'kWh', 'kWh/m2']
+    general_table[:title] = 'Consumo Neto (Energía Final)'
+    general_table[:header] =['', 'Energía', 'Energía/Sup. Acond.']
+    general_table[:units] = ['', 'kWh', 'kWh/m²']
     general_table[:data] = []
-    general_table[:data] << ['<b>Consumo EPB + NEPB</b>',
+    general_table[:data] << ['<b>Servicios EPB + No EPB</b>',
       (totalUsosEPB+totalUsosNoEPB).round(0),
-      ((totalUsosEPB+totalUsosNoEPB)/superficiehabitable).round(1)]
-    general_table[:data] << ['<b>Consumo EPB</b>', totalUsosEPB.round(0),
-        (totalUsosEPB/superficiehabitable).round(1)]
+      "<b>#{((totalUsosEPB+totalUsosNoEPB)/superficiehabitable).round(1)}</b>"]      
+    general_table[:data] << ['<b>Servicios EPB</b>', totalUsosEPB.round(0),
+        "<b>#{(totalUsosEPB/superficiehabitable).round(1)}</b>"]
     usosEPB.each do | clave, valor |
       general_table[:data] << [" - #{traduce[clave]}", valor.round(0), (valor/superficiehabitable).round(0)]
     end
 
-    general_table[:data] << ['<b>Consumo NoEPB</b>', totalUsosNoEPB.round(0),
-        (totalUsosNoEPB/superficiehabitable).round(1)]
+    general_table[:data] << ['<b>Servicios No EPB</b>', totalUsosNoEPB.round(0),
+        "<b>#{(totalUsosNoEPB/superficiehabitable).round(1)}</b>"]
     usosNoEPB.each do | clave, valor |
       general_table[:data] << [" - #{traduce[clave]}", valor.round(0), (valor/superficiehabitable).round(0)]
     end
