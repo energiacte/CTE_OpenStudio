@@ -56,9 +56,12 @@ class Cte_lib_Test < MiniTest::Unit::TestCase
       translator = OpenStudio::OSVersion::VersionTranslator.new    
       model = translator.loadModel(modelPath)      
       model = model.get
-      areaPuentesTermicos = {}      
+      sqlFile = model.setSqlFile(runner.lastEnergyPlusSqlFile.get)
+      sqlFile = model.sqlFile.get
+      CTE_tables.tabla_de_energias(model, sqlFile, runner)
+      
   
-      correr = true
+      correr = false
       if correr
       measure.run(runner, argument_map)
 

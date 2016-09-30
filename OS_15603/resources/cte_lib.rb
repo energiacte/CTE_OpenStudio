@@ -117,28 +117,110 @@ module CTE_tables
     return medicion_general
   end
 
-  def self.tabla_de_energias(model, sqlFile, runner)
-    # Basada en una tabla del report SI
-    energianeta = OpenStudio.convert(sqlFile.netSiteEnergy.get, 'GJ', 'kWh').get
-    superficiehabitable = CTE_Query.superficieHabitable(sqlFile)
-    intensidadEnergetica = superficiehabitable != 0 ? (energianeta / superficiehabitable) : 0
 
-    runner.registerValue('Energia Neta (Net Site Energy)', energianeta, 'kWh')
-    runner.registerValue('Intensidad energética (EUI)', intensidadEnergetica, 'kWh/m^2')
+ def self.energyConsumptionByVectorAndUse(sqlFile, vectorName, useName)
+    # las unidades son Julios a tenor de la informacion del SQL:
+    # SELECT distinct  reportname, units FROM TabularDataWithStrings
+    # los reports son LIKE 'BUILDING ENERGY PERFORMANCE - %'
+    result = [0.0] * 12
+    meses = (1..12).to_a
+    meses.each do | mesNumber |
+      endfueltype    = OpenStudio::EndUseFuelType.new(vectorName)
+      endusecategory = OpenStudio::EndUseCategoryType.new(useName)
+      monthofyear    = OpenStudio::MonthOfYear.new(mesNumber)
+      valor = sqlFile.energyConsumptionByMonth(
+                    endfueltype, endusecategory, monthofyear).to_f
+      result[mesNumber-1] += valor
+    end
+    return result
+  end
+
+  def self.energyConsumptionByUses(sqlFile, useNames)
+    useNames = [useNames] unless useNames.class == Array
+
+    result = 0
+    useNames.each do | end_use |
+      query_all = "
+      SELECT
+        SUM(Value)
+      FROM
+        tabulardatawithstrings
+      WHERE
+        ReportName='AnnualBuildingUtilityPerformanceSummary'
+        AND TableName='End Uses'
+        AND RowName= '#{end_use}'
+        AND ColumnName IN  ('Electricity', 'Natural Gas', 'Additional Fuel',
+                    'District Cooling', 'District Heating') "
+      search = sqlFile.execAndReturnFirstDouble(query_all)
+      result += search.get
+    end
+
+    return OpenStudio.convert(result, 'GJ', 'kWh').get
+  end
+
+
+
+  def self.tabla_de_energias(model, sqlFile, runner)
+
+    superficiehabitable = CTE_Query.superficieHabitable(sqlFile)
+
+    usosEPB = {'Heating'=> 0, 'Cooling'=> 0, 'Water Systems'=> 0}
+    #~ usosNoEPB = {'Interior Lighting'=> 0, 'Exterior Lighting'=> 0, 'Interior Equipment'=> 0,
+            #~ 'Exterior Equipment'=> 0, 'Fans'=> 0, 'Pumps'=> 0, 'Heat Rejection'=> 0,
+            #~ 'Humidification'=> 0, 'Heat Recovery'=> 0, 'Refrigeration'=> 0, 'Generators'=> 0}
+
+    usosNoEPB = {'Interior Lighting'=> 0, 'Interior Equipment'=> 0,
+            'Fans'=> 0, 'Pumps'=> 0, }
+    
+    traduce = {'Heating'=> 'Calefacción', 'Cooling'=> 'Refrigeración', 
+      'Water Systems'=> 'ACS', 'Interior Lighting'=> 'Iluminación', 
+      'Interior Equipment'=> 'Equipos','Fans'=> 'Ventiladores', 
+      'Pumps'=> 'Bombas'}
+    
+    totalUsosEPB = 0
+    usosEPB.each do | clave, dummy |
+      valor = energyConsumptionByUses(sqlFile, clave)
+      usosEPB[clave] = valor
+      totalUsosEPB += valor
+    end
+
+    totalUsosNoEPB = 0
+    usosNoEPB.each do | clave, dummy |
+      valor = energyConsumptionByUses(sqlFile, clave)
+      usosNoEPB[clave] = valor
+      totalUsosNoEPB += valor
+    end
+
+    #~ runner.registerValue('Energia Neta (Net Site Energy)', energianeta, 'kWh')
+    #~ runner.registerValue('Intensidad energética (EUI)', intensidadEnergetica, 'kWh/m^2')
 
     general_table = {}
-    general_table[:title] = 'Energía según CTE'
-    general_table[:header] =%w(informacion valor unidades)
-    general_table[:units] = []
+    general_table[:title] = 'Consumo Final'
+    general_table[:header] =['', 'Energía Final', 'Energía Final/Sup. Acond.']
+    general_table[:units] = ['', 'kWh', 'kWh/m2']
     general_table[:data] = []
-    general_table[:data] << ['Energia Neta (Net Site Energy)', energianeta.round(2), 'kWh']
-    general_table[:data] << ['Energía por superficie habitable', intensidadEnergetica.round(2), 'kWh/m^2']
+    general_table[:data] << ['<b>Consumo EPB + NEPB</b>',
+      (totalUsosEPB+totalUsosNoEPB).round(0),
+      ((totalUsosEPB+totalUsosNoEPB)/superficiehabitable).round(1)]
+    general_table[:data] << ['<b>Consumo EPB</b>', totalUsosEPB.round(0),
+        (totalUsosEPB/superficiehabitable).round(1)]
+    usosEPB.each do | clave, valor |
+      general_table[:data] << [" - #{traduce[clave]}", valor.round(0), (valor/superficiehabitable).round(0)]
+    end
 
+    general_table[:data] << ['<b>Consumo NoEPB</b>', totalUsosNoEPB.round(0),
+        (totalUsosNoEPB/superficiehabitable).round(1)]
+    usosNoEPB.each do | clave, valor |
+      general_table[:data] << [" - #{traduce[clave]}", valor.round(0), (valor/superficiehabitable).round(0)]
+    end
     return general_table
   end
 
+
+
+
   def self.tabla_mediciones_envolvente(model, sqlFile, runner)
-      
+
     indicesquery = "SELECT ConstructionIndex FROM (#{ CTE_Query::ENVOLVENTE_SUPERFICIES_EXTERIORES })
                     UNION
                     SELECT ConstructionIndex FROM (#{ CTE_Query::ENVOLVENTE_SUPERFICIES_INTERIORES })"
@@ -177,7 +259,7 @@ module CTE_tables
     ttl_puenteTermico = {}
     model.getSurfaces.each do |surface|
       if surface.name.get.include? "_pt"
-        tipoPT = surface.name.get.split('_pt')[1]        
+        tipoPT = surface.name.get.split('_pt')[1]
         unless coeficienteAcoplamiento.keys.include?(tipoPT)
           coeficienteAcoplamiento[tipoPT] = 0.0
           ttl_puenteTermico[tipoPT] = 0.0
