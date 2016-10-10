@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*- 
 #
 # Copyright (c) 2016 Ministerio de Fomento
 #                    Instituto de Ciencias de la Construcción Eduardo Torroja (IETcc-CSIC)
@@ -31,7 +31,8 @@ require_relative "cte_query"
 # TODO: acabar la tabla de remplazo
 REPLACEMENTS = {
   'Ñ' => 'N',
-  'ñ' => 'N'}
+  'ñ' => 'N',
+  'Á' => 'A'}
 ENCODING_OPTIONS = {
   :invalid           => :replace,  # Replace invalid byte sequences
   :replace           => "",        # Use a blank for those replacements
@@ -346,7 +347,7 @@ module CTE_tables
               INNER JOIN ReportVariableDataDictionary AS rvdd ON rvdd.ReportVariableDataDictionaryIndex = rvd.ReportVariableDataDictionaryIndex
             WHERE
               rvdd.VariableName = 'Zone Combined Outdoor Air Changes per Hour'
-              AND ReportingFrequency ='Hourly'
+              AND ReportingFrequency ='Monthly'
               AND KeyValue = '#{row}'"
         else  header.include? 'media'
           query = "SELECT
@@ -570,7 +571,7 @@ FROM
     INNER JOIN Time AS time USING (TimeIndex)
 WHERE
     VariableName = '#{ variableName }'
-    AND ReportingFrequency = 'Hourly'
+    AND ReportingFrequency = 'Monthly'
     AND ClassName = '#{ className }'
     AND Month IN #{ meses }
     #{ extraCond }
@@ -593,7 +594,7 @@ FROM
     INNER JOIN Time USING (TimeIndex)
 WHERE
     VariableName = '#{ variableName }'
-    AND ReportingFrequency = 'Hourly'
+    AND ReportingFrequency = 'Monthly'
     AND KeyValue = ZoneName
     AND Month IN #{ meses }
 "
