@@ -64,7 +64,7 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
     tipoEdificio << 'Nuevo'
     tipoEdificio << 'Existente'
     tipo = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("tipoEdificio", tipoEdificio, true)
-    tipo.setDisplayName("¿Edificio nuevo o existente?")
+    tipo.setDisplayName("Edificio nuevo o existente")
     tipo.setDefaultValue('Nuevo')
     args << tipo
 
@@ -91,17 +91,36 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
     args << altitud
 
     design_flow_rate = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("design_flow_rate", true)
-    design_flow_rate.setDisplayName("Caudal de diseno de ventilacion del edificio")
+    design_flow_rate.setDisplayName("Caudal de diseno de ventilacion del edificio (residencial)")
     design_flow_rate.setUnits("ren/h")
     design_flow_rate.setDefaultValue(0.63)
     args << design_flow_rate
-    
+
     heat_recovery = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("heat_recovery", true)
     heat_recovery.setDisplayName("Eficiencia del recuperador de calor")
     heat_recovery.setUnits("adimensional")
     heat_recovery.setDefaultValue(0.0)
     args << heat_recovery
-    
+
+    fan_sfp = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("fan_sfp", true)
+    fan_sfp.setDisplayName("Consumo específico de ventiladores (SFP)")
+    fan_sfp.setUnits("kPa")
+    fan_sfp.setDefaultValue(2.5)
+    args << fan_sfp
+
+    fan_ntot = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("fan_ntot", true)
+    fan_ntot.setDisplayName("Eficiencia global de ventiladores (n_tot)")
+    fan_ntot.setUnits("adimensional")
+    fan_ntot.setDefaultValue(0.5)
+    args << fan_ntot
+
+    tipoFlujo = OpenStudio::StringVector.new
+    tipoFlujo << 'Simple flujo'
+    tipoFlujo << 'Doble flujo'
+    fan_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("fan_type", tipoFlujo, true)
+    fan_type.setDisplayName("Tipo de sistema de ventilación")
+    fan_type.setDefaultValue('Simple flujo')
+    args << fan_type
 
     claseVentana = OpenStudio::StringVector.new
     claseVentana << 'Clase 1'
@@ -116,7 +135,7 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
     psiForjadoCubierta = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("psiForjadoCubierta", true)
     psiForjadoCubierta.setDisplayName("TTL forjado con cubierta")
     psiForjadoCubierta.setUnits("W/mK")
-    psiForjadoCubierta.setDefaultValue(0.24)    
+    psiForjadoCubierta.setDefaultValue(0.24)
     args << psiForjadoCubierta
 
     psiFrenteForjado = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("psiFrenteForjado", true)
@@ -168,8 +187,6 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
       return false
     end
 
-    usoEdificio = runner.getStringArgumentValue('usoEdificio', user_arguments)
-
     result = true
     result = cte_addvars(model, runner, user_arguments) # Nuevas variables y meters
     return result unless result == true
@@ -178,11 +195,8 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
     result = cte_tempaguafria(model, runner, user_arguments) # temperatura de agua de red
     return result unless result == true
 
-    #TODO, en el caso de terciario entendemos que los recuperadores están incluídos en los sistemas
-    if usoEdificio == 'Residencial'
-      result = cte_ventresidencial(model, runner, user_arguments) # modelo de ventilación para residencial
-      return result unless result == true
-    end
+    result = cte_ventresidencial(model, runner, user_arguments) # modelo de ventilación para residencial
+    return result unless result == true
 
     result = cte_infiltracion(model, runner, user_arguments)
     return result unless result == true
