@@ -77,7 +77,8 @@ def cte_addvars(model, runner, user_arguments)
     #["Zone Ideal Loads Supply Air Standard Density Volume Flow Rate", "monthly", "*"],
     ["Zone Combined Outdoor Air Sensible Heat Loss Energy", "monthly", "*"],
     ["Zone Combined Outdoor Air Sensible Heat Gain Energy", "monthly", "*"],
-    ["Zone Combined Outdoor Air Changes per Hour", "monthly", "*"]
+    ["Zone Combined Outdoor Air Changes per Hour", "monthly", "*"],
+    ["Zone Combined Outdoor Air Fan Electric Energy", "monthly", "*"]
     
     # Hourly variables
     #~ ["Surface Inside Face Conduction Heat Transfer Energy", "hourly", "*"],
@@ -103,6 +104,18 @@ def cte_addvars(model, runner, user_arguments)
 
 
   # Get final condition ================================================
+  
+  new_output_meteres = [  
+  ["Cumulative,Fans:Electricity", "monthly", "*"], #Output:Meter:, %s , ,hourly; !- [J]  
+  ]
+  
+  new_output_meteres.each do | meterName, reporting_frequency, key |
+    outputMeter = OpenStudio::Model::Meter.new(model)
+    outputMeter.setName(meterName)
+    outputMeter.setReportingFrequency(reporting_frequency)
+    runner.registerInfo("Adding output meter #{meterName} with reporting frequency #{reporting_frequency} for key #{key}.")
+  end
+  
   meters = model.getMeters
   output_variables = model.getOutputVariables
   runner.registerInfo("CTE_ADDVARS: The model finished with #{meters.size} meter objects and #{output_variables.size} output variables.")
