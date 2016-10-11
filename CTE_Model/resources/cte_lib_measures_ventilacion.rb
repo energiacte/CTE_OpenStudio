@@ -46,9 +46,17 @@ def cte_ventresidencial(model, runner, user_arguments)
   heat_recovery = runner.getDoubleArgumentValue('heat_recovery', user_arguments)
   fan_sfp = runner.getDoubleArgumentValue('fan_sfp', user_arguments)
   fan_ntot = runner.getDoubleArgumentValue('fan_ntot', user_arguments)
-  fan_type = runner.getChoiceArgumentValue('fan_type', user_arguments)
-
+  fan_type = runner.getStringArgumentValue('fan_type', user_arguments)
   usoEdificio = runner.getStringArgumentValue('usoEdificio', user_arguments)
+
+  ventilationType = (fan_type == "Doble flujo") ? 'Balanced': 'Exhaust'
+  ventilationPressureRise = fan_sfp * 1000 * fan_ntot # delta_p = SFP * n_tot, kPa -> Pa
+  ventilationTotEfficiency = fan_ntot
+
+  runner.registerValue("CTE Fan total efficiency", ventilationTotEfficiency)
+  runner.registerValue("CTE Fan Pressure Rise", ventilationPressureRise, "Pa")
+  runner.registerValue("CTE Fan Ventilation Type", ventilationType)
+  runner.registerValue("CTE Fan SFP", fan_sfp, "kPa")
 
   #XXX: en terciario los recuperadores deben definirse en los sistemas
   if usoEdificio != 'Residencial'
@@ -180,16 +188,11 @@ def cte_ventresidencial(model, runner, user_arguments)
         zone_ventilation.setSchedule(scheduleRuleNOC)
         runner.registerInfo("- Creando objeto ZoneVentilation:DesignFlowRate NOCTURNO en espacio '#{ spaceName }' del tipo '#{ spaceTypeName }' en la zona '#{ zoneName }'")
 
-
-        ventilationType = (fan_type == "Doble flujo") ? 'Balanced': 'Exhaust'
-        ventilationPressureRise = fan_sfp * 1000 * fan_ntot # delta_p = SFP * n_tot, kPa -> Pa
-        ventilationTotEfficiency = fan_ntot
-
         zone_ventilation = OpenStudio::Model::ZoneVentilationDesignFlowRate.new(model)
         zone_ventilation.addToThermalZone(zone)
         zone_ventilation.setVentilationType(ventilationType)
         zone_ventilation.setFanPressureRise(ventilationPressureRise)
-        zone_ventilation.setTotalFanEfficiency(ventilationTotEfficiency)
+        zone_ventilation.setFanTotalEfficiency(ventilationTotEfficiency)
         zone_ventilation.setDesignFlowRateCalculationMethod("AirChanges/Hour")
         zone_ventilation.setAirChangesperHour(q_ven_real) #
         zone_ventilation.setConstantTermCoefficient(1)
