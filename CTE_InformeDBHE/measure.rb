@@ -52,72 +52,19 @@ class CTE_InformeDBHE < OpenStudio::Ruleset::ReportingUserScript
  La estructura del informe usa Bootstrap, y dimple js para las graficas."
   end
   def possible_sections
-
-    #CTE_lib.mediciones()
-
     result = []
-
     # methods for sections in order that they will appear in report
     result << 'mediciones_de_superficies_segun_CTE'
     result << 'demandas_por_componentes'
-    #~ result << 'variables_de_inspeccion'
-    #result << 'variables_cte'
     result << 'annual_overview_section'
-
     result << 'building_summary_section'
-    # still need to extend building summary
-    # still need to populate site performance
-
-    #~ result << 'monthly_overview_section'
-    # result << 'utility_bills_rates_section'
     result << 'mediciones_envolvente'
-    result << 'envelope_section_section'
+    result << 'cte_envelope_section_section'
     result << 'space_type_breakdown_section'
     result << 'space_type_details_section'
-
-    #~ result << 'interior_lighting_section'
-
-    # consider binning to space types
-
-    #~ result << 'plug_loads_section'
-    #~ result << 'exterior_light_section'
-    #~ result << 'water_use_section'
-
-    #~ result << 'hvac_load_profile'
-    # TODO: - turn on hvac_part_load_profile_table once I have data for it
-
-    #~ result << 'zone_condition_section'
     result << 'zone_summary_section'
-
-    #~ result << 'zone_equipment_detail_section' # TODO: - add in content from other measures
-    #-- result << 'air_loop_summary_section' # TODO: - stub only
-    #~ result << 'air_loops_detail_section'
-    # later - on all loop detail sections get hard-sized value
-
-    #-- result << 'plant_loop_summary_section' # TODO: - stub only
-    #~ result << 'plant_loops_detail_section'
-    #-- result << 'outdoor_air_section'
-    result << 'cte_outdoor_air_section' #Renovaci??n del aire exterior (medias)
-
-    # result << 'cost_summary_section'
-    # find out how to get lifecycle cost with utility escalation
-    # consider second cost table listing all lifecycle cost objects in OSM (since can't see in GUI)
-
+    result << 'cte_outdoor_air_section' #Aire exterior
     result << 'source_energy_section'
-
-    #-- result << 'co2_and_other_emissions_section'
-    # TODO: - add emissions factors object to our template model
-
-    #-- result << 'typical_load_profiles_section' # TODO: - stub only
-    #~ result << 'schedules_overview_section'
-    # TODO: - clean up code to gather schedule profiles so I don't have to grab every 15 minutes
-
-    # see the method below in os_lib_reporting.rb to see a simple example of code to make a section of tables
-    #-- result << 'template_section'
-
-    # TODO: - some tables are so long on real models you loose header. Should we have scrolling within a table?
-    # TODO: - maybe sorting as well if it doesn't slow process down too much
-
     return result
   end
 
@@ -138,28 +85,6 @@ class CTE_InformeDBHE < OpenStudio::Ruleset::ReportingUserScript
     args
   end # end the arguments method
 
-  #~ def energyPlusOutputRequests(runner, user_arguments)
-    #~ super(runner, user_arguments)
-
-    #~ result = OpenStudio::IdfObjectVector.new
-
-    #~ # use the built-in error checking
-    #~ unless runner.validateUserArguments(arguments, user_arguments)
-      #~ return result
-    #~ end
-
-    #~ if runner.getBoolArgumentValue('hvac_load_profile', user_arguments)
-      #~ result << OpenStudio::IdfObject.load('Output:Variable,,Site Outdoor Air Drybulb Temperature,monthly;').get
-    #~ end
-
-    #~ if runner.getBoolArgumentValue('zone_condition_section', user_arguments)
-      #~ result << OpenStudio::IdfObject.load('Output:Variable,,Zone Air Temperature,hourly;').get
-      #~ result << OpenStudio::IdfObject.load('Output:Variable,,Zone Air Relative Humidity,hourly;').get
-    #~ end
-
-    #~ result
-  #~ end
-
   # define what happens when the measure is run
   def run(runner, user_arguments)
     super(runner, user_arguments)
@@ -179,12 +104,6 @@ class CTE_InformeDBHE < OpenStudio::Ruleset::ReportingUserScript
     unless args
       return false
     end
-
-    # configure logging
-    #logFile = OpenStudio::FileLogSink.new(OpenStudio::Path.new("./CTEReport.log"))
-    #logFile.setLogLevel(OpenStudio::Debug)
-    #logFile.setLogLevel(OpenStudio::Warn)
-    #OpenStudio::Logger.instance.standardOutLogger.disable
 
     # reporting final condition
     runner.registerInitialCondition('Recopilando datos de archivo SQL de EnergyPlus y model OSM.')
@@ -218,7 +137,6 @@ class CTE_InformeDBHE < OpenStudio::Ruleset::ReportingUserScript
 
     # configure template with variable values
     renderer = ERB.new(html_in)
-    #~ runner.registerInfo(" encoding #{renderer.encoding}")
     html_out = renderer.result(binding)
 
     # write html file
