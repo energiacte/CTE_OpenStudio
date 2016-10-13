@@ -107,12 +107,12 @@ def cte_addvars(model, runner, user_arguments)
   # Get final condition ================================================
   
   new_output_meteres = [
-  ["Fans:Electricity", "hourly", "*"],
+  ["Fans:Electricity", "monthly", "*"],
   ]
   
   new_output_meteres.each do | meterName, reporting_frequency, key |
     outputMeter = OpenStudio::Model::Meter.new(model)
-    outputMeter.setCumulative(true)
+    #~ outputMeter.setCumulative(true)
     outputMeter.setName(meterName)
     outputMeter.setReportingFrequency(reporting_frequency)
     runner.registerInfo("Adding output meter #{meterName} with reporting frequency #{reporting_frequency} for key #{key}.")
