@@ -68,17 +68,18 @@ def cte_ventresidencial(model, runner, user_arguments)
     return false
   end
 
-  runner.registerInfo("[1/2] Definiendo horario con ventilación nocturna en verano (4ren/h) y caudal de diseño: #{design_flow_rate*heat_recovery} [ren/h]")
+
   q_ven_real = design_flow_rate * (1 - heat_recovery)
   q_ven_noct = 4 - q_ven_real
+  runner.registerInfo("[1/2] Definiendo horario con ventilación nocturna en verano (4ren/h) y caudal de diseño: #{q_ven_real} [ren/h]")
   runner.registerValue("CTE caudal de ventilación nocturna en verano", q_ven_noct, "[ren/h]")
   runner.registerValue("CTE caudal de ventilación reducido con caudal de diseño y recuperación", q_ven_real, "[ren/h]")
 
   scheduleRulesets = model.getScheduleRulesets
-  runner.registerInfo("* Localizando en el modelo el horario '#{ HVEN_RES }' de la plantilla")
   scheduleRuleRES = scheduleRulesets.detect { |sch| sch.name.get == HVEN_RES }
-  runner.registerInfo("* Localizando en el modelo el horario '#{ HVEN_RESNOC }' de la plantilla")
+  runner.registerInfo("* Localizado en el modelo el horario '#{ HVEN_RES }' de la plantilla: #{not scheduleRuleRES.nil?}")
   scheduleRuleNOC = scheduleRulesets.detect { |sch| sch.name.get == HVEN_RESNOC }
+  runner.registerInfo("* Localizado en el modelo el horario '#{ HVEN_RESNOC }' de la plantilla: #{not scheduleRuleNOC.nil?}")
 
   def aplica_horario_a_semana(scheduleRule)
     scheduleRule.setApplyMonday(true)
@@ -150,7 +151,18 @@ def cte_ventresidencial(model, runner, user_arguments)
   # ------------------------------------------------------------------------------------------------------------------------------------
 
   runner.registerInfo("[2/2] Incorporando objetos ZoneVentilation:DesignFlowRate a espacios habitables")
-
+  def atributosVentilacion(zvdfr, zone, type, method, ach)
+    zvdfr.addToThermalZone(zone)
+    zvdfr.setVentilationType(type)
+    zvdfr.setDesignFlowRateCalculationMethod(method)
+    zvdfr.setAirChangesperHour(ach)
+    zvdfr.setConstantTermCoefficient(1)
+    zvdfr.setTemperatureTermCoefficient(0)
+    zvdfr.setVelocityTermCoefficient(0)
+    zvdfr.setVelocitySquaredTermCoefficient(0)
+    zvdfr.setMinimumIndoorTemperature(-100)
+    zvdfr.setDeltaTemperature(-100)
+  end
   zones = model.getThermalZones
   runner.registerInfo("* Localizada(s) #{ zones.count } zona(s) térmica(s)")
   zoneVentilationCounter = 0
@@ -174,36 +186,19 @@ def cte_ventresidencial(model, runner, user_arguments)
         zoneVentilationCounter += 2
         # TODO: permitir usar tipo 'Exhaust' para obtener consumo de ventiladores
         # TODO: necesita diferencia de presión del ventilador y rendimiento total del ventilador
-        zone_ventilation = OpenStudio::Model::ZoneVentilationDesignFlowRate.new(model)
-        zone_ventilation.addToThermalZone(zone)
-        zone_ventilation.setVentilationType('Natural')
-        zone_ventilation.setDesignFlowRateCalculationMethod("AirChanges/Hour")
-        zone_ventilation.setAirChangesperHour(q_ven_noct) # 4 ren/h
-        zone_ventilation.setConstantTermCoefficient(1)
-        zone_ventilation.setTemperatureTermCoefficient(0)
-        zone_ventilation.setVelocityTermCoefficient(0)
-        zone_ventilation.setVelocitySquaredTermCoefficient(0)
-        zone_ventilation.setMinimumIndoorTemperature(-100)
-        zone_ventilation.setDeltaTemperature(-100)
-        zone_ventilation.setSchedule(scheduleRuleNOC)
+        zone_ventilation_noc = OpenStudio::Model::ZoneVentilationDesignFlowRate.new(model)
+        zone_ventilation_noc.setName("HVNOC_#{spaceName}_Zone Ventilation Design Flow Rate NOCTURNO")
+        atributosVentilacion(zone_ventilation_noc, zone, 'Natural', "AirChanges/Hour",  q_ven_noct)
+        zone_ventilation_noc.setSchedule(scheduleRuleNOC)
         runner.registerInfo("- Creando objeto ZoneVentilation:DesignFlowRate NOCTURNO en espacio '#{ spaceName }' del tipo '#{ spaceTypeName }' en la zona '#{ zoneName }'")
 
         zone_ventilation = OpenStudio::Model::ZoneVentilationDesignFlowRate.new(model)
-        zone_ventilation.addToThermalZone(zone)
-        zone_ventilation.setVentilationType(ventilationType)
+        zone_ventilation.setName("HVEN_#{spaceName}_Zone Ventilation Design Flow Rate NORMAL")
+        atributosVentilacion(zone_ventilation, zone, ventilationType, "AirChanges/Hour",q_ven_real)
         zone_ventilation.setFanPressureRise(ventilationPressureRise)
         zone_ventilation.setFanTotalEfficiency(ventilationTotEfficiency)
-        zone_ventilation.setDesignFlowRateCalculationMethod("AirChanges/Hour")
-        zone_ventilation.setAirChangesperHour(q_ven_real) #
-        zone_ventilation.setConstantTermCoefficient(1)
-        zone_ventilation.setTemperatureTermCoefficient(0)
-        zone_ventilation.setVelocityTermCoefficient(0)
-        zone_ventilation.setVelocitySquaredTermCoefficient(0)
-        zone_ventilation.setMinimumIndoorTemperature(-100)
-        zone_ventilation.setDeltaTemperature(-100)
         zone_ventilation.setSchedule(scheduleRuleRES)
         runner.registerInfo("- Creando objeto ZoneVentilation:DesignFlowRate NORMAL en espacio '#{ spaceName }' del tipo '#{ spaceTypeName }' en la zona '#{ zoneName }'")
-
 
       else
         runner.registerInfo("- El espacio '#{ spaceName }' de la zona '#{ zoneName }' no es habitable (tipo: '#{ spaceTypeName }')")
