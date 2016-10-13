@@ -1,3 +1,4 @@
+"#encoding: UTF-8" 
 # -*- coding: utf-8 -*-
 #
 # Copyright (c) 2016 Ministerio de Fomento
@@ -105,12 +106,13 @@ def cte_addvars(model, runner, user_arguments)
 
   # Get final condition ================================================
   
-  new_output_meteres = [  
-  ["Cumulative,Fans:Electricity", "monthly", "*"], #Output:Meter:, %s , ,hourly; !- [J]  
+  new_output_meteres = [
+  ["Fans:Electricity", "hourly", "*"],
   ]
   
   new_output_meteres.each do | meterName, reporting_frequency, key |
     outputMeter = OpenStudio::Model::Meter.new(model)
+    outputMeter.setCumulative(true)
     outputMeter.setName(meterName)
     outputMeter.setReportingFrequency(reporting_frequency)
     runner.registerInfo("Adding output meter #{meterName} with reporting frequency #{reporting_frequency} for key #{key}.")

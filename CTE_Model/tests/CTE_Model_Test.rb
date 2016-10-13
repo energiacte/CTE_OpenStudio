@@ -41,7 +41,7 @@ class CTE_Model_Test < MiniTest::Unit::TestCase
 
     # load the test model
     translator = OpenStudio::OSVersion::VersionTranslator.new
-    path = OpenStudio::Path.new(File.dirname(__FILE__) + "/terciario.osm")
+    path = OpenStudio::Path.new(File.dirname(__FILE__) + "/EJEMPLO.osm")
     model = translator.loadModel(path)
     assert((not model.empty?))
     model = model.get
@@ -126,6 +126,7 @@ class CTE_Model_Test < MiniTest::Unit::TestCase
     # save the model to test output directory
     output_file_path = OpenStudio::Path.new(File.dirname(__FILE__) + "/output/test_output_residencial.osm")
     model.save(output_file_path,true)
+
   end
 
 end
