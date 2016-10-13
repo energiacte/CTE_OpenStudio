@@ -173,6 +173,20 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     return totalzonas
   end
 
+  def consumoDeVentilacionMecanica(runner, model, sqlFile)
+    fanquery = "SELECT VariableValue
+    FROM ReportMeterDataDictionary rmdd
+    INNER JOIN ReportMeterData rmd
+    ON rmdd.ReportMeterDataDictionaryIndex = rmd.ReportMeterDataDictionaryIndex
+    WHERE VariableName = 'Fans:Electricity'
+    AND ReportingFrequency = 'Monthly' "
+    fansearch = sqlFile.execAndReturnVectorOfDouble(fanquery)
+    fanValues = fansearch.get
+    fanValuesKWh = fanValues.map{ |valorJ| OpenStudio.convert(valorJ, 'J', 'kWh').get.round(0) }
+    return fanValuesKWh
+
+  end
+
   def energyConsumptionByVectorAndUse(sqlFile, vectorName, useName)
     # las unidades son Julios a tenor de la informacion del SQL:
     # SELECT distinct  reportname, units FROM TabularDataWithStrings
@@ -245,6 +259,11 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
       salida << ['ELECTRICIDAD', 'CONSUMO', 'EPB'] + consumoIluminacionPorMeses + ['#LIGHTING']
     end
     runner.registerInfo("#{salida}")
+
+    consumoVentiladoresPorMeses = consumoDeVentilacionMecanica(runner, model, sqlFile)
+    if consumoVentiladoresPorMeses.reduce(0, :+) != 0
+      salida << ['ELECTRICIDAD', 'CONSUMO', 'EPB'] + consumoVentiladoresPorMeses + ['#FANS']
+    end
 
     return salida
   end
