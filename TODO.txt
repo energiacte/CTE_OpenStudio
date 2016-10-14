@@ -9,10 +9,5 @@
     - Renombrar a CTE_Report
     - Que el informe en la tabla "Consumo Final" se incluya o no la iluminación
 	  en función de que sea terciario o no.
-- Otros:
-    Ver posibilidad de pasar datos entre medidas a través de comentarios
-    model.building.setComment(commentstring), serializando a JSON.
-    Se accede posteriormente leyendo el lastRunModel y con
-    model.building.getComments[2..-1] deserializando el JSON.
 
 
