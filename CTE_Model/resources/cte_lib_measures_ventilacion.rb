@@ -50,13 +50,16 @@ def cte_ventresidencial(model, runner, user_arguments)
   usoEdificio = runner.getStringArgumentValue('CTE_Uso_edificio', user_arguments)
 
   ventilationType = (fan_type == "Doble flujo") ? 'Balanced': 'Exhaust'
-  ventilationPressureRise = fan_sfp * 1000 * fan_ntot # delta_p = SFP * n_tot, kPa -> Pa
+  fan_sfp_real = fan_sfp / (1 - heat_recovery)
+  ventilationPressureRise = fan_sfp_real * 1000 * fan_ntot # delta_p = SFP * n_tot, kPa -> Pa
   ventilationTotEfficiency = fan_ntot
 
   runner.registerValue("CTE Fan total efficiency", ventilationTotEfficiency)
-  runner.registerValue("CTE Fan Pressure Rise", ventilationPressureRise, "Pa")
+  runner.registerValue("CTE Fan Pressure Rise (energy equivalent)", ventilationPressureRise, "Pa")
   runner.registerValue("CTE Fan Ventilation Type", ventilationType)
   runner.registerValue("CTE Fan SFP", fan_sfp, "kPa")
+  runner.registerValue("CTE Fan SFP real", fan_sfp_real, "kPa")
+
 
   #XXX: en terciario los recuperadores deben definirse en los sistemas
   if usoEdificio != 'Residencial'
