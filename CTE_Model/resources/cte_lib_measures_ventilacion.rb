@@ -42,12 +42,12 @@ def cte_ventresidencial(model, runner, user_arguments)
   # ------------------------------------------------------------------------------------------------------------------------------------
   # 1 - Redefine el horario de ventilación con caudal de diseño y ventilación nocturna en verano, CTER24B_HVEN (disponible en plantilla)
   # ------------------------------------------------------------------------------------------------------------------------------------
-  design_flow_rate = runner.getDoubleArgumentValue('design_flow_rate', user_arguments)
-  heat_recovery = runner.getDoubleArgumentValue('heat_recovery', user_arguments)
-  fan_sfp = runner.getDoubleArgumentValue('fan_sfp', user_arguments)
-  fan_ntot = runner.getDoubleArgumentValue('fan_ntot', user_arguments)
-  fan_type = runner.getStringArgumentValue('fan_type', user_arguments)
-  usoEdificio = runner.getStringArgumentValue('usoEdificio', user_arguments)
+  design_flow_rate = runner.getDoubleArgumentValue('CTE_Design_flow_rate', user_arguments)
+  heat_recovery = runner.getDoubleArgumentValue('CTE_Heat_recovery', user_arguments)
+  fan_sfp = runner.getDoubleArgumentValue('CTE_Fan_sfp', user_arguments)
+  fan_ntot = runner.getDoubleArgumentValue('CTE_Fan_ntot', user_arguments)
+  fan_type = runner.getStringArgumentValue('CTE_Fan_type', user_arguments)
+  usoEdificio = runner.getStringArgumentValue('CTE_Uso_edificio', user_arguments)
 
   ventilationType = (fan_type == "Doble flujo") ? 'Balanced': 'Exhaust'
   ventilationPressureRise = fan_sfp * 1000 * fan_ntot # delta_p = SFP * n_tot, kPa -> Pa

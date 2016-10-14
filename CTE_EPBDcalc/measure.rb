@@ -101,17 +101,17 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     end
 
 
-    agua_caliente_sanitaria = OpenStudio::Ruleset::OSArgument::makeChoiceArgument('WATERSYSTEMS', acs_tech,acs_desc, true)
+    agua_caliente_sanitaria = OpenStudio::Ruleset::OSArgument::makeChoiceArgument('CTE_Watersystems', acs_tech,acs_desc, true)
     agua_caliente_sanitaria.setDisplayName("Agua Caliente Sanitaria")
     agua_caliente_sanitaria.setDefaultValue("generic_acs")
     args << agua_caliente_sanitaria
 
-    calefaccion = OpenStudio::Ruleset::OSArgument::makeChoiceArgument('HEATING', heat_tech, heat_desc, true)
+    calefaccion = OpenStudio::Ruleset::OSArgument::makeChoiceArgument('CTE_Heating', heat_tech, heat_desc, true)
     calefaccion.setDisplayName("Calefacción")
     calefaccion.setDefaultValue("generic_heat")
     args << calefaccion
 
-    refrigeracion = OpenStudio::Ruleset::OSArgument::makeChoiceArgument('COOLING', cool_tech, cool_desc, true)
+    refrigeracion = OpenStudio::Ruleset::OSArgument::makeChoiceArgument('CTE_Cooling', cool_tech, cool_desc, true)
     refrigeracion.setDisplayName("Refrigeración")
     refrigeracion.setDefaultValue("generic_cool")
     args << refrigeracion
@@ -286,9 +286,9 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
   end
 
   def get_servicios(runner, user_arguments)
-    waterSystemsTech = runner.getStringArgumentValue('WATERSYSTEMS', user_arguments)
-    heatingTech = runner.getStringArgumentValue('HEATING', user_arguments)
-    coolingTech = runner.getStringArgumentValue('COOLING', user_arguments)
+    waterSystemsTech = runner.getStringArgumentValue('CTE_Watersystems', user_arguments)
+    heatingTech = runner.getStringArgumentValue('CTE_Heating', user_arguments)
+    coolingTech = runner.getStringArgumentValue('CTE_Cooling', user_arguments)
 
     servicios = [['WATERSYSTEMS', waterSystemsTech.to_sym],
                  ['HEATING', heatingTech.to_sym],

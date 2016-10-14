@@ -35,8 +35,8 @@ def cte_tempaguafria(model, runner, user_arguments)
   runner.registerInfo("CTE: fijando temperatura de agua de red")
 
   # Variables
-  provincia = runner.getStringArgumentValue('provincia', user_arguments)
-  altitudEmplazamiento = runner.getDoubleArgumentValue('altitud', user_arguments)
+  provincia = runner.getStringArgumentValue('CTE_Provincia', user_arguments)
+  altitudEmplazamiento = runner.getDoubleArgumentValue('CTE_Altitud', user_arguments)
   if (altitudEmplazamiento > 4000)
     runner.registerError("Altitud excesiva del emplazamiento: #{ altitudEmplazamiento }")
     return false

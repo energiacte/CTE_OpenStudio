@@ -91,10 +91,10 @@ def cte_infiltracion(model, runner, user_arguments) #copiado del residencial
 
   #hay que tomar el horario del espacio -> zona -> tipo de zona
 
-  tipoEdificio = runner.getStringArgumentValue('tipoEdificio', user_arguments)
-  claseVentana = runner.getStringArgumentValue('permeabilidadVentanas', user_arguments)
-  coefStack = runner.getDoubleArgumentValue('coefStack', user_arguments)
-  coefWind = runner.getDoubleArgumentValue('coefWind', user_arguments)
+  tipoEdificio = runner.getStringArgumentValue('CTE_Tipo_edificio', user_arguments)
+  claseVentana = runner.getStringArgumentValue('CTE_Permeabilidad_ventanas', user_arguments)
+  coefStack = runner.getDoubleArgumentValue('CTE_Coef_stack', user_arguments)
+  coefWind = runner.getDoubleArgumentValue('CTE_Coef_wind', user_arguments)
 
   runner.registerValue("CTE Tipo de Edificio (Nuevo/Existente)", tipoEdificio)
   runner.registerValue("CTE Clase de permeabilidad de Ventanas", claseVentana)

@@ -197,11 +197,11 @@ def medicionPTContornoHuecos(runner, model)
 end
 
 def ttlinealusuario(runner, user_arguments)
-  psiForjadoCubierta = runner.getStringArgumentValue('psiForjadoCubierta', user_arguments).to_f
-  psiFrenteForjado = runner.getStringArgumentValue('psiFrenteForjado', user_arguments).to_f
-  psiSoleraTerreno = runner.getStringArgumentValue('psiSoleraTerreno', user_arguments).to_f
-  psiForjadoExterior = runner.getStringArgumentValue('psiForjadoExterior', user_arguments).to_f
-  psiContornoHuecos = runner.getStringArgumentValue('psiContornoHuecos', user_arguments).to_f
+  psiForjadoCubierta = runner.getStringArgumentValue('CTE_Psi_forjado_cubierta', user_arguments).to_f
+  psiFrenteForjado = runner.getStringArgumentValue('CTE_Psi_frente_forjado', user_arguments).to_f
+  psiSoleraTerreno = runner.getStringArgumentValue('CTE_Psi_solera_terreno', user_arguments).to_f
+  psiForjadoExterior = runner.getStringArgumentValue('CTE_Psi_forjado_exterior', user_arguments).to_f
+  psiContornoHuecos = runner.getStringArgumentValue('CTE_Psi_contorno_huecos', user_arguments).to_f
   ttl_puentesTermicos = {
       :ptForjadoCubierta => psiForjadoCubierta,
       :ptFrenteForjado => psiFrenteForjado,
