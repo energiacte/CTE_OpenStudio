@@ -49,6 +49,16 @@ def cte_ventresidencial(model, runner, user_arguments)
   fan_type = runner.getStringArgumentValue('CTE_Fan_type', user_arguments)
   usoEdificio = runner.getStringArgumentValue('CTE_Uso_edificio', user_arguments)
 
+  #XXX: en terciario los recuperadores deben definirse en los sistemas
+  if usoEdificio != 'Residencial'
+    heat_recovery = 0.0
+  end
+
+  if heat_recovery >= 1.0
+    runner.registerError("Recuperador de calor con eficiencia igual o mayor al 100%")
+    return false
+  end
+
   ventilationType = (fan_type == "Doble flujo") ? 'Balanced': 'Exhaust'
   fan_sfp_real = fan_sfp / (1 - heat_recovery)
   ventilationPressureRise = fan_sfp_real * 1000 * fan_ntot # delta_p = SFP * n_tot, kPa -> Pa
@@ -60,23 +70,13 @@ def cte_ventresidencial(model, runner, user_arguments)
   runner.registerValue("CTE Fan SFP", fan_sfp, "kPa")
   runner.registerValue("CTE Fan SFP real", fan_sfp_real, "kPa")
 
-
-  #XXX: en terciario los recuperadores deben definirse en los sistemas
-  if usoEdificio != 'Residencial'
-    heat_recovery = 0.0
-  end
-
-  if heat_recovery >= 1.0
-    runner.registerError("Recuperador de calor con eficiencia igual o mayor al 100%")
-    return false
-  end
-
-
-  q_ven_real = design_flow_rate * (1 - heat_recovery)
-  q_ven_noct = 4 - q_ven_real
-  runner.registerInfo("[1/2] Definiendo horario con ventilación nocturna en verano (4ren/h) y caudal de diseño: #{q_ven_real} [ren/h]")
+  q_ven_reduced = design_flow_rate * (1 - heat_recovery)
+  q_ven_noct = 4 - q_ven_reduced
+  
+  
+  runner.registerInfo("[1/2] Definiendo horario con ventilación nocturna en verano (4ren/h) y caudal de diseño: #{q_ven_reduced} [ren/h]")
   runner.registerValue("CTE caudal de ventilación nocturna en verano", q_ven_noct, "[ren/h]")
-  runner.registerValue("CTE caudal de ventilación reducido con caudal de diseño y recuperación", q_ven_real, "[ren/h]")
+  runner.registerValue("CTE caudal de ventilación reducido con caudal de diseño y recuperación", q_ven_reduced, "[ren/h]")
 
   scheduleRulesets = model.getScheduleRulesets
   scheduleRuleRES = scheduleRulesets.detect { |sch| sch.name.get == HVEN_RES }
@@ -197,7 +197,7 @@ def cte_ventresidencial(model, runner, user_arguments)
 
         zone_ventilation = OpenStudio::Model::ZoneVentilationDesignFlowRate.new(model)
         zone_ventilation.setName("HVEN_#{spaceName}_Zone Ventilation Design Flow Rate NORMAL")
-        atributosVentilacion(zone_ventilation, zone, ventilationType, "AirChanges/Hour",q_ven_real)
+        atributosVentilacion(zone_ventilation, zone, ventilationType, "AirChanges/Hour",q_ven_reduced)
         zone_ventilation.setFanPressureRise(ventilationPressureRise)
         zone_ventilation.setFanTotalEfficiency(ventilationTotEfficiency)
         zone_ventilation.setSchedule(scheduleRuleRES)
