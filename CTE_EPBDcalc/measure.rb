@@ -28,6 +28,7 @@
 require 'erb'
 require 'openstudio'
 require 'date'
+require 'json'
 
 # Medida de OpenStudio (ReportingUserScript) para usar en condiciones CTE
 # La medida permite obtener salidas válidas para su uso con el software
@@ -299,6 +300,7 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
   def run(runner, user_arguments)
     super(runner, user_arguments)
 
+
     sqlFile = runner.lastEnergyPlusSqlFile
     if sqlFile.empty?
       runner.registerError("Cannot find last sql file.")
@@ -313,6 +315,8 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
       return false
     end
     model = model.get
+    puts model.building.get.comment[2..-1]
+    puts JSON.parse(model.building.get.comment[2..-1])
 
     # BUG: Esta superficie incluye los espacios habitables no acondicionados que no deberían
     # BUG: formar parte del área de referencia.
