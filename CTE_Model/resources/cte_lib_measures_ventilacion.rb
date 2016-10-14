@@ -72,8 +72,7 @@ def cte_ventresidencial(model, runner, user_arguments)
 
   q_ven_reduced = design_flow_rate * (1 - heat_recovery)
   q_ven_noct = 4 - q_ven_reduced
-  
-  
+
   runner.registerInfo("[1/2] Definiendo horario con ventilación nocturna en verano (4ren/h) y caudal de diseño: #{q_ven_reduced} [ren/h]")
   runner.registerValue("CTE caudal de ventilación nocturna en verano", q_ven_noct, "[ren/h]")
   runner.registerValue("CTE caudal de ventilación reducido con caudal de diseño y recuperación", q_ven_reduced, "[ren/h]")
@@ -154,18 +153,6 @@ def cte_ventresidencial(model, runner, user_arguments)
   # ------------------------------------------------------------------------------------------------------------------------------------
 
   runner.registerInfo("[2/2] Incorporando objetos ZoneVentilation:DesignFlowRate a espacios habitables")
-  def atributosVentilacion(zvdfr, zone, type, method, ach)
-    zvdfr.addToThermalZone(zone)
-    zvdfr.setVentilationType(type)
-    zvdfr.setDesignFlowRateCalculationMethod(method)
-    zvdfr.setAirChangesperHour(ach)
-    zvdfr.setConstantTermCoefficient(1)
-    zvdfr.setTemperatureTermCoefficient(0)
-    zvdfr.setVelocityTermCoefficient(0)
-    zvdfr.setVelocitySquaredTermCoefficient(0)
-    zvdfr.setMinimumIndoorTemperature(-100)
-    zvdfr.setDeltaTemperature(-100)
-  end
   zones = model.getThermalZones
   runner.registerInfo("* Localizada(s) #{ zones.count } zona(s) térmica(s)")
   zoneVentilationCounter = 0
@@ -187,17 +174,33 @@ def cte_ventresidencial(model, runner, user_arguments)
       end
       if spaceTypeName.start_with?('CTE_HR') or spaceTypeName.start_with?('CTE_AR')
         zoneVentilationCounter += 2
-        # TODO: permitir usar tipo 'Exhaust' para obtener consumo de ventiladores
-        # TODO: necesita diferencia de presión del ventilador y rendimiento total del ventilador
         zone_ventilation_noc = OpenStudio::Model::ZoneVentilationDesignFlowRate.new(model)
         zone_ventilation_noc.setName("HVNOC_#{spaceName}_Zone Ventilation Design Flow Rate NOCTURNO")
-        atributosVentilacion(zone_ventilation_noc, zone, 'Natural', "AirChanges/Hour",  q_ven_noct)
+        zone_ventilation_noc.addToThermalZone(zone)
+        zone_ventilation_noc.setVentilationType('Natural')
+        zone_ventilation_noc.setDesignFlowRateCalculationMethod("AirChanges/Hour")
+        zone_ventilation_noc.setAirChangesperHour(q_ven_noct)
+        zone_ventilation_noc.setConstantTermCoefficient(1)
+        zone_ventilation_noc.setTemperatureTermCoefficient(0)
+        zone_ventilation_noc.setVelocityTermCoefficient(0)
+        zone_ventilation_noc.setVelocitySquaredTermCoefficient(0)
+        zone_ventilation_noc.setMinimumIndoorTemperature(-100)
+        zone_ventilation_noc.setDeltaTemperature(-100)
         zone_ventilation_noc.setSchedule(scheduleRuleNOC)
         runner.registerInfo("- Creando objeto ZoneVentilation:DesignFlowRate NOCTURNO en espacio '#{ spaceName }' del tipo '#{ spaceTypeName }' en la zona '#{ zoneName }'")
 
         zone_ventilation = OpenStudio::Model::ZoneVentilationDesignFlowRate.new(model)
         zone_ventilation.setName("HVEN_#{spaceName}_Zone Ventilation Design Flow Rate NORMAL")
-        atributosVentilacion(zone_ventilation, zone, ventilationType, "AirChanges/Hour",q_ven_reduced)
+        zone_ventilation.addToThermalZone(zone)
+        zone_ventilation.setVentilationType(ventilationType)
+        zone_ventilation.setDesignFlowRateCalculationMethod("AirChanges/Hour")
+        zone_ventilation.setAirChangesperHour(q_ven_reduced)
+        zone_ventilation.setConstantTermCoefficient(1)
+        zone_ventilation.setTemperatureTermCoefficient(0)
+        zone_ventilation.setVelocityTermCoefficient(0)
+        zone_ventilation.setVelocitySquaredTermCoefficient(0)
+        zone_ventilation.setMinimumIndoorTemperature(-100)
+        zone_ventilation.setDeltaTemperature(-100)
         zone_ventilation.setFanPressureRise(ventilationPressureRise)
         zone_ventilation.setFanTotalEfficiency(ventilationTotEfficiency)
         zone_ventilation.setSchedule(scheduleRuleRES)
