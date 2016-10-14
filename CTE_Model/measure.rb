@@ -25,6 +25,8 @@
 #            Daniel Jiménez González <dani@ietcc.csic.es>
 #            Marta Sorribes Gil <msorribes@ietcc.csic.es>
 
+require 'json'
+
 require_relative "resources/cte_lib_measures_addvars.rb"
 require_relative "resources/cte_lib_measures_tempaguafria.rb"
 require_relative "resources/cte_lib_measures_ventilacion.rb"
@@ -187,7 +189,13 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
       return false
     end
 
-    result = true
+    argumentos = Hash.new
+    user_arguments.each do | name, argument |
+      argumentos[name] = argument.printValue
+    end
+    model.building.get.setComment(argumentos.to_json)
+
+
     result = cte_addvars(model, runner, user_arguments) # Nuevas variables y meters
     return result unless result == true
 
