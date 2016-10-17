@@ -34,7 +34,7 @@ C_HU = { 'Clase 1' => 50 * TO4PA,
          'Clase 3' => 9 * TO4PA,
          'Clase 4' => 3 * TO4PA }
 
-def cte_horario_de_infiltracion(runner, space, horario_allways_on)
+def cte_horario_de_infiltracion(runner, space, horario_always_on)
     spaceName = space.name.get
     spaceType = space.spaceType.get.name.get
     habitable = !spaceType.start_with?('CTE_N')
@@ -51,7 +51,7 @@ def cte_horario_de_infiltracion(runner, space, horario_allways_on)
         listaDeEquipos = thermalZone.zoneConditioningEquipmentListName
         if listaDeEquipos.empty?
           runner.registerInfo ("  habitable no acondicionado")
-          horarioInfiltracion = horario_allways_on
+          horarioInfiltracion = horario_always_on
         else
           runner.registerInfo ("  habitable acondicionado")
           horarios =  space.defaultScheduleSet.empty?  ?
@@ -79,12 +79,12 @@ end
 # y parámetros del documento de condic. técnicas
 def cte_infiltracion(model, runner, user_arguments) #copiado del residencial
 
-  # busca el horario para hacer allways_on
+  # busca el horario para hacer always_on
   horarios = model.getScheduleRulesets
-  horario_allways_on = false
+  horario_always_on = false
   horarios.each do | horario |
     if horario.name.get == 'CTER24B_HINF'
-      horario_allways_on = horario
+      horario_always_on = horario
       break
     end
   end
@@ -108,7 +108,7 @@ def cte_infiltracion(model, runner, user_arguments) #copiado del residencial
   # XXX: pensar como interactúa con los espacios distintos a los acondicionados
   spaces.each do |space|
     runner.registerInfo("* Espacio '#{ space.name }'")
-    horarioInfiltracion = cte_horario_de_infiltracion(runner, space, horario_allways_on)
+    horarioInfiltracion = cte_horario_de_infiltracion(runner, space, horario_always_on)
     areaOpacos = 0
     areaVentanas = 0
     areaPuertas = 0
