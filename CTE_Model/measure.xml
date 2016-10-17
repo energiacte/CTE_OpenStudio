@@ -310,24 +310,6 @@
       <default_value>0.5</default_value>
     </argument>
     <argument>
-      <name>CTE_Fan_type</name>
-      <display_name>Tipo de sistema de ventilación</display_name>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>Simple flujo</default_value>
-      <choices>
-        <choice>
-          <value>Simple flujo</value>
-          <display_name>Simple flujo</display_name>
-        </choice>
-        <choice>
-          <value>Doble flujo</value>
-          <display_name>Doble flujo</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
       <name>CTE_Permeabilidad_ventanas</name>
       <display_name>Permeabilidad de la carpintería.</display_name>
       <type>Choice</type>

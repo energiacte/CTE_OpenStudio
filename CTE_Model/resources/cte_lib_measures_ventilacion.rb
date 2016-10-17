@@ -46,7 +46,6 @@ def cte_ventresidencial(model, runner, user_arguments)
   heat_recovery = runner.getDoubleArgumentValue('CTE_Heat_recovery', user_arguments)
   fan_sfp = runner.getDoubleArgumentValue('CTE_Fan_sfp', user_arguments)
   fan_ntot = runner.getDoubleArgumentValue('CTE_Fan_ntot', user_arguments)
-  fan_type = runner.getStringArgumentValue('CTE_Fan_type', user_arguments)
   usoEdificio = runner.getStringArgumentValue('CTE_Uso_edificio', user_arguments)
 
   #XXX: en terciario los recuperadores deben definirse en los sistemas
@@ -59,19 +58,16 @@ def cte_ventresidencial(model, runner, user_arguments)
     return false
   end
 
-  ventilationType = (fan_type == "Doble flujo") ? 'Balanced': 'Exhaust'
+  q_ven_reduced = design_flow_rate * (1 - heat_recovery)
+  q_ven_noct = 4 - q_ven_reduced
   fan_sfp_augmented = fan_sfp / (1 - heat_recovery)
   ventilationPressureRise = fan_sfp_augmented * 1000 * fan_ntot # delta_p = SFP * n_tot, kPa -> Pa
   ventilationTotEfficiency = fan_ntot
 
   runner.registerValue("CTE Fan total efficiency", ventilationTotEfficiency)
   runner.registerValue("CTE Fan Pressure Rise (energy equivalent)", ventilationPressureRise, "Pa")
-  runner.registerValue("CTE Fan Ventilation Type", ventilationType)
   runner.registerValue("CTE Fan SFP", fan_sfp, "kPa")
   runner.registerValue("CTE Fan SFP augmented", fan_sfp_augmented, "kPa")
-
-  q_ven_reduced = design_flow_rate * (1 - heat_recovery)
-  q_ven_noct = 4 - q_ven_reduced
 
   runner.registerInfo("[1/2] Definiendo horario con ventilacion nocturna en verano (4ren/h) y caudal de diseño: #{q_ven_reduced} [ren/h]")
   runner.registerValue("CTE caudal de ventilacion nocturna en verano", q_ven_noct, "[ren/h]")
@@ -192,7 +188,7 @@ def cte_ventresidencial(model, runner, user_arguments)
         zone_ventilation = OpenStudio::Model::ZoneVentilationDesignFlowRate.new(model)
         zone_ventilation.setName("HVEN_#{spaceName}_Zone Ventilation Design Flow Rate NORMAL")
         zone_ventilation.addToThermalZone(zone)
-        zone_ventilation.setVentilationType(ventilationType)
+        zone_ventilation.setVentilationType("Exhaust")
         zone_ventilation.setDesignFlowRateCalculationMethod("AirChanges/Hour")
         zone_ventilation.setAirChangesperHour(q_ven_reduced)
         zone_ventilation.setConstantTermCoefficient(1)

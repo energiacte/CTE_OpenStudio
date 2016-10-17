@@ -151,7 +151,6 @@ class CTE_Model_Test < MiniTest::Unit::TestCase
     args_hash["CTE_Design_flow_rate"] = 0.63
     args_hash["CTE_Fan_ntot"] = 0.5
     args_hash["CTE_Fan_sfp"] = 2.5
-    args_hash["CTE_Fan_type"] = "Simple flujo"
     args_hash["CTE_Heat_recovery"] = 0.5
     # using defaults values from measure.rb for other arguments
 

@@ -105,24 +105,16 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
     args << heat_recovery
 
     fan_sfp = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("CTE_Fan_sfp", true)
-    fan_sfp.setDisplayName("Consumo específico de ventiladores (SFP)")
+    fan_sfp.setDisplayName("Consumo específico global de ventiladores (SFP)")
     fan_sfp.setUnits("kPa")
     fan_sfp.setDefaultValue(2.5)
     args << fan_sfp
 
     fan_ntot = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("CTE_Fan_ntot", true)
-    fan_ntot.setDisplayName("Eficiencia global de ventiladores (n_tot)")
+    fan_ntot.setDisplayName("Eficiencia total de ventiladores (n_tot)")
     fan_ntot.setUnits("adimensional")
     fan_ntot.setDefaultValue(0.5)
     args << fan_ntot
-
-    tipoFlujo = OpenStudio::StringVector.new
-    tipoFlujo << 'Simple flujo'
-    tipoFlujo << 'Doble flujo'
-    fan_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("CTE_Fan_type", tipoFlujo, true)
-    fan_type.setDisplayName("Tipo de sistema de ventilación")
-    fan_type.setDefaultValue('Simple flujo')
-    args << fan_type
 
     claseVentana = OpenStudio::StringVector.new
     claseVentana << 'Clase 1'
