@@ -90,6 +90,7 @@ def cte_ventresidencial(model, runner, user_arguments)
   end
 
   if scheduleRuleRES.nil?
+    runner.registerInfo("* Creando horario '#{ HVEN_RES }'")
     # Reglas para ventilación de diseño
     scheduleRuleRES = OpenStudio::Model::ScheduleRuleset.new(model)
     scheduleRuleRES.setName(HVEN_RES)
@@ -104,10 +105,10 @@ def cte_ventresidencial(model, runner, user_arguments)
     disenoHVENRule.setStartDate(startDate)
     disenoHVENRule.setEndDate(endDate)
     aplica_horario_a_semana(disenoHVENRule)
-    runner.registerInfo("* Añadida regla '#{ HVEN_RES }'")
   end
 
   if scheduleRuleNOC.nil?
+    runner.registerInfo("* Creando horario '#{ HVEN_RESNOC }'")
     # Reglas para ventilación de diseño
     scheduleRuleNOC = OpenStudio::Model::ScheduleRuleset.new(model)
     scheduleRuleNOC.setName(HVEN_RESNOC)
@@ -152,12 +153,13 @@ def cte_ventresidencial(model, runner, user_arguments)
   zones = model.getThermalZones
   runner.registerInfo("* Localizada(s) #{ zones.count } zona(s) térmica(s)")
   zoneVentilationCounter = 0
+  spaceCounter = 0
   zones.each do | zone |
     zoneName = zone.name.get
     zoneIsIdeal = zone.useIdealAirLoads ? true : false
     spaces = zone.spaces()
-    runner.registerInfo("+ Localizado(s) #{ spaces.count } espacio(s) en la zona '#{ zoneName }'")
-    # Solamente usamos el primer espacio de la zona? suponemos que solo hay uno?
+    spaceCounter += spaces.count
+    # XXX: Solamente usamos el primer espacio de la zona? suponemos que solo hay uno? Si hubiese más se duplicarían definiciones
     spaces.each do |space|
       spaceName = space.name.get
       spaceType = space.spaceType.get
@@ -165,9 +167,10 @@ def cte_ventresidencial(model, runner, user_arguments)
       # Las zonas con Ideal Air Loads incorporan un objeto ZoneVentilation:DesignFlowRate si la
       # plantilla define para ese tipo de espacio un objeto 'Design Specification Outdoor Air'
       if zoneIsIdeal and not spaceType.isDesignSpecificationOutdoorAirDefaulted
-          runner.registerInfo("- El espacio '#{ spaceName }' de la zona '#{ zoneName }' tiene sistemas ideales y ZoneVentilation:DesignFlowRate definido en el tipo '#{ spaceTypeName }")
+          runner.registerWarning("- El espacio '#{ spaceName }' de la zona '#{ zoneName }' tiene sistemas ideales y un Objeto OutdoorAir en el tipo '#{ spaceTypeName }")
           next
       end
+      # espacios habitables
       if spaceTypeName.start_with?('CTE_HR') or spaceTypeName.start_with?('CTE_AR')
         zoneVentilationCounter += 2
         zone_ventilation_noc = OpenStudio::Model::ZoneVentilationDesignFlowRate.new(model)
@@ -183,7 +186,6 @@ def cte_ventresidencial(model, runner, user_arguments)
         zone_ventilation_noc.setMinimumIndoorTemperature(-100)
         zone_ventilation_noc.setDeltaTemperature(-100)
         zone_ventilation_noc.setSchedule(scheduleRuleNOC)
-        runner.registerInfo("- Creando objeto ZoneVentilation:DesignFlowRate NOCTURNO en espacio '#{ spaceName }' del tipo '#{ spaceTypeName }' en la zona '#{ zoneName }'")
 
         zone_ventilation = OpenStudio::Model::ZoneVentilationDesignFlowRate.new(model)
         zone_ventilation.setName("HVEN_#{spaceName}_Zone Ventilation Design Flow Rate NORMAL")
@@ -200,13 +202,10 @@ def cte_ventresidencial(model, runner, user_arguments)
         zone_ventilation.setFanPressureRise(ventilationPressureRise)
         zone_ventilation.setFanTotalEfficiency(ventilationTotEfficiency)
         zone_ventilation.setSchedule(scheduleRuleRES)
-        runner.registerInfo("- Creando objeto ZoneVentilation:DesignFlowRate NORMAL en espacio '#{ spaceName }' del tipo '#{ spaceTypeName }' en la zona '#{ zoneName }'")
-
-      else
-        runner.registerInfo("- El espacio '#{ spaceName }' de la zona '#{ zoneName }' no es habitable (tipo: '#{ spaceTypeName }')")
       end
     end
   end
+  runner.registerInfo("* Localizado(s) #{ spaceCounter } espacio(s)")
   runner.registerInfo("* Creado(s) #{ zoneVentilationCounter } objeto(s) ZoneVentilation:DesignFlowRate. ")
   runner.registerInfo("CTE: Finalizada definición de condiciones de ventilación de espacios habitables en edificios residenciales.")
   return true # OS necesita saber que todo acabó bien

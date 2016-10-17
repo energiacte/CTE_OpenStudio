@@ -97,7 +97,6 @@ class CTE_InformeDBHE < OpenStudio::Ruleset::ReportingUserScript
     model = setup[:model]
     # workspace = setup[:workspace]
     sql_file = setup[:sqlFile]
-    web_asset_path = setup[:web_asset_path]
 
     # assign the user inputs to variables
     args = OsLib_HelperMethods.createRunVariables(runner, model, user_arguments, arguments)
@@ -108,16 +107,12 @@ class CTE_InformeDBHE < OpenStudio::Ruleset::ReportingUserScript
     # reporting final condition
     runner.registerInitialCondition('Recopilando datos de archivo SQL de EnergyPlus y model OSM.')
 
-    runner.registerInfo("Lista de secciones:")
-    possible_sections.each_with_index { |method_name, index| runner.registerInfo("- #{ index }: #{method_name}")}
-
     # generate data for requested sections
     # create a array of sections to loop through in erb file
     @sections = []
     sections_made = 0
     possible_sections.each do |method_name|
       next unless args[method_name]
-      runner.registerInfo("* Llamando a m??todo '#{method_name}'")
       method = OsLib_Reporting.method(method_name)
       @sections << method.call(model, sql_file, runner, false)
       sections_made += 1
@@ -155,7 +150,7 @@ class CTE_InformeDBHE < OpenStudio::Ruleset::ReportingUserScript
     sql_file.close
 
     # reporting final condition
-    runner.registerFinalCondition("Generado informe con #{sections_made} secciones en #{html_out_path}.")
+    runner.registerFinalCondition("Generado informe en #{ html_out_path } con secciones: #{ sections_made }")
 
     return true
   end # end the run method
