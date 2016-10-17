@@ -205,13 +205,13 @@ module CTE_tables
     general_table[:data] << ['<b>Servicios EPB</b>', totalUsosEPB.round(0),
         "<b>#{(totalUsosEPB/superficiehabitable).round(1)}</b>"]
     usosEPB.each do | clave, valor |
-      general_table[:data] << [" - #{traduce[clave]}", valor.round(0), (valor/superficiehabitable).round(0)]
+      general_table[:data] << [" - #{traduce[clave]}", valor.round(0), (valor/superficiehabitable).round(1)]
     end
 
     general_table[:data] << ['<b>Servicios No EPB</b>', totalUsosNoEPB.round(0),
         "<b>#{(totalUsosNoEPB/superficiehabitable).round(1)}</b>"]
     usosNoEPB.each do | clave, valor |
-      general_table[:data] << [" - #{traduce[clave]}", valor.round(0), (valor/superficiehabitable).round(0)]
+      general_table[:data] << [" - #{traduce[clave]}", valor.round(0), (valor/superficiehabitable).round(1)]
     end
     return general_table
   end
