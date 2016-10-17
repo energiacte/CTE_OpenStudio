@@ -104,7 +104,6 @@ def cte_infiltracion(model, runner, user_arguments) #copiado del residencial
   # XXX: pensar como interactúa con los espacios distintos a los acondicionados
   spaces.each do |space|
     horarioInfiltracion = cte_horario_de_infiltracion(runner, space, horario_always_on)
-    runner.registerInfo("* Espacio '#{ space.name }' con horario de inf. '#{ horarioInfiltracion.name.get }'")
     areaOpacos = 0
     areaVentanas = 0
     areaPuertas = 0
@@ -128,7 +127,7 @@ def cte_infiltracion(model, runner, user_arguments) #copiado del residencial
       end
     end
 
-    runner.registerInfo("-- Totales [m2]: opacos: #{ areaOpacos.round(2) }, huecos #{ areaVentanas.round(2) }, puertas #{ areaPuertas.round(2) }\n")
+    runner.registerInfo("Infiltraciones: '#{ space.name }' / '#{ horarioInfiltracion.name.get }' - ELA [m2]: opacos: #{ areaOpacos.round(2) }, huecos #{ areaVentanas.round(2) }, puertas #{ areaPuertas.round(2) }\n")
 
     c_ven = 0.0 # Superficie bocas admisión
     if claseVentana != 'Clase 1'
