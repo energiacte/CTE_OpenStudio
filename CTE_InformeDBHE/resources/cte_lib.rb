@@ -171,12 +171,12 @@ module CTE_tables
 
     usosNoEPB = {'Interior Lighting'=> 0, 'Interior Equipment'=> 0,
             'Fans'=> 0, 'Pumps'=> 0, }
-    
-    traduce = {'Heating'=> 'Calefacción', 'Cooling'=> 'Refrigeración', 
-      'Water Systems'=> 'ACS', 'Interior Lighting'=> 'Iluminación', 
-      'Interior Equipment'=> 'Equipos','Fans'=> 'Ventiladores', 
+
+    traduce = {'Heating'=> 'Calefacción', 'Cooling'=> 'Refrigeración',
+      'Water Systems'=> 'ACS', 'Interior Lighting'=> 'Iluminación',
+      'Interior Equipment'=> 'Equipos','Fans'=> 'Ventiladores',
       'Pumps'=> 'Bombas'}
-    
+
     totalUsosEPB = 0
     usosEPB.each do | clave, dummy |
       valor = energyConsumptionByUses(sqlFile, clave)
@@ -201,7 +201,7 @@ module CTE_tables
     general_table[:data] = []
     general_table[:data] << ['<b>Servicios EPB + No EPB</b>',
       (totalUsosEPB+totalUsosNoEPB).round(0),
-      "<b>#{((totalUsosEPB+totalUsosNoEPB)/superficiehabitable).round(1)}</b>"]      
+      "<b>#{((totalUsosEPB+totalUsosNoEPB)/superficiehabitable).round(1)}</b>"]
     general_table[:data] << ['<b>Servicios EPB</b>', totalUsosEPB.round(0),
         "<b>#{(totalUsosEPB/superficiehabitable).round(1)}</b>"]
     usosEPB.each do | clave, valor |
@@ -287,10 +287,8 @@ module CTE_tables
   # Tabla de aire exterior
   def self.tabla_de_aire_exterior(model, sqlFile, runner)
 
-    # Zone Combined Outdoor Air Changes per Hour is not includen in the OutdoorAirSummary,
+    # XXX: Zone Combined Outdoor Air Changes per Hour is not includen in the OutdoorAirSummary,
     # it has to be read from general variable data in the SQL file.
-    variableName = 'Zone Combined Outdoor Air Changes per Hour'
-
 
     # data for query
     report_name = 'OutdoorAirSummary'
@@ -365,7 +363,7 @@ module CTE_tables
         row_data << row_data_ip.round(2)
 
         # para la media de todo el edificio
-        medias[header] += row_data_ip*zoneVolume
+        medias[header] += row_data_ip * zoneVolume
       end
 
       table[:data] << row_data
@@ -374,7 +372,7 @@ module CTE_tables
     row_data = ['Total edificio']
     table[:header].each do |header|
       next if header == ''
-      row_data << (medias[header]/totalVolume).round(2)
+      row_data << (medias[header] / totalVolume).round(2)
     end
     table[:data] << row_data
 
