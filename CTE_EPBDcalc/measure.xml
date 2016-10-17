@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>conexion_epdb</name>
   <uid>648a813c-f8d9-44f9-912f-53b891198a35</uid>
-  <version_id>22628dcc-4f1e-47f2-8694-0c271b27a301</version_id>
-  <version_modified>20160927T150140Z</version_modified>
+  <version_id>d690f4bb-fb3c-4817-8f7d-d77741588b3b</version_id>
+  <version_modified>20161017T081900Z</version_modified>
   <xml_checksum>9BF1E6AC</xml_checksum>
   <class_name>ConexionEPDB</class_name>
   <display_name>Conexion con EPBDcalc</display_name>
@@ -11,12 +11,12 @@
   <modeler_description>Es necesasrio agrupar los consumos y producciones por usos y vectores energeticos</modeler_description>
   <arguments>
     <argument>
-      <name>WATERSYSTEMS</name>
+      <name>CTE_Watersystems</name>
       <display_name>Agua Caliente Sanitaria</display_name>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>gas_boiler</default_value>
+      <default_value>generic_acs</default_value>
       <choices>
         <choice>
           <value>gas_boiler</value>
@@ -24,7 +24,7 @@
         </choice>
         <choice>
           <value>generic_acs</value>
-          <display_name>equipo genérico ACS</display_name>
+          <display_name>equipo gen?rico ACS</display_name>
         </choice>
         <choice>
           <value>hp_heat</value>
@@ -33,12 +33,12 @@
       </choices>
     </argument>
     <argument>
-      <name>HEATING</name>
-      <display_name>Calefacción</display_name>
+      <name>CTE_Heating</name>
+      <display_name>Calefacci?n</display_name>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>hp_heat</default_value>
+      <default_value>generic_heat</default_value>
       <choices>
         <choice>
           <value>gas_boiler</value>
@@ -50,17 +50,17 @@
         </choice>
         <choice>
           <value>generic_heat</value>
-          <display_name>equipo genérico en calefaccion</display_name>
+          <display_name>equipo gen?rico en calefaccion</display_name>
         </choice>
       </choices>
     </argument>
     <argument>
-      <name>COOLING</name>
-      <display_name>Refrigeración</display_name>
+      <name>CTE_Cooling</name>
+      <display_name>Refrigeraci?n</display_name>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>hp_cool</default_value>
+      <default_value>generic_cool</default_value>
       <choices>
         <choice>
           <value>hp_cool</value>
@@ -68,7 +68,7 @@
         </choice>
         <choice>
           <value>generic_cool</value>
-          <display_name>equipo genérico en refrigeración</display_name>
+          <display_name>equipo gen?rico en refrigeraci?n</display_name>
         </choice>
       </choices>
     </argument>
@@ -134,7 +134,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>4311A23F</checksum>
+      <checksum>8A580703</checksum>
     </file>
   </files>
 </measure>

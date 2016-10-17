@@ -2,55 +2,14 @@
   <schema_version>3.0</schema_version>
   <name>cte_workspace</name>
   <uid>a4172009-822d-40f3-8c80-725f59797c02</uid>
-  <version_id>8f94848c-6bef-4068-924a-84c6e34e196b</version_id>
-  <version_modified>20160927T150137Z</version_modified>
+  <version_id>fcfa04cc-3af1-4494-8136-3d29367ddb97</version_id>
+  <version_modified>20161017T081900Z</version_modified>
   <xml_checksum>31E4D2D4</xml_checksum>
   <class_name>CTE_Workspace</class_name>
   <display_name>Aplica las medidas al Workspace</display_name>
-  <description>Asegura que los objetos ZoneVentilation:DesignFlowRate usan el horario CTER24B_HVEN y añade objetos ZoneAirBalance:OutdoorAir.</description>
-  <modeler_description>Recorre objetos ZoneVentilation:DesignFlowRate y comprueba horario. Añade a todos los objetos Zone un objeto ZoneAirBalance:OutdoorAir.</modeler_description>
-  <arguments>
-    <argument>
-      <name>recuperador</name>
-      <display_name>Recuperador de calor</display_name>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>Ninguno</default_value>
-      <choices>
-        <choice>
-          <value>Ninguno</value>
-          <display_name>Ninguno</display_name>
-        </choice>
-        <choice>
-          <value>Sensible</value>
-          <display_name>Sensible</display_name>
-        </choice>
-        <choice>
-          <value>Entálpico</value>
-          <display_name>Entálpico</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>sensible_effectiveness</name>
-      <display_name>efectividad de la recuperación sensible</display_name>
-      <type>Double</type>
-      <units></units>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0.7</default_value>
-    </argument>
-    <argument>
-      <name>latente_effectiveness</name>
-      <display_name>efectividad de la recuperación latente</display_name>
-      <type>Double</type>
-      <units></units>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0.65</default_value>
-    </argument>
-  </arguments>
+  <description>Asegura que los objetos ZoneVentilation:DesignFlowRate usan el horario CTER24B_HVEN y a?ade objetos ZoneAirBalance:OutdoorAir.</description>
+  <modeler_description>Recorre objetos ZoneVentilation:DesignFlowRate y comprueba horario. A?ade a todos los objetos Zone un objeto ZoneAirBalance:OutdoorAir.</modeler_description>
+  <arguments/>
   <provenances/>
   <tags>
     <tag>Whole Building.Space Types</tag>
@@ -165,16 +124,16 @@
       <checksum>3A2AE0C3</checksum>
     </file>
     <file>
-      <filename>cte_lib_measures_ventresidencial.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>1C1A308F</checksum>
-    </file>
-    <file>
       <filename>cte_lib_measures_zoneairbalance.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>84D20F22</checksum>
+    </file>
+    <file>
+      <filename>cte_lib_measures_ventresidencial.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>204A9CDC</checksum>
     </file>
     <file>
       <version>
@@ -185,13 +144,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>C3AE561B</checksum>
-    </file>
-    <file>
-      <filename>cte_lib_measures_recuperadorcalor.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>11F3011A</checksum>
+      <checksum>EC7F380E</checksum>
     </file>
   </files>
 </measure>

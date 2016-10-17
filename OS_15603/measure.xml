@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>open_studio_results_copy</name>
   <uid>6d91a3a6-5fcd-4f37-bcd7-9080493a5799</uid>
-  <version_id>23cbdc86-f488-4e7c-9c60-43130d0a3028</version_id>
-  <version_modified>20160927T152909Z</version_modified>
+  <version_id>24f320fc-5c59-4638-b7e1-56bcb5705571</version_id>
+  <version_modified>20161011T093631Z</version_modified>
   <xml_checksum>69BA4D91</xml_checksum>
   <class_name>OpenStudioResultsCopy</class_name>
   <display_name>Informe 15603</display_name>
@@ -49,7 +49,7 @@
     </argument>
     <argument>
       <name>variables_de_inspeccion</name>
-      <display_name>Inspección de variables</display_name>
+      <display_name>Inspecci?n de variables</display_name>
       <type>Boolean</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -561,22 +561,22 @@
       <checksum>681CCE2C</checksum>
     </file>
     <file>
-      <filename>test_cteLib.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>FCC3196B</checksum>
-    </file>
-    <file>
       <filename>cte_query.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>B364975F</checksum>
     </file>
     <file>
+      <filename>test_cteLib.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>46042B10</checksum>
+    </file>
+    <file>
       <filename>cte_lib.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>363DC5E0</checksum>
+      <checksum>DA0146EA</checksum>
     </file>
   </files>
 </measure>

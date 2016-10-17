@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>cte_informe_dbhe</name>
   <uid>fda88851-76a7-48cb-8cbd-d0d6f803b8e5</uid>
-  <version_id>1efe588e-9259-4dd3-a0af-069c8f21b053</version_id>
-  <version_modified>20161010T094256Z</version_modified>
+  <version_id>6030dd89-51d6-43e8-b90d-3ee092322a98</version_id>
+  <version_modified>20161017T081900Z</version_modified>
   <xml_checksum>72C8354A</xml_checksum>
   <class_name>CTE_InformeDBHE</class_name>
   <display_name> Informe DBHE</display_name>
@@ -102,7 +102,7 @@
       </choices>
     </argument>
     <argument>
-      <name>envelope_section_section</name>
+      <name>cte_envelope_section_section</name>
       <display_name>Envelope</display_name>
       <type>Boolean</type>
       <required>true</required>
@@ -288,18 +288,6 @@
   </attributes>
   <files>
     <file>
-      <filename>cubito+garaje_NH-report.html</filename>
-      <filetype>html</filetype>
-      <usage_type>test</usage_type>
-      <checksum>26974C1F</checksum>
-    </file>
-    <file>
-      <filename>os_lib_reporting.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>6EB900DD</checksum>
-    </file>
-    <file>
       <filename>os_lib_schedules.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -318,76 +306,10 @@
       <checksum>B364975F</checksum>
     </file>
     <file>
-      <filename>cubito+garaje_eplusoutZAB.sql</filename>
-      <filetype>sql</filetype>
-      <usage_type>test</usage_type>
-      <checksum>1C2136EB</checksum>
-    </file>
-    <file>
-      <filename>cubito+garaje_NH.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>6A7AFFFB</checksum>
-    </file>
-    <file>
-      <filename>cubito+garaje_NH-out.idf</filename>
-      <filetype>idf</filetype>
-      <usage_type>test</usage_type>
-      <checksum>4DE157AC</checksum>
-    </file>
-    <file>
-      <filename>cubito+garaje_NH.sql</filename>
-      <filetype>sql</filetype>
-      <usage_type>test</usage_type>
-      <checksum>43CF52D5</checksum>
-    </file>
-    <file>
-      <filename>E4H_AISL_APENDICE_E_alturas_corregidas.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>1D9285FE</checksum>
-    </file>
-    <file>
-      <filename>report.html</filename>
-      <filetype>html</filetype>
-      <usage_type>test</usage_type>
-      <checksum>350DA869</checksum>
-    </file>
-    <file>
-      <filename>test_cteLib.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>9C6E9231</checksum>
-    </file>
-    <file>
-      <filename>eplusout.sql</filename>
-      <filetype>sql</filetype>
-      <usage_type>test</usage_type>
-      <checksum>527FDA4B</checksum>
-    </file>
-    <file>
-      <filename>out.idf</filename>
-      <filetype>idf</filetype>
-      <usage_type>test</usage_type>
-      <checksum>1DCE2BB5</checksum>
-    </file>
-    <file>
-      <filename>out.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>F445C336</checksum>
-    </file>
-    <file>
       <filename>os_lib_reporting_SI.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>60199588</checksum>
-    </file>
-    <file>
-      <filename>report.html.erb</filename>
-      <filetype>erb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>8F926B34</checksum>
+      <checksum>EABB82D2</checksum>
     </file>
     <file>
       <version>
@@ -398,13 +320,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>85A1BC7B</checksum>
+      <checksum>D23A0811</checksum>
     </file>
     <file>
       <filename>cte_lib.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>9E95AABB</checksum>
+      <checksum>B527D461</checksum>
+    </file>
+    <file>
+      <filename>report.html.erb</filename>
+      <filetype>erb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>8F926B34</checksum>
     </file>
   </files>
 </measure>
