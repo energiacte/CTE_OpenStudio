@@ -44,17 +44,13 @@ class CTE_Workspace < OpenStudio::Ruleset::WorkspaceUserScript
   end
 
   def modeler_description
-    return "Recorre objetos ZoneVentilation:DesignFlowRate y comprueba horario. Añade a todos los objetos Zone un objeto ZoneAirBalance:OutdoorAir."
+    return "Fija temperaturas del terreno, balance de aire exterior y horario de verano."
   end
 
   def arguments(workspace)
     args = OpenStudio::Ruleset::OSArgumentVector.new
 
     return args
-  end
-
-  def es_residencial()
-    return true
   end
 
   def run(workspace, runner, user_arguments)
@@ -68,34 +64,25 @@ class CTE_Workspace < OpenStudio::Ruleset::WorkspaceUserScript
       return false
     end
 
-    num_part = '5'
-
-    if es_residencial
-      runner.registerInfo("[1/#{num_part}] - Corrección de horarios de ventilación en objetos
-                                ZoneVentilation:DesignFlowRate es CTER24B_HVEN")
-      result = cte_ventresidencial(workspace, runner, user_arguments)
-      return result unless result == true
-    end
-
     string_objects = []
 
-    runner.registerInfo("[2/#{num_part}] - Introducción de balance de aire exterior")
+    runner.registerInfo("[1/4] - Introducción de balance de aire exterior")
     result = cte_addAirBalance(runner, workspace, string_objects)
     return result unless result == true
 
-    runner.registerInfo("[3/#{num_part}] - Fija la temperatura del terreno")
+    runner.registerInfo("[2/4] - Fija la temperatura del terreno")
     result = cte_groundTemperature(runner, workspace, string_objects)
     return result unless result == true
 
 
-    runner.registerInfo("[4/#{num_part}] - Incorpora objetos definidos en cadenas al workspace")
+    runner.registerInfo("[3/4] - Incorpora objetos definidos en cadenas al workspace")
     string_objects.each do |string_object|
       idfObject = OpenStudio::IdfObject::load(string_object)
       object = idfObject.get
       workspace.addObject(object)
     end
 
-    runner.registerInfo("[5/#{num_part}] - Introduce el cambio de hora los últimos domingos de marzo y octubre")
+    runner.registerInfo("[4/4] - Introduce el cambio de hora los últimos domingos de marzo y octubre")
     result = cte_horarioestacional(runner, workspace)
     return result unless result == true
 
