@@ -25,7 +25,6 @@
 #            Daniel Jiménez González <dani@ietcc.csic.es>
 #            Marta Sorribes Gil <msorribes@ietcc.csic.es>
 
-require_relative "resources/cte_lib_measures_ventresidencial.rb"
 require_relative "resources/cte_lib_measures_zoneairbalance.rb"
 require_relative "resources/cte_lib_measures_groundtemperature.rb"
 require_relative "resources/cte_lib_measures_horarioestacional.rb"
