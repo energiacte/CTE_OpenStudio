@@ -60,22 +60,22 @@ def cte_ventresidencial(model, runner, user_arguments)
   end
 
   ventilationType = (fan_type == "Doble flujo") ? 'Balanced': 'Exhaust'
-  fan_sfp_real = fan_sfp / (1 - heat_recovery)
-  ventilationPressureRise = fan_sfp_real * 1000 * fan_ntot # delta_p = SFP * n_tot, kPa -> Pa
+  fan_sfp_augmented = fan_sfp / (1 - heat_recovery)
+  ventilationPressureRise = fan_sfp_augmented * 1000 * fan_ntot # delta_p = SFP * n_tot, kPa -> Pa
   ventilationTotEfficiency = fan_ntot
 
   runner.registerValue("CTE Fan total efficiency", ventilationTotEfficiency)
   runner.registerValue("CTE Fan Pressure Rise (energy equivalent)", ventilationPressureRise, "Pa")
   runner.registerValue("CTE Fan Ventilation Type", ventilationType)
   runner.registerValue("CTE Fan SFP", fan_sfp, "kPa")
-  runner.registerValue("CTE Fan SFP real", fan_sfp_real, "kPa")
+  runner.registerValue("CTE Fan SFP augmented", fan_sfp_augmented, "kPa")
 
   q_ven_reduced = design_flow_rate * (1 - heat_recovery)
   q_ven_noct = 4 - q_ven_reduced
 
-  runner.registerInfo("[1/2] Definiendo horario con ventilación nocturna en verano (4ren/h) y caudal de diseño: #{q_ven_reduced} [ren/h]")
-  runner.registerValue("CTE caudal de ventilación nocturna en verano", q_ven_noct, "[ren/h]")
-  runner.registerValue("CTE caudal de ventilación reducido con caudal de diseño y recuperación", q_ven_reduced, "[ren/h]")
+  runner.registerInfo("[1/2] Definiendo horario con ventilacion nocturna en verano (4ren/h) y caudal de diseño: #{q_ven_reduced} [ren/h]")
+  runner.registerValue("CTE caudal de ventilacion nocturna en verano", q_ven_noct, "[ren/h]")
+  runner.registerValue("CTE caudal de ventilacion reducido con caudal de diseño y recuperacion", q_ven_reduced, "[ren/h]")
 
   scheduleRulesets = model.getScheduleRulesets
   scheduleRuleRES = scheduleRulesets.detect { |sch| sch.name.get == HVEN_RES }
