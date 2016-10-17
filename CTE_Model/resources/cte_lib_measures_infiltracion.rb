@@ -35,39 +35,35 @@ C_HU = { 'Clase 1' => 50 * TO4PA,
          'Clase 4' => 3 * TO4PA }
 
 def cte_horario_de_infiltracion(runner, space, horario_always_on)
-    spaceName = space.name.get
+    # spaceName = space.name.get
     spaceType = space.spaceType.get.name.get
     habitable = !spaceType.start_with?('CTE_N')
-    runner.registerInfo("___ spaceName #{spaceName}, habitable: #{habitable}")
-    runner.registerInfo("    spaceType #{spaceType}")
 
     if habitable
+      # Habitable
       thermalZone = space.thermalZone.get
-      thermalZoneName = thermalZone.name.get
-      runner.registerInfo("    thermal zone #{thermalZoneName}")
       idealLoads = thermalZone.useIdealAirLoads
-      runner.registerInfo("    cargas ideales: #{idealLoads}")
       if !idealLoads
         listaDeEquipos = thermalZone.zoneConditioningEquipmentListName
         if listaDeEquipos.empty?
-          runner.registerInfo ("  habitable no acondicionado")
+          # Habitable no acondicionado
           horarioInfiltracion = horario_always_on
         else
-          runner.registerInfo ("  habitable acondicionado")
+          # Equipos reales + habitable acondicionado
           horarios =  space.defaultScheduleSet.empty?  ?
                       space.spaceType.get.defaultScheduleSet.get :
                       space.defaultScheduleSet.get
           horarioInfiltracion = horarios.infiltrationSchedule.get
         end
       else
-        runner.registerInfo ("  habitable acondicionado")
+        # Equipos ideales + habitable acondicionado
         horarios =  space.defaultScheduleSet.empty?  ?
                     space.spaceType.get.defaultScheduleSet.get :
                     space.defaultScheduleSet.get
         horarioInfiltracion = horarios.infiltrationSchedule.get
       end
     else
-      runner.registerInfo ("  no habitable")
+      # No habitable
       horarios = space.defaultScheduleSet.get
       horarioInfiltracion = horarios.infiltrationSchedule.get
     end
@@ -107,8 +103,8 @@ def cte_infiltracion(model, runner, user_arguments) #copiado del residencial
   runner.registerInfo("** Superficies para ELA **")
   # XXX: pensar como interactúa con los espacios distintos a los acondicionados
   spaces.each do |space|
-    runner.registerInfo("* Espacio '#{ space.name }'")
     horarioInfiltracion = cte_horario_de_infiltracion(runner, space, horario_always_on)
+    runner.registerInfo("* Espacio '#{ space.name }' con horario de inf. '#{ horarioInfiltracion.name.get }'")
     areaOpacos = 0
     areaVentanas = 0
     areaPuertas = 0
@@ -117,10 +113,10 @@ def cte_infiltracion(model, runner, user_arguments) #copiado del residencial
       if surface.outsideBoundaryCondition == 'Outdoors' and surface.windExposure == 'WindExposed'
         surfArea = surface.netArea
         areaOpacos += surfArea
-        runner.registerInfo("- '#{ surface.name }', #{ surface.surfaceType }, #{ surfArea.round(2) }")
+        # runner.registerInfo("- '#{ surface.name }', #{ surface.surfaceType }, #{ surfArea.round(2) }")
         surface.subSurfaces.each do |subsur|
           subSurfArea = subsur.grossArea
-          runner.registerInfo("- '#{subsur.name}', #{ subsur.subSurfaceType }, #{ subSurfArea.round(2) }")
+          # runner.registerInfo("- '#{subsur.name}', #{ subsur.subSurfaceType }, #{ subSurfArea.round(2) }")
           if ['FixedWindow', 'OperableWindow', 'SkyLight'].include?(subsur.subSurfaceType)
             areaVentanas += subSurfArea
           elsif ['Door', 'GlassDoor', 'OverheadDoor'].include?(subsur.subSurfaceType)
