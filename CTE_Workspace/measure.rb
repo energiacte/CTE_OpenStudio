@@ -40,7 +40,7 @@ class CTE_Workspace < OpenStudio::Ruleset::WorkspaceUserScript
   end
 
   def description
-    return "Asegura que los objetos ZoneVentilation:DesignFlowRate usan el horario CTER24B_HVEN y añade objetos ZoneAirBalance:OutdoorAir."
+    return "Modificaciones del IDF para calculo CTE DB-HE."
   end
 
   def modeler_description
