@@ -82,13 +82,9 @@ def getExteriorVertices(runner, spaces) # hacer un set
   spaces.each do | space |
     # tiene que ser un vector porque lo voy a sumar
     origen = OpenStudio::Vector3d.new(space.xOrigin, space.yOrigin, space.zOrigin)
-    ver = false
-    ver = true if space.name.get == "ACCESO"
-    runner.registerInfo("  space: #{space.name.get}") if ver
     space.surfaces.each do | surface |
       if surface.surfaceType == 'Wall' and
              surface.outsideBoundaryCondition == 'Outdoors'
-        runner.registerInfo("   surface: #{surface.name}") if ver
         surface.vertices.each do | point3d |
           verticesExteriores << verticeID(point3d, origen)
         end
