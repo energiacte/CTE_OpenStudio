@@ -77,7 +77,7 @@ def creaConstruccionPT(model, nombre, ttl)
 end
 
 def getExteriorVertices(runner, spaces) # hacer un set
-  runner.registerInfo("-- captura de vertices exteriores (getExteriorVertices)--")
+  runner.registerInfo("PTS: localizando vertices exteriores")
   verticesExteriores = Set.new
   spaces.each do | space |
     # tiene que ser un vector porque lo voy a sumar
@@ -135,12 +135,11 @@ def getSpaceByName(runner, model, spaceName)
 end
 
 def medicionPTForjados(runner, model)
-  runner.registerInfo("-- medición de forjados (medicionPTForjados) -- ")
+  runner.registerInfo("PTs: midiendo forjados")
   verticesExteriores = getExteriorVertices(runner, model.getSpaces)
   forjadosPorEspacios = getFloors(runner, model.getSpaces)
   salida = []
   forjadosPorEspacios.each do | spaceName, forjadosPorTipo |
-    runner.registerInfo("PTs: procesando #{spaceName}")
     space = getSpaceByName(runner, model, spaceName)
     origen = OpenStudio::Vector3d.new(space.xOrigin, space.yOrigin, space.zOrigin)
     longHash = Hash.new
@@ -169,13 +168,14 @@ def getPerimeter(subSurface)
   vertices = subSurface.vertices
   verticesp = vertices + [vertices[0]]
   long = 0
-  for cnt in 0..vertices.count-1
+  for cnt in 0..vertices.count - 1
     long += (verticesp[cnt+1] - verticesp[cnt]).length
   end
   return long
 end
 
 def medicionPTContornoHuecos(runner, model)
+  runner.registerInfo("PTs: midiendo contornos de heucos")
   salida = []
   model.getSpaces.each do | space |
     long = 0
@@ -188,7 +188,6 @@ def medicionPTContornoHuecos(runner, model)
     end
     salida << [space.name.to_s, long]
   end
-  runner.registerInfo("Puentes térmicos de contorno de huecos: #{salida}")
   return salida
 end
 
@@ -219,7 +218,6 @@ def getSpaceBarycenter(space)
         baricentro = baricentro + (v - cero)
       end
       nPuntos = surface.vertices.count
-      #~ puts ("#{surface.vertices[0].x} #{surface.vertices[0].z}")
       return baricentro.x / nPuntos, baricentro.y / nPuntos, baricentro.z / nPuntos
     end
   end
