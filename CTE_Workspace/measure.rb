@@ -63,25 +63,15 @@ class CTE_Workspace < OpenStudio::Ruleset::WorkspaceUserScript
       return false
     end
 
-    string_objects = []
-
-    runner.registerInfo("[1/4] - Introducción de balance de aire exterior")
+    runner.registerInfo("[1/3] - Introducción de balance de aire exterior")
     result = cte_addAirBalance(runner, workspace, string_objects)
     return result unless result == true
 
-    runner.registerInfo("[2/4] - Fija la temperatura del terreno")
+    runner.registerInfo("[2/3] - Fija la temperatura del terreno")
     result = cte_groundTemperature(runner, workspace, string_objects)
     return result unless result == true
 
-
-    runner.registerInfo("[3/4] - Incorpora objetos definidos en cadenas al workspace")
-    string_objects.each do |string_object|
-      idfObject = OpenStudio::IdfObject::load(string_object)
-      object = idfObject.get
-      workspace.addObject(object)
-    end
-
-    runner.registerInfo("[4/4] - Introduce el cambio de hora los últimos domingos de marzo y octubre")
+    runner.registerInfo("[3/3] - Introduce el cambio de hora los últimos domingos de marzo y octubre")
     result = cte_horarioestacional(runner, workspace)
     return result unless result == true
 
