@@ -1228,7 +1228,7 @@ module OsLib_Reporting
       column_counter = -1
       site_power_generation_table[:header].each do |header|
         origheader = { 'Capacidad nominal'=>'Rated Capacity',
-                       'Generación anual de energía'=>'Annual Energy Generated' }.fetch(key) { |nokey| nokey }
+                       'Generación anual de energía'=>'Annual Energy Generated' }.fetch(header) { |nokey| nokey }
         column_counter += 1
         next if column_counter == 0
         query = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='LEEDsummary' and RowName= '#{row}' and ColumnName='#{origheader}';"
