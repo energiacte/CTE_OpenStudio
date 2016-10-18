@@ -65,7 +65,7 @@ def cte_horario_de_infiltracion(runner, space, horario_always_on)
     else
       # No habitable
       horarios = space.defaultScheduleSet.get
-      horarioInfiltracion = horarios.infiltrationSchedule.get
+      horarioInfiltracion = horario_always_on
     end
     return horarioInfiltracion
 end
