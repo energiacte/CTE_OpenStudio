@@ -480,7 +480,7 @@ module OsLib_Reporting
       results = sqlFile.execAndReturnFirstDouble(query)
       value = OpenStudio.convert(results.get, 'GJ', target_units).get
       value_neat = OpenStudio.toNeatString(value, 0, true)
-      end_use_trans = self.traduce(end_use)
+      end_use_trans = self.translate(end_use)
       output_data_end_use_electricity[:data] << [end_use_trans, value_neat]
       runner.registerValue("CTE Energia final Electricidad - #{end_use_trans}", value, target_units)
       if value > 0
@@ -519,7 +519,7 @@ module OsLib_Reporting
       results = sqlFile.execAndReturnFirstDouble(query)
       value = OpenStudio.convert(results.get, 'GJ', target_units).get
       value_neat = OpenStudio.toNeatString(value, 0, true)
-      end_use_trans = self.traduce(end_use)
+      end_use_trans = self.translate(end_use)
       output_data_end_use_gas[:data] << [end_use_trans, value_neat]
       runner.registerValue("CTE Energia final Gas - #{end_use_trans}", value, target_units)
       if value > 0
@@ -565,7 +565,7 @@ module OsLib_Reporting
       target_units = 'kWh'
       value = OpenStudio.convert(results.get, 'GJ', target_units).get
       value_neat = OpenStudio.toNeatString(value, 0, true)
-      fuel_type_trans = self.traduce(fuel_type)
+      fuel_type_trans = self.translate(fuel_type)
       output_data_energy_use[:data] << [fuel_type_trans, value_neat]
       runner.registerValue("Combustible - #{fuel_type_trans}", value, target_units)
 
@@ -1224,7 +1224,7 @@ module OsLib_Reporting
     # loop through advisory messages
     value_found = false
     rows.each do |row|
-      row_data = [traduce(row)]
+      row_data = [translate(row)]
       column_counter = -1
       site_power_generation_table[:header].each do |header|
         column_counter += 1
