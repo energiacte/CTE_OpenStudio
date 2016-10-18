@@ -565,7 +565,7 @@ module OsLib_Reporting
       target_units = 'kWh'
       value = OpenStudio.convert(results.get, 'GJ', target_units).get
       value_neat = OpenStudio.toNeatString(value, 0, true)
-      fuel_type_trans = self.traduce(end_use)
+      fuel_type_trans = self.traduce(fuel_type)
       output_data_energy_use[:data] << [fuel_type_trans, value_neat]
       runner.registerValue("Combustible - #{fuel_type_trans}", value, target_units)
 
