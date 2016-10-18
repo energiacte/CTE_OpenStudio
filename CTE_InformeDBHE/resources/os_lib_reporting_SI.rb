@@ -1227,9 +1227,11 @@ module OsLib_Reporting
       row_data = [translate(row)]
       column_counter = -1
       site_power_generation_table[:header].each do |header|
+        origheader = { 'Capacidad nominal'=>'Rated Capacity',
+                       'Generación anual de energía'=>'Annual Energy Generated' }.fetch(key) { |nokey| nokey }
         column_counter += 1
         next if column_counter == 0
-        query = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='LEEDsummary' and RowName= '#{row}' and ColumnName='#{header}';"
+        query = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='LEEDsummary' and RowName= '#{row}' and ColumnName='#{origheader}';"
         data = sqlFile.execAndReturnFirstDouble(query).get
         data_ip = OpenStudio.convert(data, site_power_generation_table[:source_units][column_counter], site_power_generation_table[:units][column_counter]).get
         if data > 0 then value_found = true end
