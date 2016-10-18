@@ -97,6 +97,7 @@ class CTE_InformeDBHE < OpenStudio::Ruleset::ReportingUserScript
     model = setup[:model]
     # workspace = setup[:workspace]
     sql_file = setup[:sqlFile]
+    web_asset_path = setup[:web_asset_path] # used in template
 
     # assign the user inputs to variables
     args = OsLib_HelperMethods.createRunVariables(runner, model, user_arguments, arguments)
