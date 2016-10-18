@@ -9,5 +9,8 @@
     - Renombrar a CTE_Report
     - Que el informe en la tabla "Consumo Final" se incluya o no la iluminación
 	  en función de que sea terciario o no.
+- Otros:
+    - Generar XML
+        - ver https://github.com/asparke2/demo-measures/tree/master/ExportXMLMeasure
 
 
