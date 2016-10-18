@@ -15,9 +15,9 @@ El procedimiento de trabajo es el siguiente:
 - Una vez hecha la modelización de las zonas térmicas en Sketchup, es necesario
   el procedimiento se continúa en la interfaz de OpenStudio.
 - Se deben incluir las siguientes medidas en OpenStudio:
-    - CTE_Model en las medidas de modelo (Model Measures)
-    - CTE_Workspace en las medidas de EnergyPlus (Workspace Measures)
-    - CTE_Report en las medidas de Informe (Report Measures)
+    - CTE_Model en las medidas de modelo (Model Measures en Whole building -> Space types)
+    - CTE_Workspace en las medidas de EnergyPlus (Workspace Measures en Whole building -> Space types)
+    - CTE_Report en las medidas de Informe (Report Measures en Reporting -> QAQC)
 - En la medida CTE_Model se deben fijar los parámetros de cálculo deseados
   (caudal de diseño de ventilación, edificio nuevo/existente, eficiencia de
   los ventiladores y recuperadores, transmitancia térmica lineal de los
