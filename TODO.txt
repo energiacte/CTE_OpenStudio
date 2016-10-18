@@ -4,6 +4,7 @@
       circuito) y evitar el fallo en ese caso.
       Usar WaterEquipment detectando objetos por tipo (los objetos del model
       son subtipo del workspace?)
+    - Que sea coherente el hecho de meter un recuperador con el tipo de flujo.
 - OS_15603:
     - Limpiar plantilla de report y dejar solamente lo que nos interesa
     - Renombrar a CTE_Report
