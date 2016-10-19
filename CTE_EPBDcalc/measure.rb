@@ -30,6 +30,9 @@ require 'openstudio'
 require 'date'
 require 'json'
 
+require_relative "resources/cte_query"
+require_relative "resources/cte_lib"
+
 # Medida de OpenStudio (ReportingUserScript) para usar en condiciones CTE
 # La medida permite obtener salidas válidas para su uso con el software
 # de evaluación de indicadores según la ISO 52000-1 (EN 15603)
@@ -315,8 +318,6 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
       return false
     end
     model = model.get
-    puts model.building.get.comment[2..-1]
-    puts JSON.parse(model.building.get.comment[2..-1])
 
     # BUG: Esta superficie incluye los espacios habitables no acondicionados que no deberían
     # BUG: formar parte del área de referencia.
@@ -329,9 +330,9 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     WHERE zl.Name NOT LIKE 'CTE_N%' ").get
 
     string_rows = []
-
-    string_rows << "#CTE_Area_ref: #{cte_areareferencia.round(0)}"
-
+    
+    string_rows << "# Datos de entrada"
+    
     cte_name = model.building.get.name
     string_rows << "#CTE_Name: #{cte_name}"
     runner.registerInfo("CTE_Name: #{cte_name}")
@@ -343,6 +344,36 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     cte_clima = model.weatherFile.get.path.get
     string_rows << "#CTE_Weather_file: #{cte_clima}"
     runner.registerInfo("CTE_Weather_file: #{cte_clima}")
+    
+    atributos = JSON.parse(model.building.get.comment[2..-1])
+
+    atributos.each do | clave, valor |
+      string_rows << "##{clave}:#{valor}"
+      puts clave, valor
+    end
+
+    string_rows << "# Datos medidos"
+    
+    string_rows << "#CTE_Area_ref: #{cte_areareferencia.round(0)}"
+
+    string_rows << "#CTE_Vol_ref:#{CTE_Query.volumenHabitable(sqlFile)}"
+    
+    string_rows << "# Medición construcciones: [area, transmitancia]"
+    
+    mediciones = CTE_tables.tabla_mediciones_envolvente(model, sqlFile, runner)[:data]
+    mediciones.each do | nombre, area, transmitancia |
+      string_rows << "#CTE_medicion_#{nombre}:[#{area},#{transmitancia}]"
+    end
+    
+    string_rows << "# Medición puentes termicos: ['Coef. acoplamiento', 'Longitud', 'PSI']"
+    
+    mediciones = CTE_tables.tabla_mediciones_puentes_termicos(model, runner)[:data]
+    mediciones.each do | nombre, coefAcop, long, psi|
+      string_rows << "#CTE_medicion_PT_#{nombre}:[#{coefAcop},#{long},#{psi}]"
+    end
+    
+
+    
 
     servicios = get_servicios(runner, user_arguments)
     result = procesedEPBFinalEnergyConsumptionByMonth(model, sqlFile, runner, servicios)
