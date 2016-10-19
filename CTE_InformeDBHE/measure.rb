@@ -26,8 +26,7 @@
 #            Marta Sorribes Gil <msorribes@ietcc.csic.es>
 
 require 'erb'
-
-require_relative "resources/os_lib_reporting_SI"
+require_relative "resources/cte_lib_reporting"
 
 # Medida de OpenStudio para informes tipo CTE
 # Esta medida se aplica en combinaci??n con una medida de modelo y de workspace para CTE

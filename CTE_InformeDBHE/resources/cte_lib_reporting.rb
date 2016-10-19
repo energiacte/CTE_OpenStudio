@@ -1450,13 +1450,6 @@ module CTELib_Reporting
     return @source_energy_section
   end
 
-end
-
-
-module CTELib_Reporting
-  #======== Elementos generales  ============
-  # variablesdisponiblesquery = "SELECT DISTINCT VariableName, ReportingFrequency FROM ReportVariableDataDictionary "
-
   #======== Tabla general de mediciones =====
   def self.cte_mediciones_generales_table(model, sqlFile, runner)
     # TODO: descomponer superficies externas de la envolvente por tipos (muros, cubiertas, huecos, lucernarios, etc)
@@ -1870,8 +1863,6 @@ module CTELib_Reporting
   end
 
   def self._componentValueForPeriod(sqlFile, variableName, periodo, className, extraCond, unitsSource='J', unitsTarget='kWh')
-    # XXX: Esto no funciona porque no se limitan las superficies a las que forman parte de la envolvente sino que son todas las
-    # XXX: de las zonas habitables
     meses = (periodo == 'invierno') ? "(1,2,3,4,5,10,11,12)" : "(6,7,8,9)"
     query = "
 WITH
