@@ -19,10 +19,8 @@ class ConexionEPDB_Test < MiniTest::Unit::TestCase
     arguments = measure.arguments()
     argument_map = OpenStudio::Ruleset.convertOSArgumentVectorToMap(arguments)
     
-    sqlPath = "#{File.dirname(__FILE__)}/cubito+garaje_NH_ideal.sql"
-        sqlPath = "#{File.dirname(__FILE__)}/E4H_AISL_APENDICE_E_alturas_corregidas.sql"
-    modelPath = "#{File.dirname(__FILE__)}/cubito+garaje_NH_ideal.osm"
-    modelPath = "#{File.dirname(__FILE__)}/E4H_AISL_APENDICE_E_alturas_corregidas.osm"
+    sqlPath = "#{File.dirname(__FILE__)}/eplusout.sql"
+    modelPath = "#{File.dirname(__FILE__)}/out.osm"    
     assert(File.exist?(modelPath))
     assert(File.exist?(sqlPath))
     runner.setLastEnergyPlusSqlFilePath(OpenStudio::Path.new(sqlPath))
