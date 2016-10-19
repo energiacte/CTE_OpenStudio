@@ -26,13 +26,8 @@
 #            Marta Sorribes Gil <msorribes@ietcc.csic.es>
 
 require 'erb'
-require 'json'
-require 'pp'
 
 require_relative "resources/os_lib_reporting_SI"
-require_relative "resources/os_lib_schedules"
-require_relative "resources/os_lib_helper_methods"
-require_relative "resources/cte_lib"
 
 # Medida de OpenStudio para informes tipo CTE
 # Esta medida se aplica en combinaci??n con una medida de modelo y de workspace para CTE
@@ -54,12 +49,12 @@ class CTE_InformeDBHE < OpenStudio::Ruleset::ReportingUserScript
   def possible_sections
     result = []
     # methods for sections in order that they will appear in report
-    result << 'mediciones_de_superficies_segun_CTE'
-    result << 'demandas_por_componentes'
+    result << 'cte_mediciones_de_superficies'
+    result << 'cte_energia_final_por_servicios'
     result << 'annual_overview_section'
+    result << 'cte_demandas_por_componentes'
     result << 'building_summary_section'
-    result << 'mediciones_envolvente'
-    result << 'cte_envelope_section_section'
+    result << 'cte_mediciones_envolvente'
     result << 'space_type_breakdown_section'
     result << 'space_type_details_section'
     result << 'zone_summary_section'
@@ -76,7 +71,7 @@ class CTE_InformeDBHE < OpenStudio::Ruleset::ReportingUserScript
     possible_sections.each do |method_name|
       # get display name
       arg = OpenStudio::Ruleset::OSArgument.makeBoolArgument(method_name, true)
-      display_name = eval("OsLib_Reporting.#{method_name}(nil,nil,nil,true)[:title]")
+      display_name = eval("CTELib_Reporting.#{method_name}(nil,nil,nil,true)[:title]")
       arg.setDisplayName(display_name)
       arg.setDefaultValue(true)
       args << arg
@@ -85,12 +80,51 @@ class CTE_InformeDBHE < OpenStudio::Ruleset::ReportingUserScript
     args
   end # end the arguments method
 
+  # create variables in run from user arguments - originally found in os_lib_helper_methods.rb
+  def createRunVariables(runner, model, user_arguments, arguments)
+    result = {}
+
+    error = false
+    # use the built-in error checking
+    unless runner.validateUserArguments(arguments, user_arguments)
+      error = true
+      runner.registerError('Invalid argument values.')
+    end
+
+    user_arguments.each do |argument|
+      # get argument info
+      arg = user_arguments[argument]
+      arg_type = arg.print.lines($/)[1]
+
+      # create argument variable
+      if arg_type.include? 'Double, Required'
+        eval("result[\"#{arg.name}\"] = runner.getDoubleArgumentValue(\"#{arg.name}\", user_arguments)")
+      elsif arg_type.include? 'Integer, Required'
+        eval("result[\"#{arg.name}\"] = runner.getIntegerArgumentValue(\"#{arg.name}\", user_arguments)")
+      elsif arg_type.include? 'String, Required'
+        eval("result[\"#{arg.name}\"] = runner.getStringArgumentValue(\"#{arg.name}\", user_arguments)")
+      elsif arg_type.include? 'Boolean, Required'
+        eval("result[\"#{arg.name}\"] = runner.getBoolArgumentValue(\"#{arg.name}\", user_arguments)")
+      elsif arg_type.include? 'Choice, Required'
+        eval("result[\"#{arg.name}\"] = runner.getStringArgumentValue(\"#{arg.name}\", user_arguments)")
+      else
+        puts 'not setup to handle all argument types yet, or any optional arguments'
+      end
+    end
+
+    if error
+      return false
+    else
+      return result
+    end
+  end
+
   # define what happens when the measure is run
   def run(runner, user_arguments)
     super(runner, user_arguments)
 
     # get sql, model, and web assets
-    setup = OsLib_Reporting.setup(runner)
+    setup = CTELib_Reporting.setup(runner)
     unless setup
       return false
     end
@@ -100,7 +134,7 @@ class CTE_InformeDBHE < OpenStudio::Ruleset::ReportingUserScript
     web_asset_path = setup[:web_asset_path] # used in template
 
     # assign the user inputs to variables
-    args = OsLib_HelperMethods.createRunVariables(runner, model, user_arguments, arguments)
+    args = createRunVariables(runner, model, user_arguments, arguments)
     unless args
       return false
     end
@@ -114,7 +148,7 @@ class CTE_InformeDBHE < OpenStudio::Ruleset::ReportingUserScript
     sections_made = 0
     possible_sections.each do |method_name|
       next unless args[method_name]
-      method = OsLib_Reporting.method(method_name)
+      method = CTELib_Reporting.method(method_name)
       @sections << method.call(model, sql_file, runner, false)
       sections_made += 1
     end
