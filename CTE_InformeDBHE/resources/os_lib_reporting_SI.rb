@@ -116,7 +116,35 @@ module OsLib_Reporting
       'District Heating' => 'Demanda de calefacción',
       'Water' => 'Agua',
       'Photovoltaic' => 'Fotovoltaica',
-      'Wind' => 'Eólica'
+      'Wind' => 'Eólica',
+      'During Heating' => 'Con calefacción',
+      'During Cooling' => 'Con refrigeración',
+      'During Occupied Heating' => 'Con calefacción y ocupación',
+      'During Occupied Cooling' => 'Con refrigeración y ocupación',
+      'Gross Window-Wall Ratio' => 'Porcentaje bruto de huecos en fachada',
+      'Weather File' => 'Archivo de clima',
+      'Latitude' => 'Latitud',
+      'Longitude' => 'Longitud',
+      'Elevation' => 'Altitud',
+      'Time Zone' => 'Zona horaria',
+      'North Axis Angle' => 'Ángulo respecto al norte',
+      'Area' => 'Área',
+      'Conditioned (Y/N)' => 'Acondicionada (S/N)',
+      'Part of Total Floor Area (Y/N)' => 'Parte del área total (S/N)',
+      'Volume' => 'Volumen',
+      'Multiplier' => 'Multiplicador',
+      'Gross Wall Area' => 'Superficie bruta de muro',
+      'Window Glass Area' => 'Superficie acristalada',
+      'Lighting' => 'Iluminación',
+      'People' => 'Ocupación',
+      'Plug and Process' => 'Carga enchufada y de procesos',
+      'Total Energy' => 'Energía total',
+      'Energy Per Total Building Area' => 'Energía total por sup. útil',
+      'Energy Per Conditioned Building Area' => 'Energía total por sup. acondicionada',
+      'Total Site Energy' => 'Energía final total',
+      'Net Site Energy' => 'Energía final neta',
+      'Total Source Energy' => 'Energía primaria total',
+      'Net Source Energy' => 'Energía primaria neta'
     }.fetch(key) { |nokey| nokey }
   end
 
@@ -215,7 +243,7 @@ module OsLib_Reporting
 
     # gather data for section
     @building_summary_section = {}
-    @building_summary_section[:title] = 'Resumen del Modelo (Building summary section)'
+    @building_summary_section[:title] = 'Resumen del Modelo'
     @building_summary_section[:tables] = general_tables
 
     # stop here if only name is requested this is used to populate display name for arguments
@@ -226,9 +254,7 @@ module OsLib_Reporting
     # add in general information from method
     general_tables << OsLib_Reporting.general_building_information_table(model, sqlFile, runner)
     general_tables << OsLib_Reporting.weather_summary_table(model, sqlFile, runner)
-    #~ general_tables << OsLib_Reporting.design_day_table(model, sqlFile, runner)
     general_tables << OsLib_Reporting.setpoint_not_met_summary_table(model, sqlFile, runner)
-    # general_tables << OsLib_Reporting.site_performance_table(model,sqlFile,runner)
     site_power_generation_table = OsLib_Reporting.site_power_generation_table(model, sqlFile, runner)
     if site_power_generation_table
       general_tables << OsLib_Reporting.site_power_generation_table(model, sqlFile, runner)
@@ -307,23 +333,18 @@ module OsLib_Reporting
       return false
     else
       display = 'Superficie total del edificio'
-      source_units = 'm^2'
-      target_units = 'm^2'
-      value = OpenStudio.convert(query_results.get, source_units, target_units).get
+      value = query_results.get
       value_neat = OpenStudio.toNeatString(value, 0, true)
-      general_building_information[:data] << [display, value_neat, target_units]
-      runner.registerValue(display, value, target_units)
+      general_building_information[:data] << [display, value_neat, 'm^2']
+      runner.registerValue(display, value, 'm^2')
     end
 
     # EUI
     eui =  sqlFile.netSiteEnergy.get / query_results.get
-    display = 'EUI'
-    source_units = 'GJ/m^2'
-    target_units = 'kWh/m^2'
-    value = OpenStudio.convert(eui, source_units, target_units).get
+    value = OpenStudio.convert(eui, 'GJ/m^2', 'kWh/m^2').get
     value_neat = OpenStudio.toNeatString(value, 2, true)
-    general_building_information[:data] << [display, value_neat, target_units]
-    runner.registerValue(display, value, target_units)
+    general_building_information[:data] << ['Intensidad energética (E.final)', value_neat, 'kWh/m^2']
+    runner.registerValue('Intensidad energética (E.final)', value, 'kWh/m^2')
 
     return general_building_information
   end
@@ -334,15 +355,14 @@ module OsLib_Reporting
     output_data_space_type_breakdown = {}
     output_data_space_type_breakdown[:title] = ''
     output_data_space_type_breakdown[:header] = ['Tipo de Espacio', 'Superficie útil']
-    units = 'm^2'
-    output_data_space_type_breakdown[:units] = ['', units]
+    output_data_space_type_breakdown[:units] = ['', 'm^2']
     output_data_space_type_breakdown[:data] = []
     output_data_space_type_breakdown[:chart_type] = 'simple_pie'
     output_data_space_type_breakdown[:chart] = []
 
     # gather data for section
     @output_data_space_type_breakdown_section = {}
-    @output_data_space_type_breakdown_section[:title] = 'Distribución por Tipos de Espacios'
+    @output_data_space_type_breakdown_section[:title] = 'Reparto por tipos de espacios'
     @output_data_space_type_breakdown_section[:tables] = [output_data_space_type_breakdown] # only one table for this section
 
     # stop here if only name is requested this is used to populate display name for arguments
@@ -371,11 +391,10 @@ module OsLib_Reporting
       # data for space type breakdown
       display = spaceType.name.get
       floor_area_si = spaceType.floorArea
-      value = OpenStudio.convert(floor_area_si, 'm^2', units).get
-      num_people = nil
+      value = floor_area_si
       value_neat = OpenStudio.toNeatString(value, 0, true)
       output_data_space_type_breakdown[:data] << [display, value_neat]
-      runner.registerValue("Tipo de espacio - #{display}", value, units)
+      runner.registerValue("CTE Tipo de espacio - #{display}", value, 'm^2')
 
       # data for graph
       output_data_space_type_breakdown[:chart] << JSON.generate(label: display, value: value, color: color)
@@ -393,15 +412,15 @@ module OsLib_Reporting
     end
 
     if no_space_type_area_counter > 0
-      display = 'Sin Tipo de espacio'
+      display = 'Sin tipo de espacio'
       value = OpenStudio.convert(no_space_type_area_counter, 'm^2', units).get
       value_neat = OpenStudio.toNeatString(value, 0, true)
       output_data_space_type_breakdown[:data] << [display, value_neat]
-      runner.registerValue("Tipo de espacio - #{display}", value, units)
+      runner.registerValue("CTE Tipo de espacio - #{display}", value, units)
 
       # data for graph
       color = 'rgb(20,20,20)' # maybe do random or let d3 pick color instead of this?
-      output_data_space_type_breakdown[:chart] << JSON.generate(label: 'Sin Tipo de Espacio asignado', value: OpenStudio.convert(no_space_type_area_counter, 'm^2', 'm^2'), color: color)
+      output_data_space_type_breakdown[:chart] << JSON.generate(label: 'Sin tipo de espacio asignado', value: OpenStudio.convert(no_space_type_area_counter, 'm^2', 'm^2'), color: color)
     end
 
     return @output_data_space_type_breakdown_section
@@ -413,7 +432,7 @@ module OsLib_Reporting
     # end use data output
     output_data_end_use = {}
     output_data_end_use[:title] = 'Uso de energía final'
-    output_data_end_use[:header] = ['Uso', 'Consumo']
+    output_data_end_use[:header] = ['Servicio', 'Consumo']
     target_units = 'kWh'
     output_data_end_use[:units] = ['', target_units]
     output_data_end_use[:data] = []
@@ -445,7 +464,7 @@ module OsLib_Reporting
       value_neat = OpenStudio.toNeatString(value, 0, true)
       end_use_trans = self.translate(end_use)
       output_data_end_use[:data] << [end_use_trans, value_neat]
-      runner.registerValue("CTE Uso energia final - #{end_use}", value, target_units)
+      runner.registerValue("CTE Uso energia final - #{end_use_trans}", value, target_units)
       if value > 0
         output_data_end_use[:chart] << JSON.generate(label: end_use_trans, value: value, color: end_use_colors[counter])
       end
@@ -462,7 +481,7 @@ module OsLib_Reporting
     # end use data output
     output_data_end_use_electricity = {}
     output_data_end_use_electricity[:title] = 'Uso de energía final - Electricidad'
-    output_data_end_use_electricity[:header] = ['Uso', 'Consumo']
+    output_data_end_use_electricity[:header] = ['Servicio', 'Consumo']
     target_units = 'kWh'
     output_data_end_use_electricity[:units] = ['', target_units]
     output_data_end_use_electricity[:data] = []
@@ -482,7 +501,7 @@ module OsLib_Reporting
       value_neat = OpenStudio.toNeatString(value, 0, true)
       end_use_trans = self.translate(end_use)
       output_data_end_use_electricity[:data] << [end_use_trans, value_neat]
-      runner.registerValue("CTE Energia final Electricidad - #{end_use_trans}", value, target_units)
+      runner.registerValue("CTE energia final Electricidad - #{end_use_trans}", value, target_units)
       if value > 0
         output_data_end_use_electricity[:chart] << JSON.generate(label: end_use_trans, value: value, color: end_use_colors[counter])
       end
@@ -499,7 +518,7 @@ module OsLib_Reporting
     # end use data output
     output_data_end_use_gas = {}
     output_data_end_use_gas[:title] = 'Uso de energía final - Gas'
-    output_data_end_use_gas[:header] = ['Uso', 'Consumo']
+    output_data_end_use_gas[:header] = ['Servicio', 'Consumo']
     target_units = 'kWh'
     output_data_end_use_gas[:units] = ['', target_units]
     output_data_end_use_gas[:data] = []
@@ -521,7 +540,7 @@ module OsLib_Reporting
       value_neat = OpenStudio.toNeatString(value, 0, true)
       end_use_trans = self.translate(end_use)
       output_data_end_use_gas[:data] << [end_use_trans, value_neat]
-      runner.registerValue("CTE Energia final Gas - #{end_use_trans}", value, target_units)
+      runner.registerValue("CTE energia final Gas Natural - #{end_use_trans}", value, target_units)
       if value > 0
         output_data_end_use_gas[:chart] << JSON.generate(label: end_use_trans, value: value, color: end_use_colors[counter])
       end
@@ -537,7 +556,7 @@ module OsLib_Reporting
   def self.output_data_energy_use_table(model, sqlFile, runner)
     # energy use data output
     output_data_energy_use = {}
-    output_data_energy_use[:title] = 'Energia Final (Energy Use)'
+    output_data_energy_use[:title] = 'Energia Final'
     output_data_energy_use[:header] = ['Combustible', 'Consumo']
     output_data_energy_use[:units] = ['', 'kWh']
     output_data_energy_use[:data] = []
@@ -567,10 +586,10 @@ module OsLib_Reporting
       value_neat = OpenStudio.toNeatString(value, 0, true)
       fuel_type_trans = self.translate(fuel_type)
       output_data_energy_use[:data] << [fuel_type_trans, value_neat]
-      runner.registerValue("Combustible - #{fuel_type_trans}", value, target_units)
+      runner.registerValue("CTE combustible - #{fuel_type_trans}", value, target_units)
 
       if value > 0
-        output_data_energy_use[:chart] << JSON.generate(label: fuel_type_trans, value: value, color: color[counter])
+        output_data_energy_use[:chart] << JSON.generate(label: fuel_type, value: value, color: color[counter])
       end
 
       counter += 1
@@ -583,18 +602,18 @@ module OsLib_Reporting
   def self.setpoint_not_met_summary_table(model, sqlFile, runner)
     # unmet hours data output
     setpoint_not_met_summary = {}
-    setpoint_not_met_summary[:title] = 'Resumen de Horas fuera de consigna'
-    setpoint_not_met_summary[:header] = ['Tiempo fuera de consigna', 'Value']
+    setpoint_not_met_summary[:title] = 'Horas fuera de consigna'
+    setpoint_not_met_summary[:header] = ['Tiempo fuera de consigna', 'Valor']
     target_units = 'hr'
     setpoint_not_met_summary[:units] = ['', target_units]
     setpoint_not_met_summary[:data] = []
 
     # create string for rows (transposing from what is in tabular data)
     setpoint_not_met_cat = []
-    setpoint_not_met_cat << 'Con calefacción'
-    setpoint_not_met_cat << 'Con refrigeración'
-    setpoint_not_met_cat << 'Con calefacción y ocupación'
-    setpoint_not_met_cat << 'Con refrigeración y ocupación'
+    setpoint_not_met_cat << 'During Heating'
+    setpoint_not_met_cat << 'During Cooling'
+    setpoint_not_met_cat << 'During Occupied Heating'
+    setpoint_not_met_cat << 'During Occupied Cooling'
 
     # loop through  messages
     setpoint_not_met_cat.each do |cat|
@@ -606,12 +625,12 @@ module OsLib_Reporting
         return false
       else
         # net site energy
-        display = cat
+        display = self.translate(cat)
         source_units = 'hr'
         value = setpoint_not_met_cat_value.get
         value_neat = value # OpenStudio::toNeatString(value,0,true)
         setpoint_not_met_summary[:data] << [display, value_neat]
-        runner.registerValue("Horas fuera de consigna - #{display}", value, target_units)
+        runner.registerValue("CTE horas fuera de consigna - #{display}", value, target_units)
 
       end
     end # setpoint_not_met_cat.each do
@@ -855,7 +874,7 @@ module OsLib_Reporting
 
     # gather data for section
     @envelope_section = {}
-    @envelope_section[:title] = 'Envelope'
+    @envelope_section[:title] = 'Envolvente'
     @envelope_section[:tables] = envelope_tables
 
     # stop here if only name is requested this is used to populate display name for arguments
@@ -873,7 +892,7 @@ module OsLib_Reporting
 
     # create string for rows
     fenestrations = []
-    fenestrations << 'Porcentaje bruto de huecos (Hueco-muro)' # [%]
+    fenestrations << 'Gross Window-Wall Ratio' # [%]
 
     # loop rows
     fenestrations.each do |fenestration|
@@ -895,14 +914,14 @@ module OsLib_Reporting
         return false
       else
         # add data
-        display = fenestration
+        display = self.translate(fenestration)
         fenestration_data[:data] << [display, total.get, north.get, east.get, south.get, west.get]
-        runner.registerValue("#{display}", total.get, target_units)
+        runner.registerValue("CTE #{display}", total.get, target_units)
 
         # skylight
         # skylight seems to provide back percentage vs. fraction. Changing to fraction to match vertical fenestration.
-        fenestration_data[:data] << ['Porcentaje de lucernarios', skylight.get, '', '', '', '']
-        runner.registerValue('CTE Porcentaje de lucernarios (lucernario-cubierta)', skylight.get, target_units)
+        fenestration_data[:data] << ['Porcentaje de huecos en cubierta', skylight.get, '', '', '', '']
+        runner.registerValue('CTE Porcentaje de huecos en cubierta', skylight.get, target_units)
 
       end
     end
@@ -919,7 +938,7 @@ module OsLib_Reporting
 
     # gather data for section
     @output_data_space_type_section = {}
-    @output_data_space_type_section[:title] = 'Resumen de tipos de espacios'
+    @output_data_space_type_section[:title] = 'Tipos de espacios - Resumen'
     @output_data_space_type_section[:tables] = output_data_space_type_detail_tables
 
     # stop here if only name is requested this is used to populate display name for arguments
@@ -952,7 +971,7 @@ module OsLib_Reporting
 
       # space type details data output
       output_data_space_type_details = {}
-      output_data_space_type_details[:title] = "#{spaceType.name}<br>(#{space_name_list.uniq.size} spaces and #{zone_name_list.uniq.size} thermal zones)"
+      output_data_space_type_details[:title] = "#{spaceType.name}<br>(#{space_name_list.uniq.size} espacios y #{zone_name_list.uniq.size} zonas térmicas)"
       output_data_space_type_details[:header] = ['Definición', 'Valor', 'Unidad', 'Multiplicador']
       output_data_space_type_details[:units] = []  # won't use this for these tables since units change
       output_data_space_type_details[:data] = []
@@ -968,7 +987,7 @@ module OsLib_Reporting
         elsif instance.surfaceAreaPerFloorArea.is_initialized && instance.surfaceAreaPerFloorArea.get > 0
           def_value = instance.surfaceAreaPerFloorArea.get
           def_value_neat = OpenStudio.toNeatString(def_value, 0, true)
-          def_units = 'm^2/superficie útil m^2'
+          def_units = 'm^2/m^2 superficie útil'
         elsif instance.surfaceAreaPerPerson.is_initialized && instance.surfaceAreaPerPerson.get > 0
           def_value = OpenStudio.convert(instance.surfaceAreaPerPerson.get, 'm^2', 'm^2').get
           def_value_neat = OpenStudio.toNeatString(def_value, 0, true)
@@ -1071,21 +1090,21 @@ module OsLib_Reporting
         if instance.flowperSpaceFloorArea.is_initialized
           inst_value = OpenStudio.convert(instance.flowperSpaceFloorArea.get, 'm/s', 'm/s').get
           inst_value_neat = OpenStudio.toNeatString(inst_value, 4, true)
-          inst_units = 'm^3/s/superficie útil m^2'
+          inst_units = 'm^3/s/m^2 superficie útil'
           count = ''
           output_data_space_type_details[:data] << [instance_display, inst_value_neat, inst_units, count]
         end
         if instance.flowperExteriorSurfaceArea.is_initialized
           inst_value = OpenStudio.convert(instance.flowperExteriorSurfaceArea.get, 'm/s', 'm/s').get
           inst_value_neat = OpenStudio.toNeatString(inst_value, 4, true)
-          inst_units = 'm^3/s/superficie exterior m^2'
+          inst_units = 'm^3/s/m^2 superficie exterior'
           count = ''
           output_data_space_type_details[:data] << [instance_display, inst_value_neat, inst_units, count]
         end
         if instance.flowperExteriorWallArea.is_initialized # uses same input as exterior surface area but different calc method
           inst_value = OpenStudio.convert(instance.flowperExteriorWallArea.get, 'm/s', 'm/s').get
           inst_value_neat = OpenStudio.toNeatString(inst_value, 4, true)
-          inst_units = 'm^3/s/superficie exterior m^2'
+          inst_units = 'm^3/s/m^2 superficie exterior'
           count = ''
           output_data_space_type_details[:data] << [instance_display, inst_value_neat, inst_units, count]
         end
@@ -1111,25 +1130,26 @@ module OsLib_Reporting
             inst_value = OpenStudio.convert(instance.outdoorAirFlowperPerson, 'm^3/s', 'm^3/s').get
             inst_value_neat = OpenStudio.toNeatString(inst_value, 4, true)
             inst_units = 'm^3/s/persona'
-            output_data_space_type_details[:data] << ["#{instance_display} (método aire exterior #{outdoor_air_method})", inst_value_neat, inst_units, count]
+            output_data_space_type_details[:data] << ["#{instance_display} (método de aire exterior #{outdoor_air_method})", inst_value_neat, inst_units, count]
           end
           if instance.outdoorAirFlowperFloorArea > 0
             inst_value = OpenStudio.convert(instance.outdoorAirFlowperFloorArea, 'm/s', 'm/s').get
             inst_value_neat = OpenStudio.toNeatString(inst_value, 4, true)
-            inst_units = 'm^3/s/superficie útil m3/s/m2'
-            output_data_space_type_details[:data] << ["#{instance_display} (método aire exterior #{outdoor_air_method})", inst_value_neat, inst_units, count]
+            inst_units = 'm^3/s/m^2 superficie útil'
+            output_data_space_type_details[:data] << ["#{instance_display} (método de aire exterior #{outdoor_air_method})", inst_value_neat, inst_units, count]
           end
           if instance.outdoorAirFlowRate > 0
             inst_value = OpenStudio.convert(instance.outdoorAirFlowRate, 'm^3/s', 'm^3/s').get
             inst_value_neat = OpenStudio.toNeatString(inst_value, 4, true)
+            # inst_units = 'cfm'
             inst_units = 'm^3/s'
-            output_data_space_type_details[:data] << ["#{instance_display} (método aire exterior #{outdoor_air_method})", inst_value_neat, inst_units, count]
+            output_data_space_type_details[:data] << ["#{instance_display} (método de aire exterior #{outdoor_air_method})", inst_value_neat, inst_units, count]
           end
           if instance.outdoorAirFlowAirChangesperHour > 0
             inst_value = instance.outdoorAirFlowAirChangesperHour
             inst_value_neat = OpenStudio.toNeatString(inst_value, 4, true)
             inst_units = 'ren/h'
-            output_data_space_type_details[:data] << ["#{instance_display} (método aire exterior #{outdoor_air_method})", inst_value_neat, inst_units, count]
+            output_data_space_type_details[:data] << ["#{instance_display} (método de aire exterior #{outdoor_air_method})", inst_value_neat, inst_units, count]
           end
 
         end
@@ -1145,10 +1165,7 @@ module OsLib_Reporting
   # create template section
   def self.weather_summary_table(model, sqlFile, runner)
     # data for query
-    report_name = 'InputVerificationandResultsSummary'
-    table_name = 'Datos climáticos generales'
-    columns = ['', 'Valor'] # el contenido son claves
-    rows = ['Archivo de clima', 'Latitud', 'Longitud', 'Altitud', 'Zona Horaria', 'Ángulo con el norte'] # el contenido son claves
+    rows = ['Weather File', 'Latitude', 'Longitude', 'Elevation', 'Time Zone', 'North Axis Angle'] # el contenido son claves
 
     # create table
     table = {}
@@ -1159,17 +1176,10 @@ module OsLib_Reporting
 
     # run query and populate table
     rows.each do |row|
-      row_data = [row]
-      column_counter = -1
-      columns.each do |header|
-        column_counter += 1
-        next if header == ''
-        query = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='#{report_name}' and TableName='#{table_name}' and RowName= '#{row}' and ColumnName= '#{header}'"
-        results = sqlFile.execAndReturnFirstString(query) # this is first time I needed string vs. double for weather file
-        # TODO: - would be nice to get units from first column
-        row_data << results
-      end
-
+      row_data = [self.translate(row)]
+      query = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='InputVerificationandResultsSummary' and TableName='General' and RowName= '#{row}' and ColumnName= 'Value'"
+      results = sqlFile.execAndReturnFirstString(query)
+      row_data << results
       table[:data] << row_data
     end
 
@@ -1180,7 +1190,7 @@ module OsLib_Reporting
   def self.building_performance_table(model, sqlFile, runner)
     # create a second table
     building_performance_table = {}
-    building_performance_table[:title] = 'Eficiencia energética del edificio'
+    building_performance_table[:title] = 'Eficiencia energética'
     building_performance_table[:header] = %w(Descripción Valor)
     building_performance_table[:units] = []
     building_performance_table[:data] = []
@@ -1192,26 +1202,12 @@ module OsLib_Reporting
   end
 
   # create template section
-  def self.site_performance_table(model, sqlFile, runner)
-    # create a second table
-    site_performance_table = {}
-    site_performance_table[:title] = 'Site Performance'
-    site_performance_table[:header] = %w(Descripción Valor)
-    site_performance_table[:units] = []
-    site_performance_table[:data] = []
-
-    # add rows to table
-    # site_performance_table[:data] << ["Vanilla",1.5]
-
-    return site_performance_table
-  end
-
-  # create template section
   def self.site_power_generation_table(model, sqlFile, runner)
     # create a second table
+    headers = ['', 'Rated Capacity', 'Annual Energy Generated']
     site_power_generation_table = {}
-    site_power_generation_table[:title] = 'Resumen de fuentes de energía renovable'
-    site_power_generation_table[:header] = ['', 'Capacidad nominal', 'Generación anual de energía']
+    site_power_generation_table[:title] = 'Generación de energía renovable'
+    site_power_generation_table[:header] = ['', 'Capacidad nominal', 'Energía anual generada']
     site_power_generation_table[:source_units] = ['', 'kW', 'GJ']
     site_power_generation_table[:units] = ['', 'kW', 'kWh']
     site_power_generation_table[:data] = []
@@ -1224,14 +1220,12 @@ module OsLib_Reporting
     # loop through advisory messages
     value_found = false
     rows.each do |row|
-      row_data = [translate(row)]
+      row_data = [self.translate(row)]
       column_counter = -1
-      site_power_generation_table[:header].each do |header|
-        origheader = { 'Capacidad nominal'=>'Rated Capacity',
-                       'Generación anual de energía'=>'Annual Energy Generated' }.fetch(header) { |nokey| nokey }
+      headers.each do |header|
         column_counter += 1
         next if column_counter == 0
-        query = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='LEEDsummary' and RowName= '#{row}' and ColumnName='#{origheader}';"
+        query = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='LEEDsummary' and RowName= '#{row}' and ColumnName='#{header}';"
         data = sqlFile.execAndReturnFirstDouble(query).get
         data_ip = OpenStudio.convert(data, site_power_generation_table[:source_units][column_counter], site_power_generation_table[:units][column_counter]).get
         if data > 0 then value_found = true end
@@ -1263,16 +1257,10 @@ module OsLib_Reporting
     end
 
     # data for query
-    report_name = 'InputVerificationandResultsSummary'
-    table_name = 'Resumen de zonas'
-    columns = ['', 'Area', 'Acondicionada (Y/N)', 'Parte de la superficie útil (Y/N)', 'Volumen', 'Multiplicador', 'Superficie bruta de muro', 'Superficie acristalada', 'Iluminación', 'Ocupantes', 'Carga enchufada y de procesos']
-
-    # test looking at getting entire table to get rows
-    # query = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='#{report_name}' and TableName='#{table_name}'"
-    # results = sqlFile.execAndReturnVectorOfString(query).get
+    columns = ['', 'Area', 'Conditioned (Y/N)', 'Part of Total Floor Area (Y/N)', 'Volume', 'Multiplier', 'Gross Wall Area', 'Window Glass Area', 'Lighting', 'People', 'Plug and Process']
 
     # populate dynamic rows
-    rows_name_query = "SELECT DISTINCT  RowName FROM tabulardatawithstrings WHERE ReportName='#{report_name}' and TableName='#{table_name}'"
+    rows_name_query = "SELECT DISTINCT  RowName FROM tabulardatawithstrings WHERE ReportName='InputVerificationandResultsSummary' and TableName='Zone Summary'"
     row_names = sqlFile.execAndReturnVectorOfString(rows_name_query).get
     rows = []
     row_names.each do |row_name|
@@ -1283,8 +1271,8 @@ module OsLib_Reporting
 
     # create zone_summary_table
     zone_summary_table = {}
-    zone_summary_table[:title] = table_name
-    zone_summary_table[:header] = columns
+    zone_summary_table[:title] = 'Resumen de zonas'
+    zone_summary_table[:header] = columns.map { |col| self.translate(col) }
     source_units_area = 'm^2'
     target_units_area = 'm^2'
     source_units_area_per_person = 'm^2/person'
@@ -1299,13 +1287,13 @@ module OsLib_Reporting
 
     # run query and populate zone_summary_table
     rows.each do |row|
-      row_data = [row]
+      row_data = [self.translate(row)]
       column_counter = -1
-      zone_summary_table[:header].each do |header|
+      columns.each do |header|
         column_counter += 1
         next if header == ''
         if header == 'Multiplier' then header = 'Multipliers' end # what we want to show is different than what is in E+ table
-        query = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='#{report_name}' and TableName='#{table_name}' and RowName= '#{row}' and ColumnName= '#{header}'"
+        query = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='InputVerificationandResultsSummary' and TableName='Zone Summary' and RowName= '#{row}' and ColumnName= '#{header}'"
         if not zone_summary_table[:source_units][column_counter] == ''
           results = sqlFile.execAndReturnFirstDouble(query)
           row_data_ip = OpenStudio.convert(results.to_f, zone_summary_table[:source_units][column_counter], zone_summary_table[:units][column_counter]).get
@@ -1323,14 +1311,11 @@ module OsLib_Reporting
     template_tables << zone_summary_table
 
     # data for query
-    report_name = 'HVACSizingSummary'
-    table_01_name = 'Zone Cooling'
-    table_02_name = 'Zone Heating'
     columns = ['', 'Heating/Cooling', 'Calculated Design Load', 'Design Load With Sizing Factor', 'Calculated Design Air Flow', 'Design Air Flow  With Sizing Factor', 'Date/Time Of Peak', 'Outdoor Temperature at Peak Load', 'Outdoor Humidity Ratio at Peak Load']
     columns_query = ['', 'Heating/Cooling', 'Calculated Design Load', 'User Design Load', 'Calculated Design Air Flow', 'User Design Air Flow', 'Date/Time Of Peak', 'Outdoor Temperature at Peak Load', 'Outdoor Humidity Ratio at Peak Load']
 
     # populate dynamic rows
-    rows_name_query = "SELECT DISTINCT  RowName FROM tabulardatawithstrings WHERE ReportName='#{report_name}' and TableName='#{table_01_name}'"
+    rows_name_query = "SELECT DISTINCT  RowName FROM tabulardatawithstrings WHERE ReportName='HVACSizingSummary' and TableName='Zone Cooling'"
     row_names = sqlFile.execAndReturnVectorOfString(rows_name_query).get
     rows = []
     row_names.each do |row_name|
@@ -1359,7 +1344,7 @@ module OsLib_Reporting
       columns_query.each do |header|
         column_counter += 1
         next if header == '' || header == 'Heating/Cooling'
-        query = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='#{report_name}' and TableName='#{table_01_name}' and RowName= '#{row}' and ColumnName= '#{header}'"
+        query = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='HVACSizingSummary' and TableName='Zone Cooling' and RowName= '#{row}' and ColumnName= '#{header}'"
         if not zone_dd_table[:source_units][column_counter] == ''
           results = sqlFile.execAndReturnFirstDouble(query)
           row_data_ip = OpenStudio.convert(results.to_f, zone_dd_table[:source_units][column_counter], zone_dd_table[:units][column_counter]).get
@@ -1381,7 +1366,7 @@ module OsLib_Reporting
       columns_query.each do |header|
         column_counter += 1
         next if header == '' || header == 'Heating/Cooling'
-        query = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='#{report_name}' and TableName='#{table_02_name}' and RowName= '#{row}' and ColumnName= '#{header}'"
+        query = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='HVACSizingSummary' and TableName='Zone Heating' and RowName= '#{row}' and ColumnName= '#{header}'"
         if not zone_dd_table[:source_units][column_counter] == ''
           results = sqlFile.execAndReturnFirstDouble(query)
           row_data_ip = OpenStudio.convert(results.to_f, zone_dd_table[:source_units][column_counter], zone_dd_table[:units][column_counter]).get
@@ -1412,7 +1397,7 @@ module OsLib_Reporting
 
     # gather data for section
     @source_energy_section = {}
-    @source_energy_section[:title] = 'Site and Source Summary'
+    @source_energy_section[:title] = 'Energía final y primaria'
     @source_energy_section[:tables] = source_energy_section_tables
 
     # stop here if only name is requested this is used to populate display name for arguments
@@ -1420,32 +1405,24 @@ module OsLib_Reporting
       return @source_energy_section
     end
 
-    # data for query
-    report_name = 'AnnualBuildingUtilityPerformanceSummary'
-    table_name = 'Site and Source Energy'
+    # ============== Energía final y primaria
     columns = ['', 'Total Energy', 'Energy Per Total Building Area', 'Energy Per Conditioned Building Area']
     rows = ['Total Site Energy', 'Net Site Energy', 'Total Source Energy', 'Net Source Energy']
 
-    # create table
     source_energy_table = {}
-    source_energy_table[:title] = table_name
-    source_energy_table[:header] = columns
-    source_units_total = 'GJ'
-    source_units_area = 'MJ/m^2'
-    target_units_total = 'kWh'
-    target_units_area = 'kWh/m^2'
-    source_energy_table[:units] = ['', target_units_total, target_units_area, target_units_area]
-    source_energy_table[:source_units] = ['', source_units_total, source_units_area, source_units_area] # used for conversation, not needed for rendering.
+    source_energy_table[:title] = 'Energía final y primaria'
+    source_energy_table[:header] = columns.map { |col| self.translate(col) }
+    source_energy_table[:units] = ['', 'kWh', 'kWh/m^2', 'kWh/m^2']
+    source_energy_table[:source_units] = ['', 'GJ', 'MJ/m^2', 'MJ/m^2'] # used for conversion, not needed for rendering.
     source_energy_table[:data] = []
 
-    # run query and populate table
     rows.each do |row|
-      row_data = [row]
+      row_data = [self.translate(row)]
       column_counter = -1
-      source_energy_table[:header].each do |header|
+      columns.each do |col|
         column_counter += 1
-        next if header == ''
-        query = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='#{report_name}' and TableName='#{table_name}' and RowName= '#{row}' and ColumnName= '#{header}'"
+        next if col == ''
+        query = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' and TableName='Site and Source Energy' and RowName= '#{row}' and ColumnName= '#{col}'"
         results = sqlFile.execAndReturnFirstDouble(query)
         row_data_ip = OpenStudio.convert(results.to_f, source_energy_table[:source_units][column_counter], source_energy_table[:units][column_counter]).get
         row_data << row_data_ip.round(1)
@@ -1453,37 +1430,30 @@ module OsLib_Reporting
       source_energy_table[:data] << row_data
     end
 
-    # add table to array of tables
     source_energy_section_tables << source_energy_table
 
-    # data for query
-    report_name = 'AnnualBuildingUtilityPerformanceSummary'
-    table_name = 'Site to Source Energy Conversion Factors'
-    columns = ['', 'Site=>Source Conversion Factor']
-    rows = ['Electricity', 'Natural Gas', 'District Cooling', 'District Heating'] # TODO: - complete this and add logic to skip row if not used in model
-
-    # create table
+    # ========== Factores de paso
     source_energy_table = {}
-    source_energy_table[:title] = table_name
-    source_energy_table[:header] = columns
+    source_energy_table[:title] = 'Factores de paso de energía final a energía primaria'
+    source_energy_table[:header] = ['', 'Factor E.final=>E.Primaria']
     source_energy_table[:units] = []
     source_energy_table[:data] = []
 
-    # run query and populate table
+    rows = ['Electricity', 'Natural Gas', 'District Cooling', 'District Heating']
+    rows_es = {
+      'Electricity' => 'Electricidad',
+      'Natural Gas' => 'Gas Natural',
+      'District Cooling' => 'Red de distrito (cal.)',
+      'District Heating' => 'Red de distrito (ref.)'
+    }
+
     rows.each do |row|
-      row_data = [row]
-      column_counter = -1
-      source_energy_table[:header].each do |header|
-        column_counter += 1
-        next if header == ''
-        query = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='#{report_name}' and TableName='#{table_name}' and RowName= '#{row}' and ColumnName= '#{header}'"
-        results = sqlFile.execAndReturnFirstDouble(query).to_f
-        row_data << results.round(3)
-      end
+      row_data = [rows_es[row]]
+      query = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' and TableName='Site to Source Energy Conversion Factors' and RowName= '#{row}' and ColumnName= 'Site=>Source Conversion Factor'"
+      row_data << sqlFile.execAndReturnFirstDouble(query).to_f.round(3)
       source_energy_table[:data] << row_data
     end
 
-    # add table to array of tables
     source_energy_section_tables << source_energy_table
 
     return @source_energy_section
