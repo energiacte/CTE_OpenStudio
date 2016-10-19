@@ -144,7 +144,11 @@ module OsLib_Reporting
       'Total Site Energy' => 'Energía final total',
       'Net Site Energy' => 'Energía final neta',
       'Total Source Energy' => 'Energía primaria total',
-      'Net Source Energy' => 'Energía primaria neta'
+      'Net Source Energy' => 'Energía primaria neta',
+      'Total' => 'Total',
+      'Conditioned Total' => 'Total Acondicionada',
+      'Unconditioned Total' => 'Total No acondicionada',
+      'Not Part of Total' => 'Fuera del total'
     }.fetch(key) { |nokey| nokey }
   end
 
@@ -1287,11 +1291,10 @@ module OsLib_Reporting
         if header == 'Multiplier' then header = 'Multipliers' end # what we want to show is different than what is in E+ table
         query = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='InputVerificationandResultsSummary' and TableName='Zone Summary' and RowName= '#{row}' and ColumnName= '#{header}'"
         if not zone_summary_table[:source_units][column_counter] == ''
-          results = sqlFile.execAndReturnFirstDouble(query)
-          row_data_ip = OpenStudio.convert(results.to_f, zone_summary_table[:source_units][column_counter], zone_summary_table[:units][column_counter]).get
-          row_data << row_data_ip.round(2)
+          results = sqlFile.execAndReturnFirstDouble(query).to_f
+          row_data << results.round(2)
         else
-          results = sqlFile.execAndReturnFirstString(query)
+          results = sqlFile.execAndReturnFirstString(query).get.sub('Yes', 'Sí')
           row_data << results
         end
       end
