@@ -24,14 +24,7 @@ OS:SimulationControl,
   FullExterior,                           !- Solar Distribution
   25;                                     !- Maximum Number of Warmup Days
 
-OS:Output:Variable,
-  {f9f6b26d-f039-4c5e-b794-9eec486a4b17}, !- Handle
-  {0c80f96d-eb05-4afa-b733-90f969db6b2a}, !- Name
-  *,                                      !- Key Value
-  Zone Thermostat Heating Setpoint Temperature, !- Variable Name
-  Hourly;                                 !- Reporting Frequency
-
-! {"CTE_Altitud":"650","CTE_Coef_stack":"0.00029","CTE_Coef_wind":"0.000231","CTE_Design_flow_rate":"0.63","CTE_Fan_ntot":"0.5","CTE_Fan_sfp":"2.5","CTE_Heat_recovery":"0","CTE_Permeabilidad_ventanas":"Clase 2","CTE_Provincia":"Madrid","CTE_Psi_contorno_huecos":"0.05","CTE_Psi_forjado_cubierta":"0.24","CTE_Psi_forjado_exterior":"0.23","CTE_Psi_frente_forjado":"0.1","CTE_Psi_solera_terreno":"0.28","CTE_Tipo_edificio":"Nuevo","CTE_Uso_edificio":"Residencial"}
+! {"CTE_Altitud":"650","CTE_Coef_stack":"0.00029","CTE_Coef_wind":"0.000231","CTE_Design_flow_rate":"0.63","CTE_Fan_ntot":"0.5","CTE_Fan_sfp":"1.5","CTE_Heat_recovery":"0","CTE_Permeabilidad_ventanas":"Clase 2","CTE_Provincia":"Madrid","CTE_Psi_contorno_huecos":"0.05","CTE_Psi_forjado_cubierta":"0.24","CTE_Psi_forjado_exterior":"0.23","CTE_Psi_frente_forjado":"0.1","CTE_Psi_solera_terreno":"0.28","CTE_Tipo_edificio":"Nuevo","CTE_Uso_edificio":"Residencial"}
 OS:Building,
   {1ea2e9a4-0714-4cd3-b7cb-09a16a2a969d}, !- Handle
   CTE_Res_PLANTILLA,                      !- Name
@@ -53,41 +46,6 @@ OS:ShadowCalculation,
   7,                                      !- Calculation Frequency
   15000;                                  !- Maximum Figures in Shadow Overlap Calculations
 
-OS:Output:Variable,
-  {8e67702b-9c83-447c-81fd-d35382ac47c9}, !- Handle
-  {badbf676-8f21-4655-9f20-873a6ac2f151}, !- Name
-  *,                                      !- Key Value
-  Zone Ideal Loads Zone Sensible Cooling Rate, !- Variable Name
-  hourly;                                 !- Reporting Frequency
-
-OS:Output:Variable,
-  {40eb5c3d-968b-4217-b9b1-a211815facd2}, !- Handle
-  {ac72ef7f-827e-47a0-a8b9-311c6260951f}, !- Name
-  *,                                      !- Key Value
-  Zone Ventilation Air Change Rate,       !- Variable Name
-  Hourly;                                 !- Reporting Frequency
-
-OS:Output:Variable,
-  {609b324a-f21f-4e34-b707-18a584fb13f5}, !- Handle
-  {cfe90681-276d-4b07-a196-2324af9c50ee}, !- Name
-  *,                                      !- Key Value
-  Zone Ideal Loads Zone Total Cooling Energy, !- Variable Name
-  Hourly;                                 !- Reporting Frequency
-
-OS:Output:Variable,
-  {f553f067-980a-4e12-9402-1428b62be0db}, !- Handle
-  {12a5202f-a5e5-4dec-b2a7-09e6eb257d10}, !- Name
-  *,                                      !- Key Value
-  Zone Ideal Loads Zone Total Heating Energy, !- Variable Name
-  Hourly;                                 !- Reporting Frequency
-
-OS:Output:Variable,
-  {85c90fba-39d4-4f14-b223-c3ee38395538}, !- Handle
-  {381f0cea-81a4-484e-aa21-e863db18c555}, !- Name
-  *,                                      !- Key Value
-  Zone Operative Temperature,             !- Variable Name
-  hourly;                                 !- Reporting Frequency
-
 OS:HeatBalanceAlgorithm,
   {5afacf34-940b-41b7-b6b7-7554d6420a55}, !- Handle
   ConductionTransferFunction,             !- Algorithm
@@ -97,122 +55,9 @@ OS:ConvergenceLimits,
   {3c619ede-4dda-4a6f-8337-218d56e355f7}, !- Handle
   1;                                      !- Minimum System Timestep {minutes}
 
-OS:Output:Variable,
-  {ccbb734b-6013-4a23-9773-38123fde0ab0}, !- Handle
-  {c585ab9f-bc0a-4958-a1b8-cc43a3366710}, !- Name
-  *,                                      !- Key Value
-  Zone Ideal Loads Zone Sensible Heating Rate, !- Variable Name
-  hourly;                                 !- Reporting Frequency
-
-OS:Output:Variable,
-  {dfa7d344-19cf-47dd-aee9-f383d2dc201b}, !- Handle
-  {5617cddf-3bbb-4302-a556-2acd267e3b63}, !- Name
-  *,                                      !- Key Value
-  Zone Infiltration Air Change Rate,      !- Variable Name
-  Hourly;                                 !- Reporting Frequency
-
 OS:Timestep,
   {9cb96fcf-123e-495d-8fa6-b7286ea708b1}, !- Handle
   6;                                      !- Number of Timesteps per Hour
-
-OS:Output:Variable,
-  {9f697885-7ddb-4f7f-a8f9-bcfeeba3700c}, !- Handle
-  {819bf9b3-27de-4ad2-8be0-1ad6b428795d}, !- Name
-  *,                                      !- Key Value
-  Zone Mean Air Temperature,              !- Variable Name
-  hourly;                                 !- Reporting Frequency
-
-OS:Output:Variable,
-  {9d4ca8f6-b023-4988-9524-dcb97a8bf721}, !- Handle
-  {f7b1f8a4-4325-4c70-b81d-3a94dc3b2640}, !- Name
-  *,                                      !- Key Value
-  Zone Thermostat Cooling Setpoint Temperature, !- Variable Name
-  Hourly;                                 !- Reporting Frequency
-
-OS:Output:Variable,
-  {6d0f16a3-5290-49be-8096-70fcec4ebb18}, !- Handle
-  {6fe92dad-414e-468a-a5aa-a9cac24a3c04}, !- Name
-  *,                                      !- Key Value
-  Zone Ideal Loads Zone Latent Heating Rate, !- Variable Name
-  hourly;                                 !- Reporting Frequency
-
-OS:Output:Variable,
-  {0ad5cf6f-661c-4f3d-a1ad-a42f586c647f}, !- Handle
-  {607b0378-1b8d-4c81-8fca-65ead2d95ff1}, !- Name
-  *,                                      !- Key Value
-  Zone Electric Equipment Total Heating Rate, !- Variable Name
-  Hourly,                                 !- Reporting Frequency
-  ;                                       !- Schedule Name
-
-OS:Output:Variable,
-  {a51dedb9-cc23-40a2-89ae-f36d3be27bbe}, !- Handle
-  {5e2c5451-5e03-451c-983b-bd407f5ab449}, !- Name
-  *,                                      !- Key Value
-  Zone Electric Equipment Electric Energy, !- Variable Name
-  Hourly;                                 !- Reporting Frequency
-
-OS:Output:Variable,
-  {e43a747d-2aac-44f6-b004-18c591648a28}, !- Handle
-  {22bde878-d6cf-446c-b4dc-e013e392ae7f}, !- Name
-  *,                                      !- Key Value
-  Zone People Total Heating Rate,         !- Variable Name
-  Hourly;                                 !- Reporting Frequency
-
-OS:Output:Variable,
-  {7db53c97-37f8-43b2-81a3-df4b3d16f1c8}, !- Handle
-  {477b391b-f1ab-46a2-af44-5f1932ffbf01}, !- Name
-  *,                                      !- Key Value
-  Site Outdoor Air Drybulb Temperature,   !- Variable Name
-  RunPeriod;                              !- Reporting Frequency
-
-OS:Output:Variable,
-  {196d4602-3d18-4511-887d-8e7b703ed6cf}, !- Handle
-  {197e005c-bcf3-424c-8ea4-6805d1c56241}, !- Name
-  *,                                      !- Key Value
-  Zone Air Heat Balance System Air Transfer Rate, !- Variable Name
-  RunPeriod;                              !- Reporting Frequency
-
-OS:Output:Variable,
-  {dc71b124-bfc2-45d3-ba8e-041c20422e63}, !- Handle
-  {2f14e5c7-84c6-4865-89c3-38af68abc0d9}, !- Name
-  *,                                      !- Key Value
-  Zone Ideal Loads Zone Latent Cooling Rate, !- Variable Name
-  hourly;                                 !- Reporting Frequency
-
-OS:Output:Variable,
-  {3d538fc7-63f6-4bac-a17a-c65b249f1183}, !- Handle
-  {77d85380-223e-4b1e-98c8-d5cf0195e8e0}, !- Name
-  *,                                      !- Key Value
-  Zone People Occupant Count,             !- Variable Name
-  Hourly;                                 !- Reporting Frequency
-
-OS:Output:Variable,
-  {137c77c1-c68c-45cb-9387-2ffdb0772691}, !- Handle
-  {a68d64e7-252b-4184-9e6a-915611f0567c}, !- Name
-  *,                                      !- Key Value
-  Zone Lights Total Heating Rate,         !- Variable Name
-  Hourly;                                 !- Reporting Frequency
-
-OS:Output:Variable,
-  {da974b6a-1ad3-48f4-a1d1-5d2580451ca4}, !- Handle
-  {df5c1528-f9a1-4d2c-bc26-dea40251e660}, !- Name
-  *,                                      !- Key Value
-  Zone Electric Equipment Total Heating Energy, !- Variable Name
-  Hourly;                                 !- Reporting Frequency
-
-OS:Output:Variable,
-  {9d2b87e6-05cf-4cd2-aef0-260744cd4fd1}, !- Handle
-  {06c1eb6f-5f58-4b52-a198-d87274097bd4}, !- Name
-  *,                                      !- Key Value
-  Zone Lights Electric Energy,            !- Variable Name
-  Hourly;                                 !- Reporting Frequency
-
-OS:Output:Variable,
-  {289ab821-5fc5-4a3d-bdb3-4efb90f93f54}, !- Handle
-  {774b90bb-96fd-4415-b8ec-43cb6b8e1ce0}, !- Name
-  *,                                      !- Key Value
-  Zone Air Temperature,                   !- Variable Name
-  Hourly;                                 !- Reporting Frequency
 
 OS:RunPeriod,
   {ea3e53a0-9c01-4abb-b7de-f33c0f5ea9cb}, !- Handle
@@ -12252,7 +12097,7 @@ OS:DefaultScheduleSet,
   ,                                       !- Hours of Operation Schedule Name
   {145dfb69-7627-4382-b0fb-1fa61d4ee31d}, !- Number of People Schedule Name
   {2f5af3c6-5eba-4c72-a311-ac6efccaf48c}, !- People Activity Level Schedule Name
-  ,                                       !- Lighting Schedule Name
+  {5cfa34ea-79aa-4e1b-9363-07bb76091943}, !- Lighting Schedule Name
   ,                                       !- Electric Equipment Schedule Name
   ,                                       !- Gas Equipment Schedule Name
   ,                                       !- Hot Water Equipment Schedule Name
@@ -14023,10 +13868,10 @@ OS:ZoneHVAC:EquipmentList,
   {991eea04-4949-4f67-8bd1-6239bcc7d383}, !- Handle
   Zone HVAC Equipment List 3,             !- Name
   {31e25aee-b47c-46b1-b83b-ff6737950fc3}, !- Thermal Zone
-  {6212a194-de7f-4894-af31-d79d2b8309bb}, !- Zone Equipment 1
+  {e0e08264-3bc5-439b-85f4-d9367866432a}, !- Zone Equipment 1
   1,                                      !- Zone Equipment Cooling Sequence 1
   1,                                      !- Zone Equipment Heating or No-Load Sequence 1
-  {44d04f9e-3184-4c88-97c5-7a810885dd24}, !- Zone Equipment 2
+  {034c1620-8d3d-4c1b-824f-2c97541292f7}, !- Zone Equipment 2
   2,                                      !- Zone Equipment Cooling Sequence 2
   2;                                      !- Zone Equipment Heating or No-Load Sequence 2
 
@@ -15603,107 +15448,151 @@ OS:Schedule:Day,
   0,                                      ! Minute 1
   67;                                     ! Value Until Time 1
 
+OS:RadianceParameters,
+  {abb46f42-a7d5-4d50-a7dc-399ca5661972}, !- Handle
+  1,                                      !- Accumulated Rays per Record
+  0,                                      !- Direct Threshold
+  1,                                      !- Direct Certainty
+  1,                                      !- Direct Jitter
+  1,                                      !- Direct Pretest
+  6,                                      !- Ambient Bounces VMX
+  2,                                      !- Ambient Bounces DMX
+  4050,                                   !- Ambient Divisions VMX
+  512,                                    !- Ambient Divisions DMX
+  256,                                    !- Ambient Supersamples
+  0.001,                                  !- Limit Weight VMX
+  0.001,                                  !- Limit Weight DMX
+  500,                                    !- Klems Sampling Density
+  146;                                    !- Sky Discretization Resolution
+
+OS:ProgramControl,
+  {d8ee9b2b-aac2-4f90-b39e-27420ccbbd0e}; !- Handle
+
+OS:OutputControl:ReportingTolerances,
+  {f385f67c-0ed6-46dd-a896-f1d9bf505e5a}; !- Handle
+
+OS:SurfaceConvectionAlgorithm:Inside,
+  {eb05db83-967f-4560-91a4-909dedfb0c19}, !- Handle
+  TARP;                                   !- Algorithm
+
+OS:SurfaceConvectionAlgorithm:Outside,
+  {ae1b6f7a-debf-42d6-b985-734a7faf8671}, !- Handle
+  DOE-2;                                  !- Algorithm
+
+OS:ZoneAirHeatBalanceAlgorithm,
+  {8d7b9115-c390-40ee-bbc3-f444ca33fcb3}, !- Handle
+  ThirdOrderBackwardDifference;           !- Algorithm
+
+OS:ZoneAirContaminantBalance,
+  {f3372e1e-b088-480e-abf3-9735204305b4}; !- Handle
+
+OS:ZoneCapacitanceMultiplier:ResearchSpecial,
+  {7e0fc5b0-2fe0-4b4a-a3a9-e9f464514a14}, !- Handle
+  ,                                       !- Temperature Capacity Multiplier
+  ,                                       !- Humidity Capacity Multiplier
+  ;                                       !- Carbon Dioxide Capacity Multiplier
+
 OS:Meter,
-  {b15c5269-02e4-436c-b048-b384b05df718}, !- Handle
+  {91c8b549-d502-45e3-b683-404186f88bfa}, !- Handle
   DistrictHeating:Facility,               !- Name
   RunPeriod;                              !- Reporting Frequency
 
 OS:Meter,
-  {41108b65-50d0-4500-b45d-53909f484d9f}, !- Handle
+  {6c9dc942-054a-4854-982a-41bb98e8ff3b}, !- Handle
   DistrictCooling:Facility,               !- Name
   RunPeriod;                              !- Reporting Frequency
 
 OS:Output:Variable,
-  {c1a8b0c6-d3d0-4a1f-bd24-ac1c8ed4c47a}, !- Handle
+  {abcaa846-48a5-4da5-a198-eeb2188c8869}, !- Handle
   Output Variable 1,                      !- Name
   *,                                      !- Key Value
   Site Outdoor Air Drybulb Temperature,   !- Variable Name
   monthly;                                !- Reporting Frequency
 
 OS:Output:Variable,
-  {70e65123-22d8-4db4-8752-f2a765874828}, !- Handle
+  {578fdef1-3589-48da-bad2-3ef9b08cf364}, !- Handle
   Output Variable 2,                      !- Name
   *,                                      !- Key Value
   Surface Inside Face Conduction Heat Transfer Energy, !- Variable Name
   monthly;                                !- Reporting Frequency
 
 OS:Output:Variable,
-  {9b34e138-f6d3-4ded-a2f3-40f2f15bbbea}, !- Handle
+  {fb300673-cbad-4fa1-8b33-4395085a783b}, !- Handle
   Output Variable 3,                      !- Name
   *,                                      !- Key Value
   Surface Window Heat Gain Energy,        !- Variable Name
   monthly;                                !- Reporting Frequency
 
 OS:Output:Variable,
-  {a76f3204-5f64-4d33-b52a-f721f8582264}, !- Handle
+  {886aabf6-1d6e-4109-912b-5ec219b3a5c1}, !- Handle
   Output Variable 4,                      !- Name
   *,                                      !- Key Value
   Surface Window Heat Loss Energy,        !- Variable Name
   monthly;                                !- Reporting Frequency
 
 OS:Output:Variable,
-  {2c8de28f-8e7a-4550-b1ad-f1e0c63ee120}, !- Handle
+  {81eebea9-06ca-4b4f-a0ab-7b8a71b8272e}, !- Handle
   Output Variable 5,                      !- Name
   *,                                      !- Key Value
   Surface Window Transmitted Solar Radiation Energy, !- Variable Name
   monthly;                                !- Reporting Frequency
 
 OS:Output:Variable,
-  {8fb6679d-f1cc-45a0-a0e7-659c0dcd5f40}, !- Handle
+  {6435be7c-96fb-4ea6-b417-bd63df76dfcf}, !- Handle
   Output Variable 6,                      !- Name
   *,                                      !- Key Value
   Zone Total Internal Total Heating Energy, !- Variable Name
   monthly;                                !- Reporting Frequency
 
 OS:Output:Variable,
-  {05eef39e-fd41-4e8c-baeb-ccde1fb7e118}, !- Handle
+  {39fc7f3d-912f-400b-8cda-b40e04b40020}, !- Handle
   Output Variable 7,                      !- Name
   *,                                      !- Key Value
   Zone Ideal Loads Zone Total Heating Energy, !- Variable Name
   monthly;                                !- Reporting Frequency
 
 OS:Output:Variable,
-  {488546d3-7c61-4911-8ad8-3aef07e8cbb4}, !- Handle
+  {b56c63d8-02f6-4e4f-990e-85fb1d7aca2c}, !- Handle
   Output Variable 8,                      !- Name
   *,                                      !- Key Value
   Zone Ideal Loads Zone Total Cooling Energy, !- Variable Name
   monthly;                                !- Reporting Frequency
 
 OS:Output:Variable,
-  {d00319ca-1209-46a5-a2c0-70a0da8114ff}, !- Handle
+  {a3307ae2-9dd5-419b-ab7f-20960efe35cf}, !- Handle
   Output Variable 9,                      !- Name
   *,                                      !- Key Value
   Zone Combined Outdoor Air Sensible Heat Loss Energy, !- Variable Name
   monthly;                                !- Reporting Frequency
 
 OS:Output:Variable,
-  {b5ddf215-b294-4ac6-9f54-e8bf9ae95d4c}, !- Handle
+  {85e17c69-b84b-4668-88c7-97d20265e667}, !- Handle
   Output Variable 10,                     !- Name
   *,                                      !- Key Value
   Zone Combined Outdoor Air Sensible Heat Gain Energy, !- Variable Name
   monthly;                                !- Reporting Frequency
 
 OS:Output:Variable,
-  {fc868a58-6741-4dc5-92b6-c72ee90bd62a}, !- Handle
+  {22d33496-1c4a-4932-a9db-0dbf33b10635}, !- Handle
   Output Variable 11,                     !- Name
   *,                                      !- Key Value
   Zone Combined Outdoor Air Changes per Hour, !- Variable Name
   monthly;                                !- Reporting Frequency
 
 OS:Output:Variable,
-  {389746e7-b7a9-42bd-8ba8-bf1cf3b0082f}, !- Handle
+  {29553e1a-fc72-4f25-a8c7-961da9626806}, !- Handle
   Output Variable 12,                     !- Name
   *,                                      !- Key Value
   Zone Combined Outdoor Air Fan Electric Energy, !- Variable Name
   monthly;                                !- Reporting Frequency
 
 OS:Meter,
-  {9bb6e95a-766c-485b-bb69-a6543cbb3b8c}, !- Handle
+  {c9471964-f4a9-4849-828e-1a52770f6fe9}, !- Handle
   Fans:Electricity,                       !- Name
   monthly;                                !- Reporting Frequency
 
 OS:ZoneVentilation:DesignFlowRate,
-  {6212a194-de7f-4894-af31-d79d2b8309bb}, !- Handle
+  {e0e08264-3bc5-439b-85f4-d9367866432a}, !- Handle
   HVNOC_vivienda_Zone Ventilation Design Flow Rate NOCTURNO, !- Name
   {7ae777c4-0f6f-4830-b46f-05f4cd5dd4f1}, !- Schedule Name
   AirChanges/Hour,                        !- Design Flow Rate Calculation Method
@@ -15731,7 +15620,7 @@ OS:ZoneVentilation:DesignFlowRate,
   40;                                     !- Maximum Wind Speed {m/s}
 
 OS:ZoneVentilation:DesignFlowRate,
-  {44d04f9e-3184-4c88-97c5-7a810885dd24}, !- Handle
+  {034c1620-8d3d-4c1b-824f-2c97541292f7}, !- Handle
   HVEN_vivienda_Zone Ventilation Design Flow Rate NORMAL, !- Name
   {349bb94f-b15a-439e-8182-e3fb0ed95d1d}, !- Schedule Name
   AirChanges/Hour,                        !- Design Flow Rate Calculation Method
@@ -15740,7 +15629,7 @@ OS:ZoneVentilation:DesignFlowRate,
   0,                                      !- Flow Rate per Person {m3/s-person}
   0.63,                                   !- Air Changes per Hour {1/hr}
   Exhaust,                                !- Ventilation Type
-  1250,                                   !- Fan Pressure Rise {Pa}
+  750,                                    !- Fan Pressure Rise {Pa}
   0.5,                                    !- Fan Total Efficiency
   1,                                      !- Constant Term Coefficient
   0,                                      !- Temperature Term Coefficient
@@ -15759,7 +15648,7 @@ OS:ZoneVentilation:DesignFlowRate,
   40;                                     !- Maximum Wind Speed {m/s}
 
 OS:SpaceInfiltration:EffectiveLeakageArea,
-  {17334573-250d-45b1-a773-b5dbbe85d128}, !- Handle
+  {fb916d5a-ac51-45e5-847b-be8f26c7af26}, !- Handle
   CTE_ELA_#{ space.name },                !- Name
   {40c739fc-b1f5-426b-bfe3-4ae2f9708e96}, !- Space or SpaceType Name
   {5faae3d7-5df8-48a9-9ceb-58554d53b50c}, !- Schedule Name
@@ -15768,16 +15657,16 @@ OS:SpaceInfiltration:EffectiveLeakageArea,
   0.000231;                               !- Wind Coefficient
 
 OS:SpaceInfiltration:EffectiveLeakageArea,
-  {d8cd82aa-11b1-4177-adb3-ad0488a7908c}, !- Handle
+  {c07bb49e-4c80-4d90-8345-43c29f0f0ee4}, !- Handle
   CTE_ELA_#{ space.name } 1,              !- Name
   {828bcd97-95bc-46ac-b0ab-1ad1b566595c}, !- Space or SpaceType Name
-  {443ec997-1dab-4351-92d5-c29cab4f58ca}, !- Schedule Name
+  {5faae3d7-5df8-48a9-9ceb-58554d53b50c}, !- Schedule Name
   218.984478664807,                       !- Effective Air Leakage Area {cm2}
   0.00029,                                !- Stack Coefficient
   0.000231;                               !- Wind Coefficient
 
 OS:Material:NoMass,
-  {801b86b8-e8b2-4be7-87a3-c691e66adaa3}, !- Handle
+  {f77364da-82db-4a9a-a356-6beef95c770b}, !- Handle
   materialPT,                             !- Name
   Smooth,                                 !- Roughness
   1,                                      !- Thermal Resistance {m2-K/W}
@@ -15786,19 +15675,19 @@ OS:Material:NoMass,
   0.7;                                    !- Visible Absorptance
 
 OS:Construction,
-  {de96670d-fd70-4a6f-9a6d-b355a97296a8}, !- Handle
+  {0fb47e27-b0a3-49ff-afbc-ce14d7f7aa13}, !- Handle
   PT_ForjadoCubierta_PSI0.24,             !- Name
   ,                                       !- Surface Rendering Name
-  {801b86b8-e8b2-4be7-87a3-c691e66adaa3}; !- Layer 1
+  {f77364da-82db-4a9a-a356-6beef95c770b}; !- Layer 1
 
 OS:StandardsInformation:Construction,
-  {314b1d53-e0d4-404d-9008-bcffeb9806cb}, !- Handle
-  {de96670d-fd70-4a6f-9a6d-b355a97296a8}, !- Construction Name
+  {7fd04752-0ed3-4af3-aba0-a5718a9c5002}, !- Handle
+  {0fb47e27-b0a3-49ff-afbc-ce14d7f7aa13}, !- Construction Name
   ,                                       !- Intended Surface Type
   ;                                       !- Standards Construction Type
 
 OS:Material:NoMass,
-  {8b62aaf1-ad9f-4c50-aa72-7ae3c6a8ba03}, !- Handle
+  {3ae4bc68-5b82-46ba-96e1-7a4ca676e414}, !- Handle
   materialPT 1,                           !- Name
   Smooth,                                 !- Roughness
   1,                                      !- Thermal Resistance {m2-K/W}
@@ -15807,19 +15696,19 @@ OS:Material:NoMass,
   0.7;                                    !- Visible Absorptance
 
 OS:Construction,
-  {0307c1ae-a616-496b-96e6-7da48541e687}, !- Handle
+  {5961b085-d224-4b87-a6a7-9413ceb5f4e7}, !- Handle
   PT_FrenteForjado_PSI0.1,                !- Name
   ,                                       !- Surface Rendering Name
-  {8b62aaf1-ad9f-4c50-aa72-7ae3c6a8ba03}; !- Layer 1
+  {3ae4bc68-5b82-46ba-96e1-7a4ca676e414}; !- Layer 1
 
 OS:StandardsInformation:Construction,
-  {1f8ee60d-b205-4285-8f8b-4b5a8dd7d9e0}, !- Handle
-  {0307c1ae-a616-496b-96e6-7da48541e687}, !- Construction Name
+  {b3e5feff-4b44-46bc-bbc3-fd9294e58c49}, !- Handle
+  {5961b085-d224-4b87-a6a7-9413ceb5f4e7}, !- Construction Name
   ,                                       !- Intended Surface Type
   ;                                       !- Standards Construction Type
 
 OS:Material:NoMass,
-  {26ac9860-5117-40cb-aed4-089896712693}, !- Handle
+  {9f1a87c1-580d-4e82-9adb-f4bb6bb18645}, !- Handle
   materialPT 2,                           !- Name
   Smooth,                                 !- Roughness
   1,                                      !- Thermal Resistance {m2-K/W}
@@ -15828,19 +15717,19 @@ OS:Material:NoMass,
   0.7;                                    !- Visible Absorptance
 
 OS:Construction,
-  {fd571b5f-b743-4241-9602-d6fd524f11cd}, !- Handle
+  {c466e995-03f5-416b-a224-2663092907a3}, !- Handle
   PT_SoleraTerreno_PSI0.28,               !- Name
   ,                                       !- Surface Rendering Name
-  {26ac9860-5117-40cb-aed4-089896712693}; !- Layer 1
+  {9f1a87c1-580d-4e82-9adb-f4bb6bb18645}; !- Layer 1
 
 OS:StandardsInformation:Construction,
-  {8fda7739-08c3-48ac-8e28-1885819320cd}, !- Handle
-  {fd571b5f-b743-4241-9602-d6fd524f11cd}, !- Construction Name
+  {0b67b099-dcfc-4d34-a87d-67dd61a0ff02}, !- Handle
+  {c466e995-03f5-416b-a224-2663092907a3}, !- Construction Name
   ,                                       !- Intended Surface Type
   ;                                       !- Standards Construction Type
 
 OS:Material:NoMass,
-  {f27c6f18-1c9c-4309-9af1-4d04a4a82cac}, !- Handle
+  {f92c00a3-5a7f-429d-97dc-c38452a27afd}, !- Handle
   materialPT 3,                           !- Name
   Smooth,                                 !- Roughness
   1,                                      !- Thermal Resistance {m2-K/W}
@@ -15849,19 +15738,19 @@ OS:Material:NoMass,
   0.7;                                    !- Visible Absorptance
 
 OS:Construction,
-  {70bad65a-6d12-4d1d-88cc-1560e1114134}, !- Handle
+  {3bbd43cd-4875-49d6-8558-8a9b4aa3fbdb}, !- Handle
   PT_ForjadoExterior_PSI0.23,             !- Name
   ,                                       !- Surface Rendering Name
-  {f27c6f18-1c9c-4309-9af1-4d04a4a82cac}; !- Layer 1
+  {f92c00a3-5a7f-429d-97dc-c38452a27afd}; !- Layer 1
 
 OS:StandardsInformation:Construction,
-  {a74d7c00-efd3-4d59-84a0-c809a755c888}, !- Handle
-  {70bad65a-6d12-4d1d-88cc-1560e1114134}, !- Construction Name
+  {4d5e8dfe-9b88-4ca0-9023-33d6ac17ba4a}, !- Handle
+  {3bbd43cd-4875-49d6-8558-8a9b4aa3fbdb}, !- Construction Name
   ,                                       !- Intended Surface Type
   ;                                       !- Standards Construction Type
 
 OS:Material:NoMass,
-  {2ac2fad8-4dc9-4d9f-97b9-bb594335d7ee}, !- Handle
+  {18994ae4-fff6-489e-b717-e1e8f2b5ccc1}, !- Handle
   materialPT 4,                           !- Name
   Smooth,                                 !- Roughness
   1,                                      !- Thermal Resistance {m2-K/W}
@@ -15870,22 +15759,22 @@ OS:Material:NoMass,
   0.7;                                    !- Visible Absorptance
 
 OS:Construction,
-  {f7d3e5df-8b0e-4b1c-a838-1a9380f7f509}, !- Handle
+  {ebd4e8a8-b7f3-4553-8a83-55305525dbe5}, !- Handle
   PT_ContornoHuecos_PSI0.05,              !- Name
   ,                                       !- Surface Rendering Name
-  {2ac2fad8-4dc9-4d9f-97b9-bb594335d7ee}; !- Layer 1
+  {18994ae4-fff6-489e-b717-e1e8f2b5ccc1}; !- Layer 1
 
 OS:StandardsInformation:Construction,
-  {80d0c9ea-dbf9-43be-b989-31b70aa0e81d}, !- Handle
-  {f7d3e5df-8b0e-4b1c-a838-1a9380f7f509}, !- Construction Name
+  {a42f3169-47cd-41f8-b1f9-ff1b9b98ee3e}, !- Handle
+  {ebd4e8a8-b7f3-4553-8a83-55305525dbe5}, !- Construction Name
   ,                                       !- Intended Surface Type
   ;                                       !- Standards Construction Type
 
 OS:Surface,
-  {8159b5aa-5509-42da-9979-cd72d55f7f86}, !- Handle
+  {1cdf2411-5277-47b2-81f0-dd63cf832010}, !- Handle
   vivienda_ptSoleraTerreno,               !- Name
   Wall,                                   !- Surface Type
-  {fd571b5f-b743-4241-9602-d6fd524f11cd}, !- Construction Name
+  {c466e995-03f5-416b-a224-2663092907a3}, !- Construction Name
   {40c739fc-b1f5-426b-bfe3-4ae2f9708e96}, !- Space Name
   Outdoors,                               !- Outside Boundary Condition
   ,                                       !- Outside Boundary Condition Object
@@ -15899,10 +15788,10 @@ OS:Surface,
   6.52824596032268, 3.45757852110334, -50; !- X,Y,Z Vertex 4 {m}
 
 OS:Surface,
-  {77448df6-c9f3-49db-ac33-9d822dcbdc29}, !- Handle
+  {add7d808-dfe6-448e-bdeb-ee49f95f9327}, !- Handle
   vivienda_ptForjadoCubierta,             !- Name
   Wall,                                   !- Surface Type
-  {de96670d-fd70-4a6f-9a6d-b355a97296a8}, !- Construction Name
+  {0fb47e27-b0a3-49ff-afbc-ce14d7f7aa13}, !- Construction Name
   {40c739fc-b1f5-426b-bfe3-4ae2f9708e96}, !- Space Name
   Outdoors,                               !- Outside Boundary Condition
   ,                                       !- Outside Boundary Condition Object
@@ -15916,10 +15805,10 @@ OS:Surface,
   6.52824596032268, 3.45757852110334, -50; !- X,Y,Z Vertex 4 {m}
 
 OS:Surface,
-  {cd84c76f-18dc-4c70-bdce-c3be0d60d6f6}, !- Handle
+  {3b1ebd8c-21f7-4909-9e6a-b45af06d8fa4}, !- Handle
   garaje_ptSoleraTerreno,                 !- Name
   Wall,                                   !- Surface Type
-  {fd571b5f-b743-4241-9602-d6fd524f11cd}, !- Construction Name
+  {c466e995-03f5-416b-a224-2663092907a3}, !- Construction Name
   {828bcd97-95bc-46ac-b0ab-1ad1b566595c}, !- Space Name
   Outdoors,                               !- Outside Boundary Condition
   ,                                       !- Outside Boundary Condition Object
@@ -15933,10 +15822,10 @@ OS:Surface,
   -11.02373677625, 3.76576928277233, -50; !- X,Y,Z Vertex 4 {m}
 
 OS:Surface,
-  {611ad3ab-47b1-4080-aac2-4c69ee4b0171}, !- Handle
+  {035c71c3-ed3a-4a9d-88e9-9520c43e67cf}, !- Handle
   garaje_ptForjadoCubierta,               !- Name
   Wall,                                   !- Surface Type
-  {de96670d-fd70-4a6f-9a6d-b355a97296a8}, !- Construction Name
+  {0fb47e27-b0a3-49ff-afbc-ce14d7f7aa13}, !- Construction Name
   {828bcd97-95bc-46ac-b0ab-1ad1b566595c}, !- Space Name
   Outdoors,                               !- Outside Boundary Condition
   ,                                       !- Outside Boundary Condition Object
@@ -15950,10 +15839,10 @@ OS:Surface,
   -11.02373677625, 3.76576928277233, -50; !- X,Y,Z Vertex 4 {m}
 
 OS:Surface,
-  {fb01e5d9-79ac-4fb0-b220-7afd00109c4d}, !- Handle
+  {d3d9056d-67df-42ad-942c-5c69f1c90b47}, !- Handle
   vivienda_ptContornoHuecos,              !- Name
   Wall,                                   !- Surface Type
-  {f7d3e5df-8b0e-4b1c-a838-1a9380f7f509}, !- Construction Name
+  {ebd4e8a8-b7f3-4553-8a83-55305525dbe5}, !- Construction Name
   {40c739fc-b1f5-426b-bfe3-4ae2f9708e96}, !- Space Name
   Outdoors,                               !- Outside Boundary Condition
   ,                                       !- Outside Boundary Condition Object
