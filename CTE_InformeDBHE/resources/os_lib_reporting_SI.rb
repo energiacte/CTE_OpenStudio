@@ -304,20 +304,15 @@ module OsLib_Reporting
     end
 
     # structure ID / building name
-    display = 'Nombre del edificio'
-    target_units = 'building_name'
     value = model.getBuilding.name.to_s
-    general_building_information[:data] << [display, value, target_units]
-    runner.registerValue(display, value, target_units)
+    general_building_information[:data] << ['Nombre del edificio', value, 'building_name']
+    runner.registerValue('CTE Nombre del edificio', value, 'building_name')
 
     # net site energy
-    display = 'Consumo neto de energía final'
-    source_units = 'GJ'
-    target_units = 'kWh'
-    value = OpenStudio.convert(sqlFile.netSiteEnergy.get, source_units, target_units).get
+    value = OpenStudio.convert(sqlFile.netSiteEnergy.get, 'GJ', 'kWh').get
     value_neat = OpenStudio.toNeatString(value, 0, true)
-    general_building_information[:data] << [display, value_neat, target_units]
-    runner.registerValue(display, value, target_units)
+    general_building_information[:data] << ['Consumo neto de energía final', value_neat, 'kWh']
+    runner.registerValue('CTE Consumo neto de energía final', value, 'kWh')
 
     # total building area
     query = 'SELECT Value FROM tabulardatawithstrings WHERE '
@@ -332,19 +327,16 @@ module OsLib_Reporting
       runner.registerError('Did not find value for total building area.')
       return false
     else
-      display = 'Superficie total del edificio'
       value = query_results.get
-      value_neat = OpenStudio.toNeatString(value, 0, true)
-      general_building_information[:data] << [display, value_neat, 'm^2']
-      runner.registerValue(display, value, 'm^2')
+      general_building_information[:data] << ['Superficie total del edificio', value.to_f.round(2), 'm^2']
+      runner.registerValue('CTE Superficie total del edificio', value, 'm^2')
     end
 
     # EUI
     eui =  sqlFile.netSiteEnergy.get / query_results.get
     value = OpenStudio.convert(eui, 'GJ/m^2', 'kWh/m^2').get
-    value_neat = OpenStudio.toNeatString(value, 2, true)
-    general_building_information[:data] << ['Intensidad energética (E.final)', value_neat, 'kWh/m^2']
-    runner.registerValue('Intensidad energética (E.final)', value, 'kWh/m^2')
+    general_building_information[:data] << ['Intensidad energética (E.final)', value.to_f.round(2), 'kWh/m^2']
+    runner.registerValue('CTE Intensidad energética (E.final)', value, 'kWh/m^2')
 
     return general_building_information
   end
