@@ -228,14 +228,16 @@ module CTELib_Reporting
     general_tables = []
 
     @mediciones_segun_CTE = {}
-    @mediciones_segun_CTE[:title] = 'Superficies y compacidad'
+    @mediciones_segun_CTE[:title] = 'Datos generales'
     @mediciones_segun_CTE[:tables] = general_tables #esto no se lo que es
 
     if name_only == true
         return @mediciones_segun_CTE
     end
 
+    general_tables << CTELib_Reporting.weather_summary_table(model, sqlFile, runner)
     general_tables << CTELib_Reporting.cte_mediciones_generales_table(model, sqlFile, runner)
+    general_tables << CTELib_Reporting.setpoint_not_met_summary_table(model, sqlFile, runner)
     return @mediciones_segun_CTE
   end
 
@@ -267,7 +269,7 @@ module CTELib_Reporting
 
     # gather data for section
     @building_summary_section = {}
-    @building_summary_section[:title] = 'Datos generales'
+    @building_summary_section[:title] = 'Generación de energía'
     @building_summary_section[:tables] = general_tables
 
     # stop here if only name is requested this is used to populate display name for arguments
@@ -276,9 +278,6 @@ module CTELib_Reporting
     end
 
     # add in general information from method
-    general_tables << CTELib_Reporting.general_building_information_table(model, sqlFile, runner)
-    general_tables << CTELib_Reporting.weather_summary_table(model, sqlFile, runner)
-    general_tables << CTELib_Reporting.setpoint_not_met_summary_table(model, sqlFile, runner)
     site_power_generation_table = CTELib_Reporting.site_power_generation_table(model, sqlFile, runner)
     if site_power_generation_table
       general_tables << CTELib_Reporting.site_power_generation_table(model, sqlFile, runner)
@@ -311,59 +310,6 @@ module CTELib_Reporting
     return @annual_overview_section
   end
 
-  # create table with general building information
-  # this just makes a table, and not a full section. It feeds into another method that makes a full section
-
-  def self.general_building_information_table(model, sqlFile, runner, name_only=false)
-    # general building information type data output
-    general_building_information = {}
-    general_building_information[:title] = 'Edificio' # 'Building Summary' # name will be with section
-    general_building_information[:header] = %w(Informacion Valor Unidades)
-    general_building_information[:units] = [] # won't populate for this table since each row has different units
-    general_building_information[:data] = []
-
-    # stop here if only name is requested this is used to populate display name for arguments
-    if name_only == true
-      return @general_building_information
-    end
-
-    # structure ID / building name
-    value = model.getBuilding.name.to_s
-    general_building_information[:data] << ['Nombre del edificio', value, 'building_name']
-    runner.registerValue('CTE Nombre del edificio', value, 'building_name')
-
-    # net site energy
-    value = OpenStudio.convert(sqlFile.netSiteEnergy.get, 'GJ', 'kWh').get
-    value_neat = OpenStudio.toNeatString(value, 0, true)
-    general_building_information[:data] << ['Consumo neto de energía final', value_neat, 'kWh']
-    runner.registerValue('CTE Consumo neto de energía final', value, 'kWh')
-
-    # total building area
-    query = 'SELECT Value FROM tabulardatawithstrings WHERE '
-    query << "ReportName='AnnualBuildingUtilityPerformanceSummary' and " # Notice no space in SystemSummary
-    query << "ReportForString='Entire Facility' and "
-    query << "TableName='Building Area' and "
-    query << "RowName='Total Building Area' and "
-    query << "ColumnName='Area' and "
-    query << "Units='m2';"
-    query_results = sqlFile.execAndReturnFirstDouble(query)
-    if query_results.empty?
-      runner.registerError('Did not find value for total building area.')
-      return false
-    else
-      value = query_results.get
-      general_building_information[:data] << ['Superficie total del edificio', value.to_f.round(2), 'm^2']
-      runner.registerValue('CTE Superficie total del edificio', value, 'm^2')
-    end
-
-    # EUI
-    eui =  sqlFile.netSiteEnergy.get / query_results.get
-    value = OpenStudio.convert(eui, 'GJ/m^2', 'kWh/m^2').get
-    general_building_information[:data] << ['Intensidad energética (E.final)', value.to_f.round(2), 'kWh/m^2']
-    runner.registerValue('CTE Intensidad energética (E.final)', value, 'kWh/m^2')
-
-    return general_building_information
-  end
 
   # create table of space type breakdown
   def self.space_type_breakdown_section(model, sqlFile, runner, name_only = false)
@@ -1170,18 +1116,17 @@ module CTELib_Reporting
     # create table
     table = {}
     table[:title] = 'Clima'
-    table[:header] = ['', 'Valor']
+    table[:header] = rows.map { |row| self.translate(row) }
     table[:units] = []
     table[:data] = []
 
     # run query and populate table
+    row_data = []
     rows.each do |row|
-      row_data = [self.translate(row)]
       query = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='InputVerificationandResultsSummary' and TableName='General' and RowName= '#{row}' and ColumnName= 'Value'"
-      results = sqlFile.execAndReturnFirstString(query)
-      row_data << results
-      table[:data] << row_data
+      row_data << sqlFile.execAndReturnFirstString(query).get
     end
+    table[:data] = [row_data]
 
     return table
   end
