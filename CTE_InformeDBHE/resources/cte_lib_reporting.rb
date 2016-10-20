@@ -952,7 +952,7 @@ WHERE
       nombre = sqlFile.execAndReturnFirstString("SELECT Name FROM Constructions WHERE ConstructionIndex == #{indiceconstruccion} ").get
       uvalue = sqlFile.execAndReturnFirstDouble("SELECT Uvalue FROM Constructions WHERE ConstructionIndex == #{indiceconstruccion} ").get
       unless nombre.include?("_PSI")
-        data << ["#{ nombre }".encode("UTF-8", invalid: :replace, undef: :replace), area, uvalue]
+        data << [nombre.force_encoding('UTF-8'), area, uvalue]
       end
     end
 
