@@ -272,7 +272,7 @@ module CTELib_Reporting
     # add in general information from method
     general_tables << CTELib_Reporting.tabla_mediciones_envolvente(model, sqlfile, runner)
     general_tables << CTELib_Reporting.tabla_mediciones_puentes_termicos(model, runner)
-    general_tables << self.cte_envelope_fenestration_table(model, sqlfile, runner)
+    general_tables << CTELib_Reporting.cte_envelope_fenestration_table(model, sqlfile, runner)
 
     return @mediciones
   end
@@ -768,6 +768,7 @@ module CTELib_Reporting
       row_data = [self.translate(row)]
       headers.each_with_index do |header, index|
         next if header == ''
+        #XXX: Leedsummary?
         query = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='LEEDsummary' and RowName= '#{row}' and ColumnName='#{header}';"
         data = sqlFile.execAndReturnFirstDouble(query).get
         data_ip = OpenStudio.convert(data, site_power_generation_table[:source_units][index], site_power_generation_table[:units][index]).get
