@@ -15,6 +15,8 @@ CTE_Informe:
     - Incluir iluminación en "Consumo Final EPB" en función de que sea terciario o no.
     - Hacer mediciones a partir de modelo y no de base de datos SQL
 - Otros:
+    - Incluir factores de paso a energía primaria y emisiones (habría que
+      solicitar para RED1 y RED2)
     - Generar XML
         - ver https://github.com/asparke2/demo-measures/tree/master/ExportXMLMeasure
 
