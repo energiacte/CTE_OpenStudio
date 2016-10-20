@@ -48,17 +48,15 @@ class CTE_InformeDBHE < OpenStudio::Ruleset::ReportingUserScript
   def possible_sections
     result = []
     # methods for sections in order that they will appear in report
-    result << 'cte_mediciones_de_superficies'
+    result << 'cte_datos_generales'
     result << 'cte_energia_final_por_servicios'
-    result << 'annual_overview_section'
+    result << 'cte_site_power_generation_section'
     result << 'cte_demandas_por_componentes'
-    result << 'building_summary_section'
     result << 'cte_mediciones_envolvente'
-    result << 'space_type_breakdown_section'
-    result << 'space_type_details_section'
-    result << 'zone_summary_section'
+    result << 'cte_space_types_section'
+    result << 'cte_zones_section'
     result << 'cte_outdoor_air_section' #Aire exterior
-    result << 'source_energy_section'
+    result << 'cte_source_energy_section'
     return result
   end
 
