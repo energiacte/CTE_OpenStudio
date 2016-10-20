@@ -4,12 +4,16 @@
       circuito) y evitar el fallo en ese caso.
       Usar WaterEquipment detectando objetos por tipo (los objetos del model
       son subtipo del workspace?)
-    - Que sea coherente el hecho de meter un recuperador con el tipo de flujo.
 - OS_15603:
-    - Limpiar plantilla de report y dejar solamente lo que nos interesa
-    - Renombrar a CTE_Report
-    - Que el informe en la tabla "Consumo Final" se incluya o no la iluminación
-	  en función de que sea terciario o no.
+    - Quitar tablas propias que ya están en CTE_Informe y dejar el informe
+      estándar pero en unidades SI.
+    - Comprobar si la tabla de Sizing se corrige igual que en CTE_Informe
+      (Heating Load -> Heating Sensible Load, Cooling Load -> Heating Sensible
+      Load)
+    - Renombrar a OpenStudio Report SI
+CTE_Informe:
+    - Incluir iluminación en "Consumo Final EPB" en función de que sea terciario o no.
+    - Hacer mediciones a partir de modelo y no de base de datos SQL
 - Otros:
     - Generar XML
         - ver https://github.com/asparke2/demo-measures/tree/master/ExportXMLMeasure
