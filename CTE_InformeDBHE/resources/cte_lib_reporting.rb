@@ -144,9 +144,11 @@ module CTELib_Reporting
       'Unconditioned Total' => 'Total No acondicionada',
       'Not Part of Total' => 'Fuera del total',
       'Heating/Cooling' => 'Calefacción/Refrigeración',
-      'Calculated Design Load' => 'Carga térmica de diseño',
+      'Calculated Design Load' => 'Carga térmica de diseño calculada',
+      'User Design Load' => 'Carga de diseño de usuario',
       'Design Load With Sizing Factor' => 'Carga térmica para dimensionado',
-      'Calculated Design Air Flow' => 'Flujo de aire de diseño calculado',
+      'Calculated Design Air Flow' => 'Flujo de aire de diseño',
+      'User Design Air Flow' => 'Flujo de aire de usuario',
       'Design Air Flow  With Sizing Factor' => 'Flujo de aire de dimensionado',
       'Date/Time Of Peak' => 'Fecha/hora pico',
       'Outdoor Temperature at Peak Load' => 'Temperatura exterior con carga pico',
@@ -1364,7 +1366,7 @@ WHERE
 
     # XXX: no hay tabla 'Zone Cooling' en el ejemplo, sino 'Zone Sensible Cooling'
     # populate dynamic rows
-    rows_name_query = "SELECT DISTINCT RowName FROM tabulardatawithstrings WHERE ReportName='HVACSizingSummary' and TableName='Zone Cooling'"
+    rows_name_query = "SELECT DISTINCT RowName FROM tabulardatawithstrings WHERE ReportName='HVACSizingSummary' and TableName='Zone Sensible Cooling'"
     row_names = sqlFile.execAndReturnVectorOfString(rows_name_query).get
     rows = []
     row_names.each do |row_name|
@@ -1375,8 +1377,8 @@ WHERE
     zone_dd_table = {}
     zone_dd_table[:title] = 'Dimensionado de calefacción y refrigeración por zonas'
     zone_dd_table[:header] = columns_query.map { |col| self.translate(col) }
-    zone_dd_table[:units] = ['', '', '', '', 'm^3/s', 'm^3/s', '', 'C', 'lbWater/lbAir']
-    zone_dd_table[:source_units] = ['', '', '', '', 'm^3/s', 'm^3/s', '', 'C', 'lbWater/lbAir'] # used for conversion, not needed for rendering.
+    zone_dd_table[:units] = ['', '', '', '', 'm^3/s', 'm^3/s', '', 'C', 'kgWater/kgDryAir']
+    zone_dd_table[:source_units] = ['', '', '', '', 'm^3/s', 'm^3/s', '', 'C', 'kgWater/kgDryAir'] # used for conversion
     zone_dd_table[:data] = []
     # run query and populate zone_dd_table
     rows.each do |row|
@@ -1384,16 +1386,14 @@ WHERE
       # XXX: no hay tabla 'Zone Cooling' en el ejemplo, sino 'Zone Sensible Cooling'
       # populate cooling row
       row_data = [row, 'Refrigeración']
-      column_counter = -1
-      columns_query.each do |header|
-        column_counter += 1
-        next if header == '' || header == 'Heating/Cooling'
-        query = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='HVACSizingSummary' and TableName='Zone Cooling' and RowName= '#{row}' and ColumnName= '#{header}'"
-        if not zone_dd_table[:source_units][column_counter] == ''
+      columns_query.each_with_index do |column, index|
+        next if column == '' || column == 'Heating/Cooling'
+        query = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='HVACSizingSummary' and TableName='Zone Sensible Cooling' and RowName= '#{row}' and ColumnName= '#{column}'"
+        if not zone_dd_table[:source_units][index] == ''
           results = sqlFile.execAndReturnFirstDouble(query)
-          row_data_ip = OpenStudio.convert(results.to_f, zone_dd_table[:source_units][column_counter], zone_dd_table[:units][column_counter]).get
+          row_data_ip = OpenStudio.convert(results.to_f, zone_dd_table[:source_units][index], zone_dd_table[:units][index]).get
           row_data << row_data_ip.round(2)
-        elsif header == 'Calculated Design Load' || header == 'User Design Load'
+        elsif column == 'Calculated Design Load' || column == 'User Design Load'
           results = sqlFile.execAndReturnFirstDouble(query)
           row_data_ip = OpenStudio.convert(results.to_f, 'W', 'kW').get
           row_data << "#{row_data_ip.round(2)} (kW)"
@@ -1407,16 +1407,14 @@ WHERE
       # XXX: no hay tabla 'Zone Heating' en el ejemplo, sino 'Zone Sensible Heating'
       # populate heating row
       row_data = [row, 'Calefacción']
-      column_counter = -1
-      columns_query.each do |header|
-        column_counter += 1
-        next if header == '' || header == 'Heating/Cooling'
-        query = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='HVACSizingSummary' and TableName='Zone Heating' and RowName= '#{row}' and ColumnName= '#{header}'"
-        if not zone_dd_table[:source_units][column_counter] == ''
+      columns_query.each_with_index do |column, index|
+        next if column == '' || column == 'Heating/Cooling'
+        query = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='HVACSizingSummary' and TableName='Zone Sensible Heating' and RowName= '#{row}' and ColumnName= '#{column}'"
+        if not zone_dd_table[:source_units][index] == ''
           results = sqlFile.execAndReturnFirstDouble(query)
-          row_data_ip = OpenStudio.convert(results.to_f, zone_dd_table[:source_units][column_counter], zone_dd_table[:units][column_counter]).get
+          row_data_ip = OpenStudio.convert(results.to_f, zone_dd_table[:source_units][index], zone_dd_table[:units][index]).get
           row_data << row_data_ip.round(2)
-        elsif header == 'Calculated Design Load' || header == 'User Design Load'
+        elsif column == 'Calculated Design Load' || column == 'User Design Load'
           results = sqlFile.execAndReturnFirstDouble(query)
           row_data_ip = OpenStudio.convert(results.to_f, 'W', 'kW').get
           row_data << "#{row_data_ip.round(2)} (kW)"
