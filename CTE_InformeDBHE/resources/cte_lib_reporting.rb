@@ -403,48 +403,48 @@ module CTELib_Reporting
     buildingName = model.getBuilding.name.get
     # Zonas habitables
     zonasHabitables = CTE_Query.zonasHabitables(sqlFile)
-    superficieHabitable = CTE_Query.superficieHabitable(sqlFile).round(2)
-    volumenHabitable = CTE_Query.volumenHabitable(sqlFile).round(2)
+    superficieHabitable = CTE_Query.superficieHabitable(sqlFile)
+    volumenHabitable = CTE_Query.volumenHabitable(sqlFile)
     # Zonas no habitables
     zonasNoHabitables = CTE_Query.zonasNoHabitables(sqlFile)
-    superficieNoHabitable = CTE_Query.superficieNoHabitable(sqlFile).round(2)
-    volumenNoHabitable = CTE_Query.volumenNoHabitable(sqlFile).round(2)
+    superficieNoHabitable = CTE_Query.superficieNoHabitable(sqlFile)
+    volumenNoHabitable = CTE_Query.volumenNoHabitable(sqlFile)
     # Envolvente térmica
     superficiesExteriores = CTE_Query.envolventeSuperficiesExteriores(sqlFile)
-    areaexterior = CTE_Query.envolventeAreaExterior(sqlFile).round(2)
+    areaexterior = CTE_Query.envolventeAreaExterior(sqlFile)
     superficiesInteriores = CTE_Query.envolventeSuperficiesInteriores(sqlFile)
-    areainterior = CTE_Query.envolventeAreaInterior(sqlFile).round(2)
+    areainterior = CTE_Query.envolventeAreaInterior(sqlFile)
     areatotal = areaexterior + areainterior
-    compacidad = (volumenHabitable / areatotal).round(2)
+    compacidad = (volumenHabitable / areatotal)
 
     runner.registerInfo("* Iniciando mediciones (edificio #{ buildingName })")
     runner.registerValue("Zonas habitables", "#{ zonasHabitables }")
     runner.registerValue("Zonas habitables, número", zonasHabitables.count())
-    runner.registerValue("Zonas habitables, superficie", superficieHabitable, 'm^2')
-    runner.registerValue("Zonas habitables, volumen", volumenHabitable, 'm^3')
+    runner.registerValue("Zonas habitables, superficie", '%.2f' % superficieHabitable, 'm^2')
+    runner.registerValue("Zonas habitables, volumen", '%.2f' % volumenHabitable, 'm^3')
     runner.registerValue("Zonas no habitables", "#{ zonasNoHabitables }")
     runner.registerValue("Zonas no habitables, número", zonasNoHabitables.count())
-    runner.registerValue("Zonas no habitables, superficie", superficieNoHabitable, 'm^2')
-    runner.registerValue("Zonas no habitables, volumen", volumenNoHabitable, 'm^3')
+    runner.registerValue("Zonas no habitables, superficie", '%.2f' % superficieNoHabitable, 'm^2')
+    runner.registerValue("Zonas no habitables, volumen", '%.2f' % volumenNoHabitable, 'm^3')
     runner.registerValue('Envolvente Térmica, superficies exteriores', superficiesExteriores.count())
     runner.registerValue('Envolvente Térmica, superficies interiores', superficiesInteriores.count())
-    runner.registerValue('Envolvente Térmica, área de superficies exteriores', areaexterior, 'm^2')
-    runner.registerValue('Envolvente Térmica, área de superficies interiores', areainterior, 'm^2')
-    runner.registerValue('Envolvente Térmica, área total', areatotal, 'm^2')
-    runner.registerValue('Compacidad', compacidad)
+    runner.registerValue('Envolvente Térmica, área de superficies exteriores', '%.2f' % areaexterior, 'm^2')
+    runner.registerValue('Envolvente Térmica, área de superficies interiores', '%.2f' % areainterior, 'm^2')
+    runner.registerValue('Envolvente Térmica, área total', '%.2f' % areatotal, 'm^2')
+    runner.registerValue('Compacidad', '%.2f' % compacidad)
 
     medicion_general = {}
     medicion_general[:title] = "Superficies y volúmenes (edificio #{ buildingName })"
     medicion_general[:header] = ['', '#', 'Superficie', 'Volumen']
     medicion_general[:units] = ['', '', 'm²', 'm³']
     medicion_general[:data] = []
-    medicion_general[:data] << ['<b>Edificio</b>', '', superficieHabitable + superficieNoHabitable, volumenHabitable + volumenNoHabitable]
-    medicion_general[:data] << ["<u>Zonas habitables</u>", zonasHabitables.count(), superficieHabitable, volumenHabitable]
-    medicion_general[:data] << ["<u>Zonas no habitables</u>", zonasNoHabitables.count(), superficieNoHabitable, volumenNoHabitable]
-    medicion_general[:data] << ["<u>Envolvente térmica</u>", '', areatotal, '']
-    medicion_general[:data] << ['- Exterior', '', areaexterior, '']
-    medicion_general[:data] << ['- Interior', '', areainterior, '']
-    medicion_general[:data] << ['<b>Compacidad</b>', "<b>#{ compacidad }</b>", areatotal, volumenHabitable]
+    medicion_general[:data] << ['<b>Edificio</b>', '', '%.2f' % (superficieHabitable + superficieNoHabitable), '%.2f' % (volumenHabitable + volumenNoHabitable)]
+    medicion_general[:data] << ["<u>Zonas habitables</u>", zonasHabitables.count(), '%.2f' % superficieHabitable, '%.2f' % volumenHabitable]
+    medicion_general[:data] << ["<u>Zonas no habitables</u>", zonasNoHabitables.count(), '%.2f' % superficieNoHabitable, '%.2f' % volumenNoHabitable]
+    medicion_general[:data] << ["<u>Envolvente térmica</u>", '', '%.2f' % areatotal, '']
+    medicion_general[:data] << ['- Exterior', '', '%.2f' % areaexterior, '']
+    medicion_general[:data] << ['- Interior', '', '%.2f' % areainterior, '']
+    medicion_general[:data] << ['<b>Compacidad</b>', "<b>#{  '%.2f' % compacidad }</b>", '%.2f' % areatotal, '%.2f' % volumenHabitable]
     runner.registerInfo("* Finalizadas mediciones (edificio #{ buildingName })")
 
     return medicion_general
@@ -479,8 +479,7 @@ module CTELib_Reporting
         # net site energy
         display = self.translate(cat)
         value = setpoint_not_met_cat_value.get
-        value_neat = value
-        setpoint_not_met_summary[:data] << [display, value_neat]
+        setpoint_not_met_summary[:data] << [display, value]
         runner.registerValue("CTE horas fuera de consigna - #{display}", value, 'hr')
 
       end
@@ -543,21 +542,61 @@ module CTELib_Reporting
     general_table[:header] =['Categoría / Servicio', 'Energía', 'Energía/Sup. Acond.']
     general_table[:units] = ['', 'kWh', 'kWh/m²']
     general_table[:data] = []
-    general_table[:data] << ['<b>Servicios EPB + No EPB</b>',
-      (totalUsosEPB+totalUsosNoEPB).round(0),
+    general_table[:data] << ['<b>Servicios EPB + No EPB</b>', '<b>%.0f</b>' % (totalUsosEPB + totalUsosNoEPB),
       "<b>#{((totalUsosEPB+totalUsosNoEPB)/superficiehabitable).round(1)}</b>"]
-    general_table[:data] << ['<b>Servicios EPB</b>', totalUsosEPB.round(0),
+    general_table[:data] << ['<b>Servicios EPB</b>', '<b>%.0f</b>' % totalUsosEPB,
         "<b>#{(totalUsosEPB/superficiehabitable).round(1)}</b>"]
     usosEPB.each do | clave, valor |
-      general_table[:data] << [" - #{traduce[clave]}", valor.round(0), (valor/superficiehabitable).round(1)]
+      general_table[:data] << [" - #{traduce[clave]}", '%.0f' % valor, '%.1f' % (valor / superficiehabitable)]
     end
 
-    general_table[:data] << ['<b>Servicios No EPB</b>', totalUsosNoEPB.round(0),
+    general_table[:data] << ['<b>Servicios No EPB</b>', '<b>%.0f</b>' % totalUsosNoEPB,
         "<b>#{(totalUsosNoEPB/superficiehabitable).round(1)}</b>"]
     usosNoEPB.each do | clave, valor |
-      general_table[:data] << [" - #{traduce[clave]}", valor.round(0), (valor/superficiehabitable).round(1)]
+      general_table[:data] << [" - #{traduce[clave]}", valor.round(0), '%.1f' % (valor / superficiehabitable)]
     end
     return general_table
+  end
+
+  #XXX: no se usa
+  def self.energyConsumptionByVectorAndUse(sqlFile, vectorName, useName)
+    # las unidades son Julios a tenor de la informacion del SQL:
+    # SELECT distinct  reportname, units FROM TabularDataWithStrings
+    # los reports son LIKE 'BUILDING ENERGY PERFORMANCE - %'
+    result = [0.0] * 12
+    meses = (1..12).to_a
+    meses.each do | mesNumber |
+      endfueltype    = OpenStudio::EndUseFuelType.new(vectorName)
+      endusecategory = OpenStudio::EndUseCategoryType.new(useName)
+      monthofyear    = OpenStudio::MonthOfYear.new(mesNumber)
+      valor = sqlFile.energyConsumptionByMonth(
+        endfueltype, endusecategory, monthofyear).to_f
+      result[mesNumber-1] += valor
+    end
+    return result
+  end
+
+  def self.energyConsumptionByUses(sqlFile, useNames)
+    useNames = [useNames] unless useNames.class == Array
+
+    result = 0
+    useNames.each do | end_use |
+      query_all = "
+      SELECT
+        SUM(Value)
+      FROM
+        tabulardatawithstrings
+      WHERE
+        ReportName='AnnualBuildingUtilityPerformanceSummary'
+        AND TableName='End Uses'
+        AND RowName= '#{end_use}'
+        AND ColumnName IN  ('Electricity', 'Natural Gas', 'Additional Fuel',
+                    'District Cooling', 'District Heating') "
+      search = sqlFile.execAndReturnFirstDouble(query_all)
+      result += search.get
+    end
+
+    return OpenStudio.convert(result, 'GJ', 'kWh').get
   end
 
   # Tabla y gráfica de uso de energía final por servicio ==================================================
@@ -567,8 +606,7 @@ module CTELib_Reporting
     output_data_end_use = {}
     output_data_end_use[:title] = 'Consumo de energía final por servicio'
     output_data_end_use[:header] = ['Servicio', 'Consumo']
-    target_units = 'kWh'
-    output_data_end_use[:units] = ['', target_units]
+    output_data_end_use[:units] = ['', 'kWh']
     output_data_end_use[:data] = []
     output_data_end_use[:chart_type] = 'simple_pie'
     output_data_end_use[:chart] = []
@@ -593,11 +631,10 @@ module CTELib_Reporting
       results_dc = sqlFile.execAndReturnFirstDouble(query_dc).get
       results_dh = sqlFile.execAndReturnFirstDouble(query_dh).get
       total_end_use = results_elec + results_gas + results_add + results_dc + results_dh
-      value = OpenStudio.convert(total_end_use, 'GJ', target_units).get
-      value_neat = OpenStudio.toNeatString(value, 0, true)
+      value = OpenStudio.convert(total_end_use, 'GJ', 'kWh').get
       end_use_trans = self.translate(end_use)
-      output_data_end_use[:data] << [end_use_trans, value_neat]
-      runner.registerValue("CTE Uso energia final - #{end_use_trans}", value, target_units)
+      output_data_end_use[:data] << [end_use_trans, '%.0f' % value]
+      runner.registerValue("CTE Uso energia final - #{end_use_trans}", value, 'kWh')
       if value > 0
         output_data_end_use[:chart] << JSON.generate(label: end_use_trans, value: value, color: end_use_colors[index])
       end
@@ -636,9 +673,8 @@ module CTELib_Reporting
       query = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' and TableName='End Uses' and RowName= 'Total End Uses' and ColumnName= '#{fuel_type}'"
       results = sqlFile.execAndReturnFirstDouble(query)
       value = OpenStudio.convert(results.get, 'GJ', 'kWh').get
-      value_neat = OpenStudio.toNeatString(value, 0, true)
       fuel_type_trans = self.translate(fuel_type)
-      output_data_energy_use[:data] << [fuel_type_trans, value_neat]
+      output_data_energy_use[:data] << [fuel_type_trans, '%.0f' % value]
       runner.registerValue("CTE combustible - #{fuel_type_trans}", value, 'kWh')
 
       if value > 0
@@ -670,9 +706,8 @@ module CTELib_Reporting
       query = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' and TableName='End Uses' and RowName= '#{end_use}' and ColumnName= 'Electricity'"
       results = sqlFile.execAndReturnFirstDouble(query)
       value = OpenStudio.convert(results.get, 'GJ', 'kWh').get
-      value_neat = OpenStudio.toNeatString(value, 0, true)
       end_use_trans = self.translate(end_use)
-      output_data_end_use_electricity[:data] << [end_use_trans, value_neat]
+      output_data_end_use_electricity[:data] << [end_use_trans, '%.0f' % value]
       runner.registerValue("CTE energia final Electricidad - #{end_use_trans}", value, 'kWh')
       if value > 0
         output_data_end_use_electricity[:chart] << JSON.generate(label: end_use_trans, value: value, color: end_use_colors[index])
@@ -704,9 +739,8 @@ module CTELib_Reporting
       query = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' and TableName='End Uses' and RowName= '#{end_use}' and ColumnName= 'Natural Gas'"
       results = sqlFile.execAndReturnFirstDouble(query)
       value = OpenStudio.convert(results.get, 'GJ', 'kWh').get
-      value_neat = OpenStudio.toNeatString(value, 0, true)
       end_use_trans = self.translate(end_use)
-      output_data_end_use_gas[:data] << [end_use_trans, value_neat]
+      output_data_end_use_gas[:data] << [end_use_trans, '%.0f' % value]
       runner.registerValue("CTE energia final Gas Natural - #{end_use_trans}", value, 'kWh')
       if value > 0
         output_data_end_use_gas[:chart] << JSON.generate(label: end_use_trans, value: value, color: end_use_colors[index])
@@ -739,7 +773,7 @@ module CTELib_Reporting
         data_ip = OpenStudio.convert(data, site_power_generation_table[:source_units][index], site_power_generation_table[:units][index]).get
         if data > 0 then value_found = true end
 
-        row_data << data_ip.round(2)
+        row_data << '%.2f' % data_ip
       end
       site_power_generation_table[:data] << row_data
     end
@@ -927,7 +961,7 @@ WHERE
     contenedor_general[:units] = ['', 'm²', 'W/m²K']
     contenedor_general[:data] = []
     data.each do | nombre, area, uvalue |
-      contenedor_general[:data] << [nombre, area.round(2), uvalue.round(3)]
+      contenedor_general[:data] << [nombre, '%.2f' % area, '%.3f' % uvalue]
     end
 
     return contenedor_general
@@ -958,7 +992,7 @@ WHERE
     contenedor_general[:data] = []
     coeficienteAcoplamiento.each do | key, value |
       psi = ttl_puenteTermico[key]
-      contenedor_general[:data] << [key, value.round(0), (value/psi).round(0), psi.round(2)]
+      contenedor_general[:data] << [key, '%.2f' % value,  '%.1f' % (value / psi),  '%.2f' % psi]
     end
 
     return contenedor_general
@@ -972,8 +1006,7 @@ WHERE
     fenestration_data = {}
     fenestration_data[:title] = 'Porcentaje de huecos'
     fenestration_data[:header] = %w(Descripción Total Norte Este Sur Oeste)
-    target_units = '%' # it is a bit odd, but eplusout.htm calls the tale ratio, but shows as percentage. I'll match that here for now.
-    fenestration_data[:units] = ['', target_units, target_units, target_units, target_units, target_units]
+    fenestration_data[:units] = ['', '%', '%', '%', '%', '%']
     fenestration_data[:data] = []
 
     # create string for rows
@@ -1001,13 +1034,13 @@ WHERE
       else
         # add data
         display = self.translate(fenestration)
-        fenestration_data[:data] << [display, total.get, north.get, east.get, south.get, west.get]
-        runner.registerValue("CTE #{display}", total.get, target_units)
+        fenestration_data[:data] << [display,  '%.1f' % total.get, '%.1f' % north.get, '%.1f' % east.get, '%.1f' % south.get, '%.1f' % west.get]
+        runner.registerValue("CTE #{display}", total.get, '%')
 
         # skylight
         # skylight seems to provide back percentage vs. fraction. Changing to fraction to match vertical fenestration.
-        fenestration_data[:data] << ['Porcentaje de huecos en cubierta', skylight.get, '', '', '', '']
-        runner.registerValue('CTE Porcentaje de huecos en cubierta', skylight.get, target_units)
+        fenestration_data[:data] << ['Porcentaje de huecos en cubierta', '%.1f' % skylight.get, '-', '-', '-', '-']
+        runner.registerValue('CTE Porcentaje de huecos en cubierta', skylight.get, '%')
       end
     end
 
@@ -1670,56 +1703,6 @@ WHERE
     return data_array
   end
 
-
-
-
-
- def self.energyConsumptionByVectorAndUse(sqlFile, vectorName, useName)
-    # las unidades son Julios a tenor de la informacion del SQL:
-    # SELECT distinct  reportname, units FROM TabularDataWithStrings
-    # los reports son LIKE 'BUILDING ENERGY PERFORMANCE - %'
-    result = [0.0] * 12
-    meses = (1..12).to_a
-    meses.each do | mesNumber |
-      endfueltype    = OpenStudio::EndUseFuelType.new(vectorName)
-      endusecategory = OpenStudio::EndUseCategoryType.new(useName)
-      monthofyear    = OpenStudio::MonthOfYear.new(mesNumber)
-      valor = sqlFile.energyConsumptionByMonth(
-                    endfueltype, endusecategory, monthofyear).to_f
-      result[mesNumber-1] += valor
-    end
-    return result
-  end
-
-  def self.energyConsumptionByUses(sqlFile, useNames)
-    useNames = [useNames] unless useNames.class == Array
-
-    result = 0
-    useNames.each do | end_use |
-      query_all = "
-      SELECT
-        SUM(Value)
-      FROM
-        tabulardatawithstrings
-      WHERE
-        ReportName='AnnualBuildingUtilityPerformanceSummary'
-        AND TableName='End Uses'
-        AND RowName= '#{end_use}'
-        AND ColumnName IN  ('Electricity', 'Natural Gas', 'Additional Fuel',
-                    'District Cooling', 'District Heating') "
-      search = sqlFile.execAndReturnFirstDouble(query_all)
-      result += search.get
-    end
-
-    return OpenStudio.convert(result, 'GJ', 'kWh').get
-  end
-
-
-
-
-
-
-
   # Tablas de ventilación e infiltraciones ==================================================
 
   # Tabla de aire exterior ==================================================================
@@ -1798,7 +1781,7 @@ WHERE
         row_data_ip = OpenStudio.convert(results.to_f,
                       table[:source_units][column_counter],
                       table[:units][column_counter]).get
-        row_data << row_data_ip.round(2)
+        row_data << '%.2f' % row_data_ip
 
         # para la media de todo el edificio
         medias[header] += row_data_ip * zoneVolume
@@ -1807,10 +1790,10 @@ WHERE
       table[:data] << row_data
     end
 
-    row_data = ['Total edificio']
+    row_data = ['<b>Total edificio</b>']
     table[:header].each do |header|
       next if header == ''
-      row_data << (medias[header] / totalVolume).round(2)
+      row_data << "<b>#{ '%.2f' % (medias[header] / totalVolume) }</b>"
     end
     table[:data] << row_data
 
