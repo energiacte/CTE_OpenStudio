@@ -543,17 +543,17 @@ module CTELib_Reporting
     general_table[:units] = ['', 'kWh', 'kWh/m²']
     general_table[:data] = []
     general_table[:data] << ['<b>Servicios EPB + No EPB</b>', '<b>%.0f</b>' % (totalUsosEPB + totalUsosNoEPB),
-      "<b>#{((totalUsosEPB+totalUsosNoEPB)/superficiehabitable).round(1)}</b>"]
+      "<b>#{ '%.1f' % ((totalUsosEPB + totalUsosNoEPB) / superficiehabitable) }</b>"]
     general_table[:data] << ['<b>Servicios EPB</b>', '<b>%.0f</b>' % totalUsosEPB,
-        "<b>#{(totalUsosEPB/superficiehabitable).round(1)}</b>"]
+        "<b>#{ '%.1f' % (totalUsosEPB / superficiehabitable) }</b>"]
     usosEPB.each do | clave, valor |
       general_table[:data] << [" - #{traduce[clave]}", '%.0f' % valor, '%.1f' % (valor / superficiehabitable)]
     end
 
     general_table[:data] << ['<b>Servicios No EPB</b>', '<b>%.0f</b>' % totalUsosNoEPB,
-        "<b>#{(totalUsosNoEPB/superficiehabitable).round(1)}</b>"]
+        "<b>#{ '%.1f' % (totalUsosNoEPB/superficiehabitable) }</b>"]
     usosNoEPB.each do | clave, valor |
-      general_table[:data] << [" - #{traduce[clave]}", valor.round(0), '%.1f' % (valor / superficiehabitable)]
+      general_table[:data] << [" - #{traduce[clave]}", '%.0f' % valor, '%.1f' % (valor / superficiehabitable)]
     end
     return general_table
   end
@@ -1425,11 +1425,11 @@ WHERE
         if not zone_dd_table[:source_units][index] == ''
           results = sqlFile.execAndReturnFirstDouble(query)
           row_data_ip = OpenStudio.convert(results.to_f, zone_dd_table[:source_units][index], zone_dd_table[:units][index]).get
-          row_data << row_data_ip.round(2)
+          row_data << '%.2f' % row_data_ip
         elsif column == 'Calculated Design Load' || column == 'User Design Load'
           results = sqlFile.execAndReturnFirstDouble(query)
           row_data_ip = OpenStudio.convert(results.to_f, 'W', 'kW').get
-          row_data << "#{row_data_ip.round(2)} (kW)"
+          row_data << "#{ '%.2f' % row_data_ip } (kW)"
         else
           results = sqlFile.execAndReturnFirstString(query)
           row_data << results
@@ -1446,11 +1446,11 @@ WHERE
         if not zone_dd_table[:source_units][index] == ''
           results = sqlFile.execAndReturnFirstDouble(query)
           row_data_ip = OpenStudio.convert(results.to_f, zone_dd_table[:source_units][index], zone_dd_table[:units][index]).get
-          row_data << row_data_ip.round(2)
+          row_data << '%.2f' % row_data_ip
         elsif column == 'Calculated Design Load' || column == 'User Design Load'
           results = sqlFile.execAndReturnFirstDouble(query)
           row_data_ip = OpenStudio.convert(results.to_f, 'W', 'kW').get
-          row_data << "#{row_data_ip.round(2)} (kW)"
+          row_data << "#{ '%.2f' % row_data_ip } (kW)"
         else
           results = sqlFile.execAndReturnFirstString(query)
           row_data << results
@@ -1472,8 +1472,7 @@ WHERE
 
 
 
-
-  
+  #XXX: sin uso pero interesante
   # summary of what to show for each type of air loop component
   def self.air_loop_component_summary_logic(component, model)
     if component.to_AirLoopHVACOutdoorAirSystem.is_initialized
