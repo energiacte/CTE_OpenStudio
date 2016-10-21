@@ -5,9 +5,9 @@
   <version_id>45d1a20d-0321-40e3-a269-31fa78e1a030</version_id>
   <version_modified>20161010T115844Z</version_modified>
   <xml_checksum>69BA4D91</xml_checksum>
-  <class_name>OpenStudioResultsCopy</class_name>
-  <display_name>Informe 15603</display_name>
-  <description>Informe de resultados con informacion relativa al CTE DB-HE.</description>
+  <class_name>OpenStudioResultsSI</class_name>
+  <display_name>OpenStudio Results SI</display_name>
+  <description>OpenStudio Resuilts in SI Units.</description>
   <modeler_description>Datos obtenidos de los resultados de EnergyPlus y del modelo de OpenStudio.
  La estructura del informe usa Bootstrap, y dimple js para las graficas.</modeler_description>
   <arguments>

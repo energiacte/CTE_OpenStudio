@@ -6,7 +6,6 @@ require 'minitest/autorun'
 require 'fileutils'
 
 require_relative '../measure.rb'
-require_relative "../resources/cte_lib.rb"
 
 #require 'sqlite3'
 
@@ -31,7 +30,7 @@ class Cte_lib_Test < MiniTest::Unit::TestCase
       assert(File.exist?(sqlPath))
 
       # create an instance of the measure
-      measure = OpenStudioResultsCopy.new
+      measure = OpenStudioResultsSI.new
 
       # create an instance of a runner
       runner = OpenStudio::Ruleset::OSRunner.new

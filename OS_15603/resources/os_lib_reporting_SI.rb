@@ -1,34 +1,8 @@
-# -*- coding: utf-8 -*-
-#
-# Copyright (c) 2016 Ministerio de Fomento
-#                    Instituto de Ciencias de la Construcción Eduardo Torroja (IETcc-CSIC)
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
-#
-# Author(s): Rafael Villar Burke <pachi@ietcc.csic.es>,
-#            Daniel Jiménez González <dani@ietcc.csic.es>
-#            Marta Sorribes Gil <msorribes@ietcc.csic.es>
+# coding: utf-8
 
-# Plantilla de reportes basada en la distribuida con OpenStudio
+# Standard OS report, in SI units
 
 require 'json'
-require_relative "cte_lib"
 
 module OsLib_Reporting
   # setup - get model, sql, and setup web assets path
@@ -193,119 +167,6 @@ module OsLib_Reporting
     return template_table
   end
 
-  ### -----------------------------------------------------------------------------------
-  ### Métodos propios -------------------------------------------------------------------
-  ### -----------------------------------------------------------------------------------
-  
-  def self.cte_outdoor_air_section(model, sqlFile, runner, name_only = false)
-    # array to hold tables
-    general_tables = []
-    
-    # gather data for section
-    @aire_exterior = {}
-    @aire_exterior[:title] = 'Aire exterior'
-    @aire_exterior[:tables] = general_tables
-    
-    if name_only == true
-      return @aire_exterior
-    end
-    
-    # add in general information from method
-    general_tables << CTE_tables.tabla_de_aire_exterior(model, sqlFile, runner)
-                                 
-    
-    return @aire_exterior
-  end 
-
-  def self.demandas_por_componentes(model, sqlFile, runner, name_only = false)
-    # array to hold tables
-    general_tables = []
-
-    # gather data for section
-    @demandas_por_componente = {}
-    @demandas_por_componente[:title] = "Demandas por componentes"
-    @demandas_por_componente[:tables] = general_tables
-
-    if name_only == true
-        return @demandas_por_componente
-    end
-
-    # add in general information from method
-    general_tables << CTE_tables.tabla_demanda_por_componentes(model, sqlFile, runner, 'invierno')
-    general_tables << CTE_tables.tabla_demanda_por_componentes(model, sqlFile, runner, 'verano')
-
-    return @demandas_por_componente
-
-  end
-
-  def self.mediciones_envolvente(model, sqlfile, runner, name_only = false)
-    # array to hold tables
-    general_tables = []
-
-    #gather data for section
-    @mediciones = {}
-    @mediciones[:title] = "Mediciones de la envolvente"
-    @mediciones[:tables] = general_tables
-
-    if name_only == true
-      return @mediciones
-    end
-
-    # add in general information from method
-    general_tables << CTE_tables.tabla_mediciones_envolvente(model, sqlfile, runner)
-    general_tables << CTE_tables.tabla_mediciones_puentes_termicos(model, runner)
-
-    return @mediciones
-  end
-
-  def self.variables_de_inspeccion(model, sqlFile, runner, name_only = false)
-
-    # array to hold tables
-    general_tables = []
-
-    # gather data for section
-    @inspeccion_variables = {}
-    @inspeccion_variables[:title] = "Inspección de variables"
-    @inspeccion_variables[:tables] = general_tables
-
-    if name_only == true
-        return @inspeccion_variables
-    end
-
-    # add in general information from method
-    general_tables << CTE_tables.tabla_variables_inspeccionadas(model, sqlFile, runner)
-
-    return @inspeccion_variables
-  end
-
-
-   # mediciones_segun_CTE section
-  def self.mediciones_de_superficies_segun_CTE(model, sqlFile, runner, name_only = false)
-    # array to hold tables
-    general_tables = []
-
-    # gather data for section
-    @mediciones_segun_CTE = {}
-    @mediciones_segun_CTE[:title] = 'Mediciones de superficies segun CTE'
-    @mediciones_segun_CTE[:tables] = general_tables #esto no se lo que es
-
-    if name_only == true
-        return @mediciones_segun_CTE
-    end
-
-    # add in general information from method
-    general_tables << CTE_tables.tabla_mediciones_generales(model, sqlFile, runner)
-    general_tables << CTE_tables.tabla_de_energias(model, sqlFile, runner)
-
-    return @mediciones_segun_CTE
-  end
-
-
-  ### -----------------------------------------------------------------------------------
-  ### Fin métodos propios ---------------------------------------------------------------
-  ### -----------------------------------------------------------------------------------
-
-
   # building_summary section
   def self.building_summary_section(model, sqlFile, runner, name_only = false)
     # array to hold tables
@@ -313,7 +174,7 @@ module OsLib_Reporting
 
     # gather data for section
     @building_summary_section = {}
-    @building_summary_section[:title] = 'Resumen del Modelo (Model Summary)'
+    @building_summary_section[:title] = 'Model Summary'
     @building_summary_section[:tables] = general_tables
 
     # stop here if only name is requested this is used to populate display name for arguments
@@ -342,7 +203,7 @@ module OsLib_Reporting
 
     # gather data for section
     @annual_overview_section = {}
-    @annual_overview_section[:title] = 'Resumen anual' #'Annual Overview'
+    @annual_overview_section[:title] = 'Annual Overview'
     @annual_overview_section[:tables] = annual_tables
 
     # stop here if only name is requested this is used to populate display name for arguments
@@ -365,8 +226,8 @@ module OsLib_Reporting
   def self.general_building_information_table(model, sqlFile, runner, name_only=false)
     # general building information type data output
     general_building_information = {}
-    general_building_information[:title] = 'Resumen del Edificio' # 'Building Summary' # name will be with section
-    general_building_information[:header] = %w(Informacion Valor Unidades)
+    general_building_information[:title] = 'Building Summary' # name will be with section
+    general_building_information[:header] = %w(Information Value Units)
     general_building_information[:units] = [] # won't populate for this table since each row has different units
     general_building_information[:data] = []
 
@@ -524,9 +385,7 @@ module OsLib_Reporting
     counter = 0
     OpenStudio::EndUseCategoryType.getValues.each do |end_use|
       # get end uses
-      end_use = OpenStudio::EndUseCategoryType.new(end_use).valueDescription #aquí es un nombre de categoría:
-        # Heating, Cooling, Interior Lighting, Exterior Lighting, Interior Equipment, Exterior Equipment,
-        # Fans, Pumps, Heat Rejection, Humidification, Heat Recovery, Water Systems, Refrigeration, Generators
+      end_use = OpenStudio::EndUseCategoryType.new(end_use).valueDescription
 
       query_elec = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' and TableName='End Uses' and RowName= '#{end_use}' and ColumnName= 'Electricity'"
       query_gas = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' and TableName='End Uses' and RowName= '#{end_use}' and ColumnName= 'Natural Gas'"
@@ -632,8 +491,8 @@ module OsLib_Reporting
   def self.output_data_energy_use_table(model, sqlFile, runner)
     # energy use data output
     output_data_energy_use = {}
-    output_data_energy_use[:title] = 'Energia Final (Energy Use)'
-    output_data_energy_use[:header] = ['Combustible', 'Consumo']
+    output_data_energy_use[:title] = 'Energy Use'
+    output_data_energy_use[:header] = ['Fuel', 'Consumption']
     output_data_energy_use[:units] = ['', 'kWh']
     output_data_energy_use[:data] = []
     output_data_energy_use[:chart_type] = 'simple_pie'
@@ -961,7 +820,7 @@ module OsLib_Reporting
     model.getAirLoopHVACs.sort.each do |air_loop|
       # air loop data output
       output_data_air_loops = {}
-      output_data_air_loops[:title] = Utils.sanitize(runner, air_loop.name.get) # TODO: - confirm first that it has name
+      output_data_air_loops[:title] = air_loop.name.get # TODO: - confirm first that it has name
       output_data_air_loops[:header] = ['Object', 'Sizing', 'Sizing Units', 'Description', 'Value', 'Value Units', 'Count']
       output_data_air_loops[:units] = [] # not using units for these tables
       output_data_air_loops[:data] = []
@@ -1804,7 +1663,7 @@ module OsLib_Reporting
     water_use_equipment.sort.each do |instance|
       water_use_equipment_def = instance.waterUseEquipmentDefinition
       if instance.waterUseConnections.is_initialized && instance.waterUseConnections.get.plantLoop.is_initialized
-        plant_loop = Utils.sanitize(runner, instance.waterUseConnections.get.plantLoop.get.name.get)
+        plant_loop = instance.waterUseConnections.get.plantLoop.get.name
       else
         plant_loop = ''
       end
@@ -1830,8 +1689,8 @@ module OsLib_Reporting
       else
         target_temp_range = ''
       end
-      water_use_data[:data] << [Utils.sanitize(runner, instance.name.get), plant_loop, Utils.sanitize(runner, water_use_equipment_def.name.get), space, peak_flow_rate_ip_neat, water_use_equipment_flow_rate_sch, target_temp_range]
-      runner.registerValue(Utils.sanitize(runner, instance.name.to_s), peak_flow_rate_ip, target_units)
+      water_use_data[:data] << [instance.name.get, plant_loop, water_use_equipment_def.name.get, space, peak_flow_rate_ip_neat, water_use_equipment_flow_rate_sch, target_temp_range]
+      runner.registerValue(instance.name.to_s, peak_flow_rate_ip, target_units)
     end
 
     # don't create empty table
@@ -2099,7 +1958,7 @@ module OsLib_Reporting
         if instance.flowperExteriorWallArea.is_initialized # uses same input as exterior surface area but different calc method
           inst_value = OpenStudio.convert(instance.flowperExteriorWallArea.get, 'm/s', 'm/s').get
           inst_value_neat = OpenStudio.toNeatString(inst_value, 4, true)
-          inst_units = 'm^3/s/ext surf area m^2'
+          inst_units = 'm^3/s/ext wall area m^2'
           count = ''
           output_data_space_type_details[:data] << [instance_display, inst_value_neat, inst_units, count]
         end
@@ -2136,7 +1995,6 @@ module OsLib_Reporting
           if instance.outdoorAirFlowRate > 0
             inst_value = OpenStudio.convert(instance.outdoorAirFlowRate, 'm^3/s', 'm^3/s').get
             inst_value_neat = OpenStudio.toNeatString(inst_value, 4, true)
-            # inst_units = 'cfm'
             inst_units = 'm^3/s'
             output_data_space_type_details[:data] << ["#{instance_display} (outdoor air method #{outdoor_air_method})", inst_value_neat, inst_units, count]
           end
@@ -2162,13 +2020,13 @@ module OsLib_Reporting
     # data for query
     report_name = 'InputVerificationandResultsSummary'
     table_name = 'General'
-    columns = ['', 'Value'] # el contenido son claves
-    rows = ['Weather File', 'Latitude', 'Longitude', 'Elevation', 'Time Zone', 'North Axis Angle'] # el contenido son claves
+    columns = ['', 'Value']
+    rows = ['Weather File', 'Latitude', 'Longitude', 'Elevation', 'Time Zone', 'North Axis Angle']
 
     # create table
     table = {}
-    table[:title] = 'Resumen climático'
-    table[:header] = ['', 'Valor']
+    table[:title] = 'Weather Summary'
+    table[:header] = columns
     table[:units] = []
     table[:data] = []
 
@@ -2176,7 +2034,7 @@ module OsLib_Reporting
     rows.each do |row|
       row_data = [row]
       column_counter = -1
-      columns.each do |header|
+      table[:header].each do |header|
         column_counter += 1
         next if header == ''
         query = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='#{report_name}' and TableName='#{table_name}' and RowName= '#{row}' and ColumnName= '#{header}'"
@@ -2328,7 +2186,7 @@ module OsLib_Reporting
 
     # gather data for section
     @monthly_overview_section = {}
-    @monthly_overview_section[:title] = 'Resumen mensual' # 'Monthly Overview'
+    @monthly_overview_section[:title] = 'Monthly Overview'
     @monthly_overview_section[:tables] = monthly_tables
 
     # stop here if only name is requested this is used to populate display name for arguments
@@ -2666,7 +2524,7 @@ module OsLib_Reporting
     temperature_bins_temps_ip = [56, 61, 66, 68, 70, 72, 74, 76, 78, 83, 88]
     temperature_bins_temps_si = []
     temperature_bins_temps_ip.each do |i|
-      temperature_bins_temps_si << OpenStudio.convert(i, 'F', 'C').get.round(1)
+      temperature_bins_temps_si << OpenStudio.convert(i, 'F', 'C').get
     end
 
     # hash to store hours
@@ -3437,20 +3295,13 @@ module OsLib_Reporting
     if name_only == true
       return @outdoor_air_section
     end
-    
-    # Zone Combined Outdoor Air Changes per Hour is not includen in the OutdoorAirSummary, 
-    # it has to be read from general variable data in the SQL file.    
-    variableName = 'Zone Combined Outdoor Air Changes per Hour'
-    
 
     # data for query
     report_name = 'OutdoorAirSummary'
     table_name = 'Average Outdoor Air During Occupied Hours'
     min_table_name = 'Minimum Outdoor Air During Occupied Hours'
-    # columns = ['', 'Average Number of Occupants', 'Nominal Number of Occupants', 'Zone Volume',
-        # 'Avg. Mechanical Ventilation', 'Min. Mechanical Ventilation', 'Avg. Infiltration', 'Min. Infiltration']
-    columns = ['', 'Average Number of Occupants', 'Avg. Mechanical Ventilation', 'Min. Mechanical Ventilation',
-          'Avg. Infiltration', 'Min. Infiltration', 'Avg. Simple Ventilation', 'Min. Simple Ventilation']
+    columns = ['', 'Average Number of Occupants', 'Nominal Number of Occupants', 'Zone Volume',
+        'Avg. Mechanical Ventilation', 'Min. Mechanical Ventilation', 'Avg. Infiltration', 'Min. Infiltration']
 
     # populate dynamic rows
     rows_name_query = "SELECT DISTINCT  RowName FROM tabulardatawithstrings WHERE ReportName='#{report_name}' and TableName='#{table_name}'"
@@ -3466,10 +3317,8 @@ module OsLib_Reporting
     table[:header] = columns
     source_units_volume = 'm^3'
     target_units_volume = 'm^3'
-    # table[:units] = ['', '', '', target_units_volume, 'ach', 'ach', 'ach', 'ach']
-    table[:units] = ['', '', 'ach', 'ach', 'ach', 'ach', 'ach', 'ach']
-    # table[:source_units] = ['', '', '', source_units_volume, 'ach', 'ach', 'ach', 'ach'] # used for conversation, not needed for rendering.
-    table[:source_units] = ['', '', 'ach', 'ach', 'ach', 'ach', 'ach', 'ach']
+    table[:units] = ['', '', '', target_units_volume, 'ach', 'ach', 'ach', 'ach']
+    table[:source_units] = ['', '', '', source_units_volume, 'ach', 'ach', 'ach', 'ach'] # used for conversation, not needed for rendering.
     table[:data] = []
 
     # run query and populate table

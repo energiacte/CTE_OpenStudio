@@ -13,7 +13,6 @@
     - Renombrar a OpenStudio Report SI
 CTE_Informe:
     - Incluir iluminación en "Consumo Final EPB" en función de que sea terciario o no.
-    - Hacer mediciones a partir de modelo y no de base de datos SQL
     - Calcular A_sol,ver / A_util pidiendo factor de sombra de protecciones
       móviles
     - Calcular K
