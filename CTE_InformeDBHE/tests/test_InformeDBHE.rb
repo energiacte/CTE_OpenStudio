@@ -35,28 +35,32 @@ class Cte_lib_Test < MiniTest::Unit::TestCase
       # create an instance of a runner
       runner = OpenStudio::Ruleset::OSRunner.new
 
-      # get arguments and test that they are what we are expecting
-      arguments = measure.arguments()
-      #assert_equal(22, arguments.size)
-
       # set up runner, this will happen automatically when measure is run in PAT
       runner.setLastOpenStudioModelPath(OpenStudio::Path.new(modelPath))
       runner.setLastEnergyPlusWorkspacePath(OpenStudio::Path.new(idfPath))
       runner.setLastEnergyPlusSqlFilePath(OpenStudio::Path.new(sqlPath))
 
+      #~ # get the last model
+      #~ model = runner.lastOpenStudioModel
+      #~ if model.empty?
+      #~ runner.registerError('Cannot find last model.')
+      #~ return false
+      #~ end
+      #~ model = model.get
+
       # set argument values to good values and run the measure
       #argument_map = OpenStudio::Ruleset::OSArgumentMap.new
-
-      # get arguments
-      #arguments = measure.arguments(model)
-      arguments = measure.arguments()
-      argument_map = OpenStudio::Ruleset.convertOSArgumentVectorToMap(arguments)
 
       translator = OpenStudio::OSVersion::VersionTranslator.new
       model = translator.loadModel(modelPath)
       model = model.get
       sqlFile = model.setSqlFile(runner.lastEnergyPlusSqlFile.get)
       sqlFile = model.sqlFile.get
+
+      # get arguments
+      #arguments = measure.arguments(model)
+      arguments = measure.arguments()
+      argument_map = OpenStudio::Ruleset.convertOSArgumentVectorToMap(arguments)
 
       measure.run(runner, argument_map)
       result = runner.result
