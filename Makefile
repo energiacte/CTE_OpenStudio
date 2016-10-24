@@ -79,3 +79,12 @@ installdocker:
 	sudo usermod -aG docker `whoami`
 # cd /usr/local/share/openstudio-1.12.0/Ruby/openstudio/
 # /usr/local/share/openstudio-1.12.0/Ruby/openstudio/examples/RunAllOSMs.rb
+
+
+test:
+	cd ./CTE_Model/tests/ && ruby *.rb
+	cd ./CTE_Workspace/tests/ && ruby *.rb
+	cd ./CTE_InformeDBHE/tests/ && ruby *.rb
+	cd ./CTE_EPBDcalc/tests/ && ruby *.rb
+	cd ./OS_Report_SI/tests/ && ruby *.rb
+
