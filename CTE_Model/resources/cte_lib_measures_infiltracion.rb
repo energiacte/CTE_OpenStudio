@@ -154,7 +154,7 @@ def cte_infiltracion(model, runner, user_arguments) #copiado del residencial
     ela.setWindCoefficient(coefWind)
     ela.setSchedule(horarioInfiltracion)
     ela.setEffectiveAirLeakageArea(areaEquivalente)
-    ela.setName('CTE_ELA_#{ space.name }')
+    ela.setName("CTE_ELA_#{ space.name }")
   end
 
   return true # OS necesita saber que todo acaba bien
