@@ -179,10 +179,9 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
       # FIXME: Se añade a la lista de 12 ceros
       valores << value
     end
-    # Consumo total de iluminación para todas las zonas
+    # Consumo total de iluminación para todas las zonas [kWh]
     totalzonas = valores.transpose.map {|x| x.reduce(:+)}
     totalzonas = totalzonas.map{ |x| x.round(0) }
-    runner.registerInfo("CTE iluminacion consumo total zonas: #{ totalzonas } kWh")
     return totalzonas
   end
 
@@ -249,24 +248,12 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     string_rows = []
     string_rows << "# Datos de entrada"
 
-    # General metadata
-    cte_name = model.building.get.name
-    string_rows << "#CTE_Name: #{ cte_name }"
-    runner.registerInfo("CTE_Name: #{ cte_name }")
-
-    cte_datetime = DateTime.now.strftime "%d/%m/%Y %H:%M"
-    string_rows << "#CTE_Datetime: #{ cte_datetime }"
-    runner.registerInfo("CTE_Datetime: #{ cte_datetime }")
-
-    cte_clima = model.weatherFile.get.path.get
-    string_rows << "#CTE_Weather_file: #{ cte_clima }"
-    runner.registerInfo("CTE_Weather_file: #{ cte_clima }")
-
-    # General attributes stored in model
-    atributos = JSON.parse(model.building.get.comment[2..-1])
-    atributos.each do | clave, valor |
+    # General metadata and attributes stored in the model
+    string_rows << "#CTE_Name: #{ model.building.get.name }"
+    string_rows << "#CTE_Datetime: #{ DateTime.now.strftime '%d/%m/%Y %H:%M' }"
+    string_rows << "#CTE_Weather_file: #{ model.weatherFile.get.path.get.to_s.split(File::SEPARATOR)[-1].strip.chomp('.epw') }"
+    JSON.parse(model.building.get.comment[2..-1]).each do | clave, valor |
       string_rows << "##{ clave }: #{ valor }"
-      puts clave, valor
     end
 
     # Building quantities
@@ -282,17 +269,16 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     WHERE zl.Name NOT LIKE 'CTE_N%' ").get
 
     string_rows << "# Datos medidos"
-    string_rows << "#CTE_Area_ref: #{ cte_areareferencia.round(0) }"
-    string_rows << "#CTE_Vol_ref: #{ CTE_Query.volumenHabitable(sqlFile) }"
-    string_rows << "# Medicion construcciones: [Area [m2], Transmitancia U [W/m2K]]"
+    string_rows << "#CTE_Area_ref: #{ cte_areareferencia.round(2) }"
+    string_rows << "#CTE_Vol_ref: #{ CTE_Query.volumenHabitable(sqlFile).round(2) }"
 
+    string_rows << "# Medicion construcciones: [Area [m2], Transmitancia U [W/m2K]]"
     mediciones = CTE_tables.tabla_mediciones_envolvente(model, sqlFile, runner)[:data]
     mediciones.each do | nombre, area, transmitancia |
       string_rows << "#CTE_medicion_#{ nombre }: [#{ area }, #{ transmitancia }]"
     end
 
     string_rows << "# Medicion puentes termicos: ['Coef. acoplamiento [W/K]', 'Longitud [m]', 'PSI [W/mK]']"
-
     mediciones = CTE_tables.tabla_mediciones_puentes_termicos(model, runner)[:data]
     mediciones.each do | nombre, coefAcop, long, psi|
       string_rows << "#CTE_medicion_PT_#{ nombre }: [#{ coefAcop }, #{ long }, #{ psi }]"
@@ -314,7 +300,7 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
 
   def get_filename(model)
     buildingName = model.building.get.name.to_s.strip
-    climatePath = model.weatherFile.get.path.get.to_s.strip
+    climatePath = model.weatherFile.get.path.get.to_s
     climateFilename = climatePath.split(File::SEPARATOR)[-1].strip.chomp('.epw')
     return "cteEPBD-#{ buildingName }-#{ climateFilename }-#{ DateTime.now.strftime "%Y%m%d" }.csv"
   end
