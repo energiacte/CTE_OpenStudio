@@ -57,10 +57,10 @@ class OpenStudioResultsSI < OpenStudio::Ruleset::ReportingUserScript
     result = []
 
     # methods for sections in order that they will appear in report
-    result << 'annual_overview_section'
 
     result << 'building_summary_section'
     # still need to extend building summary
+    result << 'annual_overview_section'
     # still need to populate site performance
 
     result << 'monthly_overview_section'
@@ -84,11 +84,11 @@ class OpenStudioResultsSI < OpenStudio::Ruleset::ReportingUserScript
     result << 'zone_summary_section'
 
     result << 'zone_equipment_detail_section' # TODO: - add in content from other measures
-    result << 'air_loop_summary_section' # TODO: - stub only
+    # result << 'air_loop_summary_section' # TODO: - stub only
     result << 'air_loops_detail_section'
     # later - on all loop detail sections get hard-sized value
 
-    result << 'plant_loop_summary_section' # TODO: - stub only
+    # result << 'plant_loop_summary_section' # TODO: - stub only
     result << 'plant_loops_detail_section'
     result << 'outdoor_air_section'
 
@@ -98,15 +98,15 @@ class OpenStudioResultsSI < OpenStudio::Ruleset::ReportingUserScript
 
     result << 'source_energy_section'
 
-     result << 'co2_and_other_emissions_section'
+    # result << 'co2_and_other_emissions_section'
     # TODO: - add emissions factors object to our template model
 
-    result << 'typical_load_profiles_section' # TODO: - stub only
+    # result << 'typical_load_profiles_section' # TODO: - stub only
     result << 'schedules_overview_section'
     # TODO: - clean up code to gather schedule profiles so I don't have to grab every 15 minutes
 
     # see the method below in os_lib_reporting.rb to see a simple example of code to make a section of tables
-    result << 'template_section'
+    #result << 'template_section'
 
     # TODO: - some tables are so long on real models you loose header. Should we have scrolling within a table?
     # TODO: - maybe sorting as well if it doesn't slow process down too much
