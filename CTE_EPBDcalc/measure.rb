@@ -346,13 +346,12 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     buildingName = model.building.get.name.to_s.strip
     climatePath = model.weatherFile.get.path.get.to_s.strip
     climateFilename = climatePath.split(File::SEPARATOR)[-1].strip.chomp('.epw')
-    return "cteEPBD-#{ DateTime.now.strftime "%Y%m%d" }-#{ buildingName }-#{ climateFilename }.csv"
+    return "cteEPBD-#{ buildingName }-#{ climateFilename }-#{ DateTime.now.strftime "%Y%m%d" }.csv"
   end
 
   # define what happens when the measure is run
   def run(runner, user_arguments)
     super(runner, user_arguments)
-
 
     sqlFile = runner.lastEnergyPlusSqlFile
     if sqlFile.empty?
