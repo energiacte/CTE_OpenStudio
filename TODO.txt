@@ -4,18 +4,18 @@
       circuito) y evitar el fallo en ese caso.
       Usar WaterEquipment detectando objetos por tipo (los objetos del model
       son subtipo del workspace?)
-- OS_15603:
-    - Quitar tablas propias que ya están en CTE_Informe y dejar el informe
-      estándar pero en unidades SI.
-    - Comprobar si la tabla de Sizing se corrige igual que en CTE_Informe
-      (Heating Load -> Heating Sensible Load, Cooling Load -> Heating Sensible
-      Load)
-    - Renombrar a OpenStudio Report SI
 CTE_Informe:
     - Incluir iluminación en "Consumo Final EPB" en función de que sea terciario o no.
     - Calcular A_sol,ver / A_util pidiendo factor de sombra de protecciones
       móviles
     - Calcular K
+CTE_EPBDcalc:
+    - Nombre de archivo de salida generado con metadatos, y no fijo.
+    - Revisar usabilidad de comentarios
+OS_Report_SI:
+    - Comprobar si la tabla de Sizing se corrige igual que en CTE_Informe
+      (Heating Load -> Heating Sensible Load, Cooling Load -> Heating Sensible
+      Load)
 - Otros:
     - Incluir factores de paso a energía primaria y emisiones (habría que
       solicitar para RED1 y RED2)

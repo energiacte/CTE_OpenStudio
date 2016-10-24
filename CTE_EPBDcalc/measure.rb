@@ -157,10 +157,9 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
       spaces = thermalZone.spaces()
       # vamos a tomar el tipo del primer espacio
       spaceType = spaces[0].spaceType.get.name.get
-      runner.registerInfo("#{thermalZone.name}")
-      runner.registerInfo("#{spaces[0].name.get} tipo #{spaceType}")
-      next if (spaceType.start_with?('CTE_AR') or
-         spaceType.start_with?('CTE_NOHABs') )
+      runner.registerInfo("#{ thermalZone.name }")
+      runner.registerInfo("#{ spaces[0].name.get } tipo #{ spaceType }")
+      next if (spaceType.start_with?('CTE_AR') or spaceType.start_with?('CTE_NOHAB') )
 
       valueJ = sqlFile.execAndReturnVectorOfDouble(
       zonelightselectricenergymonthlyentry(thermalZone.name.to_s.upcase)).get
@@ -169,11 +168,11 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
         value << OpenStudio.convert(valor, 'J', 'kWh').get.round(1)
       end
       valores << value
-      runner.registerInfo("consumo electrico mensual: #{value} kWh")
+      runner.registerInfo("consumo electrico mensual: #{ value } kWh")
     end
     totalzonas = valores.transpose.map {|x| x.reduce(:+)}
     totalzonas = totalzonas.map{ |x| x.round(0) }
-    runner.registerInfo("consumo total zonas: #{totalzonas} kWh")
+    runner.registerInfo("consumo total zonas: #{ totalzonas } kWh")
     return totalzonas
   end
 
@@ -251,7 +250,7 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
       vector = vector.map{ |v| OpenStudio.convert(v, 'J', 'kWh').get }
 
       TECNOLOGIAS[tecnologia][:combustibles].each do | combustible, rendimiento |
-        comentario   = "# #{servicio}, #{tecnologia}, #{vectorOrigen}-->#{combustible}, #{rendimiento}"
+        comentario   = "# #{ servicio }, #{ tecnologia }, #{ vectorOrigen }-->#{ combustible }, #{ rendimiento }"
         if vector.reduce(0, :+) != 0
           salida << [combustible, 'CONSUMO', 'EPB'] + vector.map { |v| (v * rendimiento).round(0) } + [comentario]
         end
@@ -262,7 +261,7 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     if consumoIluminacionPorMeses.reduce(0, :+) != 0
       salida << ['ELECTRICIDAD', 'CONSUMO', 'EPB'] + consumoIluminacionPorMeses + ['#LIGHTING']
     end
-    runner.registerInfo("#{salida}")
+    runner.registerInfo("#{ salida }")
 
     consumoVentiladoresPorMeses = consumoDeVentilacionMecanica(runner, model, sqlFile)
     if consumoVentiladoresPorMeses.reduce(0, :+) != 0
@@ -277,7 +276,7 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     nombreFichero = 'consumoParaEPBDcalc.csv'
 
     outFile = File.open(nombreFichero, 'w')
-    runner.registerInfo("string_rows = #{string_rows}")
+    runner.registerInfo("string_rows = #{ string_rows }")
 
     string_rows.each do | string |
       if string.is_a? String
@@ -330,9 +329,8 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     WHERE zl.Name NOT LIKE 'CTE_N%' ").get
 
     string_rows = []
-    
     string_rows << "# Datos de entrada"
-    
+
     cte_name = model.building.get.name
     string_rows << "#CTE_Name: #{cte_name}"
     runner.registerInfo("CTE_Name: #{cte_name}")
@@ -344,7 +342,7 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     cte_clima = model.weatherFile.get.path.get
     string_rows << "#CTE_Weather_file: #{cte_clima}"
     runner.registerInfo("CTE_Weather_file: #{cte_clima}")
-    
+
     atributos = JSON.parse(model.building.get.comment[2..-1])
 
     atributos.each do | clave, valor |
@@ -353,27 +351,24 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     end
 
     string_rows << "# Datos medidos"
-    
     string_rows << "#CTE_Area_ref: #{cte_areareferencia.round(0)}"
-
     string_rows << "#CTE_Vol_ref:#{CTE_Query.volumenHabitable(sqlFile)}"
-    
     string_rows << "# Medición construcciones: [area, transmitancia]"
-    
+
     mediciones = CTE_tables.tabla_mediciones_envolvente(model, sqlFile, runner)[:data]
     mediciones.each do | nombre, area, transmitancia |
       string_rows << "#CTE_medicion_#{nombre}:[#{area},#{transmitancia}]"
     end
-    
+
     string_rows << "# Medición puentes termicos: ['Coef. acoplamiento', 'Longitud', 'PSI']"
-    
+
     mediciones = CTE_tables.tabla_mediciones_puentes_termicos(model, runner)[:data]
     mediciones.each do | nombre, coefAcop, long, psi|
       string_rows << "#CTE_medicion_PT_#{nombre}:[#{coefAcop},#{long},#{psi}]"
     end
-    
 
-    
+
+
 
     servicios = get_servicios(runner, user_arguments)
     result = procesedEPBFinalEnergyConsumptionByMonth(model, sqlFile, runner, servicios)
