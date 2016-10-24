@@ -14,6 +14,11 @@ class ConexionEPDB_Test < MiniTest::Unit::TestCase
     @modelPath = "#{ File.dirname(__FILE__) }/out.osm"
     assert(File.exist?(@modelPath))
     assert(File.exist?(@sqlPath))
+
+    @sqlPathTerciario = "#{ File.dirname(__FILE__) }/eplusout_terciario.sql"
+    @modelPathTerciario = "#{ File.dirname(__FILE__) }/out_terciario.osm"
+    assert(File.exist?(@modelPathTerciario))
+    assert(File.exist?(@sqlPathTerciario))
   end
 
 
@@ -44,8 +49,8 @@ class ConexionEPDB_Test < MiniTest::Unit::TestCase
     arguments = measure.arguments()
     argument_map = OpenStudio::Ruleset.convertOSArgumentVectorToMap(arguments)
 
-    runner.setLastEnergyPlusSqlFilePath(OpenStudio::Path.new(@sqlPath))
-    runner.setLastOpenStudioModelPath(OpenStudio::Path.new(@modelPath))
+    runner.setLastEnergyPlusSqlFilePath(OpenStudio::Path.new(@sqlPathTerciario))
+    runner.setLastOpenStudioModelPath(OpenStudio::Path.new(@modelPathTerciario))
 
     measure.run(runner, argument_map)
     result = runner.result

@@ -156,30 +156,17 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
   end
 
   def consumoMensualIluminacion(runner, model, sqlFile)
-    # TODO: analizar el caso en que hay más de un equipo de iluminación por espacio.
-    valores = []
+    valores = [[0] * 12]
     model.getThermalZones.each do | thermalZone |
-      valores << [0] * 12
-
-      # FIXME: Deberían filtrarse los espacios de la zona para ver si hay alguno que no sea residencial o no habitable
-      # FIXME: y en ese caso tomar el consumo de la zona
-      spaces = thermalZone.spaces()
-      # vamos a tomar el tipo del primer espacio
-      spaceType = spaces[0].spaceType.get.name.get
-      next if (spaceType.start_with?('CTE_AR') or spaceType.start_with?('CTE_NOHAB') )
-
+      spaceTypeNames = thermalZone.spaces().map { |space| space.spaceType.get.name.get }
+      validSpaceTypeNames = spaceTypeNames.select { |name| not (name.start_with?('CTE_AR') or name.start_with?('CTE_NOHAB')) }
+      next if validSpaceTypeNames.length == 0
       valueJ = sqlFile.execAndReturnVectorOfDouble(zonelightselectricenergymonthlyentry(thermalZone.name.to_s.upcase)).get
-
-      # FIXME: Se añade a la lista de 12 ceros
-      valueJ.each do | valor |
-        value << OpenStudio.convert(valor, 'J', 'kWh').get.round(1)
-      end
-      # FIXME: Se añade a la lista de 12 ceros
-      valores << value
+      valores << valueJ.map { |valor| OpenStudio.convert(valor, 'J', 'kWh').get.round(1) }
     end
     # Consumo total de iluminación para todas las zonas [kWh]
     totalzonas = valores.transpose.map {|x| x.reduce(:+)}
-    totalzonas = totalzonas.map{ |x| x.round(0) }
+    totalzonas = totalzonas.map{ |x| x.round(1) }
     return totalzonas
   end
 
