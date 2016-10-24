@@ -10,7 +10,8 @@ aplicación del CTE DB-HE y la ISO 52000-1 (UNE EN 15603) con OpenStudio.
 El procedimiento de trabajo es el siguiente:
 
 - Debe tenerse instalada una versión de OpenStudio (v1.12) y de Sketchup, con
-  el complemento correspondiente.
+  el complemento correspondiente. Para el cálculo es también necesario el uso
+  de archivos climáticos con valores reglamentarios.
 - En Sketchup se realiza la modelización de los espacios del edificio, usando
   de base una plantilla (disponible en el directorio /Templates)
 - Una vez hecha la modelización de las zonas térmicas en Sketchup, es necesario

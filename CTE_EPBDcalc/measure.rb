@@ -80,8 +80,6 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
   # define the arguments that the user will input
   def arguments()
     args = OpenStudio::Ruleset::OSArgumentVector.new
-    provincias_display = OpenStudio::StringVector.new
-    provincias_chs = OpenStudio::StringVector.new
 
     acs_tech = [] # tecnología
     acs_desc = [] # descripción
