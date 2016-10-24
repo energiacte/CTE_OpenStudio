@@ -332,39 +332,39 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     string_rows << "# Datos de entrada"
 
     cte_name = model.building.get.name
-    string_rows << "#CTE_Name: #{cte_name}"
-    runner.registerInfo("CTE_Name: #{cte_name}")
+    string_rows << "#CTE_Name: #{ cte_name }"
+    runner.registerInfo("CTE_Name: #{ cte_name }")
 
     cte_datetime = DateTime.now.strftime "%d/%m/%Y %H:%M"
-    string_rows << "#CTE_Datetime: #{cte_datetime}"
-    runner.registerInfo("CTE_Datetime: #{cte_datetime}")
+    string_rows << "#CTE_Datetime: #{ cte_datetime }"
+    runner.registerInfo("CTE_Datetime: #{ cte_datetime }")
 
     cte_clima = model.weatherFile.get.path.get
-    string_rows << "#CTE_Weather_file: #{cte_clima}"
-    runner.registerInfo("CTE_Weather_file: #{cte_clima}")
+    string_rows << "#CTE_Weather_file: #{ cte_clima }"
+    runner.registerInfo("CTE_Weather_file: #{ cte_clima }")
 
     atributos = JSON.parse(model.building.get.comment[2..-1])
 
     atributos.each do | clave, valor |
-      string_rows << "##{clave}:#{valor}"
+      string_rows << "##{ clave }: #{ valor }"
       puts clave, valor
     end
 
     string_rows << "# Datos medidos"
-    string_rows << "#CTE_Area_ref: #{cte_areareferencia.round(0)}"
-    string_rows << "#CTE_Vol_ref:#{CTE_Query.volumenHabitable(sqlFile)}"
+    string_rows << "#CTE_Area_ref: #{ cte_areareferencia.round(0) }"
+    string_rows << "#CTE_Vol_ref: #{ CTE_Query.volumenHabitable(sqlFile) }"
     string_rows << "# Medición construcciones: [area, transmitancia]"
 
     mediciones = CTE_tables.tabla_mediciones_envolvente(model, sqlFile, runner)[:data]
     mediciones.each do | nombre, area, transmitancia |
-      string_rows << "#CTE_medicion_#{nombre}:[#{area},#{transmitancia}]"
+      string_rows << "#CTE_medicion_#{ nombre }: [#{ area }, #{ transmitancia }]"
     end
 
     string_rows << "# Medición puentes termicos: ['Coef. acoplamiento', 'Longitud', 'PSI']"
 
     mediciones = CTE_tables.tabla_mediciones_puentes_termicos(model, runner)[:data]
     mediciones.each do | nombre, coefAcop, long, psi|
-      string_rows << "#CTE_medicion_PT_#{nombre}:[#{coefAcop},#{long},#{psi}]"
+      string_rows << "#CTE_medicion_PT_#{ nombre }: [#{ coefAcop }, #{ long }, #{ psi }]"
     end
 
 
