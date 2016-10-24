@@ -310,14 +310,14 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     string_rows << "# Datos medidos"
     string_rows << "#CTE_Area_ref: #{ cte_areareferencia.round(0) }"
     string_rows << "#CTE_Vol_ref: #{ CTE_Query.volumenHabitable(sqlFile) }"
-    string_rows << "# Medición construcciones: [area, transmitancia]"
+    string_rows << "# Medicion construcciones: [Area [m2], Transmitancia U [W/m2K]]"
 
     mediciones = CTE_tables.tabla_mediciones_envolvente(model, sqlFile, runner)[:data]
     mediciones.each do | nombre, area, transmitancia |
       string_rows << "#CTE_medicion_#{ nombre }: [#{ area }, #{ transmitancia }]"
     end
 
-    string_rows << "# Medición puentes termicos: ['Coef. acoplamiento', 'Longitud', 'PSI']"
+    string_rows << "# Medicion puentes termicos: ['Coef. acoplamiento [W/K]', 'Longitud [m]', 'PSI [W/mK]']"
 
     mediciones = CTE_tables.tabla_mediciones_puentes_termicos(model, runner)[:data]
     mediciones.each do | nombre, coefAcop, long, psi|
