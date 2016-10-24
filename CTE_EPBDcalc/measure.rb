@@ -140,7 +140,7 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
   end
 
   def consumoDeIluminacion(runner, model, sqlFile)
-    runner.registerInfo("Consumo de iluminacion")
+    runner.registerInfo("CTE Consumo de iluminacion")
     valores = []
 
     # usaría espacios, pero es que la variable del consumo para sistemas de iluminación
@@ -168,11 +168,11 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
       end
       # FIXME: Se añade a la lista de 12 ceros
       valores << value
-      runner.registerInfo("consumo electrico mensual: #{ value } kWh")
+      runner.registerInfo("CTE iluminacion consumo electrico mensual: #{ value } kWh")
     end
     totalzonas = valores.transpose.map {|x| x.reduce(:+)}
     totalzonas = totalzonas.map{ |x| x.round(0) }
-    runner.registerInfo("consumo total zonas: #{ totalzonas } kWh")
+    runner.registerInfo("CTE iluminacion consumo total zonas: #{ totalzonas } kWh")
     return totalzonas
   end
 
@@ -224,7 +224,7 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     tienenquesercero.each do | fuel, enduse |
         consumomensual = energyConsumptionByVectorAndUse(sqlFile, fuel, enduse)
         if consumomensual.reduce(0, :+) != 0
-          runner.registerError("ERROR: consumo inesperado de combustible '#{ fuel }' para el uso '#{ enduse }'")
+          runner.registerError("CTE ERROR: consumo inesperado de combustible '#{ fuel }' para el uso '#{ enduse }'")
           return false
         end
     end
