@@ -1,3 +1,4 @@
 *.log
 **/tests/output/
 **/tests/report.html
+**/tests/report.htm
