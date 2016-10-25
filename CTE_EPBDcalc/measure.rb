@@ -162,7 +162,7 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
       validSpaceTypeNames = spaceTypeNames.select { |name| not (name.start_with?('CTE_AR') or name.start_with?('CTE_NOHAB')) }
       next if validSpaceTypeNames.length == 0
       valueJ = sqlFile.execAndReturnVectorOfDouble(zonelightselectricenergymonthlyentry(thermalZone.name.to_s.upcase)).get
-      valores << valueJ.map { |valor| OpenStudio.convert(valor, 'J', 'kWh').get.round(1) }
+      valores << valueJ.map { |valor| OpenStudio.convert(valor, 'J', 'kWh').get.round(2) }
     end
     # Consumo total de iluminación para todas las zonas [kWh]
     totalzonas = valores.transpose.map {|x| x.reduce(:+)}
@@ -179,7 +179,7 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     AND ReportingFrequency = 'Monthly' "
     fansearch = sqlFile.execAndReturnVectorOfDouble(fanquery)
     fanValues = fansearch.get
-    fanValuesKWh = fanValues.map{ |valorJ| OpenStudio.convert(valorJ, 'J', 'kWh').get.round(0) }
+    fanValuesKWh = fanValues.map{ |valorJ| OpenStudio.convert(valorJ, 'J', 'kWh').get.round(2) }
     return fanValuesKWh
   end
 
@@ -193,7 +193,7 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
       valor = sqlFile.energyConsumptionByMonth(endfueltype, endusecategory, monthofyear).to_f
       result[mesNumber - 1] += valor
     end
-    return result.map{ |v| OpenStudio.convert(v, 'J', 'kWh').get }
+    return result.map{ |v| OpenStudio.convert(v, 'J', 'kWh').get.round(2) }
   end
 
   def consumoMensual(model, sqlFile, runner, servicios)
@@ -210,7 +210,7 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
       TECNOLOGIAS[tecnologia][:combustibles].each do | combustible, rendimiento |
         if vector.reduce(0, :+) != 0
           comentario   = "# #{ servicio }, #{ tecnologia }, #{ vectorOrigen }-->#{ combustible }, #{ rendimiento }"
-          salida << [combustible, 'CONSUMO', 'EPB'] + vector.map { |v| (v * rendimiento).round(0) } + [comentario]
+          salida << [combustible, 'CONSUMO', 'EPB'] + vector.map { |v| (v * rendimiento).round(2) } + [comentario]
         end
       end
     end
