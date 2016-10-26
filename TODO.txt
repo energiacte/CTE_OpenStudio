@@ -1,4 +1,7 @@
 - CTE_Model:
+    - Gestionar sombras estacionales en la medida. En residencial asignar
+      horario a ventana (con shading-control) según sombra estacional y
+      en terciario siempre está off.
     - temperatura_del_agua_de_red: 
       Detectar el caso en el que no hay definida demanda de ACS (no hay
       circuito) y evitar el fallo en ese caso.
