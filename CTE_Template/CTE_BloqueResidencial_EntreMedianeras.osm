@@ -442,7 +442,7 @@ OS:People:Definition,
   Area/Person,                            !- Number of People Calculation Method
   ,                                       !- Number of People {people}
   ,                                       !- People per Space Floor Area {person/m2}
-  5.21,                                   !- Space Floor Area per Person {m2/person}
+  26.1,                                   !- Space Floor Area per Person {m2/person}
   0.3;                                    !- Fraction Radiant
 
 OS:ElectricEquipment:Definition,
@@ -584,7 +584,7 @@ OS:People:Definition,
   Area/Person,                            !- Number of People Calculation Method
   ,                                       !- Number of People {people}
   ,                                       !- People per Space Floor Area {person/m2}
-  26.1,                                   !- Space Floor Area per Person {m2/person}
+  5.21,                                   !- Space Floor Area per Person {m2/person}
   0.3;                                    !- Fraction Radiant
 
 OS:Rendering:Color,
@@ -11291,7 +11291,7 @@ OS:Surface,
   {a5443ed0-af0f-4152-86d4-c82ed00c58f4}, !- Handle
   SUELO_ZC,                               !- Name
   Floor,                                  !- Surface Type
-  ,                                       !- Construction Name
+  {7bc9a636-3fa8-4709-b2cd-5beb2aa0a5b4}, !- Construction Name
   {ab0094cd-d2d7-4a69-835e-450c49a32ca0}, !- Space Name
   Ground,                                 !- Outside Boundary Condition
   ,                                       !- Outside Boundary Condition Object
@@ -12239,7 +12239,7 @@ OS:Surface,
   {ed02d7a6-7c4b-47a9-a072-0e7bf732a4d6}, !- Handle
   SUELO_4,                                !- Name
   Floor,                                  !- Surface Type
-  ,                                       !- Construction Name
+  {7bc9a636-3fa8-4709-b2cd-5beb2aa0a5b4}, !- Construction Name
   {3cdc680d-d39f-4ef8-a4f7-c76f95772194}, !- Space Name
   Ground,                                 !- Outside Boundary Condition
   ,                                       !- Outside Boundary Condition Object
@@ -14454,7 +14454,7 @@ OS:Surface,
   {1d1a27e5-c230-435a-ac39-f4210b362a6d}, !- Handle
   SUELO_2,                                !- Name
   Floor,                                  !- Surface Type
-  ,                                       !- Construction Name
+  {7bc9a636-3fa8-4709-b2cd-5beb2aa0a5b4}, !- Construction Name
   {f8080944-cc1c-47c6-be58-113a6ff1c11c}, !- Space Name
   Ground,                                 !- Outside Boundary Condition
   ,                                       !- Outside Boundary Condition Object
@@ -15386,7 +15386,7 @@ OS:Surface,
   {134cfe13-6464-4e3f-8235-bc25a284eceb}, !- Handle
   SUELO_1,                                !- Name
   Floor,                                  !- Surface Type
-  ,                                       !- Construction Name
+  {7bc9a636-3fa8-4709-b2cd-5beb2aa0a5b4}, !- Construction Name
   {7f5c487d-b278-4b20-a458-726b7988298d}, !- Space Name
   Ground,                                 !- Outside Boundary Condition
   ,                                       !- Outside Boundary Condition Object
@@ -16410,7 +16410,7 @@ OS:Surface,
   {711d0d0a-99cc-4b05-ac15-266e3ee55652}, !- Handle
   SUELO_ACCESO,                           !- Name
   Floor,                                  !- Surface Type
-  ,                                       !- Construction Name
+  {7bc9a636-3fa8-4709-b2cd-5beb2aa0a5b4}, !- Construction Name
   {6222e3bf-2614-41b2-bd13-aaa1ea2eef5e}, !- Space Name
   Ground,                                 !- Outside Boundary Condition
   ,                                       !- Outside Boundary Condition Object
@@ -18580,7 +18580,7 @@ OS:Surface,
   {85afa210-81d8-406f-87e5-2c81bfbf4096}, !- Handle
   SUELO_3,                                !- Name
   Floor,                                  !- Surface Type
-  ,                                       !- Construction Name
+  {7bc9a636-3fa8-4709-b2cd-5beb2aa0a5b4}, !- Construction Name
   {aec6dfa8-986f-4269-9fd9-45b5ab690061}, !- Space Name
   Ground,                                 !- Outside Boundary Condition
   ,                                       !- Outside Boundary Condition Object
@@ -25498,168 +25498,6 @@ OS:StandardsInformation:Construction,
   ;                                       !- Fenestration Gas Fill
 
 OS:Construction,
-  {30759d0d-452d-4434-b180-ebeb2310f3e1}, !- Handle
-  CTE_2013_Suelo_zona A,                  !- Name
-  {7150fcf5-b0cd-4ebf-91d5-0b32b0ef632e}, !- Surface Rendering Name
-  {ce810311-feb8-4f64-8cab-bdf2c958cf15}, !- Layer 1
-  {db83498b-4a4a-403d-a6fc-1b05c8a8d6dc}, !- Layer 2
-  {6ea35070-4aec-47b1-a905-e5bfc6bc3a12}, !- Layer 3
-  {6d716a72-010a-475b-824b-fd20abf786fe}; !- Layer 4
-
-OS:StandardsInformation:Construction,
-  {a2f6f774-2f5c-4d34-9047-fde029936858}, !- Handle
-  {30759d0d-452d-4434-b180-ebeb2310f3e1}, !- Construction Name
-  ,                                       !- Intended Surface Type
-  ,                                       !- Standards Construction Type
-  ,                                       !- Perturbable Layer
-  ,                                       !- Perturbable Layer Type
-  ,                                       !- Other Perturbable Layer Type
-  ,                                       !- Construction Standard
-  ,                                       !- Construction Standard Source
-  ,                                       !- Fenestration Type
-  ,                                       !- Fenestration Assembly Context
-  ,                                       !- Fenestration Number of Panes
-  ,                                       !- Fenestration Frame Type
-  ,                                       !- Fenestration Divider Type
-  ,                                       !- Fenestration Tint
-  ;                                       !- Fenestration Gas Fill
-
-OS:Construction,
-  {c58cb446-e0d2-4090-a877-df6e4ad49ce7}, !- Handle
-  CTE_2013_Suelo_zona Alfa,               !- Name
-  {7150fcf5-b0cd-4ebf-91d5-0b32b0ef632e}, !- Surface Rendering Name
-  {ce810311-feb8-4f64-8cab-bdf2c958cf15}, !- Layer 1
-  {9badd279-afeb-47ab-847f-3507029deb70}, !- Layer 2
-  {6ea35070-4aec-47b1-a905-e5bfc6bc3a12}, !- Layer 3
-  {6d716a72-010a-475b-824b-fd20abf786fe}; !- Layer 4
-
-OS:StandardsInformation:Construction,
-  {db7c7db1-f591-482b-9fb0-a65b9dceee57}, !- Handle
-  {c58cb446-e0d2-4090-a877-df6e4ad49ce7}, !- Construction Name
-  ,                                       !- Intended Surface Type
-  ,                                       !- Standards Construction Type
-  ,                                       !- Perturbable Layer
-  ,                                       !- Perturbable Layer Type
-  ,                                       !- Other Perturbable Layer Type
-  ,                                       !- Construction Standard
-  ,                                       !- Construction Standard Source
-  ,                                       !- Fenestration Type
-  ,                                       !- Fenestration Assembly Context
-  ,                                       !- Fenestration Number of Panes
-  ,                                       !- Fenestration Frame Type
-  ,                                       !- Fenestration Divider Type
-  ,                                       !- Fenestration Tint
-  ;                                       !- Fenestration Gas Fill
-
-OS:Construction,
-  {1739ff31-9d08-42b3-abbc-f68baf689010}, !- Handle
-  CTE_2013_Suelo_zona B,                  !- Name
-  {5e052703-08cd-485b-84e0-4c995e87082f}, !- Surface Rendering Name
-  {ce810311-feb8-4f64-8cab-bdf2c958cf15}, !- Layer 1
-  {166afc2c-a889-4f3d-9449-85bacc90ffd1}, !- Layer 2
-  {6ea35070-4aec-47b1-a905-e5bfc6bc3a12}, !- Layer 3
-  {6d716a72-010a-475b-824b-fd20abf786fe}; !- Layer 4
-
-OS:StandardsInformation:Construction,
-  {34ad39ed-9ecd-4c8c-adbd-be64ebc31951}, !- Handle
-  {1739ff31-9d08-42b3-abbc-f68baf689010}, !- Construction Name
-  ,                                       !- Intended Surface Type
-  ,                                       !- Standards Construction Type
-  ,                                       !- Perturbable Layer
-  ,                                       !- Perturbable Layer Type
-  ,                                       !- Other Perturbable Layer Type
-  ,                                       !- Construction Standard
-  ,                                       !- Construction Standard Source
-  ,                                       !- Fenestration Type
-  ,                                       !- Fenestration Assembly Context
-  ,                                       !- Fenestration Number of Panes
-  ,                                       !- Fenestration Frame Type
-  ,                                       !- Fenestration Divider Type
-  ,                                       !- Fenestration Tint
-  ;                                       !- Fenestration Gas Fill
-
-OS:Construction,
-  {084aa4ae-4e75-4487-b210-7d6b9617f96f}, !- Handle
-  CTE_2013_Suelo_zona C,                  !- Name
-  {f6151c73-35cf-4aca-9722-0e48ffda22fe}, !- Surface Rendering Name
-  {ce810311-feb8-4f64-8cab-bdf2c958cf15}, !- Layer 1
-  {47176245-3aa8-41a7-b816-e12d3901be25}, !- Layer 2
-  {6ea35070-4aec-47b1-a905-e5bfc6bc3a12}, !- Layer 3
-  {6d716a72-010a-475b-824b-fd20abf786fe}; !- Layer 4
-
-OS:StandardsInformation:Construction,
-  {44408079-552d-48c8-b611-ae3944fbe31f}, !- Handle
-  {084aa4ae-4e75-4487-b210-7d6b9617f96f}, !- Construction Name
-  ,                                       !- Intended Surface Type
-  ,                                       !- Standards Construction Type
-  ,                                       !- Perturbable Layer
-  ,                                       !- Perturbable Layer Type
-  ,                                       !- Other Perturbable Layer Type
-  ,                                       !- Construction Standard
-  ,                                       !- Construction Standard Source
-  ,                                       !- Fenestration Type
-  ,                                       !- Fenestration Assembly Context
-  ,                                       !- Fenestration Number of Panes
-  ,                                       !- Fenestration Frame Type
-  ,                                       !- Fenestration Divider Type
-  ,                                       !- Fenestration Tint
-  ;                                       !- Fenestration Gas Fill
-
-OS:Construction,
-  {334c85c8-3e70-472b-ac4b-d6ad661b091f}, !- Handle
-  CTE_2013_Suelo_zona D,                  !- Name
-  {cfcd4bad-6bf7-4dc1-a527-0a88491c2278}, !- Surface Rendering Name
-  {ce810311-feb8-4f64-8cab-bdf2c958cf15}, !- Layer 1
-  {111ef03d-1fac-45cc-a9ce-f037b94fa4ce}, !- Layer 2
-  {6ea35070-4aec-47b1-a905-e5bfc6bc3a12}, !- Layer 3
-  {6d716a72-010a-475b-824b-fd20abf786fe}; !- Layer 4
-
-OS:StandardsInformation:Construction,
-  {61f91c37-ed36-40fb-a677-ccae90a4ad91}, !- Handle
-  {334c85c8-3e70-472b-ac4b-d6ad661b091f}, !- Construction Name
-  ,                                       !- Intended Surface Type
-  ,                                       !- Standards Construction Type
-  ,                                       !- Perturbable Layer
-  ,                                       !- Perturbable Layer Type
-  ,                                       !- Other Perturbable Layer Type
-  ,                                       !- Construction Standard
-  ,                                       !- Construction Standard Source
-  ,                                       !- Fenestration Type
-  ,                                       !- Fenestration Assembly Context
-  ,                                       !- Fenestration Number of Panes
-  ,                                       !- Fenestration Frame Type
-  ,                                       !- Fenestration Divider Type
-  ,                                       !- Fenestration Tint
-  ;                                       !- Fenestration Gas Fill
-
-OS:Construction,
-  {772c3468-368b-4412-a371-65dbe77081a7}, !- Handle
-  CTE_2013_Suelo_zona E,                  !- Name
-  {d5f49dce-119a-4cab-85af-aa2e77b3a0c6}, !- Surface Rendering Name
-  {ce810311-feb8-4f64-8cab-bdf2c958cf15}, !- Layer 1
-  {359d6a35-dc80-4297-8943-626f662d8673}, !- Layer 2
-  {6ea35070-4aec-47b1-a905-e5bfc6bc3a12}, !- Layer 3
-  {6d716a72-010a-475b-824b-fd20abf786fe}; !- Layer 4
-
-OS:StandardsInformation:Construction,
-  {6b216438-baca-4c6f-bd28-74c79ac474b0}, !- Handle
-  {772c3468-368b-4412-a371-65dbe77081a7}, !- Construction Name
-  ,                                       !- Intended Surface Type
-  ,                                       !- Standards Construction Type
-  ,                                       !- Perturbable Layer
-  ,                                       !- Perturbable Layer Type
-  ,                                       !- Other Perturbable Layer Type
-  ,                                       !- Construction Standard
-  ,                                       !- Construction Standard Source
-  ,                                       !- Fenestration Type
-  ,                                       !- Fenestration Assembly Context
-  ,                                       !- Fenestration Number of Panes
-  ,                                       !- Fenestration Frame Type
-  ,                                       !- Fenestration Divider Type
-  ,                                       !- Fenestration Tint
-  ;                                       !- Fenestration Gas Fill
-
-OS:Construction,
   {42f5bfc3-311d-4e47-bb6b-3dda0c93ff42}, !- Handle
   CTE_Ref_Cubierta_zona A,                !- Name
   {2770ba74-ff19-4cef-81bc-81cb2b5e32a9}, !- Surface Rendering Name
@@ -26416,141 +26254,6 @@ OS:StandardsInformation:Construction,
   ;                                       !- Fenestration Gas Fill
 
 OS:Construction,
-  {9295d531-38d5-4125-b3fc-baceba3f2c47}, !- Handle
-  CTE_Ref_Suelo_zona A,                   !- Name
-  {7150fcf5-b0cd-4ebf-91d5-0b32b0ef632e}, !- Surface Rendering Name
-  {da04da82-d8a4-424d-ab67-62883b2969bf}, !- Layer 1
-  {aae2ca40-5205-4e06-978b-db8002846c58}, !- Layer 2
-  {6ea35070-4aec-47b1-a905-e5bfc6bc3a12}, !- Layer 3
-  {6d716a72-010a-475b-824b-fd20abf786fe}; !- Layer 4
-
-OS:StandardsInformation:Construction,
-  {34fe86dd-88ad-4d64-98f7-b834facd89ec}, !- Handle
-  {9295d531-38d5-4125-b3fc-baceba3f2c47}, !- Construction Name
-  ,                                       !- Intended Surface Type
-  ,                                       !- Standards Construction Type
-  ,                                       !- Perturbable Layer
-  ,                                       !- Perturbable Layer Type
-  ,                                       !- Other Perturbable Layer Type
-  ,                                       !- Construction Standard
-  ,                                       !- Construction Standard Source
-  ,                                       !- Fenestration Type
-  ,                                       !- Fenestration Assembly Context
-  ,                                       !- Fenestration Number of Panes
-  ,                                       !- Fenestration Frame Type
-  ,                                       !- Fenestration Divider Type
-  ,                                       !- Fenestration Tint
-  ;                                       !- Fenestration Gas Fill
-
-OS:Construction,
-  {fd929403-4bf7-462f-8350-a0bf14539b58}, !- Handle
-  CTE_Ref_Suelo_zona B,                   !- Name
-  {5e052703-08cd-485b-84e0-4c995e87082f}, !- Surface Rendering Name
-  {da04da82-d8a4-424d-ab67-62883b2969bf}, !- Layer 1
-  {7a5b8f28-b7d8-49d5-a143-4363bb8043b8}, !- Layer 2
-  {6ea35070-4aec-47b1-a905-e5bfc6bc3a12}, !- Layer 3
-  {6d716a72-010a-475b-824b-fd20abf786fe}; !- Layer 4
-
-OS:StandardsInformation:Construction,
-  {9b96468f-4d06-4677-aa23-007efa9dd9ba}, !- Handle
-  {fd929403-4bf7-462f-8350-a0bf14539b58}, !- Construction Name
-  ,                                       !- Intended Surface Type
-  ,                                       !- Standards Construction Type
-  ,                                       !- Perturbable Layer
-  ,                                       !- Perturbable Layer Type
-  ,                                       !- Other Perturbable Layer Type
-  ,                                       !- Construction Standard
-  ,                                       !- Construction Standard Source
-  ,                                       !- Fenestration Type
-  ,                                       !- Fenestration Assembly Context
-  ,                                       !- Fenestration Number of Panes
-  ,                                       !- Fenestration Frame Type
-  ,                                       !- Fenestration Divider Type
-  ,                                       !- Fenestration Tint
-  ;                                       !- Fenestration Gas Fill
-
-OS:Construction,
-  {96f2635f-99ae-40e0-a063-d2e1d9faf8ea}, !- Handle
-  CTE_Ref_Suelo_zona C,                   !- Name
-  {f6151c73-35cf-4aca-9722-0e48ffda22fe}, !- Surface Rendering Name
-  {da04da82-d8a4-424d-ab67-62883b2969bf}, !- Layer 1
-  {54b4d65c-28ed-485d-ab54-6fde6a2f2e8c}, !- Layer 2
-  {6ea35070-4aec-47b1-a905-e5bfc6bc3a12}, !- Layer 3
-  {6d716a72-010a-475b-824b-fd20abf786fe}; !- Layer 4
-
-OS:StandardsInformation:Construction,
-  {b9fc2668-8efa-434a-b3e0-40b6bf933239}, !- Handle
-  {96f2635f-99ae-40e0-a063-d2e1d9faf8ea}, !- Construction Name
-  ,                                       !- Intended Surface Type
-  ,                                       !- Standards Construction Type
-  ,                                       !- Perturbable Layer
-  ,                                       !- Perturbable Layer Type
-  ,                                       !- Other Perturbable Layer Type
-  ,                                       !- Construction Standard
-  ,                                       !- Construction Standard Source
-  ,                                       !- Fenestration Type
-  ,                                       !- Fenestration Assembly Context
-  ,                                       !- Fenestration Number of Panes
-  ,                                       !- Fenestration Frame Type
-  ,                                       !- Fenestration Divider Type
-  ,                                       !- Fenestration Tint
-  ;                                       !- Fenestration Gas Fill
-
-OS:Construction,
-  {533c0d98-2d76-45b2-864b-b3f582de1c02}, !- Handle
-  CTE_Ref_Suelo_zona D,                   !- Name
-  {cfcd4bad-6bf7-4dc1-a527-0a88491c2278}, !- Surface Rendering Name
-  {da04da82-d8a4-424d-ab67-62883b2969bf}, !- Layer 1
-  {8e967bc6-9e15-4c9c-bc5b-5758b3c2245a}, !- Layer 2
-  {6ea35070-4aec-47b1-a905-e5bfc6bc3a12}, !- Layer 3
-  {6d716a72-010a-475b-824b-fd20abf786fe}; !- Layer 4
-
-OS:StandardsInformation:Construction,
-  {b2e837c8-50f1-462a-a9f1-3e9bc9aacbde}, !- Handle
-  {533c0d98-2d76-45b2-864b-b3f582de1c02}, !- Construction Name
-  ,                                       !- Intended Surface Type
-  ,                                       !- Standards Construction Type
-  ,                                       !- Perturbable Layer
-  ,                                       !- Perturbable Layer Type
-  ,                                       !- Other Perturbable Layer Type
-  ,                                       !- Construction Standard
-  ,                                       !- Construction Standard Source
-  ,                                       !- Fenestration Type
-  ,                                       !- Fenestration Assembly Context
-  ,                                       !- Fenestration Number of Panes
-  ,                                       !- Fenestration Frame Type
-  ,                                       !- Fenestration Divider Type
-  ,                                       !- Fenestration Tint
-  ;                                       !- Fenestration Gas Fill
-
-OS:Construction,
-  {d2d8b1fd-71b8-48fd-97e2-d4cb1f791428}, !- Handle
-  CTE_Ref_Suelo_zona E,                   !- Name
-  {d5f49dce-119a-4cab-85af-aa2e77b3a0c6}, !- Surface Rendering Name
-  {da04da82-d8a4-424d-ab67-62883b2969bf}, !- Layer 1
-  {73ac25b0-95a9-425b-9538-91831c4a82f6}, !- Layer 2
-  {6ea35070-4aec-47b1-a905-e5bfc6bc3a12}, !- Layer 3
-  {6d716a72-010a-475b-824b-fd20abf786fe}; !- Layer 4
-
-OS:StandardsInformation:Construction,
-  {43dd0e1d-bad2-4479-ab09-7be969acfc08}, !- Handle
-  {d2d8b1fd-71b8-48fd-97e2-d4cb1f791428}, !- Construction Name
-  ,                                       !- Intended Surface Type
-  ,                                       !- Standards Construction Type
-  ,                                       !- Perturbable Layer
-  ,                                       !- Perturbable Layer Type
-  ,                                       !- Other Perturbable Layer Type
-  ,                                       !- Construction Standard
-  ,                                       !- Construction Standard Source
-  ,                                       !- Fenestration Type
-  ,                                       !- Fenestration Assembly Context
-  ,                                       !- Fenestration Number of Panes
-  ,                                       !- Fenestration Frame Type
-  ,                                       !- Fenestration Divider Type
-  ,                                       !- Fenestration Tint
-  ;                                       !- Fenestration Gas Fill
-
-OS:Construction,
   {5e711c22-f924-4d64-913c-83d0f269bcec}, !- Handle
   CTE_Res_Mobiliario,                     !- Name
   {f1deeb06-53a6-4537-abd3-d95f0ec7e88b}, !- Surface Rendering Name
@@ -26614,7 +26317,7 @@ OS:DefaultConstructionSet,
 OS:DefaultSurfaceConstructions,
   {7d26ae8f-f247-4537-95af-42f418a2ae81}, !- Handle
   Default Surface Constructions 34,       !- Name
-  {c58cb446-e0d2-4090-a877-df6e4ad49ce7}, !- Floor Construction Name
+  {52d839d9-c712-4900-a8ec-04d587a898ba}, !- Floor Construction Name
   {d17913ee-1014-413e-917c-fe56c606f269}, !- Wall Construction Name
   {a30527fc-53a3-407f-b62a-fe013da5539d}; !- Roof Ceiling Construction Name
 
@@ -26628,7 +26331,7 @@ OS:DefaultSurfaceConstructions,
 OS:DefaultSurfaceConstructions,
   {ce5c33b5-95b2-451a-87c6-6db9f4c22f88}, !- Handle
   Default Surface Constructions 36,       !- Name
-  {c58cb446-e0d2-4090-a877-df6e4ad49ce7}, !- Floor Construction Name
+  ,                                       !- Floor Construction Name
   ,                                       !- Wall Construction Name
   ;                                       !- Roof Ceiling Construction Name
 
@@ -26672,7 +26375,7 @@ OS:DefaultConstructionSet,
 OS:DefaultSurfaceConstructions,
   {621f42bd-95f5-4121-b2c9-d7dcd1071139}, !- Handle
   Default Surface Constructions 31,       !- Name
-  {30759d0d-452d-4434-b180-ebeb2310f3e1}, !- Floor Construction Name
+  {a6fde435-860e-42fe-b881-dab018ee7799}, !- Floor Construction Name
   {ac277f87-58d4-4bec-92f2-092a538a89f8}, !- Wall Construction Name
   {230af7bf-2ba6-4ae4-8f1f-bb186135aa6d}; !- Roof Ceiling Construction Name
 
@@ -26686,7 +26389,7 @@ OS:DefaultSurfaceConstructions,
 OS:DefaultSurfaceConstructions,
   {fccc2f2e-9c27-47a7-9652-d5b3197279e0}, !- Handle
   Default Surface Constructions 33,       !- Name
-  {30759d0d-452d-4434-b180-ebeb2310f3e1}, !- Floor Construction Name
+  ,                                       !- Floor Construction Name
   ,                                       !- Wall Construction Name
   ;                                       !- Roof Ceiling Construction Name
 
@@ -26730,7 +26433,7 @@ OS:DefaultConstructionSet,
 OS:DefaultSurfaceConstructions,
   {dd05b577-3529-47e3-b80a-f30c3f1b0fab}, !- Handle
   Default Surface Constructions 19,       !- Name
-  {1739ff31-9d08-42b3-abbc-f68baf689010}, !- Floor Construction Name
+  {d5d0ef58-d9a0-46e4-b64e-7498d4b34729}, !- Floor Construction Name
   {b3f5e6a5-27a2-4259-89fc-f7edd3b29dbd}, !- Wall Construction Name
   {e14bcfa2-13aa-4fb7-8367-84cf8c035389}; !- Roof Ceiling Construction Name
 
@@ -26744,7 +26447,7 @@ OS:DefaultSurfaceConstructions,
 OS:DefaultSurfaceConstructions,
   {c0768970-3aff-4a64-bbb4-c21c6ced9ff8}, !- Handle
   Default Surface Constructions 21,       !- Name
-  {1739ff31-9d08-42b3-abbc-f68baf689010}, !- Floor Construction Name
+  ,                                       !- Floor Construction Name
   ,                                       !- Wall Construction Name
   ;                                       !- Roof Ceiling Construction Name
 
@@ -26788,7 +26491,7 @@ OS:DefaultConstructionSet,
 OS:DefaultSurfaceConstructions,
   {e78e09a5-8dd5-4445-85de-10f9c4124064}, !- Handle
   Default Surface Constructions 22,       !- Name
-  {084aa4ae-4e75-4487-b210-7d6b9617f96f}, !- Floor Construction Name
+  {bdc0e9ba-cced-4c8b-91f4-615818177395}, !- Floor Construction Name
   {bdf81116-f865-473d-9a7d-372458647250}, !- Wall Construction Name
   {89aed870-dd62-4fbf-bc8f-65d6afacc3d9}; !- Roof Ceiling Construction Name
 
@@ -26802,7 +26505,7 @@ OS:DefaultSurfaceConstructions,
 OS:DefaultSurfaceConstructions,
   {f640c992-b504-48a5-b72c-e42523cc3cd6}, !- Handle
   Default Surface Constructions 24,       !- Name
-  {084aa4ae-4e75-4487-b210-7d6b9617f96f}, !- Floor Construction Name
+  ,                                       !- Floor Construction Name
   ,                                       !- Wall Construction Name
   ;                                       !- Roof Ceiling Construction Name
 
@@ -26846,7 +26549,7 @@ OS:DefaultConstructionSet,
 OS:DefaultSurfaceConstructions,
   {e3e4d95d-e532-4fa0-a46e-a55dbed28156}, !- Handle
   Default Surface Constructions 25,       !- Name
-  {334c85c8-3e70-472b-ac4b-d6ad661b091f}, !- Floor Construction Name
+  {7bc9a636-3fa8-4709-b2cd-5beb2aa0a5b4}, !- Floor Construction Name
   {47a92aea-3505-4981-ae47-1d55838ccb3e}, !- Wall Construction Name
   {371a39ce-491b-4320-b15c-6d32c717f9c6}; !- Roof Ceiling Construction Name
 
@@ -26860,7 +26563,7 @@ OS:DefaultSurfaceConstructions,
 OS:DefaultSurfaceConstructions,
   {09efde4c-b252-4d0c-9d87-232e85084c70}, !- Handle
   Default Surface Constructions 27,       !- Name
-  {334c85c8-3e70-472b-ac4b-d6ad661b091f}, !- Floor Construction Name
+  ,                                       !- Floor Construction Name
   ,                                       !- Wall Construction Name
   ;                                       !- Roof Ceiling Construction Name
 
@@ -26904,7 +26607,7 @@ OS:DefaultConstructionSet,
 OS:DefaultSurfaceConstructions,
   {22a8b4d5-4d13-4503-9a19-7cd1c99ecc32}, !- Handle
   Default Surface Constructions 28,       !- Name
-  {772c3468-368b-4412-a371-65dbe77081a7}, !- Floor Construction Name
+  {f02f0cfd-b9fc-412a-87fd-72ad1ef5fc62}, !- Floor Construction Name
   {5b186e74-ec66-4b5b-b063-6fca51c75833}, !- Wall Construction Name
   {24bcd6f8-5d71-46b7-b969-5054bedb0534}; !- Roof Ceiling Construction Name
 
@@ -26918,7 +26621,7 @@ OS:DefaultSurfaceConstructions,
 OS:DefaultSurfaceConstructions,
   {b55ed132-58ee-4948-bc39-5668d47d93cb}, !- Handle
   Default Surface Constructions 30,       !- Name
-  {772c3468-368b-4412-a371-65dbe77081a7}, !- Floor Construction Name
+  ,                                       !- Floor Construction Name
   ,                                       !- Wall Construction Name
   ;                                       !- Roof Ceiling Construction Name
 
@@ -26962,7 +26665,7 @@ OS:DefaultConstructionSet,
 OS:DefaultSurfaceConstructions,
   {b0d0b146-eba3-45e8-b23f-bcca859559f6}, !- Handle
   Default Surface Constructions 16,       !- Name
-  {9295d531-38d5-4125-b3fc-baceba3f2c47}, !- Floor Construction Name
+  {89ea7917-4f3d-453d-8860-5d640b3d791c}, !- Floor Construction Name
   {77f7f6d9-88ca-4caf-b8bc-c7f3f5900beb}, !- Wall Construction Name
   {42f5bfc3-311d-4e47-bb6b-3dda0c93ff42}; !- Roof Ceiling Construction Name
 
@@ -26976,7 +26679,7 @@ OS:DefaultSurfaceConstructions,
 OS:DefaultSurfaceConstructions,
   {2764834c-4f8f-49b0-bb4a-89c42bce4a0f}, !- Handle
   Default Surface Constructions 18,       !- Name
-  {9295d531-38d5-4125-b3fc-baceba3f2c47}, !- Floor Construction Name
+  ,                                       !- Floor Construction Name
   ,                                       !- Wall Construction Name
   ;                                       !- Roof Ceiling Construction Name
 
@@ -27020,7 +26723,7 @@ OS:DefaultConstructionSet,
 OS:DefaultSurfaceConstructions,
   {36f8fa09-ab33-4895-a444-f33be9268824}, !- Handle
   Default Surface Constructions 1,        !- Name
-  {fd929403-4bf7-462f-8350-a0bf14539b58}, !- Floor Construction Name
+  {25a219f1-dfcf-4a7d-9198-59ce0cef9791}, !- Floor Construction Name
   {741d96d0-996f-40a4-95a6-a678638d6b6d}, !- Wall Construction Name
   {ba683aba-3710-434f-bf94-cb4b056f3252}; !- Roof Ceiling Construction Name
 
@@ -27034,7 +26737,7 @@ OS:DefaultSurfaceConstructions,
 OS:DefaultSurfaceConstructions,
   {4540a3b6-a10b-4bee-8e85-6f1c7d35113a}, !- Handle
   Default Surface Constructions 3,        !- Name
-  {fd929403-4bf7-462f-8350-a0bf14539b58}, !- Floor Construction Name
+  ,                                       !- Floor Construction Name
   ,                                       !- Wall Construction Name
   ;                                       !- Roof Ceiling Construction Name
 
@@ -27078,7 +26781,7 @@ OS:DefaultConstructionSet,
 OS:DefaultSurfaceConstructions,
   {f9637edf-aa4f-4d89-bb8d-d34071f91a05}, !- Handle
   Default Surface Constructions 7,        !- Name
-  {96f2635f-99ae-40e0-a063-d2e1d9faf8ea}, !- Floor Construction Name
+  {daf44074-b513-4641-a068-17d858ad990e}, !- Floor Construction Name
   {5f68fd77-1d0e-4384-b4ae-c6dd47c76c88}, !- Wall Construction Name
   {83e127a1-525d-4fdd-914e-eccd98de6661}; !- Roof Ceiling Construction Name
 
@@ -27092,7 +26795,7 @@ OS:DefaultSurfaceConstructions,
 OS:DefaultSurfaceConstructions,
   {a3f2c5d7-1404-404d-8832-3d09c0f8fe37}, !- Handle
   Default Surface Constructions 9,        !- Name
-  {96f2635f-99ae-40e0-a063-d2e1d9faf8ea}, !- Floor Construction Name
+  ,                                       !- Floor Construction Name
   ,                                       !- Wall Construction Name
   ;                                       !- Roof Ceiling Construction Name
 
@@ -27136,7 +26839,7 @@ OS:DefaultConstructionSet,
 OS:DefaultSurfaceConstructions,
   {e715db2f-997e-45cb-b8bf-90f81334ec13}, !- Handle
   Default Surface Constructions 10,       !- Name
-  {533c0d98-2d76-45b2-864b-b3f582de1c02}, !- Floor Construction Name
+  {1c3c79a4-279b-458d-9e19-f29bb58c6bd6}, !- Floor Construction Name
   {3751b901-23bf-4972-a5b9-edd7ff59d541}, !- Wall Construction Name
   {d13eaf11-6497-46a7-a909-e9b37e487f71}; !- Roof Ceiling Construction Name
 
@@ -27150,7 +26853,7 @@ OS:DefaultSurfaceConstructions,
 OS:DefaultSurfaceConstructions,
   {58a04d0a-1c15-447b-bf77-add789e4c96f}, !- Handle
   Default Surface Constructions 12,       !- Name
-  {533c0d98-2d76-45b2-864b-b3f582de1c02}, !- Floor Construction Name
+  ,                                       !- Floor Construction Name
   ,                                       !- Wall Construction Name
   ;                                       !- Roof Ceiling Construction Name
 
@@ -27194,7 +26897,7 @@ OS:DefaultConstructionSet,
 OS:DefaultSurfaceConstructions,
   {b431201a-93af-4c5f-b561-d51ddd62e0a0}, !- Handle
   Default Surface Constructions 13,       !- Name
-  {d2d8b1fd-71b8-48fd-97e2-d4cb1f791428}, !- Floor Construction Name
+  {6d5f9557-f0b7-43a3-945e-4bbeddd965b5}, !- Floor Construction Name
   {d4c6e261-e616-41ef-bd2d-9cda036e8c0a}, !- Wall Construction Name
   {79ae53c8-62d2-4fdd-98e1-80625dd5c5b3}; !- Roof Ceiling Construction Name
 
@@ -27208,7 +26911,7 @@ OS:DefaultSurfaceConstructions,
 OS:DefaultSurfaceConstructions,
   {8117eb51-5ddd-4903-ba01-a4b14f44f54a}, !- Handle
   Default Surface Constructions 15,       !- Name
-  {d2d8b1fd-71b8-48fd-97e2-d4cb1f791428}, !- Floor Construction Name
+  ,                                       !- Floor Construction Name
   ,                                       !- Wall Construction Name
   ;                                       !- Roof Ceiling Construction Name
 
@@ -28625,4 +28328,349 @@ OS:Schedule:Day,
   24,                                     !- Hour 4
   0,                                      !- Minute 4
   27;                                     !- Value Until Time 4
+
+OS:Material,
+  {bcc1226d-ff4f-4dba-88a3-72c4bb18880a}, !- Handle
+  CTE_Terreno_0.5m,                       !- Name
+  Rough,                                  !- Roughness
+  0.5,                                    !- Thickness {m}
+  2,                                      !- Conductivity {W/m-K}
+  2000,                                   !- Density {kg/m3}
+  1000,                                   !- Specific Heat {J/kg-K}
+  0.6,                                    !- Thermal Absorptance
+  0.6,                                    !- Solar Absorptance
+  0.6;                                    !- Visible Absorptance
+
+OS:StandardsInformation:Material,
+  {202d3930-4aee-4d7e-9d79-9817d46b09c5}, !- Handle
+  {bcc1226d-ff4f-4dba-88a3-72c4bb18880a}; !- Material Name
+
+OS:Material:NoMass,
+  {f38b27dd-98cd-4cee-8637-2ebf5e06164d}, !- Handle
+  CTE_Capa_virtual_terreno,               !- Name
+  Smooth,                                 !- Roughness
+  1;                                      !- Thermal Resistance {m2-K/W}
+
+OS:StandardsInformation:Material,
+  {d002baeb-647e-4bdb-9f42-e1eb4f9788e9}, !- Handle
+  {f38b27dd-98cd-4cee-8637-2ebf5e06164d}; !- Material Name
+
+OS:Construction,
+  {a6fde435-860e-42fe-b881-dab018ee7799}, !- Handle
+  CTE_2013_Suelo_zona A,                  !- Name
+  {7150fcf5-b0cd-4ebf-91d5-0b32b0ef632e}, !- Surface Rendering Name
+  {f38b27dd-98cd-4cee-8637-2ebf5e06164d}, !- Layer 1
+  {bcc1226d-ff4f-4dba-88a3-72c4bb18880a}, !- Layer 2
+  {ce810311-feb8-4f64-8cab-bdf2c958cf15}, !- Layer 3
+  {db83498b-4a4a-403d-a6fc-1b05c8a8d6dc}, !- Layer 4
+  {6ea35070-4aec-47b1-a905-e5bfc6bc3a12}, !- Layer 5
+  {6d716a72-010a-475b-824b-fd20abf786fe}; !- Layer 6
+
+OS:StandardsInformation:Construction,
+  {90e308ad-5878-414e-9ce9-9ff67b41ccee}, !- Handle
+  {a6fde435-860e-42fe-b881-dab018ee7799}, !- Construction Name
+  ,                                       !- Intended Surface Type
+  ,                                       !- Standards Construction Type
+  ,                                       !- Perturbable Layer
+  ,                                       !- Perturbable Layer Type
+  ,                                       !- Other Perturbable Layer Type
+  ,                                       !- Construction Standard
+  ,                                       !- Construction Standard Source
+  ,                                       !- Fenestration Type
+  ,                                       !- Fenestration Assembly Context
+  ,                                       !- Fenestration Number of Panes
+  ,                                       !- Fenestration Frame Type
+  ,                                       !- Fenestration Divider Type
+  ,                                       !- Fenestration Tint
+  ;                                       !- Fenestration Gas Fill
+
+OS:Construction,
+  {52d839d9-c712-4900-a8ec-04d587a898ba}, !- Handle
+  CTE_2013_Suelo_zona Alfa,               !- Name
+  {7150fcf5-b0cd-4ebf-91d5-0b32b0ef632e}, !- Surface Rendering Name
+  {f38b27dd-98cd-4cee-8637-2ebf5e06164d}, !- Layer 1
+  {bcc1226d-ff4f-4dba-88a3-72c4bb18880a}, !- Layer 2
+  {ce810311-feb8-4f64-8cab-bdf2c958cf15}, !- Layer 3
+  {9badd279-afeb-47ab-847f-3507029deb70}, !- Layer 4
+  {6ea35070-4aec-47b1-a905-e5bfc6bc3a12}, !- Layer 5
+  {6d716a72-010a-475b-824b-fd20abf786fe}; !- Layer 6
+
+OS:StandardsInformation:Construction,
+  {a9ebc239-85b9-4e17-aa79-151a01a491f6}, !- Handle
+  {52d839d9-c712-4900-a8ec-04d587a898ba}, !- Construction Name
+  ,                                       !- Intended Surface Type
+  ,                                       !- Standards Construction Type
+  ,                                       !- Perturbable Layer
+  ,                                       !- Perturbable Layer Type
+  ,                                       !- Other Perturbable Layer Type
+  ,                                       !- Construction Standard
+  ,                                       !- Construction Standard Source
+  ,                                       !- Fenestration Type
+  ,                                       !- Fenestration Assembly Context
+  ,                                       !- Fenestration Number of Panes
+  ,                                       !- Fenestration Frame Type
+  ,                                       !- Fenestration Divider Type
+  ,                                       !- Fenestration Tint
+  ;                                       !- Fenestration Gas Fill
+
+OS:Construction,
+  {d5d0ef58-d9a0-46e4-b64e-7498d4b34729}, !- Handle
+  CTE_2013_Suelo_zona B,                  !- Name
+  {5e052703-08cd-485b-84e0-4c995e87082f}, !- Surface Rendering Name
+  {f38b27dd-98cd-4cee-8637-2ebf5e06164d}, !- Layer 1
+  {bcc1226d-ff4f-4dba-88a3-72c4bb18880a}, !- Layer 2
+  {ce810311-feb8-4f64-8cab-bdf2c958cf15}, !- Layer 3
+  {166afc2c-a889-4f3d-9449-85bacc90ffd1}, !- Layer 4
+  {6ea35070-4aec-47b1-a905-e5bfc6bc3a12}, !- Layer 5
+  {6d716a72-010a-475b-824b-fd20abf786fe}; !- Layer 6
+
+OS:StandardsInformation:Construction,
+  {2450caf9-9513-42d6-9f3f-6e71ccea5450}, !- Handle
+  {d5d0ef58-d9a0-46e4-b64e-7498d4b34729}, !- Construction Name
+  ,                                       !- Intended Surface Type
+  ,                                       !- Standards Construction Type
+  ,                                       !- Perturbable Layer
+  ,                                       !- Perturbable Layer Type
+  ,                                       !- Other Perturbable Layer Type
+  ,                                       !- Construction Standard
+  ,                                       !- Construction Standard Source
+  ,                                       !- Fenestration Type
+  ,                                       !- Fenestration Assembly Context
+  ,                                       !- Fenestration Number of Panes
+  ,                                       !- Fenestration Frame Type
+  ,                                       !- Fenestration Divider Type
+  ,                                       !- Fenestration Tint
+  ;                                       !- Fenestration Gas Fill
+
+OS:Construction,
+  {bdc0e9ba-cced-4c8b-91f4-615818177395}, !- Handle
+  CTE_2013_Suelo_zona C,                  !- Name
+  {f6151c73-35cf-4aca-9722-0e48ffda22fe}, !- Surface Rendering Name
+  {f38b27dd-98cd-4cee-8637-2ebf5e06164d}, !- Layer 1
+  {bcc1226d-ff4f-4dba-88a3-72c4bb18880a}, !- Layer 2
+  {ce810311-feb8-4f64-8cab-bdf2c958cf15}, !- Layer 3
+  {47176245-3aa8-41a7-b816-e12d3901be25}, !- Layer 4
+  {6ea35070-4aec-47b1-a905-e5bfc6bc3a12}, !- Layer 5
+  {6d716a72-010a-475b-824b-fd20abf786fe}; !- Layer 6
+
+OS:StandardsInformation:Construction,
+  {4708dbfd-fc52-409e-bf58-56d8d21780a8}, !- Handle
+  {bdc0e9ba-cced-4c8b-91f4-615818177395}, !- Construction Name
+  ,                                       !- Intended Surface Type
+  ,                                       !- Standards Construction Type
+  ,                                       !- Perturbable Layer
+  ,                                       !- Perturbable Layer Type
+  ,                                       !- Other Perturbable Layer Type
+  ,                                       !- Construction Standard
+  ,                                       !- Construction Standard Source
+  ,                                       !- Fenestration Type
+  ,                                       !- Fenestration Assembly Context
+  ,                                       !- Fenestration Number of Panes
+  ,                                       !- Fenestration Frame Type
+  ,                                       !- Fenestration Divider Type
+  ,                                       !- Fenestration Tint
+  ;                                       !- Fenestration Gas Fill
+
+OS:Construction,
+  {7bc9a636-3fa8-4709-b2cd-5beb2aa0a5b4}, !- Handle
+  CTE_2013_Suelo_zona D,                  !- Name
+  {cfcd4bad-6bf7-4dc1-a527-0a88491c2278}, !- Surface Rendering Name
+  {f38b27dd-98cd-4cee-8637-2ebf5e06164d}, !- Layer 1
+  {bcc1226d-ff4f-4dba-88a3-72c4bb18880a}, !- Layer 2
+  {ce810311-feb8-4f64-8cab-bdf2c958cf15}, !- Layer 3
+  {111ef03d-1fac-45cc-a9ce-f037b94fa4ce}, !- Layer 4
+  {6ea35070-4aec-47b1-a905-e5bfc6bc3a12}, !- Layer 5
+  {6d716a72-010a-475b-824b-fd20abf786fe}; !- Layer 6
+
+OS:StandardsInformation:Construction,
+  {4c33c03d-dbf3-4ec0-8f6d-f574de81b569}, !- Handle
+  {7bc9a636-3fa8-4709-b2cd-5beb2aa0a5b4}, !- Construction Name
+  ,                                       !- Intended Surface Type
+  ,                                       !- Standards Construction Type
+  ,                                       !- Perturbable Layer
+  ,                                       !- Perturbable Layer Type
+  ,                                       !- Other Perturbable Layer Type
+  ,                                       !- Construction Standard
+  ,                                       !- Construction Standard Source
+  ,                                       !- Fenestration Type
+  ,                                       !- Fenestration Assembly Context
+  ,                                       !- Fenestration Number of Panes
+  ,                                       !- Fenestration Frame Type
+  ,                                       !- Fenestration Divider Type
+  ,                                       !- Fenestration Tint
+  ;                                       !- Fenestration Gas Fill
+
+OS:Construction,
+  {f02f0cfd-b9fc-412a-87fd-72ad1ef5fc62}, !- Handle
+  CTE_2013_Suelo_zona E,                  !- Name
+  {d5f49dce-119a-4cab-85af-aa2e77b3a0c6}, !- Surface Rendering Name
+  {f38b27dd-98cd-4cee-8637-2ebf5e06164d}, !- Layer 1
+  {bcc1226d-ff4f-4dba-88a3-72c4bb18880a}, !- Layer 2
+  {ce810311-feb8-4f64-8cab-bdf2c958cf15}, !- Layer 3
+  {359d6a35-dc80-4297-8943-626f662d8673}, !- Layer 4
+  {6ea35070-4aec-47b1-a905-e5bfc6bc3a12}, !- Layer 5
+  {6d716a72-010a-475b-824b-fd20abf786fe}; !- Layer 6
+
+OS:StandardsInformation:Construction,
+  {882412e4-ffe6-4d23-aa53-f3a1a8f4d47f}, !- Handle
+  {f02f0cfd-b9fc-412a-87fd-72ad1ef5fc62}, !- Construction Name
+  ,                                       !- Intended Surface Type
+  ,                                       !- Standards Construction Type
+  ,                                       !- Perturbable Layer
+  ,                                       !- Perturbable Layer Type
+  ,                                       !- Other Perturbable Layer Type
+  ,                                       !- Construction Standard
+  ,                                       !- Construction Standard Source
+  ,                                       !- Fenestration Type
+  ,                                       !- Fenestration Assembly Context
+  ,                                       !- Fenestration Number of Panes
+  ,                                       !- Fenestration Frame Type
+  ,                                       !- Fenestration Divider Type
+  ,                                       !- Fenestration Tint
+  ;                                       !- Fenestration Gas Fill
+
+OS:Construction,
+  {89ea7917-4f3d-453d-8860-5d640b3d791c}, !- Handle
+  CTE_Ref_Suelo_zona A,                   !- Name
+  {7150fcf5-b0cd-4ebf-91d5-0b32b0ef632e}, !- Surface Rendering Name
+  {f38b27dd-98cd-4cee-8637-2ebf5e06164d}, !- Layer 1
+  {bcc1226d-ff4f-4dba-88a3-72c4bb18880a}, !- Layer 2
+  {da04da82-d8a4-424d-ab67-62883b2969bf}, !- Layer 3
+  {aae2ca40-5205-4e06-978b-db8002846c58}, !- Layer 4
+  {6ea35070-4aec-47b1-a905-e5bfc6bc3a12}, !- Layer 5
+  {6d716a72-010a-475b-824b-fd20abf786fe}; !- Layer 6
+
+OS:StandardsInformation:Construction,
+  {636a9ae5-044c-4150-8cac-893f007d0750}, !- Handle
+  {89ea7917-4f3d-453d-8860-5d640b3d791c}, !- Construction Name
+  ,                                       !- Intended Surface Type
+  ,                                       !- Standards Construction Type
+  ,                                       !- Perturbable Layer
+  ,                                       !- Perturbable Layer Type
+  ,                                       !- Other Perturbable Layer Type
+  ,                                       !- Construction Standard
+  ,                                       !- Construction Standard Source
+  ,                                       !- Fenestration Type
+  ,                                       !- Fenestration Assembly Context
+  ,                                       !- Fenestration Number of Panes
+  ,                                       !- Fenestration Frame Type
+  ,                                       !- Fenestration Divider Type
+  ,                                       !- Fenestration Tint
+  ;                                       !- Fenestration Gas Fill
+
+OS:Construction,
+  {25a219f1-dfcf-4a7d-9198-59ce0cef9791}, !- Handle
+  CTE_Ref_Suelo_zona B,                   !- Name
+  {5e052703-08cd-485b-84e0-4c995e87082f}, !- Surface Rendering Name
+  {f38b27dd-98cd-4cee-8637-2ebf5e06164d}, !- Layer 1
+  {bcc1226d-ff4f-4dba-88a3-72c4bb18880a}, !- Layer 2
+  {da04da82-d8a4-424d-ab67-62883b2969bf}, !- Layer 3
+  {7a5b8f28-b7d8-49d5-a143-4363bb8043b8}, !- Layer 4
+  {6ea35070-4aec-47b1-a905-e5bfc6bc3a12}, !- Layer 5
+  {6d716a72-010a-475b-824b-fd20abf786fe}; !- Layer 6
+
+OS:StandardsInformation:Construction,
+  {cb8cdee9-be88-4392-a00b-f383c9a3f0c7}, !- Handle
+  {25a219f1-dfcf-4a7d-9198-59ce0cef9791}, !- Construction Name
+  ,                                       !- Intended Surface Type
+  ,                                       !- Standards Construction Type
+  ,                                       !- Perturbable Layer
+  ,                                       !- Perturbable Layer Type
+  ,                                       !- Other Perturbable Layer Type
+  ,                                       !- Construction Standard
+  ,                                       !- Construction Standard Source
+  ,                                       !- Fenestration Type
+  ,                                       !- Fenestration Assembly Context
+  ,                                       !- Fenestration Number of Panes
+  ,                                       !- Fenestration Frame Type
+  ,                                       !- Fenestration Divider Type
+  ,                                       !- Fenestration Tint
+  ;                                       !- Fenestration Gas Fill
+
+OS:Construction,
+  {daf44074-b513-4641-a068-17d858ad990e}, !- Handle
+  CTE_Ref_Suelo_zona C,                   !- Name
+  {f6151c73-35cf-4aca-9722-0e48ffda22fe}, !- Surface Rendering Name
+  {f38b27dd-98cd-4cee-8637-2ebf5e06164d}, !- Layer 1
+  {bcc1226d-ff4f-4dba-88a3-72c4bb18880a}, !- Layer 2
+  {da04da82-d8a4-424d-ab67-62883b2969bf}, !- Layer 3
+  {54b4d65c-28ed-485d-ab54-6fde6a2f2e8c}, !- Layer 4
+  {6ea35070-4aec-47b1-a905-e5bfc6bc3a12}, !- Layer 5
+  {6d716a72-010a-475b-824b-fd20abf786fe}; !- Layer 6
+
+OS:StandardsInformation:Construction,
+  {2aa6bea0-941b-4941-8045-7cb792ef5a00}, !- Handle
+  {daf44074-b513-4641-a068-17d858ad990e}, !- Construction Name
+  ,                                       !- Intended Surface Type
+  ,                                       !- Standards Construction Type
+  ,                                       !- Perturbable Layer
+  ,                                       !- Perturbable Layer Type
+  ,                                       !- Other Perturbable Layer Type
+  ,                                       !- Construction Standard
+  ,                                       !- Construction Standard Source
+  ,                                       !- Fenestration Type
+  ,                                       !- Fenestration Assembly Context
+  ,                                       !- Fenestration Number of Panes
+  ,                                       !- Fenestration Frame Type
+  ,                                       !- Fenestration Divider Type
+  ,                                       !- Fenestration Tint
+  ;                                       !- Fenestration Gas Fill
+
+OS:Construction,
+  {1c3c79a4-279b-458d-9e19-f29bb58c6bd6}, !- Handle
+  CTE_Ref_Suelo_zona D,                   !- Name
+  {cfcd4bad-6bf7-4dc1-a527-0a88491c2278}, !- Surface Rendering Name
+  {f38b27dd-98cd-4cee-8637-2ebf5e06164d}, !- Layer 1
+  {bcc1226d-ff4f-4dba-88a3-72c4bb18880a}, !- Layer 2
+  {da04da82-d8a4-424d-ab67-62883b2969bf}, !- Layer 3
+  {8e967bc6-9e15-4c9c-bc5b-5758b3c2245a}, !- Layer 4
+  {6ea35070-4aec-47b1-a905-e5bfc6bc3a12}, !- Layer 5
+  {6d716a72-010a-475b-824b-fd20abf786fe}; !- Layer 6
+
+OS:StandardsInformation:Construction,
+  {ecae9ad1-c1c4-421a-a36b-8f5e15a7f8da}, !- Handle
+  {1c3c79a4-279b-458d-9e19-f29bb58c6bd6}, !- Construction Name
+  ,                                       !- Intended Surface Type
+  ,                                       !- Standards Construction Type
+  ,                                       !- Perturbable Layer
+  ,                                       !- Perturbable Layer Type
+  ,                                       !- Other Perturbable Layer Type
+  ,                                       !- Construction Standard
+  ,                                       !- Construction Standard Source
+  ,                                       !- Fenestration Type
+  ,                                       !- Fenestration Assembly Context
+  ,                                       !- Fenestration Number of Panes
+  ,                                       !- Fenestration Frame Type
+  ,                                       !- Fenestration Divider Type
+  ,                                       !- Fenestration Tint
+  ;                                       !- Fenestration Gas Fill
+
+OS:Construction,
+  {6d5f9557-f0b7-43a3-945e-4bbeddd965b5}, !- Handle
+  CTE_Ref_Suelo_zona E,                   !- Name
+  {d5f49dce-119a-4cab-85af-aa2e77b3a0c6}, !- Surface Rendering Name
+  {f38b27dd-98cd-4cee-8637-2ebf5e06164d}, !- Layer 1
+  {bcc1226d-ff4f-4dba-88a3-72c4bb18880a}, !- Layer 2
+  {da04da82-d8a4-424d-ab67-62883b2969bf}, !- Layer 3
+  {73ac25b0-95a9-425b-9538-91831c4a82f6}, !- Layer 4
+  {6ea35070-4aec-47b1-a905-e5bfc6bc3a12}, !- Layer 5
+  {6d716a72-010a-475b-824b-fd20abf786fe}; !- Layer 6
+
+OS:StandardsInformation:Construction,
+  {231f4395-3a6f-486b-b724-c34f5ae507af}, !- Handle
+  {6d5f9557-f0b7-43a3-945e-4bbeddd965b5}, !- Construction Name
+  ,                                       !- Intended Surface Type
+  ,                                       !- Standards Construction Type
+  ,                                       !- Perturbable Layer
+  ,                                       !- Perturbable Layer Type
+  ,                                       !- Other Perturbable Layer Type
+  ,                                       !- Construction Standard
+  ,                                       !- Construction Standard Source
+  ,                                       !- Fenestration Type
+  ,                                       !- Fenestration Assembly Context
+  ,                                       !- Fenestration Number of Panes
+  ,                                       !- Fenestration Frame Type
+  ,                                       !- Fenestration Divider Type
+  ,                                       !- Fenestration Tint
+  ;                                       !- Fenestration Gas Fill
 
