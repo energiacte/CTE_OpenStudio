@@ -329,7 +329,7 @@ OS:People:Definition,
   Area/Person,                            !- Number of People Calculation Method
   ,                                       !- Number of People {people}
   ,                                       !- People per Space Floor Area {person/m2}
-  30,                                     !- Space Floor Area per Person {m2/person}
+  33,                                     !- Space Floor Area per Person {m2/person}
   0.3;                                    !- Fraction Radiant
 
 OS:ElectricEquipment:Definition,
@@ -20647,128 +20647,128 @@ OS:Rendering:Color,
 OS:ThermostatSetpoint:DualSetpoint,
   {380621ed-be86-477c-b316-c94fa5620f18}, !- Handle
   Thermostat Setpoint Dual Setpoint 22,   !- Name
-  {9702e3ae-8573-49b4-95d4-47c444b74175}, !- Heating Setpoint Temperature Schedule Name
-  {be217039-eb2b-4cf3-b01f-085f5c857ffe}; !- Cooling Setpoint Temperature Schedule Name
+  {6b69773f-337b-4dca-a532-07cb29f458cf}, !- Heating Setpoint Temperature Schedule Name
+  {fae6e48a-afe1-4ed7-9cb1-3a3c22439ad9}; !- Cooling Setpoint Temperature Schedule Name
 
 OS:ThermostatSetpoint:DualSetpoint,
   {3e186565-a46d-43d1-9c2b-39fa5fee15d2}, !- Handle
   Thermostat Setpoint Dual Setpoint 23,   !- Name
-  {9702e3ae-8573-49b4-95d4-47c444b74175}, !- Heating Setpoint Temperature Schedule Name
-  {be217039-eb2b-4cf3-b01f-085f5c857ffe}; !- Cooling Setpoint Temperature Schedule Name
+  {6b69773f-337b-4dca-a532-07cb29f458cf}, !- Heating Setpoint Temperature Schedule Name
+  {fae6e48a-afe1-4ed7-9cb1-3a3c22439ad9}; !- Cooling Setpoint Temperature Schedule Name
 
 OS:ThermostatSetpoint:DualSetpoint,
   {bc927395-0ae2-4f1f-a864-cafd53a31738}, !- Handle
   Thermostat Setpoint Dual Setpoint 24,   !- Name
-  {9702e3ae-8573-49b4-95d4-47c444b74175}, !- Heating Setpoint Temperature Schedule Name
-  {be217039-eb2b-4cf3-b01f-085f5c857ffe}; !- Cooling Setpoint Temperature Schedule Name
+  {6b69773f-337b-4dca-a532-07cb29f458cf}, !- Heating Setpoint Temperature Schedule Name
+  {fae6e48a-afe1-4ed7-9cb1-3a3c22439ad9}; !- Cooling Setpoint Temperature Schedule Name
 
 OS:ThermostatSetpoint:DualSetpoint,
   {b6a95ed9-0575-4165-9488-0e915fcd7c78}, !- Handle
   Thermostat Setpoint Dual Setpoint 25,   !- Name
-  {9702e3ae-8573-49b4-95d4-47c444b74175}, !- Heating Setpoint Temperature Schedule Name
-  {be217039-eb2b-4cf3-b01f-085f5c857ffe}; !- Cooling Setpoint Temperature Schedule Name
+  {6b69773f-337b-4dca-a532-07cb29f458cf}, !- Heating Setpoint Temperature Schedule Name
+  {fae6e48a-afe1-4ed7-9cb1-3a3c22439ad9}; !- Cooling Setpoint Temperature Schedule Name
 
 OS:ThermostatSetpoint:DualSetpoint,
   {84fe9772-7f13-49d2-8d68-4b428d9349fc}, !- Handle
   Thermostat Setpoint Dual Setpoint 26,   !- Name
-  {9702e3ae-8573-49b4-95d4-47c444b74175}, !- Heating Setpoint Temperature Schedule Name
-  {be217039-eb2b-4cf3-b01f-085f5c857ffe}; !- Cooling Setpoint Temperature Schedule Name
+  {6b69773f-337b-4dca-a532-07cb29f458cf}, !- Heating Setpoint Temperature Schedule Name
+  {fae6e48a-afe1-4ed7-9cb1-3a3c22439ad9}; !- Cooling Setpoint Temperature Schedule Name
 
 OS:ThermostatSetpoint:DualSetpoint,
   {11fad70b-59a7-4f84-bd11-5a5d2f445745}, !- Handle
   Thermostat Setpoint Dual Setpoint 27,   !- Name
-  {9702e3ae-8573-49b4-95d4-47c444b74175}, !- Heating Setpoint Temperature Schedule Name
-  {be217039-eb2b-4cf3-b01f-085f5c857ffe}; !- Cooling Setpoint Temperature Schedule Name
+  {6b69773f-337b-4dca-a532-07cb29f458cf}, !- Heating Setpoint Temperature Schedule Name
+  {fae6e48a-afe1-4ed7-9cb1-3a3c22439ad9}; !- Cooling Setpoint Temperature Schedule Name
 
 OS:ThermostatSetpoint:DualSetpoint,
   {69d3fc14-a726-414c-943e-d057b34c6804}, !- Handle
   Thermostat Setpoint Dual Setpoint 28,   !- Name
-  {9702e3ae-8573-49b4-95d4-47c444b74175}, !- Heating Setpoint Temperature Schedule Name
-  {be217039-eb2b-4cf3-b01f-085f5c857ffe}; !- Cooling Setpoint Temperature Schedule Name
+  {6b69773f-337b-4dca-a532-07cb29f458cf}, !- Heating Setpoint Temperature Schedule Name
+  {fae6e48a-afe1-4ed7-9cb1-3a3c22439ad9}; !- Cooling Setpoint Temperature Schedule Name
 
 OS:ThermostatSetpoint:DualSetpoint,
   {daad2066-b5d8-4059-bbe1-44add577c409}, !- Handle
   Thermostat Setpoint Dual Setpoint 29,   !- Name
-  {9702e3ae-8573-49b4-95d4-47c444b74175}, !- Heating Setpoint Temperature Schedule Name
-  {be217039-eb2b-4cf3-b01f-085f5c857ffe}; !- Cooling Setpoint Temperature Schedule Name
+  {6b69773f-337b-4dca-a532-07cb29f458cf}, !- Heating Setpoint Temperature Schedule Name
+  {fae6e48a-afe1-4ed7-9cb1-3a3c22439ad9}; !- Cooling Setpoint Temperature Schedule Name
 
 OS:ThermostatSetpoint:DualSetpoint,
   {d85a580f-f7d4-423f-85ff-2f418c12b1c4}, !- Handle
   Thermostat Setpoint Dual Setpoint 30,   !- Name
-  {9702e3ae-8573-49b4-95d4-47c444b74175}, !- Heating Setpoint Temperature Schedule Name
-  {be217039-eb2b-4cf3-b01f-085f5c857ffe}; !- Cooling Setpoint Temperature Schedule Name
+  {6b69773f-337b-4dca-a532-07cb29f458cf}, !- Heating Setpoint Temperature Schedule Name
+  {fae6e48a-afe1-4ed7-9cb1-3a3c22439ad9}; !- Cooling Setpoint Temperature Schedule Name
 
 OS:ThermostatSetpoint:DualSetpoint,
   {0af7bf3a-ffc2-4c8c-bce8-21424d0e4959}, !- Handle
   Thermostat Setpoint Dual Setpoint 31,   !- Name
-  {9702e3ae-8573-49b4-95d4-47c444b74175}, !- Heating Setpoint Temperature Schedule Name
-  {be217039-eb2b-4cf3-b01f-085f5c857ffe}; !- Cooling Setpoint Temperature Schedule Name
+  {6b69773f-337b-4dca-a532-07cb29f458cf}, !- Heating Setpoint Temperature Schedule Name
+  {fae6e48a-afe1-4ed7-9cb1-3a3c22439ad9}; !- Cooling Setpoint Temperature Schedule Name
 
 OS:ThermostatSetpoint:DualSetpoint,
   {5fb18a1e-efc1-41c7-b2bd-7b4d6d6298ff}, !- Handle
   Thermostat Setpoint Dual Setpoint 32,   !- Name
-  {9702e3ae-8573-49b4-95d4-47c444b74175}, !- Heating Setpoint Temperature Schedule Name
-  {be217039-eb2b-4cf3-b01f-085f5c857ffe}; !- Cooling Setpoint Temperature Schedule Name
+  {6b69773f-337b-4dca-a532-07cb29f458cf}, !- Heating Setpoint Temperature Schedule Name
+  {fae6e48a-afe1-4ed7-9cb1-3a3c22439ad9}; !- Cooling Setpoint Temperature Schedule Name
 
 OS:ThermostatSetpoint:DualSetpoint,
   {cc1ed851-9b06-4495-a80f-0cd2f0d8d7a7}, !- Handle
   Thermostat Setpoint Dual Setpoint 33,   !- Name
-  {9702e3ae-8573-49b4-95d4-47c444b74175}, !- Heating Setpoint Temperature Schedule Name
-  {be217039-eb2b-4cf3-b01f-085f5c857ffe}; !- Cooling Setpoint Temperature Schedule Name
+  {6b69773f-337b-4dca-a532-07cb29f458cf}, !- Heating Setpoint Temperature Schedule Name
+  {fae6e48a-afe1-4ed7-9cb1-3a3c22439ad9}; !- Cooling Setpoint Temperature Schedule Name
 
 OS:ThermostatSetpoint:DualSetpoint,
   {c8d40d36-2a07-4498-847b-faf49cd1b3b8}, !- Handle
   Thermostat Setpoint Dual Setpoint 34,   !- Name
-  {9702e3ae-8573-49b4-95d4-47c444b74175}, !- Heating Setpoint Temperature Schedule Name
-  {be217039-eb2b-4cf3-b01f-085f5c857ffe}; !- Cooling Setpoint Temperature Schedule Name
+  {6b69773f-337b-4dca-a532-07cb29f458cf}, !- Heating Setpoint Temperature Schedule Name
+  {fae6e48a-afe1-4ed7-9cb1-3a3c22439ad9}; !- Cooling Setpoint Temperature Schedule Name
 
 OS:ThermostatSetpoint:DualSetpoint,
   {9b61fbdc-5697-40fa-8191-5a66c5b81b51}, !- Handle
   Thermostat Setpoint Dual Setpoint 35,   !- Name
-  {9702e3ae-8573-49b4-95d4-47c444b74175}, !- Heating Setpoint Temperature Schedule Name
-  {be217039-eb2b-4cf3-b01f-085f5c857ffe}; !- Cooling Setpoint Temperature Schedule Name
+  {6b69773f-337b-4dca-a532-07cb29f458cf}, !- Heating Setpoint Temperature Schedule Name
+  {fae6e48a-afe1-4ed7-9cb1-3a3c22439ad9}; !- Cooling Setpoint Temperature Schedule Name
 
 OS:ThermostatSetpoint:DualSetpoint,
   {5e0e65f9-5b92-473c-b8e9-65d2f51fa4b1}, !- Handle
   Thermostat Setpoint Dual Setpoint 36,   !- Name
-  {9702e3ae-8573-49b4-95d4-47c444b74175}, !- Heating Setpoint Temperature Schedule Name
-  {be217039-eb2b-4cf3-b01f-085f5c857ffe}; !- Cooling Setpoint Temperature Schedule Name
+  {6b69773f-337b-4dca-a532-07cb29f458cf}, !- Heating Setpoint Temperature Schedule Name
+  {fae6e48a-afe1-4ed7-9cb1-3a3c22439ad9}; !- Cooling Setpoint Temperature Schedule Name
 
 OS:ThermostatSetpoint:DualSetpoint,
   {ce5663df-6b40-4862-a40b-cd82b4f5cde3}, !- Handle
   Thermostat Setpoint Dual Setpoint 37,   !- Name
-  {9702e3ae-8573-49b4-95d4-47c444b74175}, !- Heating Setpoint Temperature Schedule Name
-  {be217039-eb2b-4cf3-b01f-085f5c857ffe}; !- Cooling Setpoint Temperature Schedule Name
+  {6b69773f-337b-4dca-a532-07cb29f458cf}, !- Heating Setpoint Temperature Schedule Name
+  {fae6e48a-afe1-4ed7-9cb1-3a3c22439ad9}; !- Cooling Setpoint Temperature Schedule Name
 
 OS:ThermostatSetpoint:DualSetpoint,
   {588f452a-3afa-46b1-9193-3a446a565027}, !- Handle
   Thermostat Setpoint Dual Setpoint 38,   !- Name
-  {9702e3ae-8573-49b4-95d4-47c444b74175}, !- Heating Setpoint Temperature Schedule Name
-  {be217039-eb2b-4cf3-b01f-085f5c857ffe}; !- Cooling Setpoint Temperature Schedule Name
+  {6b69773f-337b-4dca-a532-07cb29f458cf}, !- Heating Setpoint Temperature Schedule Name
+  {fae6e48a-afe1-4ed7-9cb1-3a3c22439ad9}; !- Cooling Setpoint Temperature Schedule Name
 
 OS:ThermostatSetpoint:DualSetpoint,
   {16ba93b2-865a-4a53-8cc2-f1b84e2488ee}, !- Handle
   Thermostat Setpoint Dual Setpoint 39,   !- Name
-  {9702e3ae-8573-49b4-95d4-47c444b74175}, !- Heating Setpoint Temperature Schedule Name
-  {be217039-eb2b-4cf3-b01f-085f5c857ffe}; !- Cooling Setpoint Temperature Schedule Name
+  {6b69773f-337b-4dca-a532-07cb29f458cf}, !- Heating Setpoint Temperature Schedule Name
+  {fae6e48a-afe1-4ed7-9cb1-3a3c22439ad9}; !- Cooling Setpoint Temperature Schedule Name
 
 OS:ThermostatSetpoint:DualSetpoint,
   {c7d6cadb-0940-4c02-970a-8e67ebe7ac6c}, !- Handle
   Thermostat Setpoint Dual Setpoint 40,   !- Name
-  {9702e3ae-8573-49b4-95d4-47c444b74175}, !- Heating Setpoint Temperature Schedule Name
-  {be217039-eb2b-4cf3-b01f-085f5c857ffe}; !- Cooling Setpoint Temperature Schedule Name
+  {6b69773f-337b-4dca-a532-07cb29f458cf}, !- Heating Setpoint Temperature Schedule Name
+  {fae6e48a-afe1-4ed7-9cb1-3a3c22439ad9}; !- Cooling Setpoint Temperature Schedule Name
 
 OS:ThermostatSetpoint:DualSetpoint,
   {33312212-bbda-49e8-9958-49319ab043b2}, !- Handle
   Thermostat Setpoint Dual Setpoint 41,   !- Name
-  {9702e3ae-8573-49b4-95d4-47c444b74175}, !- Heating Setpoint Temperature Schedule Name
-  {be217039-eb2b-4cf3-b01f-085f5c857ffe}; !- Cooling Setpoint Temperature Schedule Name
+  {6b69773f-337b-4dca-a532-07cb29f458cf}, !- Heating Setpoint Temperature Schedule Name
+  {fae6e48a-afe1-4ed7-9cb1-3a3c22439ad9}; !- Cooling Setpoint Temperature Schedule Name
 
 OS:ThermostatSetpoint:DualSetpoint,
   {2c5ca2fc-2163-4e66-9075-815d556cdbed}, !- Handle
   Thermostat Setpoint Dual Setpoint 42,   !- Name
-  {9702e3ae-8573-49b4-95d4-47c444b74175}, !- Heating Setpoint Temperature Schedule Name
-  {be217039-eb2b-4cf3-b01f-085f5c857ffe}; !- Cooling Setpoint Temperature Schedule Name
+  {6b69773f-337b-4dca-a532-07cb29f458cf}, !- Heating Setpoint Temperature Schedule Name
+  {fae6e48a-afe1-4ed7-9cb1-3a3c22439ad9}; !- Cooling Setpoint Temperature Schedule Name
 
 OS:ShadingSurfaceGroup,
   {55e903db-7c97-4aa0-b067-f8fca47ca0e3}, !- Handle
@@ -22777,120 +22777,6 @@ OS:Schedule:Day,
   0;                                      !- Value Until Time 1
 
 OS:Schedule:Ruleset,
-  {9702e3ae-8573-49b4-95d4-47c444b74175}, !- Handle
-  CTER24B_TCAL,                           !- Name
-  {ae0a9df5-cb98-4c78-bce5-3089e79621ec}, !- Schedule Type Limits Name
-  {dfa54b3c-6d1a-4acc-831d-24afbf995969}; !- Default Day Schedule Name
-
-OS:Schedule:Day,
-  {dfa54b3c-6d1a-4acc-831d-24afbf995969}, !- Handle
-  Schedule Day 10,                        !- Name
-  {ae0a9df5-cb98-4c78-bce5-3089e79621ec}, !- Schedule Type Limits Name
-  ,                                       !- Interpolate to Timestep
-  24,                                     !- Hour 1
-  0,                                      !- Minute 1
-  23.5;                                   !- Value Until Time 1
-
-OS:Schedule:Rule,
-  {262ad05d-6c74-4676-a30c-fbb77d63c30e}, !- Handle
-  Schedule Rule 6,                        !- Name
-  {9702e3ae-8573-49b4-95d4-47c444b74175}, !- Schedule Ruleset Name
-  0,                                      !- Rule Order
-  {048d4beb-ddb1-43b7-93c1-a4069ac05636}, !- Day Schedule Name
-  Yes,                                    !- Apply Sunday
-  Yes,                                    !- Apply Monday
-  Yes,                                    !- Apply Tuesday
-  Yes,                                    !- Apply Wednesday
-  Yes,                                    !- Apply Thursday
-  Yes,                                    !- Apply Friday
-  Yes,                                    !- Apply Saturday
-  ,                                       !- Apply Holiday
-  DateRange,                              !- Date Specification Type
-  1,                                      !- Start Month
-  1,                                      !- Start Day
-  5,                                      !- End Month
-  31;                                     !- End Day
-
-OS:Schedule:Day,
-  {048d4beb-ddb1-43b7-93c1-a4069ac05636}, !- Handle
-  Schedule Day 13,                        !- Name
-  {ae0a9df5-cb98-4c78-bce5-3089e79621ec}, !- Schedule Type Limits Name
-  ,                                       !- Interpolate to Timestep
-  7,                                      !- Hour 1
-  0,                                      !- Minute 1
-  17,                                     !- Value Until Time 1
-  23,                                     !- Hour 2
-  0,                                      !- Minute 2
-  20,                                     !- Value Until Time 2
-  24,                                     !- Hour 3
-  0,                                      !- Minute 3
-  17;                                     !- Value Until Time 3
-
-OS:Schedule:Rule,
-  {c236787a-e5fa-4379-84da-7b1828b69e4c}, !- Handle
-  Schedule Rule 5,                        !- Name
-  {9702e3ae-8573-49b4-95d4-47c444b74175}, !- Schedule Ruleset Name
-  1,                                      !- Rule Order
-  {2e14ab24-e899-4a2f-9e91-aec03aa381ea}, !- Day Schedule Name
-  Yes,                                    !- Apply Sunday
-  Yes,                                    !- Apply Monday
-  Yes,                                    !- Apply Tuesday
-  Yes,                                    !- Apply Wednesday
-  Yes,                                    !- Apply Thursday
-  Yes,                                    !- Apply Friday
-  Yes,                                    !- Apply Saturday
-  ,                                       !- Apply Holiday
-  DateRange,                              !- Date Specification Type
-  6,                                      !- Start Month
-  1,                                      !- Start Day
-  9,                                      !- End Month
-  30;                                     !- End Day
-
-OS:Schedule:Day,
-  {2e14ab24-e899-4a2f-9e91-aec03aa381ea}, !- Handle
-  Schedule Day 12,                        !- Name
-  {ae0a9df5-cb98-4c78-bce5-3089e79621ec}, !- Schedule Type Limits Name
-  ,                                       !- Interpolate to Timestep
-  24,                                     !- Hour 1
-  0,                                      !- Minute 1
-  -50;                                    !- Value Until Time 1
-
-OS:Schedule:Rule,
-  {cc71cdcf-8c54-48ce-9f5b-49a9d8b52089}, !- Handle
-  Schedule Rule 3,                        !- Name
-  {9702e3ae-8573-49b4-95d4-47c444b74175}, !- Schedule Ruleset Name
-  2,                                      !- Rule Order
-  {f67e8f50-6fac-45c5-8d9d-b4ce185dcc4d}, !- Day Schedule Name
-  Yes,                                    !- Apply Sunday
-  Yes,                                    !- Apply Monday
-  Yes,                                    !- Apply Tuesday
-  Yes,                                    !- Apply Wednesday
-  Yes,                                    !- Apply Thursday
-  Yes,                                    !- Apply Friday
-  Yes,                                    !- Apply Saturday
-  ,                                       !- Apply Holiday
-  DateRange,                              !- Date Specification Type
-  10,                                     !- Start Month
-  1,                                      !- Start Day
-  12,                                     !- End Month
-  31;                                     !- End Day
-
-OS:Schedule:Day,
-  {f67e8f50-6fac-45c5-8d9d-b4ce185dcc4d}, !- Handle
-  Schedule Day 11,                        !- Name
-  {ae0a9df5-cb98-4c78-bce5-3089e79621ec}, !- Schedule Type Limits Name
-  ,                                       !- Interpolate to Timestep
-  7,                                      !- Hour 1
-  0,                                      !- Minute 1
-  17,                                     !- Value Until Time 1
-  23,                                     !- Hour 2
-  0,                                      !- Minute 2
-  20,                                     !- Value Until Time 2
-  24,                                     !- Hour 3
-  0,                                      !- Minute 3
-  17;                                     !- Value Until Time 3
-
-OS:Schedule:Ruleset,
   {6b1df41e-d453-4e9d-ab51-4c455eec8d4e}, ! Handle
   CTER24B_Temp_circuito_calefaccion,      ! Name
   {ae0a9df5-cb98-4c78-bce5-3089e79621ec}, ! Schedule Type Limits Name
@@ -22924,117 +22810,6 @@ OS:Schedule:Day,
   24,                                     ! Hour 1
   0,                                      ! Minute 1
   67;                                     ! Value Until Time 1
-
-OS:Schedule:Ruleset,
-  {be217039-eb2b-4cf3-b01f-085f5c857ffe}, !- Handle
-  CTER24B_TREF,                           !- Name
-  {ae0a9df5-cb98-4c78-bce5-3089e79621ec}, !- Schedule Type Limits Name
-  {9a8ebd63-f7e1-44bb-b853-ff46d317e066}; !- Default Day Schedule Name
-
-OS:Schedule:Day,
-  {9a8ebd63-f7e1-44bb-b853-ff46d317e066}, !- Handle
-  Schedule Day 14,                        !- Name
-  {ae0a9df5-cb98-4c78-bce5-3089e79621ec}, !- Schedule Type Limits Name
-  ,                                       !- Interpolate to Timestep
-  24,                                     !- Hour 1
-  0,                                      !- Minute 1
-  23.5;                                   !- Value Until Time 1
-
-OS:Schedule:Rule,
-  {534c1d02-7f1d-45bb-8746-35dc2aaf45f4}, !- Handle
-  Schedule Rule 9,                        !- Name
-  {be217039-eb2b-4cf3-b01f-085f5c857ffe}, !- Schedule Ruleset Name
-  0,                                      !- Rule Order
-  {7119c595-82d0-4ee3-912c-169945d5b0b4}, !- Day Schedule Name
-  Yes,                                    !- Apply Sunday
-  Yes,                                    !- Apply Monday
-  Yes,                                    !- Apply Tuesday
-  Yes,                                    !- Apply Wednesday
-  Yes,                                    !- Apply Thursday
-  Yes,                                    !- Apply Friday
-  Yes,                                    !- Apply Saturday
-  ,                                       !- Apply Holiday
-  DateRange,                              !- Date Specification Type
-  1,                                      !- Start Month
-  1,                                      !- Start Day
-  5,                                      !- End Month
-  31;                                     !- End Day
-
-OS:Schedule:Day,
-  {7119c595-82d0-4ee3-912c-169945d5b0b4}, !- Handle
-  Schedule Day 17,                        !- Name
-  {ae0a9df5-cb98-4c78-bce5-3089e79621ec}, !- Schedule Type Limits Name
-  ,                                       !- Interpolate to Timestep
-  24,                                     !- Hour 1
-  0,                                      !- Minute 1
-  99.0000076293945;                       !- Value Until Time 1
-
-OS:Schedule:Rule,
-  {76d3eb80-9c44-4c09-962c-e8a365e06f3a}, !- Handle
-  Schedule Rule 8,                        !- Name
-  {be217039-eb2b-4cf3-b01f-085f5c857ffe}, !- Schedule Ruleset Name
-  1,                                      !- Rule Order
-  {1b6ca257-8070-47af-b67b-9593baa9b0bb}, !- Day Schedule Name
-  Yes,                                    !- Apply Sunday
-  Yes,                                    !- Apply Monday
-  Yes,                                    !- Apply Tuesday
-  Yes,                                    !- Apply Wednesday
-  Yes,                                    !- Apply Thursday
-  Yes,                                    !- Apply Friday
-  Yes,                                    !- Apply Saturday
-  ,                                       !- Apply Holiday
-  DateRange,                              !- Date Specification Type
-  6,                                      !- Start Month
-  1,                                      !- Start Day
-  9,                                      !- End Month
-  30;                                     !- End Day
-
-OS:Schedule:Day,
-  {1b6ca257-8070-47af-b67b-9593baa9b0bb}, !- Handle
-  Schedule Day 16,                        !- Name
-  {ae0a9df5-cb98-4c78-bce5-3089e79621ec}, !- Schedule Type Limits Name
-  ,                                       !- Interpolate to Timestep
-  7,                                      !- Hour 1
-  0,                                      !- Minute 1
-  27,                                     !- Value Until Time 1
-  15,                                     !- Hour 2
-  0,                                      !- Minute 2
-  99,                                     !- Value Until Time 2
-  23,                                     !- Hour 3
-  0,                                      !- Minute 3
-  24.9999980926514,                       !- Value Until Time 3
-  24,                                     !- Hour 4
-  0,                                      !- Minute 4
-  27;                                     !- Value Until Time 4
-
-OS:Schedule:Rule,
-  {8d22f5f8-92ce-425d-8c99-6c5319a6797d}, !- Handle
-  Schedule Rule 7,                        !- Name
-  {be217039-eb2b-4cf3-b01f-085f5c857ffe}, !- Schedule Ruleset Name
-  2,                                      !- Rule Order
-  {45a6a184-06de-4d36-8ded-d75349d68050}, !- Day Schedule Name
-  Yes,                                    !- Apply Sunday
-  Yes,                                    !- Apply Monday
-  Yes,                                    !- Apply Tuesday
-  Yes,                                    !- Apply Wednesday
-  Yes,                                    !- Apply Thursday
-  Yes,                                    !- Apply Friday
-  Yes,                                    !- Apply Saturday
-  ,                                       !- Apply Holiday
-  DateRange,                              !- Date Specification Type
-  10,                                     !- Start Month
-  1,                                      !- Start Day
-  12,                                     !- End Month
-  31;                                     !- End Day
-
-OS:Schedule:Day,
-  {45a6a184-06de-4d36-8ded-d75349d68050}, !- Handle
-  Schedule Day 15,                        !- Name
-  {ae0a9df5-cb98-4c78-bce5-3089e79621ec}, !- Schedule Type Limits Name
-  ,                                       !- Interpolate to Timestep
-  24,                                     !- Hour 1
-  0,                                      !- Minute 1
-  99.0000076293945;                       !- Value Until Time 1
 
 OS:Schedule:Ruleset,
   {eae2115f-5ad3-43f9-b541-fa31fe73c799}, !- Handle
@@ -28711,4 +28486,142 @@ OS:SubSurface,
   0.832452113123491, 6.39579840086668e-008, 0, !- X,Y,Z Vertex 2 {m}
   2.75062656119925, 0, 0,                 !- X,Y,Z Vertex 3 {m}
   2.75062656119925, 6.52408206914146e-008, 2.31706812572325; !- X,Y,Z Vertex 4 {m}
+
+OS:Schedule:Ruleset,
+  {6b69773f-337b-4dca-a532-07cb29f458cf}, !- Handle
+  CTER24B_TCAL,                           !- Name
+  {ae0a9df5-cb98-4c78-bce5-3089e79621ec}, !- Schedule Type Limits Name
+  {0d395260-594a-4f2b-a659-3f74fa7c74dc}; !- Default Day Schedule Name
+
+OS:Schedule:Day,
+  {0d395260-594a-4f2b-a659-3f74fa7c74dc}, !- Handle
+  Schedule Day 10,                        !- Name
+  {ae0a9df5-cb98-4c78-bce5-3089e79621ec}, !- Schedule Type Limits Name
+  ,                                       !- Interpolate to Timestep
+  24,                                     !- Hour 1
+  0,                                      !- Minute 1
+  -50;                                    !- Value Until Time 1
+
+OS:Schedule:Rule,
+  {d5016112-0a88-4282-b13d-a2b63caa5ef1}, !- Handle
+  Schedule Rule 6,                        !- Name
+  {6b69773f-337b-4dca-a532-07cb29f458cf}, !- Schedule Ruleset Name
+  0,                                      !- Rule Order
+  {e829318d-bac1-40ea-b036-e5e38c67cb7d}, !- Day Schedule Name
+  Yes,                                    !- Apply Sunday
+  Yes,                                    !- Apply Monday
+  Yes,                                    !- Apply Tuesday
+  Yes,                                    !- Apply Wednesday
+  Yes,                                    !- Apply Thursday
+  Yes,                                    !- Apply Friday
+  Yes,                                    !- Apply Saturday
+  ,                                       !- Apply Holiday
+  DateRange,                              !- Date Specification Type
+  1,                                      !- Start Month
+  1,                                      !- Start Day
+  5,                                      !- End Month
+  31;                                     !- End Day
+
+OS:Schedule:Day,
+  {e829318d-bac1-40ea-b036-e5e38c67cb7d}, !- Handle
+  Schedule Day 13,                        !- Name
+  {ae0a9df5-cb98-4c78-bce5-3089e79621ec}, !- Schedule Type Limits Name
+  ,                                       !- Interpolate to Timestep
+  7,                                      !- Hour 1
+  0,                                      !- Minute 1
+  17,                                     !- Value Until Time 1
+  23,                                     !- Hour 2
+  0,                                      !- Minute 2
+  20,                                     !- Value Until Time 2
+  24,                                     !- Hour 3
+  0,                                      !- Minute 3
+  17;                                     !- Value Until Time 3
+
+OS:Schedule:Rule,
+  {f1d43b5e-cb80-47aa-9389-6637d451e47b}, !- Handle
+  Schedule Rule 3,                        !- Name
+  {6b69773f-337b-4dca-a532-07cb29f458cf}, !- Schedule Ruleset Name
+  1,                                      !- Rule Order
+  {4fb543f8-6653-4712-80dc-47e3ff1c001a}, !- Day Schedule Name
+  Yes,                                    !- Apply Sunday
+  Yes,                                    !- Apply Monday
+  Yes,                                    !- Apply Tuesday
+  Yes,                                    !- Apply Wednesday
+  Yes,                                    !- Apply Thursday
+  Yes,                                    !- Apply Friday
+  Yes,                                    !- Apply Saturday
+  ,                                       !- Apply Holiday
+  DateRange,                              !- Date Specification Type
+  10,                                     !- Start Month
+  1,                                      !- Start Day
+  12,                                     !- End Month
+  31;                                     !- End Day
+
+OS:Schedule:Day,
+  {4fb543f8-6653-4712-80dc-47e3ff1c001a}, !- Handle
+  Schedule Day 11,                        !- Name
+  {ae0a9df5-cb98-4c78-bce5-3089e79621ec}, !- Schedule Type Limits Name
+  ,                                       !- Interpolate to Timestep
+  7,                                      !- Hour 1
+  0,                                      !- Minute 1
+  17,                                     !- Value Until Time 1
+  23,                                     !- Hour 2
+  0,                                      !- Minute 2
+  20,                                     !- Value Until Time 2
+  24,                                     !- Hour 3
+  0,                                      !- Minute 3
+  17;                                     !- Value Until Time 3
+
+OS:Schedule:Ruleset,
+  {fae6e48a-afe1-4ed7-9cb1-3a3c22439ad9}, !- Handle
+  CTER24B_TREF,                           !- Name
+  {ae0a9df5-cb98-4c78-bce5-3089e79621ec}, !- Schedule Type Limits Name
+  {d907a6bd-a224-4fac-a70a-0575ab78e432}; !- Default Day Schedule Name
+
+OS:Schedule:Day,
+  {d907a6bd-a224-4fac-a70a-0575ab78e432}, !- Handle
+  Schedule Day 14,                        !- Name
+  {ae0a9df5-cb98-4c78-bce5-3089e79621ec}, !- Schedule Type Limits Name
+  ,                                       !- Interpolate to Timestep
+  24,                                     !- Hour 1
+  0,                                      !- Minute 1
+  99.0000076293945;                       !- Value Until Time 1
+
+OS:Schedule:Rule,
+  {a6313095-64ea-49cc-9744-731597a51a3a}, !- Handle
+  Schedule Rule 8,                        !- Name
+  {fae6e48a-afe1-4ed7-9cb1-3a3c22439ad9}, !- Schedule Ruleset Name
+  0,                                      !- Rule Order
+  {814faf68-96d8-49d6-9455-b5b11319bca5}, !- Day Schedule Name
+  Yes,                                    !- Apply Sunday
+  Yes,                                    !- Apply Monday
+  Yes,                                    !- Apply Tuesday
+  Yes,                                    !- Apply Wednesday
+  Yes,                                    !- Apply Thursday
+  Yes,                                    !- Apply Friday
+  Yes,                                    !- Apply Saturday
+  ,                                       !- Apply Holiday
+  DateRange,                              !- Date Specification Type
+  6,                                      !- Start Month
+  1,                                      !- Start Day
+  9,                                      !- End Month
+  30;                                     !- End Day
+
+OS:Schedule:Day,
+  {814faf68-96d8-49d6-9455-b5b11319bca5}, !- Handle
+  Schedule Day 16,                        !- Name
+  {ae0a9df5-cb98-4c78-bce5-3089e79621ec}, !- Schedule Type Limits Name
+  ,                                       !- Interpolate to Timestep
+  7,                                      !- Hour 1
+  0,                                      !- Minute 1
+  27,                                     !- Value Until Time 1
+  15,                                     !- Hour 2
+  0,                                      !- Minute 2
+  99,                                     !- Value Until Time 2
+  23,                                     !- Hour 3
+  0,                                      !- Minute 3
+  24.9999980926514,                       !- Value Until Time 3
+  24,                                     !- Hour 4
+  0,                                      !- Minute 4
+  27;                                     !- Value Until Time 4
 
