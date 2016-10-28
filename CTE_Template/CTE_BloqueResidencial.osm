@@ -330,7 +330,8 @@ OS:People:Definition,
   ,                                       !- Number of People {people}
   ,                                       !- People per Space Floor Area {person/m2}
   33,                                     !- Space Floor Area per Person {m2/person}
-  0.3;                                    !- Fraction Radiant
+  0.3,                                    !- Fraction Radiant
+  0.61;                                   !- Sensible Heat Fraction
 
 OS:ElectricEquipment:Definition,
   {d74cfa3d-3cc5-4052-a9bf-e2d61fd08fdc}, !- Handle
@@ -23075,7 +23076,7 @@ OS:Schedule:Day,
   ,                                       !- Interpolate to Timestep
   24,                                     !- Hour 1
   0,                                      !- Minute 1
-  70;                                     !- Value Until Time 1
+  117.209999084473;                       !- Value Until Time 1
 
 OS:Schedule:Ruleset,
   {42991565-3cf7-42e6-a69e-55d9f17a8387}, !- Handle
@@ -25011,7 +25012,7 @@ OS:Schedule:Day,
   ,                                       !- Interpolate to Timestep
   24,                                     !- Hour 1
   0,                                      !- Minute 1
-  100.000007629395;                       !- Value Until Time 1
+  85;                                     !- Value Until Time 1
 
 OS:Schedule:Ruleset,
   {0ae1d415-1958-472d-b94a-236bc64fda9d}, ! Handle

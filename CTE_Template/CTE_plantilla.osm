@@ -515,7 +515,8 @@ OS:People:Definition,
   ,                                       !- Number of People {people}
   ,                                       !- People per Space Floor Area {person/m2}
   33,                                     !- Space Floor Area per Person {m2/person}
-  0.3;                                    !- Fraction Radiant
+  0.3,                                    !- Fraction Radiant
+  0.61;                                   !- Sensible Heat Fraction
 
 OS:ElectricEquipment:Definition,
   {d74cfa3d-3cc5-4052-a9bf-e2d61fd08fdc}, !- Handle
@@ -862,7 +863,7 @@ OS:People:Definition,
   Area/Person,                            !- Number of People Calculation Method
   ,                                       !- Number of People {people}
   ,                                       !- People per Space Floor Area {person/m2}
-  5.21,                                   !- Space Floor Area per Person {m2/person}
+  26.1,                                   !- Space Floor Area per Person {m2/person}
   0.3;                                    !- Fraction Radiant
 
 OS:ElectricEquipment:Definition,
@@ -1004,7 +1005,7 @@ OS:People:Definition,
   Area/Person,                            !- Number of People Calculation Method
   ,                                       !- Number of People {people}
   ,                                       !- People per Space Floor Area {person/m2}
-  26.1,                                   !- Space Floor Area per Person {m2/person}
+  5.21,                                   !- Space Floor Area per Person {m2/person}
   0.3;                                    !- Fraction Radiant
 
 OS:Rendering:Color,
@@ -9911,7 +9912,7 @@ OS:Schedule:Day,
   ,                                       !- Interpolate to Timestep
   24,                                     !- Hour 1
   0,                                      !- Minute 1
-  70;                                     !- Value Until Time 1
+  117.209999084473;                       !- Value Until Time 1
 
 OS:Schedule:Ruleset,
   {6987b026-c1f3-415b-9db8-6b3d2ef0f4af}, !- Handle
@@ -10805,7 +10806,7 @@ OS:Schedule:Day,
   ,                                       !- Interpolate to Timestep
   24,                                     !- Hour 1
   0,                                      !- Minute 1
-  100.000007629395;                       !- Value Until Time 1
+  85;                                     !- Value Until Time 1
 
 OS:DefaultScheduleSet,
   {d8426dc7-260d-4d81-953c-79f34dd5c807}, !- Handle
