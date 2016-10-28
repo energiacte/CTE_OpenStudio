@@ -24204,7 +24204,7 @@ OS:Schedule:Day,
   ,                                       !- Interpolate to Timestep
   24,                                     !- Hour 1
   0,                                      !- Minute 1
-  85;                                     !- Value Until Time 1
+  100.000007629395;                       !- Value Until Time 1
 
 OS:Schedule:Ruleset,
   {2ffea539-9afd-4f14-8d71-6405b78ec099}, ! Handle
