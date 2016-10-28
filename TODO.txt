@@ -7,6 +7,8 @@
       circuito) y evitar el fallo en ese caso.
       Usar WaterEquipment detectando objetos por tipo (los objetos del model
       son subtipo del workspace?)
+    - Añadir capas ficticias (0,5m terreno + capa ficticia) a suelos siguiendo
+      esquema de UNE EN ISO 13770 en lugar de dejarlo como proceso manual.
 CTE_Informe:
     - Incluir iluminación en "Consumo Final EPB" en función de que sea terciario o no.
     - Calcular A_sol,ver / A_util pidiendo factor de sombra de protecciones
