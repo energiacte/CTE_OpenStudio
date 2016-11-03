@@ -8249,7 +8249,7 @@ OS:Material:NoMass,
   {39c95835-71cd-40d8-987b-bbf72b351830}, !- Handle
   Material Aislamiento Referencia Zona A_Medianeras, !- Name
   Smooth,                                 !- Roughness
-  0.189,                                  !- Thermal Resistance {m2-K/W}
+  0.282,                                  !- Thermal Resistance {m2-K/W}
   0.6,                                    !- Thermal Absorptance
   0.6,                                    !- Solar Absorptance
   0.6;                                    !- Visible Absorptance
@@ -8314,7 +8314,7 @@ OS:Material:NoMass,
   {24997068-0e17-47c1-a40a-bddd8aad4b5b}, !- Handle
   Material Aislamiento Referencia Zona B_Medianeras, !- Name
   Smooth,                                 !- Roughness
-  0.304,                                  !- Thermal Resistance {m2-K/W}
+  0.397,                                  !- Thermal Resistance {m2-K/W}
   0.6,                                    !- Thermal Absorptance
   0.6,                                    !- Solar Absorptance
   0.6;                                    !- Visible Absorptance
@@ -8353,7 +8353,7 @@ OS:Material:NoMass,
   {9431327b-09d0-45c9-b94a-43c6456f9d03}, !- Handle
   Material Aislamiento Referencia Zona C_Medianeras, !- Name
   Smooth,                                 !- Roughness
-  0.369,                                  !- Thermal Resistance {m2-K/W}
+  0.462,                                  !- Thermal Resistance {m2-K/W}
   0.6,                                    !- Thermal Absorptance
   0.6,                                    !- Solar Absorptance
   0.6;                                    !- Visible Absorptance
@@ -8405,7 +8405,7 @@ OS:Material:NoMass,
   {c65a6c6c-baa0-4665-a11b-daf323dc5b5e}, !- Handle
   Material Aislamiento Referencia Zona D_Medianeras, !- Name
   Smooth,                                 !- Roughness
-  0.369,                                  !- Thermal Resistance {m2-K/W}
+  0.462,                                  !- Thermal Resistance {m2-K/W}
   0.6,                                    !- Thermal Absorptance
   0.6,                                    !- Solar Absorptance
   0.6;                                    !- Visible Absorptance
@@ -8457,7 +8457,7 @@ OS:Material:NoMass,
   {c6ad8ef0-ea63-4b6d-a305-6e22654f078b}, !- Handle
   Material Aislamiento Referencia Zona E_Medianeras, !- Name
   Smooth,                                 !- Roughness
-  0.369,                                  !- Thermal Resistance {m2-K/W}
+  0.462,                                  !- Thermal Resistance {m2-K/W}
   0.6,                                    !- Thermal Absorptance
   0.6,                                    !- Solar Absorptance
   0.6;                                    !- Visible Absorptance
@@ -16530,7 +16530,7 @@ OS:Material:NoMass,
   {ad6341ae-cdfa-4e28-bf57-564aee9c4281}, !- Handle
   Material Aislamiento_APENDICE_E_Zona A_Muros, !- Name
   Smooth,                                 !- Roughness
-  1.46,                                   !- Thermal Resistance {m2-K/W}
+  1.462,                                  !- Thermal Resistance {m2-K/W}
   0.6,                                    !- Thermal Absorptance
   0.6,                                    !- Solar Absorptance
   0.6;                                    !- Visible Absorptance
