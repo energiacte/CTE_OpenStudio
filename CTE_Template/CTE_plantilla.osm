@@ -8275,7 +8275,7 @@ OS:Material:NoMass,
   {aae2ca40-5205-4e06-978b-db8002846c58}, !- Handle
   Material Aislamiento Referencia Zona A_Suelos, !- Name
   Smooth,                                 !- Roughness
-  1.610,                                  !- Thermal Resistance {m2-K/W}
+  1.57,                                   !- Thermal Resistance {m2-K/W}
   0.6,                                    !- Thermal Absorptance
   0.6,                                    !- Solar Absorptance
   0.6;                                    !- Visible Absorptance
@@ -8288,7 +8288,7 @@ OS:Material:NoMass,
   {a89e6eb3-9ed8-4ac9-9c5e-f4232eaa79cc}, !- Handle
   Material Aislamiento Referencia Zona B_Cubiertas, !- Name
   Smooth,                                 !- Roughness
-  1.815,                                  !- Thermal Resistance {m2-K/W}
+  1.845,                                  !- Thermal Resistance {m2-K/W}
   0.6,                                    !- Thermal Absorptance
   0.6,                                    !- Solar Absorptance
   0.6;                                    !- Visible Absorptance
@@ -8327,7 +8327,7 @@ OS:Material:NoMass,
   {7a5b8f28-b7d8-49d5-a143-4363bb8043b8}, !- Handle
   Material Aislamiento Referencia Zona B_Suelos, !- Name
   Smooth,                                 !- Roughness
-  1.646,                                  !- Thermal Resistance {m2-K/W}
+  1.607,                                  !- Thermal Resistance {m2-K/W}
   0.6,                                    !- Thermal Absorptance
   0.6,                                    !- Solar Absorptance
   0.6;                                    !- Visible Absorptance
@@ -8340,7 +8340,7 @@ OS:Material:NoMass,
   {4bb4a89a-47b2-4a7c-a9f9-56faeab7b98a}, !- Handle
   Material Aislamiento Referencia Zona C_Cubiertas, !- Name
   Smooth,                                 !- Roughness
-  2.032,                                  !- Thermal Resistance {m2-K/W}
+  2.062,                                  !- Thermal Resistance {m2-K/W}
   0.6,                                    !- Thermal Absorptance
   0.6,                                    !- Solar Absorptance
   0.6;                                    !- Visible Absorptance
@@ -8379,7 +8379,7 @@ OS:Material:NoMass,
   {54b4d65c-28ed-485d-ab54-6fde6a2f2e8c}, !- Handle
   Material Aislamiento Referencia Zona C_Suelos, !- Name
   Smooth,                                 !- Roughness
-  1.723,                                  !- Thermal Resistance {m2-K/W}
+  1.683,                                  !- Thermal Resistance {m2-K/W}
   0.6,                                    !- Thermal Absorptance
   0.6,                                    !- Solar Absorptance
   0.6;                                    !- Visible Absorptance
@@ -8392,7 +8392,7 @@ OS:Material:NoMass,
   {2f9c57fc-8173-4a1b-8967-c7013c74dadd}, !- Handle
   Material Aislamiento Referencia Zona D_Cubiertas, !- Name
   Smooth,                                 !- Roughness
-  2.224,                                  !- Thermal Resistance {m2-K/W}
+  2.254,                                  !- Thermal Resistance {m2-K/W}
   0.6,                                    !- Thermal Absorptance
   0.6,                                    !- Solar Absorptance
   0.6;                                    !- Visible Absorptance
@@ -8431,7 +8431,7 @@ OS:Material:NoMass,
   {8e967bc6-9e15-4c9c-bc5b-5758b3c2245a}, !- Handle
   Material Aislamiento Referencia Zona D_Suelos, !- Name
   Smooth,                                 !- Roughness
-  1.764,                                  !- Thermal Resistance {m2-K/W}
+  1.724,                                  !- Thermal Resistance {m2-K/W}
   0.6,                                    !- Thermal Absorptance
   0.6,                                    !- Solar Absorptance
   0.6;                                    !- Visible Absorptance
@@ -8444,7 +8444,7 @@ OS:Material:NoMass,
   {93b08f7f-e153-4005-b490-b6316544bce9}, !- Handle
   Material Aislamiento Referencia Zona E_Cubiertas, !- Name
   Smooth,                                 !- Roughness
-  2.450,                                  !- Thermal Resistance {m2-K/W}
+  2.48,                                   !- Thermal Resistance {m2-K/W}
   0.6,                                    !- Thermal Absorptance
   0.6,                                    !- Solar Absorptance
   0.6;                                    !- Visible Absorptance
@@ -8470,7 +8470,7 @@ OS:Material:NoMass,
   {4b70ae0a-13f0-4514-91d3-a13f6d2f76fc}, !- Handle
   Material Aislamiento Referencia Zona E_Muros, !- Name
   Smooth,                                 !- Roughness
-  1.216,                                  !- Thermal Resistance {m2-K/W}
+  1.217,                                  !- Thermal Resistance {m2-K/W}
   0.6,                                    !- Thermal Absorptance
   0.6,                                    !- Solar Absorptance
   0.6;                                    !- Visible Absorptance
@@ -8483,7 +8483,7 @@ OS:Material:NoMass,
   {73ac25b0-95a9-425b-9538-91831c4a82f6}, !- Handle
   Material Aislamiento Referencia Zona E_Suelos, !- Name
   Smooth,                                 !- Roughness
-  1.807,                                  !- Thermal Resistance {m2-K/W}
+  1.767,                                  !- Thermal Resistance {m2-K/W}
   0.6,                                    !- Thermal Absorptance
   0.6,                                    !- Solar Absorptance
   0.6;                                    !- Visible Absorptance
@@ -8642,7 +8642,7 @@ OS:WindowMaterial:SimpleGlazingSystem,
   {17d429ac-ac2c-4cb2-aaa2-ba8ee0773e37}, !- Handle
   CTE_2013_soloVidrio_zona D_2.61,        !- Name
   2.61,                                   !- U-Factor {W/m2-K}
-  0.7;                                    !- Solar Heat Gain Coefficient
+  0.75;                                   !- Solar Heat Gain Coefficient
 
 OS:StandardsInformation:Material,
   {167045df-310e-4419-8267-cd9edbde26ce}, !- Handle
@@ -15525,7 +15525,7 @@ OS:StandardsInformation:Material,
 
 OS:DefaultConstructionSet,
   {55dddf39-1947-4251-8f03-66cba9fc2bc6}, !- Handle
-  CTE_EdificioReferencia_zonaA,           !- Name
+  CTE_EdReferencia_A,                     !- Name
   {07b76fc8-90d1-4b5f-9d7b-164a14334b07}, !- Default Exterior Surface Constructions Name
   {405fa9f7-5242-4b31-9ee2-10d3d6aec084}, !- Default Interior Surface Constructions Name
   {49c69ab4-0238-4096-916b-b7b39ae47a43}, !- Default Ground Contact Surface Constructions Name
@@ -15583,7 +15583,7 @@ OS:DefaultSubSurfaceConstructions,
 
 OS:DefaultConstructionSet,
   {ebd9a922-ca04-49de-a3c7-0c5f6e1caf09}, !- Handle
-  CTE_EdificioReferencia_zonaB,           !- Name
+  CTE_EdReferencia_B,                     !- Name
   {b55997fb-d945-4dd0-a34b-f92864ff809a}, !- Default Exterior Surface Constructions Name
   {9bc4b1c8-e374-45e7-9923-d561a56b5a50}, !- Default Interior Surface Constructions Name
   {9537bab1-1f16-42b6-860f-b94901967fc2}, !- Default Ground Contact Surface Constructions Name
@@ -15612,8 +15612,8 @@ OS:DefaultSurfaceConstructions,
   {9537bab1-1f16-42b6-860f-b94901967fc2}, !- Handle
   Default Surface Constructions 3,        !- Name
   {2cb01469-f7dd-4176-9b1e-80ebf94c1e98}, !- Floor Construction Name
-  ,                                       !- Wall Construction Name
-  ;                                       !- Roof Ceiling Construction Name
+  {2cb01469-f7dd-4176-9b1e-80ebf94c1e98}, !- Wall Construction Name
+  {2cb01469-f7dd-4176-9b1e-80ebf94c1e98}; !- Roof Ceiling Construction Name
 
 OS:DefaultSubSurfaceConstructions,
   {2a10709e-0538-43c5-b918-565e4d24c5d1}, !- Handle
@@ -15641,7 +15641,7 @@ OS:DefaultSubSurfaceConstructions,
 
 OS:DefaultConstructionSet,
   {b66d835d-a3a7-4496-8f99-1d47c4f5b5dc}, !- Handle
-  CTE_EdificioReferencia_zonaC,           !- Name
+  CTE_EdReferencia_C,                     !- Name
   {4cc875ae-3fcf-42e5-906b-da9c0d344670}, !- Default Exterior Surface Constructions Name
   {4747570a-12a5-4b97-b68a-28fb0722e666}, !- Default Interior Surface Constructions Name
   {51a742a6-b3b6-4b8f-8fb3-6f3c92d01a87}, !- Default Ground Contact Surface Constructions Name
@@ -15670,8 +15670,8 @@ OS:DefaultSurfaceConstructions,
   {51a742a6-b3b6-4b8f-8fb3-6f3c92d01a87}, !- Handle
   Default Surface Constructions 9,        !- Name
   {2295a702-b04c-4664-a210-3fef7301b7ca}, !- Floor Construction Name
-  ,                                       !- Wall Construction Name
-  ;                                       !- Roof Ceiling Construction Name
+  {2295a702-b04c-4664-a210-3fef7301b7ca}, !- Wall Construction Name
+  {2295a702-b04c-4664-a210-3fef7301b7ca}; !- Roof Ceiling Construction Name
 
 OS:DefaultSubSurfaceConstructions,
   {290f51e2-74ca-402d-93a6-968aa1d05314}, !- Handle
@@ -15709,7 +15709,7 @@ OS:StandardsInformation:Material,
 
 OS:DefaultConstructionSet,
   {9abc41f3-b5c6-480a-a634-6425c567a398}, !- Handle
-  CTE_EdificioReferencia_zonaD,           !- Name
+  CTE_EdReferencia_D,                     !- Name
   {28d939f6-eafa-43ea-9c2f-c6343cf3b56c}, !- Default Exterior Surface Constructions Name
   {e49ca212-7705-4b75-aac2-14a49e6f91ce}, !- Default Interior Surface Constructions Name
   {0e085293-a3b5-4e0d-a604-6dd9a83941e6}, !- Default Ground Contact Surface Constructions Name
@@ -15738,8 +15738,8 @@ OS:DefaultSurfaceConstructions,
   {0e085293-a3b5-4e0d-a604-6dd9a83941e6}, !- Handle
   Default Surface Constructions 12,       !- Name
   {beca3357-d4e6-4139-b912-db08f4ff6f34}, !- Floor Construction Name
-  ,                                       !- Wall Construction Name
-  ;                                       !- Roof Ceiling Construction Name
+  {beca3357-d4e6-4139-b912-db08f4ff6f34}, !- Wall Construction Name
+  {beca3357-d4e6-4139-b912-db08f4ff6f34}; !- Roof Ceiling Construction Name
 
 OS:DefaultSubSurfaceConstructions,
   {25a3ea91-2861-4307-90fe-1fd8e2b8e90b}, !- Handle
@@ -15777,7 +15777,7 @@ OS:StandardsInformation:Material,
 
 OS:DefaultConstructionSet,
   {d490b8a3-26f5-4d44-a222-0d2a2469c34e}, !- Handle
-  CTE_EdificioReferencia_zonaE,           !- Name
+  CTE_EdReferencia_E,                     !- Name
   {acca372a-58b6-464f-aba3-1f9e32b3357b}, !- Default Exterior Surface Constructions Name
   {53be243a-0fde-49f2-a984-b4f715cb5bd0}, !- Default Interior Surface Constructions Name
   {b7090fa7-61da-4f52-8500-36961e854b7e}, !- Default Ground Contact Surface Constructions Name
@@ -15806,8 +15806,8 @@ OS:DefaultSurfaceConstructions,
   {b7090fa7-61da-4f52-8500-36961e854b7e}, !- Handle
   Default Surface Constructions 15,       !- Name
   {8bacef83-ce87-487f-acc8-62bdcefab117}, !- Floor Construction Name
-  ,                                       !- Wall Construction Name
-  ;                                       !- Roof Ceiling Construction Name
+  {8bacef83-ce87-487f-acc8-62bdcefab117}, !- Wall Construction Name
+  {8bacef83-ce87-487f-acc8-62bdcefab117}; !- Roof Ceiling Construction Name
 
 OS:DefaultSubSurfaceConstructions,
   {af97989e-85d1-44a9-89cc-e909f45f1793}, !- Handle
@@ -17694,7 +17694,7 @@ OS:StandardsInformation:Construction,
 
 OS:DefaultConstructionSet,
   {9d1d4853-da75-48ee-9517-48eea1d3cef8}, !- Handle
-  CTE_2013_zonaA,                         !- Name
+  CTE_2013_A,                             !- Name
   {03671c5a-b7b4-4fb7-8b1f-dc24cf0bf3b8}, !- Default Exterior Surface Constructions Name
   {04a8b366-f5e7-4ea2-98f7-e71e83d7b481}, !- Default Interior Surface Constructions Name
   {e9ca3343-3e9a-4c46-80f2-69f333870fec}, !- Default Ground Contact Surface Constructions Name
@@ -17723,8 +17723,8 @@ OS:DefaultSurfaceConstructions,
   {49c69ab4-0238-4096-916b-b7b39ae47a43}, !- Handle
   Default Surface Constructions 18,       !- Name
   {a1f494b2-00bf-422a-b008-0d58f0d58a12}, !- Floor Construction Name
-  ,                                       !- Wall Construction Name
-  ;                                       !- Roof Ceiling Construction Name
+  {a1f494b2-00bf-422a-b008-0d58f0d58a12}, !- Wall Construction Name
+  {a1f494b2-00bf-422a-b008-0d58f0d58a12}; !- Roof Ceiling Construction Name
 
 OS:DefaultSubSurfaceConstructions,
   {135d07c3-3f18-4ec7-b0cb-187363a565ae}, !- Handle
@@ -17752,7 +17752,7 @@ OS:DefaultSubSurfaceConstructions,
 
 OS:DefaultConstructionSet,
   {ec32faf7-8232-431f-9bc4-846366199c60}, !- Handle
-  CTE_2013_zonaB,                         !- Name
+  CTE_2013_B,                             !- Name
   {30daed3e-114f-4b09-8d34-19356086998b}, !- Default Exterior Surface Constructions Name
   {1a0b89e4-eacf-4cfa-bc52-64f4b4396aec}, !- Default Interior Surface Constructions Name
   {783fb832-264c-4b95-b49d-1c741d566b59}, !- Default Ground Contact Surface Constructions Name
@@ -17781,8 +17781,8 @@ OS:DefaultSurfaceConstructions,
   {783fb832-264c-4b95-b49d-1c741d566b59}, !- Handle
   Default Surface Constructions 21,       !- Name
   {f867750c-1c7d-4b5d-a6e4-9ee6d6871ac8}, !- Floor Construction Name
-  ,                                       !- Wall Construction Name
-  ;                                       !- Roof Ceiling Construction Name
+  {f867750c-1c7d-4b5d-a6e4-9ee6d6871ac8}, !- Wall Construction Name
+  {f867750c-1c7d-4b5d-a6e4-9ee6d6871ac8}; !- Roof Ceiling Construction Name
 
 OS:DefaultSubSurfaceConstructions,
   {65771fbf-782d-4df3-b406-b21aeec8197c}, !- Handle
@@ -17810,7 +17810,7 @@ OS:DefaultSubSurfaceConstructions,
 
 OS:DefaultConstructionSet,
   {b882c5c4-3462-4bcc-8e21-cf82ab4b29cc}, !- Handle
-  CTE_2013_zonaC,                         !- Name
+  CTE_2013_C,                             !- Name
   {38fb5c2e-696e-489a-9632-2bd95a6bae8b}, !- Default Exterior Surface Constructions Name
   {d59cc8c9-2843-4aa0-bf93-f7c7b1ed7ee8}, !- Default Interior Surface Constructions Name
   {fe8ed7a9-8a21-4ceb-8330-d4e72c901d58}, !- Default Ground Contact Surface Constructions Name
@@ -17839,8 +17839,8 @@ OS:DefaultSurfaceConstructions,
   {fe8ed7a9-8a21-4ceb-8330-d4e72c901d58}, !- Handle
   Default Surface Constructions 24,       !- Name
   {eeb74d26-27c1-4271-b12d-729e62dabecb}, !- Floor Construction Name
-  ,                                       !- Wall Construction Name
-  ;                                       !- Roof Ceiling Construction Name
+  {eeb74d26-27c1-4271-b12d-729e62dabecb}, !- Wall Construction Name
+  {eeb74d26-27c1-4271-b12d-729e62dabecb}; !- Roof Ceiling Construction Name
 
 OS:DefaultSubSurfaceConstructions,
   {6578fa63-26d9-40c0-872c-d6cd472b0261}, !- Handle
@@ -17868,7 +17868,7 @@ OS:DefaultSubSurfaceConstructions,
 
 OS:DefaultConstructionSet,
   {cabe8120-08d0-4164-b9ad-d404991f71f1}, !- Handle
-  CTE_2013_zonaD,                         !- Name
+  CTE_2013_D,                             !- Name
   {a1b37ed8-a41e-4777-abad-9b78e70f6558}, !- Default Exterior Surface Constructions Name
   {6ed41c96-0f5e-467d-ad8a-a8bda9f990b8}, !- Default Interior Surface Constructions Name
   {a726c5a6-a986-487a-a88d-377a01cc7a1a}, !- Default Ground Contact Surface Constructions Name
@@ -17897,8 +17897,8 @@ OS:DefaultSurfaceConstructions,
   {a726c5a6-a986-487a-a88d-377a01cc7a1a}, !- Handle
   Default Surface Constructions 27,       !- Name
   {fcd4fa30-27a9-4314-b1d0-634b8c0eca16}, !- Floor Construction Name
-  ,                                       !- Wall Construction Name
-  ;                                       !- Roof Ceiling Construction Name
+  {fcd4fa30-27a9-4314-b1d0-634b8c0eca16}, !- Wall Construction Name
+  {fcd4fa30-27a9-4314-b1d0-634b8c0eca16}; !- Roof Ceiling Construction Name
 
 OS:DefaultSubSurfaceConstructions,
   {8ab229ed-5892-4603-86e5-4c44905dcf48}, !- Handle
@@ -17926,7 +17926,7 @@ OS:DefaultSubSurfaceConstructions,
 
 OS:DefaultConstructionSet,
   {48de58d3-187b-4b06-9169-47a49e125076}, !- Handle
-  CTE_2013_zonaE,                         !- Name
+  CTE_2013_E,                             !- Name
   {1536fe49-d2b2-479a-8ba2-d67fe77cf350}, !- Default Exterior Surface Constructions Name
   {05feb163-a4d3-4e12-b1f6-d8081d974509}, !- Default Interior Surface Constructions Name
   {ac54125d-894b-4678-be05-70619ac89692}, !- Default Ground Contact Surface Constructions Name
@@ -17955,8 +17955,8 @@ OS:DefaultSurfaceConstructions,
   {ac54125d-894b-4678-be05-70619ac89692}, !- Handle
   Default Surface Constructions 30,       !- Name
   {db5a5424-6112-411d-9122-2534650a66a3}, !- Floor Construction Name
-  ,                                       !- Wall Construction Name
-  ;                                       !- Roof Ceiling Construction Name
+  {db5a5424-6112-411d-9122-2534650a66a3}, !- Wall Construction Name
+  {db5a5424-6112-411d-9122-2534650a66a3}; !- Roof Ceiling Construction Name
 
 OS:DefaultSubSurfaceConstructions,
   {a51d9cb5-8a52-487f-bcbd-db83f4efbc58}, !- Handle
@@ -17984,7 +17984,7 @@ OS:DefaultSubSurfaceConstructions,
 
 OS:DefaultConstructionSet,
   {de018b9b-95f3-48f8-827e-72218e2e008f}, !- Handle
-  CTE_2013_zona Alfa,                     !- Name
+  CTE_2013_Alfa,                          !- Name
   {897ec51e-ec76-4ed5-83b1-d0417cecde17}, !- Default Exterior Surface Constructions Name
   {d87348d7-9a5a-4b91-b411-f240e356982a}, !- Default Interior Surface Constructions Name
   {821cedff-99ff-4f26-b92d-4b6db6bf1661}, !- Default Ground Contact Surface Constructions Name
@@ -18013,8 +18013,8 @@ OS:DefaultSurfaceConstructions,
   {e9ca3343-3e9a-4c46-80f2-69f333870fec}, !- Handle
   Default Surface Constructions 33,       !- Name
   {3526537c-ec78-4252-8964-78f7449cde28}, !- Floor Construction Name
-  ,                                       !- Wall Construction Name
-  ;                                       !- Roof Ceiling Construction Name
+  {3526537c-ec78-4252-8964-78f7449cde28}, !- Wall Construction Name
+  {3526537c-ec78-4252-8964-78f7449cde28}; !- Roof Ceiling Construction Name
 
 OS:DefaultSubSurfaceConstructions,
   {ffb9b61b-56da-43bb-adcb-303fadcfddd2}, !- Handle
@@ -18270,8 +18270,8 @@ OS:DefaultSurfaceConstructions,
   {821cedff-99ff-4f26-b92d-4b6db6bf1661}, !- Handle
   Default Surface Constructions 36,       !- Name
   {f51d80d1-141f-433a-8673-a18813df5293}, !- Floor Construction Name
-  ,                                       !- Wall Construction Name
-  ;                                       !- Roof Ceiling Construction Name
+  {f51d80d1-141f-433a-8673-a18813df5293}, !- Wall Construction Name
+  {f51d80d1-141f-433a-8673-a18813df5293}; !- Roof Ceiling Construction Name
 
 OS:DefaultSubSurfaceConstructions,
   {6737c24b-9264-42a4-918f-facb66292b42}, !- Handle
@@ -18956,7 +18956,7 @@ OS:StandardsInformation:Construction,
 
 OS:Material:NoMass,
   {dfe5c7f4-2b72-4cb9-8745-17296a4f4ff6}, !- Handle
-  CTE_Capa_virtual_terreno,               !- Name
+  CTE_Capa_virtual_terreno_R1.0,          !- Name
   Smooth,                                 !- Roughness
   1;                                      !- Thermal Resistance {m2-K/W}
 
@@ -19117,4 +19117,27 @@ OS:Schedule:Day,
   24,                                     !- Hour 4
   0,                                      !- Minute 4
   27;                                     !- Value Until Time 4
+
+OS:Material:NoMass,
+  {52cf71b1-680b-4b72-b0eb-30c2f47d43b5}, !- Handle
+  CTE_Capa_virtual_terreno_R0.5,          !- Name
+  Smooth,                                 !- Roughness
+  0.5;                                    !- Thermal Resistance {m2-K/W}
+
+OS:StandardsInformation:Material,
+  {3dec27a5-1d1d-4b18-bfdb-75715a004a6f}, !- Handle
+  {52cf71b1-680b-4b72-b0eb-30c2f47d43b5}; !- Material Name
+
+OS:Material:NoMass,
+  {d5fc7d90-83d5-4a0d-ac97-cd6ba3e403ab}, !- Handle
+  Material Aislamiento Referencia Zona A_Cubiertas, !- Name
+  Smooth,                                 !- Roughness
+  1.623,                                  !- Thermal Resistance {m2-K/W}
+  0.6,                                    !- Thermal Absorptance
+  0.6,                                    !- Solar Absorptance
+  0.6;                                    !- Visible Absorptance
+
+OS:StandardsInformation:Material,
+  {ac0ec44b-8dbe-4851-a159-b1a1fd42fcc4}, !- Handle
+  {d5fc7d90-83d5-4a0d-ac97-cd6ba3e403ab}; !- Material Name
 
