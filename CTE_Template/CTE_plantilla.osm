@@ -16530,7 +16530,7 @@ OS:Material:NoMass,
   {ad6341ae-cdfa-4e28-bf57-564aee9c4281}, !- Handle
   Material Aislamiento_APENDICE_E_Zona A_Muros, !- Name
   Smooth,                                 !- Roughness
-  1.462,                                  !- Thermal Resistance {m2-K/W}
+  1.46199999917089,                       !- Thermal Resistance {m2-K/W}
   0.6,                                    !- Thermal Absorptance
   0.6,                                    !- Solar Absorptance
   0.6;                                    !- Visible Absorptance
@@ -19140,4 +19140,17 @@ OS:Material:NoMass,
 OS:StandardsInformation:Material,
   {ac0ec44b-8dbe-4851-a159-b1a1fd42fcc4}, !- Handle
   {d5fc7d90-83d5-4a0d-ac97-cd6ba3e403ab}; !- Material Name
+
+OS:Material:NoMass,
+  {4d3a5156-a7c8-4fd6-9309-5d18fe8f0c7a}, !- Handle
+  XPS 24 cm ,                             !- Name
+  Smooth,                                 !- Roughness
+  8,                                      !- Thermal Resistance {m2-K/W}
+  0.6,                                    !- Thermal Absorptance
+  0.6,                                    !- Solar Absorptance
+  0.6;                                    !- Visible Absorptance
+
+OS:StandardsInformation:Material,
+  {dcdc2427-7078-4fd1-95de-975eb3f69d55}, !- Handle
+  {4d3a5156-a7c8-4fd6-9309-5d18fe8f0c7a}; !- Material Name
 
