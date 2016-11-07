@@ -14,6 +14,7 @@ CTE_Informe:
     - Calcular A_sol,ver / A_util pidiendo factor de sombra de protecciones
       móviles
     - Calcular K
+    - Arreglar tabla de dimensionado de equipos
 CTE_EPBDcalc:
     - Nombre de archivo de salida generado con metadatos, y no fijo.
     - Revisar usabilidad de comentarios
