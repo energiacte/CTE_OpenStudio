@@ -32,6 +32,7 @@ require_relative "resources/cte_lib_measures_tempaguafria.rb"
 require_relative "resources/cte_lib_measures_ventilacion.rb"
 require_relative "resources/cte_lib_measures_infiltracion.rb"
 require_relative "resources/cte_lib_measures_puentestermicos.rb"
+require_relative "resources/cte_lib_measures_fijaclima.rb"
 
 # Medida de OpenStudio (ModelUserScript) que modifica el modelo para su uso con el CTE
 # Para su correcto funcionamiento esta medida debe emplearse con una plantilla adecuada.
@@ -69,6 +70,18 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
     tipo.setDisplayName("Edificio nuevo o existente")
     tipo.setDefaultValue('Nuevo')
     args << tipo
+    
+    zonas_climaticas_chs = OpenStudio::StringVector.new
+    ['Manual', 'A3_peninsula', 'A4_peninsula', 'B3_peninsula', 'B4_peninsula', 
+    'C1_peninsula', 'C2_peninsula', 'C3_peninsula', 'C4_peninsula',
+    'D1_peninsula', 'D2_peninsula', 'D3_peninsula', 'E1_peninsula',
+    'A1_canarias', 'A2_canarias', 'A3_canarias', 'A4_canarias', 
+    'alpha1_canarias', 'alpha2_canarias', 'alpha3_canarias', 'alpha4_canarias'  ].each{ |zclima| zonas_climaticas_chs << zclima }
+    zona_climatica = OpenStudio::Ruleset::OSArgument::makeChoiceArgument('CTE_Zona_climatica', zonas_climaticas_chs, true)
+    zona_climatica.setDisplayName("Zona Climática")
+    zona_climatica.setDescription("Selecciona manual si quieres que la zona climática se tome del fichero climático asociado")
+    zona_climatica.setDefaultValue("Manual")
+    args << zona_climatica
 
     provincias_chs = OpenStudio::StringVector.new
 
@@ -186,7 +199,9 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
       argumentos[name] = argument.printValue
     end
     model.building.get.setComment(argumentos.to_json)
-
+    
+    result = cte_fijaclima(model, runner, user_arguments) # gestiona el archivo de clima
+    return result unless result == true
 
     result = cte_addvars(model, runner, user_arguments) # Nuevas variables y meters
     return result unless result == true
