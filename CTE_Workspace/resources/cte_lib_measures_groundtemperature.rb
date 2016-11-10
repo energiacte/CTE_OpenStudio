@@ -30,6 +30,7 @@ require 'csv'
 def parseweatherfilename(weatherfile)
   zc, peninsulaocanarias = weatherfile.filename.to_s.sub(/.epw$/, '').split('_')
   zci, zcv = zc[0..-2], zc[-1]
+  zci = zci.include?('alpha')?  'alfa': zci
   return zci, zcv, peninsulaocanarias
 end
 
