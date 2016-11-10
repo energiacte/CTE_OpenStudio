@@ -72,7 +72,7 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
 
     provincias_chs = OpenStudio::StringVector.new
 
-    ['A_Coruna', 'Albacete', 'Alicante_Alacant', 'Almeria', 'Avila', 'Badajoz', 'Barcelona', 'Bilbao_Bilbo',
+    ['Automatico', 'A_Coruna', 'Albacete', 'Alicante_Alacant', 'Almeria', 'Avila', 'Badajoz', 'Barcelona', 'Bilbao_Bilbo',
      'Burgos', 'Caceres', 'Cadiz', 'Castellon_Castello', 'Ceuta', 'Ciudad_Real', 'Cordoba', 'Cuenca',
      'Girona', 'Granada', 'Guadalajara', 'Huelva', 'Huesca', 'Jaen', 'Las_Palmas_de_Gran_Canaria', 'Leon',
      'Lleida', 'Logrono', 'Lugo', 'Madrid', 'Malaga', 'Melilla', 'Murcia', 'Ourense', 'Oviedo', 'Palencia',
@@ -82,7 +82,7 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
 
     provincia = OpenStudio::Ruleset::OSArgument::makeChoiceArgument('CTE_Provincia', provincias_chs, true)
     provincia.setDisplayName("Provincia")
-    provincia.setDefaultValue("Madrid")
+    provincia.setDefaultValue("Automatico")
 
     args << provincia
 
@@ -203,6 +203,10 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
 
     result = cte_puentestermicos(model, runner, user_arguments)
     return result unless result == true
+    
+    site = model.getSite
+    weather_file = site.name.get
+    runner.registerValue("CTE_Weather_file", weather_file)
 
     # Get final condition ================================================
     runner.registerFinalCondition("CTE: Finalizada la aplicación de medidas de modelo.")
