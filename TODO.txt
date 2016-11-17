@@ -31,4 +31,5 @@ OS_Report_SI:
     - Cambiar provincia y altitud de referencia al cambiar archivo de clima
     - Cambiar construction set + U del frame and divider + shading control
       (vincula construcción -por zona- y horario)
-
+- Generador Automático de Plantillas:
+	- Para que sean más robustas las plantillas generarlas por script
