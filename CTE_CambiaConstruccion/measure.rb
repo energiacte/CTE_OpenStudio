@@ -87,18 +87,6 @@ class CTE_CambiaConstruccion < OpenStudio::Ruleset::ModelUserScript
       return false
     end
 
-    # XXX: Append selected arguments in JSON comment for Building Object
-    argumentos = Hash.new
-    unless model.building.get.comment.empty?
-      JSON.parse(model.building.get.comment[2..-1]).each do | clave, valor |
-        argumentos[clave] = valor
-      end
-    end
-    user_arguments.each do | name, argument |
-      argumentos[name] = runner.getOptionalWorkspaceObjectChoiceValue(name, user_arguments, model).get.name.to_s
-    end
-    model.building.get.setComment(argumentos.to_json)
-
     # Initial condition of model ------------------------------------------------
     building = model.getBuilding
     defaultConstructionSet = building.defaultConstructionSet
@@ -221,13 +209,24 @@ class CTE_CambiaConstruccion < OpenStudio::Ruleset::ModelUserScript
       constructionset_name = defaultConstructionSet.get.name
       frameanddivider_name = frame_and_divider ? frame_and_divider.name.get : ''
     else
-      constructionset_name = ''
-      frameanddivider_name = ''
+      constructionset_name = '<vacio>'
+      frameanddivider_name = '<vacio>'
     end
 
     runner.registerFinalCondition("The final default construction set for the building is '#{ constructionset_name }' with FrameAndDivider '#{ frameanddivider_name }'.")
 
-    #TODO: mover aquí generación de JSON, con valores reales de construction_name y frameanddivider_name
+    #Guardamos datos en Modelo
+    argumentos = Hash.new
+    unless model.building.get.comment.empty?
+      json = JSON.parse(model.building.get.comment[2..-1])
+      json.each do | clave, valor |
+        argumentos[clave] = valor
+      end
+    end
+    argumentos["CTE_ConstructionSet"] = constructionset_name
+    argumentos["CTE_Carpinteria"] = frameanddivider_name
+    model.building.get.setComment(argumentos.to_json)
+
     return true
   end #end the run method
 

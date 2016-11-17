@@ -24,6 +24,7 @@ OS:SimulationControl,
   FullExterior,                           !- Solar Distribution
   25;                                     !- Maximum Number of Warmup Days
 
+! {"CTE_Altitud":"650","CTE_Coef_stack":"0.00029","CTE_Coef_wind":"0.000231","CTE_Design_flow_rate":"0.63","CTE_Fan_ntot":"0.5","CTE_Fan_sfp":"1.5","CTE_Heat_recovery":"0","CTE_Permeabilidad_ventanas":"Clase 2","CTE_Provincia":"Madrid","CTE_Psi_contorno_huecos":"0.05","CTE_Psi_forjado_cubierta":"0.24","CTE_Psi_forjado_exterior":"0.23","CTE_Psi_frente_forjado":"0.1","CTE_Psi_solera_terreno":"0.28","CTE_Tipo_edificio":"Nuevo","CTE_Uso_edificio":"Residencial"}
 OS:Building,
   {1ea2e9a4-0714-4cd3-b7cb-09a16a2a969d}, !- Handle
   ResBloque01_EN0V0,                      !- Name

@@ -53,7 +53,7 @@ class CTECambiaConstruccion_Test < Test::Unit::TestCase
 
     #save the model
     output_file_path = OpenStudio::Path.new(File.dirname(__FILE__) + "/out/test.osm")
-    model.save(output_file_path,true)
+    model.save(output_file_path, true)
   end
 
   def test_CTECambiaConstruccion_clear
