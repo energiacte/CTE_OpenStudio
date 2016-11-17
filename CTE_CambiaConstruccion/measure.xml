@@ -1,0 +1,100 @@
+<measure>
+  <schema_version>3.0</schema_version>
+  <name>cte_cambia_construccion</name>
+  <uid>8fdb867a-a24a-40a0-9fa5-162f9ceec7e3</uid>
+  <version_id>8da78f66-9216-4fb0-9d48-29902bbdf842</version_id>
+  <version_modified>20161116T175941Z</version_modified>
+  <xml_checksum>85D63B6B</xml_checksum>
+  <class_name>CTE_CambiaConstruccion</class_name>
+  <display_name> CTE_Cambia_construccion</display_name>
+  <description>Cambia el default construction set.</description>
+  <modeler_description>Cambia el default construction set.</modeler_description>
+  <arguments>
+    <argument>
+      <name>CTE_Construccion_defecto</name>
+      <display_name>Construcci?n por defecto</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>{28346bb7-fe60-4c72-9ae6-73f501e93278}</default_value>
+      <choices>
+        <choice>
+          <value>{28346bb7-fe60-4c72-9ae6-73f501e93278}</value>
+          <display_name>&lt;clear field></display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>CTE_Carpinteria</name>
+      <display_name>Elige la carpinter?a.</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>{28346bb7-fe60-4c72-9ae6-73f501e93278}</default_value>
+      <choices>
+        <choice>
+          <value>{28346bb7-fe60-4c72-9ae6-73f501e93278}</value>
+          <display_name>&lt;clear field></display_name>
+        </choice>
+      </choices>
+    </argument>
+  </arguments>
+  <provenances/>
+  <tags>
+    <tag>Envelope.Opaque</tag>
+  </tags>
+  <attributes>
+    <attribute>
+      <name>Uses SketchUp API</name>
+      <value>false</value>
+      <datatype>boolean</datatype>
+    </attribute>
+    <attribute>
+      <name>Measure Type</name>
+      <value>ModelMeasure</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Use Case</name>
+      <value>Model Articulation</value>
+      <datatype>string</datatype>
+    </attribute>
+  </attributes>
+  <files>
+    <file>
+      <filename>LargeHotel.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>094C90D7</checksum>
+    </file>
+    <file>
+      <filename>test.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>ED60C593</checksum>
+    </file>
+    <file>
+      <filename>CTE_Blq_EM_limpio.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>77678D74</checksum>
+    </file>
+    <file>
+      <filename>test_CambiaConstruccion.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>A6AB12DD</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.3.1</identifier>
+        <min_compatible>1.8.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>33343C9B</checksum>
+    </file>
+  </files>
+</measure>
