@@ -1,21 +1,18 @@
-#see the URL below for information on how to write OpenStudio measures
-# http://openstudio.nrel.gov/openstudio-measure-writing-guide
-
-#see the URL below for information on using life cycle cost objects in OpenStudio
-# http://openstudio.nrel.gov/openstudio-life-cycle-examples
-
-#see the URL below for access to C++ documentation on model objects (click on "model" in the main window to view model objects)
-# http://openstudio.nrel.gov/sites/openstudio.nrel.gov/files/nv_data/cpp_documentation_it/model/html/namespaces.html
+# coding: utf-8
+# Author(s): Daniel Jiménez González, Rafael Villar Burke
+# email: danielj@ietcc.csic.es, pachi@ietcc.csic.es
+#
+# Measure based on previous measure in the BCL "Assign ConstructionSet to Building" by David Goldwasser
+# Change constructionSet of Building and assign FrameAndDivider to windows that inherit from the defaultConstructionSet
 
 require 'json'
 
-#start the measure
 class CTE_CambiaConstruccion < OpenStudio::Ruleset::ModelUserScript
 
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return " CTE_Cambia_construccion"
+    return "CTE_Cambia_construccion"
   end
 
   #define the arguments that the user will input
@@ -48,8 +45,8 @@ class CTE_CambiaConstruccion < OpenStudio::Ruleset::ModelUserScript
     construction_set = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("CTE_Construccion_defecto", construction_set_handles, construction_set_display_names)
     construction_set.setDisplayName("Construcción por defecto")
     construction_set.setDefaultValue("<clear field>") #if no construction set is chosen this field will be cleared out
-    args << construction_set    
-    
+    args << construction_set
+
     # Frame and Dividers -----------------------------------------------
     frames_handles = OpenStudio::StringVector.new
     frames_display_names = OpenStudio::StringVector.new
@@ -85,141 +82,149 @@ class CTE_CambiaConstruccion < OpenStudio::Ruleset::ModelUserScript
   def run(model, runner, user_arguments)
     super(model, runner, user_arguments)
 
-    #use the built-in error checking 
+    #use the built-in error checking
     if not runner.validateUserArguments(arguments(model), user_arguments)
       return false
     end
-    
-    argumentos = Hash.new
-    JSON.parse(model.building.get.comment[2..-1]).each do | clave, valor |
-      argumentos[clave] = valor
-    end
-    
-    user_arguments.each do | name, argument |
-      #~ argumentos[name] = argument.printValue
-      #~ argumentos[name] = runner.getStringArgumentValue(name, user_arguments).get.name
-      argumentos[name] = runner.getOptionalWorkspaceObjectChoiceValue(name, user_arguments,model).get.name
-      
-    end
-    
-    
-    model.building.get.setComment(argumentos.to_json)
-    
-    # DEFAULT CONSTRUCTION SET
-    #assign the user inputs to variables -------------------------------
-    cs_object = runner.getOptionalWorkspaceObjectChoiceValue("CTE_Construccion_defecto", user_arguments, model)
 
-    #check the user_name for reasonableness
-    cs_clear_field = false
+    # Append selected arguments in JSON comment for Building Object
+    argumentos = Hash.new
+    unless model.building.get.comment.empty?
+      JSON.parse(model.building.get.comment[2..-1]).each do | clave, valor |
+        argumentos[clave] = valor
+      end
+    end
+    user_arguments.each do | name, argument |
+      argumentos[name] = runner.getOptionalWorkspaceObjectChoiceValue(name, user_arguments, model).get.name
+    end
+    model.building.get.setComment(argumentos.to_json)
+
+    # Initial condition of model ------------------------------------------------
+    building = model.getBuilding
+    defaultConstructionSet = building.defaultConstructionSet
+    if not defaultConstructionSet.empty?
+      defaultextsurfcons = defaultConstructionSet.get.defaultExteriorSubSurfaceConstructions
+      if defaultextsurfcons.empty?
+        defaultWindowConstructionName = ''
+      else
+        windowconst = defaultextsurfcons.get.fixedWindowConstruction
+        defaultWindowConstructionName = windowconst.empty? ? '' : windowconst.get.name
+      end
+      runner.registerInitialCondition("The initial default construction set for the building is #{defaultConstructionSet.get.name} and it's window name is #{defaultWindowConstructionName }.")
+    else
+      runner.registerInitialCondition("The initial model doesn't have a default construction set for the building.")
+    end
+
+    # Localiza ConstructionSet seleccionado -------------------------------------
+    cs_param_object = runner.getOptionalWorkspaceObjectChoiceValue("CTE_Construccion_defecto", user_arguments, model)
+
     construction_set = nil
-    if cs_object.empty?
+    reset_cset = false
+    if cs_param_object.empty?
       handle = runner.getStringArgumentValue("CTE_Construccion_defecto", user_arguments)
       if handle.empty?
-        runner.registerError("No construction set was chosen.")
+        runner.registerError("No se seleccionó ConstructionSet.")
       else
-        runner.registerError("The selected construction set with handle '#{handle}' was not found in the model. It may have been removed by another measure.")
+        runner.registerError("No se encuentra el ConstructionSet '#{handle}'. Pudo eliminarlo otra medida.")
       end
       return false
     else
-      if not cs_object.get.to_DefaultConstructionSet.empty?
-        construction_set = cs_object.get.to_DefaultConstructionSet.get
-      elsif not cs_object.get.to_Building.empty?
-        cs_clear_field = true
+      if not cs_param_object.get.to_DefaultConstructionSet.empty? # hay un objeto defaultConstructionSet -> cambiamos a ese
+        construction_set = cs_param_object.get.to_DefaultConstructionSet.get
+      elsif not cs_param_object.get.to_Building.empty? # hay un objeto Building -> reseteamos
+        reset_cset = true
       else
         runner.registerError("Script Error - argument not showing up as construction set or building.")
         return false
       end
     end
 
-    #reporting initial condition of model
-    building = model.getBuilding
-    defaultConstructionSet = building.defaultConstructionSet
-    if not defaultConstructionSet.empty?
-      runner.registerInitialCondition("The initial default construction set for the building is #{defaultConstructionSet.get.name}.")
-    else
-      runner.registerInitialCondition("The initial model doesn't have a default construction set for the building.")
-    end
-    
+    # MODIFICA ConstructionSet -------------------------------------------------------
     # alter default construction set as requested
-    if cs_clear_field
+    if reset_cset == true
       building.resetDefaultConstructionSet
     else
       building.setDefaultConstructionSet(construction_set)
     end
 
-    #reporting final condition of model
-    defaultConstructionSet = building.defaultConstructionSet
-    if not defaultConstructionSet.empty?
-      runner.registerFinalCondition("The final default construction set for the building is #{defaultConstructionSet.get.name}.")
-    else
-      runner.registerFinalCondition("The final model doesn't have a default construction set for the building.")
-    end
-    
-    if construction_set      
-      if "ABCDE".include?(construction_set.name.get[-1])
-        construccionVentanasName = "CTE_2013_Huecos_zona #{construction_set.name.get[-1]}"
-      elsif construction_set.name.get.end_with?("Alfa") 
-        construccionVentanasName = "CTE_2013_Huecos_zona alfa"
-      end
-    else
-      puts "Error, no #{construction_set}"
-    end     
-    
-    
-    # definir el shadingControl a partir del material de sombra
-    materialPersiana = ''
-    model.getShadingMaterials.each do | material |
-      materialPersiana = material if material.name.get == "CTE_Sombra estacional_Persiana"        
-    end
-    shadingControl = OpenStudio::Model::ShadingControl.new(materialPersiana)
-    
-    shadingControl.setName('control persianas')
-    horarioPersiana = ''
-    model.getSchedules.each do |schedule|
-      horarioPersiana = schedule if schedule.name.get == "CTER24B_SombraEstacional"
-    end    
-    shadingControl.setShadingType("ExteriorShade")
-    shadingControl.setShadingControlType('OnIfScheduleAllows')
-    shadingControl.setSchedule(horarioPersiana)
-    
-    
-    #assign the user inputs to variables -------------------------------
+    # Localiza FrameAndDivider seleccionado ---------------------------------------
     fd_object = runner.getOptionalWorkspaceObjectChoiceValue("CTE_Carpinteria", user_arguments, model)
 
-    #check the user_name for reasonableness
-    fd_clear_field = false
-    frameAndDivider = nil
+    reset_fd = false
+    frame_and_divider = nil
     if fd_object.empty?
       fd_handle = runner.getStringArgumentValue("CTE_Carpinteria", user_arguments)
       if fd_handle.empty?
-        runner.registerError("No se eligió carpintería.")
+        runner.registerError("No se seleccionó carpintería.")
       else
-        runner.registerError("La carpintería seleccionada con handle '#{handle}' no está en el modelo. It may have been removed by another measure.")
+        runner.registerError("No se encuentra el WindowPropertyFrameAndDivider '#{handle}'. Pudo eliminarla otra medida.")
       end
       return false
     else
-      if not fd_object.get.to_WindowPropertyFrameAndDivider.empty?
-        frameAndDivider = fd_object.get.to_WindowPropertyFrameAndDivider.get
-      elsif not fd_object.get.to_Building.empty?
-        fd_clear_field = true
+      if not fd_object.get.to_WindowPropertyFrameAndDivider.empty? # hay FrameAndDivider -> cambia
+        frame_and_divider = fd_object.get.to_WindowPropertyFrameAndDivider.get
+      elsif not fd_object.get.to_Building.empty? # hay Building -> reset
+        reset_fd = true
       else
         runner.registerError("Script Error - argument not showing up as WindowPropertyFrameAndDivider or building.")
         return false
       end
     end
-    
-    puts "frame and divider #{frameAndDivider}"
-    
-    # modifca el control y el marco en las ventanas correspondientes
-    model.getSubSurfaces.each do | subsurface |
-      next if not ['FixedWindow', 'OperableWindow'].include?(subsurface.subSurfaceType)
-      
-      if not subsurface.construction.empty? and 
-          subsurface.construction.get.name.get == construccionVentanasName
-          subsurface.setShadingControl(shadingControl)
-          subsurface.setWindowPropertyFrameAndDivider(frameAndDivider)
+
+    # TODO: caso con reset_fd: recorre subsurfaces y .resetWindowPropertyFrameAndDivider
+    if reset_fd == true
+      model.getSubSurfaces.each do | subsurface |
+        next if not ['FixedWindow', 'OperableWindow'].include?(subsurface.subSurfaceType)
+        subsurface.resetWindowPropertyFrameAndDivider
       end
     end
+
+    # Cambio de FrameAndDivider de Ventanas con construcción por defecto del construction set =========
+    if reset_cset != true and reset_fd != true
+      # Localiza material de sombra estacional ----------------------------------------
+      materialPersiana = ''
+      model.getShadingMaterials.each do | material |
+        materialPersiana = material if material.name.get.start_with?("CTE_Sombra")
+      end
+
+      defaultextsurfcons = construction_set.defaultExteriorSubSurfaceConstructions
+      if defaultextsurfcons.empty?
+        target_window_construction_name = ''
+      else
+        windowconst = defaultextsurfcons.get.fixedWindowConstruction
+        target_window_construction_name = windowconst.empty? ? '' : windowconst.get.name
+      end
+
+      # GENERA SHADINGCONTROL ---------------------
+      shadingControl = OpenStudio::Model::ShadingControl.new(materialPersiana)
+      shadingControl.setName('Control sombra estacional')
+      horarioPersiana = ''
+      model.getSchedules.each do |schedule|
+        horarioPersiana = schedule if schedule.name.get == "CTER24B_SombraEstacional"
+      end
+      shadingControl.setShadingType("ExteriorShade")
+      shadingControl.setShadingControlType('OnIfScheduleAllows')
+      shadingControl.setSchedule(horarioPersiana)
+
+      # MODIFICA SHADINGCONTROL Y FRAMEANDIVIDER PARA LAS CONSTRUCCIONES DE HUECO SELECCIONADAS
+      model.getSubSurfaces.each do | subsurface |
+        next if not ['FixedWindow', 'OperableWindow'].include?(subsurface.subSurfaceType)
+        if not subsurface.construction.empty? and target_window_construction_name != '' and subsurface.construction.get.name.get == target_window_construction_name
+          subsurface.setShadingControl(shadingControl)
+          subsurface.setWindowPropertyFrameAndDivider(frame_and_divider)
+        end
+      end
+    end
+
+    #reporting final condition of model
+    defaultConstructionSet = building.defaultConstructionSet
+    if not defaultConstructionSet.empty?
+      frame_and_divider_name = frame_and_divider ? frame_and_divider.name.get : ''
+      runner.registerFinalCondition("The final default construction set for the building is #{defaultConstructionSet.get.name} with frameanddivider #{ frame_and_divider_name }.")
+    else
+      runner.registerFinalCondition("The final model doesn't have a default construction set for the building.")
+    end
+
     return true
   end #end the run method
 

@@ -2,13 +2,13 @@
   <schema_version>3.0</schema_version>
   <name>cte_cambia_construccion</name>
   <uid>8fdb867a-a24a-40a0-9fa5-162f9ceec7e3</uid>
-  <version_id>8da78f66-9216-4fb0-9d48-29902bbdf842</version_id>
-  <version_modified>20161116T175941Z</version_modified>
-  <xml_checksum>85D63B6B</xml_checksum>
+  <version_id>9920bc0e-80a7-4677-865e-b9dd0c502c6a</version_id>
+  <version_modified>20161117T142239Z</version_modified>
+  <xml_checksum>CA8AE31A</xml_checksum>
   <class_name>CTE_CambiaConstruccion</class_name>
-  <display_name> CTE_Cambia_construccion</display_name>
-  <description>Cambia el default construction set.</description>
-  <modeler_description>Cambia el default construction set.</modeler_description>
+  <display_name>CTE_Cambia_construccion</display_name>
+  <description>Cambia el ConstructionSet del edificio y su tipo de hueco/marco.</description>
+  <modeler_description>Cambia el defaultConstructionSet y el FrameAndDivider de los huecos que heredan del defaultConstructionSet.</modeler_description>
   <arguments>
     <argument>
       <name>CTE_Construccion_defecto</name>
@@ -16,10 +16,10 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>{28346bb7-fe60-4c72-9ae6-73f501e93278}</default_value>
+      <default_value>{febe1ca6-3ff4-4f7d-84c8-c8b7a6eabebb}</default_value>
       <choices>
         <choice>
-          <value>{28346bb7-fe60-4c72-9ae6-73f501e93278}</value>
+          <value>{febe1ca6-3ff4-4f7d-84c8-c8b7a6eabebb}</value>
           <display_name>&lt;clear field></display_name>
         </choice>
       </choices>
@@ -30,10 +30,10 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>{28346bb7-fe60-4c72-9ae6-73f501e93278}</default_value>
+      <default_value>{febe1ca6-3ff4-4f7d-84c8-c8b7a6eabebb}</default_value>
       <choices>
         <choice>
-          <value>{28346bb7-fe60-4c72-9ae6-73f501e93278}</value>
+          <value>{febe1ca6-3ff4-4f7d-84c8-c8b7a6eabebb}</value>
           <display_name>&lt;clear field></display_name>
         </choice>
       </choices>
@@ -41,7 +41,7 @@
   </arguments>
   <provenances/>
   <tags>
-    <tag>Envelope.Opaque</tag>
+    <tag>Envelope.Construction Sets</tag>
   </tags>
   <attributes>
     <attribute>
@@ -62,28 +62,10 @@
   </attributes>
   <files>
     <file>
-      <filename>LargeHotel.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>094C90D7</checksum>
-    </file>
-    <file>
-      <filename>test.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>ED60C593</checksum>
-    </file>
-    <file>
-      <filename>CTE_Blq_EM_limpio.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>77678D74</checksum>
-    </file>
-    <file>
       <filename>test_CambiaConstruccion.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>A6AB12DD</checksum>
+      <checksum>106D3140</checksum>
     </file>
     <file>
       <version>
@@ -94,7 +76,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>33343C9B</checksum>
+      <checksum>4178FD70</checksum>
+    </file>
+    <file>
+      <filename>test.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>4543CEB1</checksum>
     </file>
   </files>
 </measure>
