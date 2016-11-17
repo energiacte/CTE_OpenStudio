@@ -191,21 +191,26 @@ class CTE_CambiaConstruccion < OpenStudio::Ruleset::ModelUserScript
         target_window_construction_name = windowconst.empty? ? '' : windowconst.get.name
       end
 
-      # GENERA SHADINGCONTROL ---------------------
-      shadingControl = OpenStudio::Model::ShadingControl.new(materialPersiana)
-      shadingControl.setName('Control sombra estacional')
-      horarioPersiana = model.getSchedules.detect{ |schedule| schedule.name.get == "CTER24B_SombraEstacional" }
-      shadingControl.setShadingType("ExteriorShade")
-      shadingControl.setShadingControlType('OnIfScheduleAllows')
-      shadingControl.setSchedule(horarioPersiana)
+      if target_window_construction_name != ''
+        # GENERA SHADINGCONTROL ---------------------
+        shadingControl = OpenStudio::Model::ShadingControl.new(materialPersiana)
+        shadingControl.setName('Control sombra estacional')
+        horarioPersiana = model.getSchedules.detect{ |schedule| schedule.name.get == "CTER24B_SombraEstacional" }
+        shadingControl.setShadingType("ExteriorShade")
+        shadingControl.setShadingControlType('OnIfScheduleAllows')
+        shadingControl.setSchedule(horarioPersiana)
 
-      # MODIFICA SHADINGCONTROL Y FRAMEANDIVIDER PARA LAS CONSTRUCCIONES DE HUECO SELECCIONADAS
-      model.getSubSurfaces.each do | subsurface |
-        next if not ['FixedWindow', 'OperableWindow'].include?(subsurface.subSurfaceType)
-        if not subsurface.construction.empty? and target_window_construction_name != '' and subsurface.construction.get.name.get == target_window_construction_name
-          subsurface.resetShadingControl
-          subsurface.setShadingControl(shadingControl)
-          subsurface.setWindowPropertyFrameAndDivider(frame_and_divider)
+        # MODIFICA SHADINGCONTROL Y FRAMEANDIVIDER PARA LAS CONSTRUCCIONES DE HUECO SELECCIONADAS
+        model.getSubSurfaces.each do | subsurface |
+          next if not ['FixedWindow', 'OperableWindow'].include?(subsurface.subSurfaceType)
+          next if subsurface.construction.empty?
+          if subsurface.construction.get.name.to_s == target_window_construction_name.to_s
+            #subsurface.resetShadingControl
+            #TODO: Cambiar solo si es Residencial
+            subsurface.setShadingControl(shadingControl)
+            #TODO fin de cambio
+            subsurface.setWindowPropertyFrameAndDivider(frame_and_divider)
+          end
         end
       end
     end
