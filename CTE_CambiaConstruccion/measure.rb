@@ -182,11 +182,7 @@ class CTE_CambiaConstruccion < OpenStudio::Ruleset::ModelUserScript
     # Cambio de FrameAndDivider de Ventanas con construcción por defecto del construction set =========
     if reset_cset != true and reset_fd != true
       # Localiza material de sombra estacional ----------------------------------------
-      materialPersiana = ''
-      model.getShadingMaterials.each do | material |
-        materialPersiana = material if material.name.get.start_with?("CTE_Sombra")
-      end
-
+      materialPersiana = model.getShadingMaterials.detect{ |material | material.name.get.start_with?("CTE_Sombra") }
       defaultextsurfcons = construction_set.defaultExteriorSubSurfaceConstructions
       if defaultextsurfcons.empty?
         target_window_construction_name = ''
@@ -198,10 +194,7 @@ class CTE_CambiaConstruccion < OpenStudio::Ruleset::ModelUserScript
       # GENERA SHADINGCONTROL ---------------------
       shadingControl = OpenStudio::Model::ShadingControl.new(materialPersiana)
       shadingControl.setName('Control sombra estacional')
-      horarioPersiana = ''
-      model.getSchedules.each do |schedule|
-        horarioPersiana = schedule if schedule.name.get == "CTER24B_SombraEstacional"
-      end
+      horarioPersiana = model.getSchedules.detect{ |schedule| schedule.name.get == "CTER24B_SombraEstacional" }
       shadingControl.setShadingType("ExteriorShade")
       shadingControl.setShadingControlType('OnIfScheduleAllows')
       shadingControl.setSchedule(horarioPersiana)
