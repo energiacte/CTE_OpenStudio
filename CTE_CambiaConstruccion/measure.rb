@@ -203,6 +203,7 @@ class CTE_CambiaConstruccion < OpenStudio::Ruleset::ModelUserScript
       model.getSubSurfaces.each do | subsurface |
         next if not ['FixedWindow', 'OperableWindow'].include?(subsurface.subSurfaceType)
         if not subsurface.construction.empty? and target_window_construction_name != '' and subsurface.construction.get.name.get == target_window_construction_name
+          subsurface.resetShadingControl
           subsurface.setShadingControl(shadingControl)
           subsurface.setWindowPropertyFrameAndDivider(frame_and_divider)
         end
