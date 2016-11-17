@@ -87,7 +87,7 @@ class CTE_CambiaConstruccion < OpenStudio::Ruleset::ModelUserScript
       return false
     end
 
-    # Append selected arguments in JSON comment for Building Object
+    # XXX: Append selected arguments in JSON comment for Building Object
     argumentos = Hash.new
     unless model.building.get.comment.empty?
       JSON.parse(model.building.get.comment[2..-1]).each do | clave, valor |
@@ -95,7 +95,7 @@ class CTE_CambiaConstruccion < OpenStudio::Ruleset::ModelUserScript
       end
     end
     user_arguments.each do | name, argument |
-      argumentos[name] = runner.getOptionalWorkspaceObjectChoiceValue(name, user_arguments, model).get.name
+      argumentos[name] = runner.getOptionalWorkspaceObjectChoiceValue(name, user_arguments, model).get.name.to_s
     end
     model.building.get.setComment(argumentos.to_json)
 
@@ -205,7 +205,7 @@ class CTE_CambiaConstruccion < OpenStudio::Ruleset::ModelUserScript
           next if not ['FixedWindow', 'OperableWindow'].include?(subsurface.subSurfaceType)
           next if subsurface.construction.empty?
           if subsurface.construction.get.name.to_s == target_window_construction_name.to_s
-            #subsurface.resetShadingControl
+            subsurface.resetShadingControl
             #TODO: Cambiar solo si es Residencial
             subsurface.setShadingControl(shadingControl)
             #TODO fin de cambio
@@ -218,12 +218,16 @@ class CTE_CambiaConstruccion < OpenStudio::Ruleset::ModelUserScript
     #reporting final condition of model
     defaultConstructionSet = building.defaultConstructionSet
     if not defaultConstructionSet.empty?
-      frame_and_divider_name = frame_and_divider ? frame_and_divider.name.get : ''
-      runner.registerFinalCondition("The final default construction set for the building is #{defaultConstructionSet.get.name} with frameanddivider #{ frame_and_divider_name }.")
+      constructionset_name = defaultConstructionSet.get.name
+      frameanddivider_name = frame_and_divider ? frame_and_divider.name.get : ''
     else
-      runner.registerFinalCondition("The final model doesn't have a default construction set for the building.")
+      constructionset_name = ''
+      frameanddivider_name = ''
     end
 
+    runner.registerFinalCondition("The final default construction set for the building is '#{ constructionset_name }' with FrameAndDivider '#{ frameanddivider_name }'.")
+
+    #TODO: mover aquí generación de JSON, con valores reales de construction_name y frameanddivider_name
     return true
   end #end the run method
 
