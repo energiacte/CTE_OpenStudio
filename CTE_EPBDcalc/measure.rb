@@ -287,7 +287,15 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     buildingName = model.building.get.name.to_s.strip
     climatePath = model.weatherFile.get.path.get.to_s
     climateFilename = climatePath.split(File::SEPARATOR)[-1].strip.chomp('.epw')
-    return "cteEPBD-#{ buildingName }-#{ climateFilename }-#{ DateTime.now.strftime "%Y%m%d" }.csv"
+    jason = JSON.parse(model.building.get.comment[2..-1])
+    construction_set = jason["CTE_Construccion_defecto"]
+    recuperador = jason["CTE_Heat_recovery"].to_f * 100
+    ventilacionDiseno = jason["CTE_Design_flow_rate"].to_f
+    nnRec =   ('%2s' % recuperador).gsub(' ','0').gsub('.','')
+    nnnVent = ('%3s' % ventilacionDiseno).gsub(' ','0').gsub('.','')
+    #~ return "cteEPBD-#{ buildingName }-#{ climateFilename }-#{ DateTime.now.strftime "%Y%m%d" }.csv"
+    return "cteEPBD-#{ buildingName }-#{ construction_set }-V#{ nnnVent }R#{ nnRec }-#{ climateFilename }.csv"
+    
   end
 
   # define what happens when the measure is run
