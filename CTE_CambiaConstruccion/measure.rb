@@ -197,9 +197,19 @@ class CTE_CambiaConstruccion < OpenStudio::Ruleset::ModelUserScript
           if subsurface.construction.get.name.to_s == target_window_construction_name.to_s
             changed_subsurfaces += 1
             subsurface.resetShadingControl
-            if subsurface.surface.get.space.get.spaceType.get.name.get.start_with?('CTE_AR')
-              changed_shadowcontrols += 1
-              subsurface.setShadingControl(shadingControl) # Shading control solo en residencial
+            surface = subsurface.surface
+            unless surface.empty?
+              space = surface.get.space
+              unless space.empty?
+                spacetype = space.get.spaceType
+                unless spacetype.empty?
+                  spacetypename = spacetype.get.name
+                  if spacetypename.get.start_with?('CTE_AR')
+                      changed_shadowcontrols += 1
+                      subsurface.setShadingControl(shadingControl) # Shading control solo en residencial
+                  end
+                end
+              end
             end
             subsurface.setWindowPropertyFrameAndDivider(frame_and_divider)
           end
