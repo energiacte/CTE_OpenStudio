@@ -244,6 +244,7 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
           mycset = model.building.defaultConstructionSet.get.name.to_s.encode("UTF-8", invalid: :replace, undef: :replace)
         else
           mycset = 'Base'
+        end
         json["CTE_ConstructionSet"] = mycset
         model.building.get.setComment(json.to_json)
       end
