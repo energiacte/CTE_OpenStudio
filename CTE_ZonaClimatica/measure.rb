@@ -1,3 +1,4 @@
+# coding: utf-8
 # Author(s): Daniel Jiménez González, Rafael Villar Burke
 # email: pachi@ietcc.csic.es
 #
@@ -83,9 +84,13 @@ class CTE_ZonaClimatica < OpenStudio::Ruleset::ModelUserScript
     site.setElevation(weather_elev)
 
     # Remove existing design days
-    model.getDesignDays.each do |d|
-        model.removeObject(d.handle)
-    end
+    # OpenStudio generates copies of our designdays using names:
+    # - Sizing Period Design Day 1
+    # - Sizing Period Design Day 2
+    # and apparently it needs them
+    # model.getDesignDays.each do |d|
+    #     model.removeObject(d.handle)
+    # end
 
     # Add new design days
     ddy_file = File.join(@weather_directory, clima_name + '.ddy')
