@@ -224,19 +224,20 @@ def getSpaceBarycenter(space)
 end
 
   def creaSuperficiePT(model, space, area, construccionPT, direccion)
-    x,y,z = getSpaceBarycenter(space)
+    x, y, z = getSpaceBarycenter(space)
     alto = ALTURA_SUPERFICIE_PT
-    ancho = area/alto
+    ancho = area / alto
     ancho = -1 * ancho unless direccion.include?('+')
     x2 = x
     y2 = y
     x2 += ancho if direccion.include?('x')
     y2 += ancho if direccion.include?('y')
+    # Move surfaces 100m to the north (y)
     vertices = []
-    vertices << OpenStudio::Point3d.new(x, y, z - 50 - alto)
-    vertices << OpenStudio::Point3d.new(x2, y2, z - 50 - alto)
-    vertices << OpenStudio::Point3d.new(x2, y2, z - 50)
-    vertices << OpenStudio::Point3d.new(x, y, z - 50)
+    vertices << OpenStudio::Point3d.new(x, y + 100, z - alto)
+    vertices << OpenStudio::Point3d.new(x2, y2 + 100, z - alto)
+    vertices << OpenStudio::Point3d.new(x2, y2 + 100, z)
+    vertices << OpenStudio::Point3d.new(x, y + 100, z)
     superficie = OpenStudio::Model::Surface.new(vertices, model)
     superficie.setSunExposure('NoSun')
     superficie.setWindExposure('NoWind')
