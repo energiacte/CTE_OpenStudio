@@ -167,6 +167,8 @@ class CTE_CambiaConstruccion < OpenStudio::Ruleset::ModelUserScript
       end
     end
 
+    changed_subsurfaces = 0
+    changed_shadowcontrols = 0
     # Cambio de FrameAndDivider de Ventanas con construcción por defecto del construction set =========
     if reset_cset != true and reset_fd != true
       # Localiza material de sombra estacional ----------------------------------------
@@ -193,10 +195,12 @@ class CTE_CambiaConstruccion < OpenStudio::Ruleset::ModelUserScript
           next if not ['FixedWindow', 'OperableWindow'].include?(subsurface.subSurfaceType)
           next if subsurface.construction.empty?
           if subsurface.construction.get.name.to_s == target_window_construction_name.to_s
+            changed_subsurfaces += 1
             subsurface.resetShadingControl
-            #TODO: Cambiar solo si es Residencial
-            subsurface.setShadingControl(shadingControl)
-            #TODO fin de cambio
+            if subsurface.surface.get.space.get.spaceType.get.name.get.start_with?('CTE_AR')
+              changed_shadowcontrols += 1
+              subsurface.setShadingControl(shadingControl) # Shading control solo en residencial
+            end
             subsurface.setWindowPropertyFrameAndDivider(frame_and_divider)
           end
         end
@@ -213,7 +217,7 @@ class CTE_CambiaConstruccion < OpenStudio::Ruleset::ModelUserScript
       frameanddivider_name = '<vacio>'
     end
 
-    runner.registerFinalCondition("The final default construction set for the building is '#{ constructionset_name }' with FrameAndDivider '#{ frameanddivider_name }'.")
+    runner.registerFinalCondition("The final default construction set for the building is '#{ constructionset_name }' with FrameAndDivider '#{ frameanddivider_name }'. Changed #{ changed_subsurfaces } subsurfaces and #{ changed_shadowcontrols } ShadingControl objects.")
 
     #Guardamos datos en Modelo
     argumentos = Hash.new
