@@ -70,12 +70,12 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
     tipo.setDisplayName("Edificio nuevo o existente")
     tipo.setDefaultValue('Nuevo')
     args << tipo
-    
+
     zonas_climaticas_chs = OpenStudio::StringVector.new
-    ['Manual', 'A3_peninsula', 'A4_peninsula', 'B3_peninsula', 'B4_peninsula', 
+    ['Manual', 'A3_peninsula', 'A4_peninsula', 'B3_peninsula', 'B4_peninsula',
     'C1_peninsula', 'C2_peninsula', 'C3_peninsula', 'C4_peninsula',
     'D1_peninsula', 'D2_peninsula', 'D3_peninsula', 'E1_peninsula',
-    'A1_canarias', 'A2_canarias', 'A3_canarias', 'A4_canarias', 
+    'A1_canarias', 'A2_canarias', 'A3_canarias', 'A4_canarias',
     'alpha1_canarias', 'alpha2_canarias', 'alpha3_canarias', 'alpha4_canarias'  ].each{ |zclima| zonas_climaticas_chs << zclima }
     zona_climatica = OpenStudio::Ruleset::OSArgument::makeChoiceArgument('CTE_Zona_climatica', zonas_climaticas_chs, true)
     zona_climatica.setDisplayName("Zona Climática")
@@ -199,7 +199,7 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
       argumentos[name] = argument.printValue
     end
     model.building.get.setComment(argumentos.to_json)
-    
+
     result = cte_fijaclima(model, runner, user_arguments) # gestiona el archivo de clima
     return result unless result == true
 
@@ -218,7 +218,7 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
 
     result = cte_puentestermicos(model, runner, user_arguments)
     return result unless result == true
-    
+
     site = model.getSite
     weather_file = site.name.get
     runner.registerValue("CTE_Weather_file", weather_file)
