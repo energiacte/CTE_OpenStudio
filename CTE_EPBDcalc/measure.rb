@@ -240,7 +240,12 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     unless model.building.get.comment.empty?
       json = JSON.parse(model.building.get.comment[2..-1])
       unless json.key?("CTE_ConstructionSet")
-        json["CTE_ConstructionSet"] = 'Base'
+        unless model.building.defaultConstructionSet.empty?
+          mycset = model.building.defaultConstructionSet.get.name.to_s.encode("UTF-8", invalid: :replace, undef: :replace)
+        else
+          mycset = 'Base'
+        json["CTE_ConstructionSet"] = mycset
+        model.building.get.setComment(json.to_json)
       end
       json.each do | clave, valor |
         string_rows << "##{ clave }: #{ valor }"
