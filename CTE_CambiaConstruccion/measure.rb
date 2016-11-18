@@ -227,8 +227,8 @@ class CTE_CambiaConstruccion < OpenStudio::Ruleset::ModelUserScript
         argumentos[clave] = valor
       end
     end
-    argumentos["CTE_ConstructionSet"] = constructionset_name.to_s.tr('ñÑ/\áéóíúÁÉÍÓÚ-', '_')
-    argumentos["CTE_Carpinteria"] = frameanddivider_name.to_s.tr('ñÑ/\áéóíúÁÉÍÓÚ-', '_')
+    argumentos["CTE_ConstructionSet"] = constructionset_name.to_s.encode("UTF-8", invalid: :replace, undef: :replace)
+    argumentos["CTE_Carpinteria"] = frameanddivider_name.to_s.encode("UTF-8", invalid: :replace, undef: :replace)
     model.building.get.setComment(argumentos.to_json)
 
     return true
