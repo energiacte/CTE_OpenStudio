@@ -237,8 +237,14 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     string_rows << "#CTE_Name: #{ model.building.get.name }"
     string_rows << "#CTE_Datetime: #{ DateTime.now.strftime '%d/%m/%Y %H:%M' }"
     string_rows << "#CTE_Weather_file: #{ model.weatherFile.get.path.get.to_s.split(File::SEPARATOR)[-1].strip.chomp('.epw') }"
-    JSON.parse(model.building.get.comment[2..-1]).each do | clave, valor |
-      string_rows << "##{ clave }: #{ valor }"
+    unless model.building.get.comment.empty?
+      json = JSON.parse(model.building.get.comment[2..-1])
+      unless json.key?("CTE_ConstructionSet")
+        json["CTE_ConstructionSet"] = 'Base'
+      end
+      json.each do | clave, valor |
+        string_rows << "##{ clave }: #{ valor }"
+      end
     end
 
     # Building quantities
@@ -287,15 +293,15 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     buildingName = model.building.get.name.to_s.strip
     climatePath = model.weatherFile.get.path.get.to_s
     climateFilename = climatePath.split(File::SEPARATOR)[-1].strip.chomp('.epw')
-    jason = JSON.parse(model.building.get.comment[2..-1])
-    construction_set = jason["CTE_Construccion_defecto"]
-    recuperador = jason["CTE_Heat_recovery"].to_f * 100
-    ventilacionDiseno = jason["CTE_Design_flow_rate"].to_f
+    unless model.building.get.comment.empty?
+      json = JSON.parse(model.building.get.comment[2..-1])
+      constructionSet = json["CTE_ConstructionSet"] || 'Base'
+      recuperador = json["CTE_Heat_recovery"].to_f * 100
+      ventilacionDiseno = json["CTE_Design_flow_rate"].to_f
+    end
     nnRec =   ('%2s' % recuperador).gsub(' ','0').gsub('.','')
     nnnVent = ('%3s' % ventilacionDiseno).gsub(' ','0').gsub('.','')
-    #~ return "cteEPBD-#{ buildingName }-#{ climateFilename }-#{ DateTime.now.strftime "%Y%m%d" }.csv"
-    return "cteEPBD-#{ buildingName }-#{ construction_set }-V#{ nnnVent }R#{ nnRec }-#{ climateFilename }.csv"
-    
+    return "cteEPBD-#{ buildingName }-#{ constructionSet }-V#{ nnnVent }R#{ nnRec }-#{ climateFilename }.csv"
   end
 
   # define what happens when the measure is run
