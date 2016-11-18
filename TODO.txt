@@ -18,6 +18,8 @@ CTE_Informe:
 	  superficiales. Ver: openstudio-standards/data/lib/openstudio-standards/standards/Standards.Construction.rb
 CTE_EPBDcalc:
     - Revisar usabilidad de comentarios
+    - Corregir nombre con eficiencia del recuperador, saca 3 dígitos cuando no
+      es 0 (p.e R800 para 0.80 de eficiencia) y R00 cuando es 0.0
 OS_Report_SI:
     - Comprobar si la tabla de Sizing se corrige igual que en CTE_Informe
       (Heating Load -> Heating Sensible Load, Cooling Load -> Heating Sensible
