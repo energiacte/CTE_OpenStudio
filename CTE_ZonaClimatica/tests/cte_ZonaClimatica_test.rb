@@ -52,11 +52,17 @@ class CTE_ZonaClimatica_Test < MiniTest::Unit::TestCase
     assert(result.warnings.size == 0, "Warnings are greater than 0")
     #assert(result.info.size == 2)
 
-    assert(model.getObjectsByType("OS:SizingPeriod:DesignDay".to_IddObjectType).count == 2, "Expected 2 design day objects")
+    ddyobjects = model.getObjectsByType("OS:SizingPeriod:DesignDay".to_IddObjectType)
+    assert(ddyobjects.count == 4, "Expected 2 design day objects")
 
     puts "Final weather file is #{ File.basename(model.weatherFile.get.path.get.to_s) }" unless model.weatherFile.empty?
     puts "Final site data is #{ model.getSite }" if model.getSite
     puts "Final Water Mains Temp is #{ model.getSiteWaterMainsTemperature }" if model.getSiteWaterMainsTemperature
+
+    ddyobjects.each do |ddy|
+        puts ddy
+    end
+
     model.save(test_out_file)
 
     assert(File.basename(model.weatherFile.get.path.get.to_s) == test_new_weather_file)
