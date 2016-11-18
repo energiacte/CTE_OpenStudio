@@ -1,8 +1,7 @@
 - CTE_Model:
-    - Gestionar sombras estacionales en la medida. En residencial asignar
-      horario a ventana (con shading-control) según sombra estacional y
-      en terciario siempre está off.
-    - temperatura_del_agua_de_red: 
+    - Llevar la gestión de las sombras estacionales de CTE_CambiaConstruccion
+      a CTE_Model
+    - temperatura_del_agua_de_red:
       Detectar el caso en el que no hay definida demanda de ACS (no hay
       circuito) y evitar el fallo en ese caso.
       Usar WaterEquipment detectando objetos por tipo (los objetos del model
@@ -15,23 +14,23 @@ CTE_Informe:
       móviles
     - Calcular K
     - Arreglar tabla de dimensionado de equipos
-	- Mostrar transmitancia térmica de construcciones incluyendo las resistencias 
+	- Mostrar transmitancia térmica de construcciones incluyendo las resistencias
 	  superficiales. Ver: openstudio-standards/data/lib/openstudio-standards/standards/Standards.Construction.rb
 CTE_EPBDcalc:
-    - Nombre de archivo de salida generado con metadatos, y no fijo.
     - Revisar usabilidad de comentarios
 OS_Report_SI:
     - Comprobar si la tabla de Sizing se corrige igual que en CTE_Informe
       (Heating Load -> Heating Sensible Load, Cooling Load -> Heating Sensible
       Load)
 - Otros:
+    - Generar correctamente humedad de días de diseño:
+        El HumidityRatio no es correcto:
+          'Entered Humidity Ratio Invalid (PsyWFnTdpPb)'
     - Incluir factores de paso a energía primaria y emisiones (habría que
       solicitar para RED1 y RED2)
     - Generar XML
         - ver https://github.com/asparke2/demo-measures/tree/master/ExportXMLMeasure
 - Análisis paramétrico:
     - Cambiar provincia y altitud de referencia al cambiar archivo de clima
-    - Cambiar construction set + U del frame and divider + shading control
-      (vincula construcción -por zona- y horario)
 - Generador Automático de Plantillas:
 	- Para que sean más robustas las plantillas generarlas por script
