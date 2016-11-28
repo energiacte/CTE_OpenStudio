@@ -302,11 +302,11 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     unless model.building.get.comment.empty?
       json = JSON.parse(model.building.get.comment[2..-1])
       constructionSet = json["CTE_ConstructionSet"] || 'Base'
-      recuperador = json["CTE_Heat_recovery"].to_f * 100
+      recuperador = json["CTE_Heat_recovery"].to_f
       ventilacionDiseno = json["CTE_Design_flow_rate"].to_f
     end
-    nnRec =   ('%2s' % recuperador).gsub(' ','0').gsub('.','')
-    nnnVent = ('%3s' % ventilacionDiseno).gsub(' ','0').gsub('.','')
+    nnRec =   ('%03d' % (recuperador * 100))
+    nnnVent = ('%03d' % (ventilacionDiseno * 100))
     return "cteEPBD-#{ buildingName }-#{ constructionSet }-V#{ nnnVent }R#{ nnRec }-#{ climateFilename }.csv"
   end
 
