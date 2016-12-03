@@ -25,11 +25,14 @@
 #            Daniel Jiménez González <dani@ietcc.csic.es>
 #            Marta Sorribes Gil <msorribes@ietcc.csic.es>
 
+require 'json'
+
 require_relative "resources/cte_lib_measures_addvars.rb"
 require_relative "resources/cte_lib_measures_tempaguafria.rb"
 require_relative "resources/cte_lib_measures_ventilacion.rb"
 require_relative "resources/cte_lib_measures_infiltracion.rb"
 require_relative "resources/cte_lib_measures_puentestermicos.rb"
+require_relative "resources/cte_lib_measures_fijaclima.rb"
 
 # Medida de OpenStudio (ModelUserScript) que modifica el modelo para su uso con el CTE
 # Para su correcto funcionamiento esta medida debe emplearse con una plantilla adecuada.
@@ -54,7 +57,7 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
     usoedificio_chs = OpenStudio::StringVector.new
     usoedificio_chs << 'Residencial'
     usoedificio_chs << 'Terciario'
-    usoEdificio = OpenStudio::Ruleset::OSArgument::makeChoiceArgument('usoEdificio', usoedificio_chs, true)
+    usoEdificio = OpenStudio::Ruleset::OSArgument::makeChoiceArgument('CTE_Uso_edificio', usoedificio_chs, true)
     usoEdificio.setDisplayName("Uso del edificio")
     #~ usoEdificio.setDefaultValue('Residencial')
     usoEdificio.setDefaultValue('Terciario')
@@ -63,14 +66,26 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
     tipoEdificio = OpenStudio::StringVector.new
     tipoEdificio << 'Nuevo'
     tipoEdificio << 'Existente'
-    tipo = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("tipoEdificio", tipoEdificio, true)
-    tipo.setDisplayName("¿Edificio nuevo o existente?")
+    tipo = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("CTE_Tipo_edificio", tipoEdificio, true)
+    tipo.setDisplayName("Edificio nuevo o existente")
     tipo.setDefaultValue('Nuevo')
     args << tipo
 
+    zonas_climaticas_chs = OpenStudio::StringVector.new
+    ['Manual', 'A3_peninsula', 'A4_peninsula', 'B3_peninsula', 'B4_peninsula',
+    'C1_peninsula', 'C2_peninsula', 'C3_peninsula', 'C4_peninsula',
+    'D1_peninsula', 'D2_peninsula', 'D3_peninsula', 'E1_peninsula',
+    'A1_canarias', 'A2_canarias', 'A3_canarias', 'A4_canarias',
+    'alpha1_canarias', 'alpha2_canarias', 'alpha3_canarias', 'alpha4_canarias'  ].each{ |zclima| zonas_climaticas_chs << zclima }
+    zona_climatica = OpenStudio::Ruleset::OSArgument::makeChoiceArgument('CTE_Zona_climatica', zonas_climaticas_chs, true)
+    zona_climatica.setDisplayName("Zona Climática")
+    zona_climatica.setDescription("Selecciona manual si quieres que la zona climática se tome del fichero climático asociado")
+    zona_climatica.setDefaultValue("Manual")
+    args << zona_climatica
+
     provincias_chs = OpenStudio::StringVector.new
 
-    ['A_Coruna', 'Albacete', 'Alicante_Alacant', 'Almeria', 'Avila', 'Badajoz', 'Barcelona', 'Bilbao_Bilbo',
+    ['Automatico', 'A_Coruna', 'Albacete', 'Alicante_Alacant', 'Almeria', 'Avila', 'Badajoz', 'Barcelona', 'Bilbao_Bilbo',
      'Burgos', 'Caceres', 'Cadiz', 'Castellon_Castello', 'Ceuta', 'Ciudad_Real', 'Cordoba', 'Cuenca',
      'Girona', 'Granada', 'Guadalajara', 'Huelva', 'Huesca', 'Jaen', 'Las_Palmas_de_Gran_Canaria', 'Leon',
      'Lleida', 'Logrono', 'Lugo', 'Madrid', 'Malaga', 'Melilla', 'Murcia', 'Ourense', 'Oviedo', 'Palencia',
@@ -78,78 +93,89 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
      'Santander', 'Segovia', 'Sevilla', 'Soria', 'Tarragona', 'Teruel', 'Toledo', 'Valencia', 'Valladolid',
      'Vitoria_Gasteiz', 'Zamora', 'Zaragoza'].each{ |prov|  provincias_chs << prov }
 
-    provincia = OpenStudio::Ruleset::OSArgument::makeChoiceArgument('provincia', provincias_chs, true)
+    provincia = OpenStudio::Ruleset::OSArgument::makeChoiceArgument('CTE_Provincia', provincias_chs, true)
     provincia.setDisplayName("Provincia")
-    provincia.setDefaultValue("Madrid")
+    provincia.setDefaultValue("Automatico")
 
     args << provincia
 
-    altitud = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("altitud", true)
+    altitud = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("CTE_Altitud", true)
     altitud.setDisplayName("Altitud del emplazamiento")
     altitud.setUnits("metros")
     altitud.setDefaultValue(650)
     args << altitud
 
-    design_flow_rate = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("design_flow_rate", true)
-    design_flow_rate.setDisplayName("Caudal de diseno de ventilacion del edificio")
+    design_flow_rate = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("CTE_Design_flow_rate", true)
+    design_flow_rate.setDisplayName("Caudal de diseno de ventilacion del edificio (residencial)")
     design_flow_rate.setUnits("ren/h")
     design_flow_rate.setDefaultValue(0.63)
     args << design_flow_rate
-    
-    heat_recovery = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("heat_recovery", true)
+
+    heat_recovery = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("CTE_Heat_recovery", true)
     heat_recovery.setDisplayName("Eficiencia del recuperador de calor")
     heat_recovery.setUnits("adimensional")
     heat_recovery.setDefaultValue(0.0)
     args << heat_recovery
-    
+
+    fan_sfp = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("CTE_Fan_sfp", true)
+    fan_sfp.setDisplayName("Consumo específico global de ventiladores (SFP)")
+    fan_sfp.setUnits("kPa")
+    fan_sfp.setDefaultValue(2.5)
+    args << fan_sfp
+
+    fan_ntot = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("CTE_Fan_ntot", true)
+    fan_ntot.setDisplayName("Eficiencia total de ventiladores (n_tot)")
+    fan_ntot.setUnits("adimensional")
+    fan_ntot.setDefaultValue(0.5)
+    args << fan_ntot
 
     claseVentana = OpenStudio::StringVector.new
     claseVentana << 'Clase 1'
     claseVentana << 'Clase 2'
     claseVentana << 'Clase 3'
     claseVentana << 'Clase 4'
-    permeabilidad = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("permeabilidadVentanas", claseVentana, true)
+    permeabilidad = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("CTE_Permeabilidad_ventanas", claseVentana, true)
     permeabilidad.setDisplayName("Permeabilidad de la carpintería.")
     permeabilidad.setDefaultValue('Clase 1')
     args << permeabilidad
 
-    psiForjadoCubierta = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("psiForjadoCubierta", true)
+    psiForjadoCubierta = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("CTE_Psi_forjado_cubierta", true)
     psiForjadoCubierta.setDisplayName("TTL forjado con cubierta")
     psiForjadoCubierta.setUnits("W/mK")
-    psiForjadoCubierta.setDefaultValue(0.24)    
+    psiForjadoCubierta.setDefaultValue(0.24)
     args << psiForjadoCubierta
 
-    psiFrenteForjado = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("psiFrenteForjado", true)
+    psiFrenteForjado = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("CTE_Psi_frente_forjado", true)
     psiFrenteForjado.setDisplayName("TTL frente forjado")
     psiFrenteForjado.setUnits("W/mK")
     psiFrenteForjado.setDefaultValue(0.1)
     args << psiFrenteForjado
 
-    psiSoleraTerreno = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("psiSoleraTerreno", true)
+    psiSoleraTerreno = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("CTE_Psi_solera_terreno", true)
     psiSoleraTerreno.setDisplayName("TTL forjado con solera")
     psiSoleraTerreno.setUnits("W/mK")
     psiSoleraTerreno.setDefaultValue(0.28)
     args << psiSoleraTerreno
 
-    psiForjadoExterior = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("psiForjadoExterior", true)
+    psiForjadoExterior = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("CTE_Psi_forjado_exterior", true)
     psiForjadoExterior.setDisplayName("TTL forjado con suelo exterior")
     psiForjadoExterior.setDefaultValue(0.23)
     args << psiForjadoExterior
 
 
-    psiContornoHuecos = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("psiContornoHuecos", true)
+    psiContornoHuecos = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("CTE_Psi_contorno_huecos", true)
     psiContornoHuecos.setDisplayName("TTL contorno de huecos")
     psiContornoHuecos.setUnits("W/mK")
     psiContornoHuecos.setDefaultValue(0.05)
     args << psiContornoHuecos
 
 
-    coefStack = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("coefStack", true)
+    coefStack = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("CTE_Coef_stack", true)
     coefStack.setDisplayName("Coeficiente de Stack")
     coefStack.setDefaultValue(0.00029)
     args << coefStack
 
-    coefWind = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("coefWind", true)
+    coefWind = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("CTE_Coef_wind", true)
     coefWind.setDisplayName("Coeficiente de Viento")
     coefWind.setDefaultValue(0.000231)
     args << coefWind
@@ -168,9 +194,15 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
       return false
     end
 
-    usoEdificio = runner.getStringArgumentValue('usoEdificio', user_arguments)
+    argumentos = Hash.new
+    user_arguments.each do | name, argument |
+      argumentos[name] = argument.printValue
+    end
+    model.building.get.setComment(argumentos.to_json)
 
-    result = true
+    result = cte_fijaclima(model, runner, user_arguments) # gestiona el archivo de clima
+    return result unless result == true
+
     result = cte_addvars(model, runner, user_arguments) # Nuevas variables y meters
     return result unless result == true
 
@@ -178,17 +210,18 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
     result = cte_tempaguafria(model, runner, user_arguments) # temperatura de agua de red
     return result unless result == true
 
-    #TODO, en el caso de terciario entendemos que los recuperadores están incluídos en los sistemas
-    if usoEdificio == 'Residencial'
-      result = cte_ventresidencial(model, runner, user_arguments) # modelo de ventilación para residencial
-      return result unless result == true
-    end
+    result = cte_ventresidencial(model, runner, user_arguments) # modelo de ventilación para residencial
+    return result unless result == true
 
     result = cte_infiltracion(model, runner, user_arguments)
     return result unless result == true
 
     result = cte_puentestermicos(model, runner, user_arguments)
     return result unless result == true
+
+    site = model.getSite
+    weather_file = site.name.get
+    runner.registerValue("CTE_Weather_file", weather_file)
 
     # Get final condition ================================================
     runner.registerFinalCondition("CTE: Finalizada la aplicación de medidas de modelo.")

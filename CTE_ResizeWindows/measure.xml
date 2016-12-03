@@ -1,0 +1,73 @@
+<measure>
+  <schema_version>3.0</schema_version>
+  <name>resize_existing_windows</name>
+  <uid>b1c8aae7-db36-4461-88f8-d6ac57ec11d5</uid>
+  <version_id>cccd57fa-546a-4662-bc31-d1c94cb47e9e</version_id>
+  <version_modified>20161103T111545Z</version_modified>
+  <xml_checksum>A8B8B5E3</xml_checksum>
+  <class_name>ResizeExistingWindows</class_name>
+  <display_name>Reduce huecos en un porcentaje del área</display_name>
+  <description>Redimensiona huecos en el porcentaje indicado.
+    El objetivo es descontar del area de hueco el area de marco,
+    puesto que en OS el area de marco se detrae del muro y no del hueco.</description>
+  <modeler_description>Medida basada en la medida ResizeExistingWindowsToFitWWR</modeler_description>
+  <arguments>
+    <argument>
+      <name>frameratio</name>
+      <display_name>Fraccion de marco (fraction).</display_name>
+      <type>Double</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.2</default_value>
+    </argument>
+  </arguments>
+  <provenances/>
+  <tags>
+    <tag>Envelope.Fenestration</tag>
+  </tags>
+  <attributes>
+    <attribute>
+      <name>Measure Type</name>
+      <value>ModelMeasure</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>Apply Measure Now</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>OpenStudio Application</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>Parametric Analysis Tool</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Use Case</name>
+      <value>New Construction EE</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Use Case</name>
+      <value>Retrofit EE</value>
+      <datatype>string</datatype>
+    </attribute>
+  </attributes>
+  <files>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.8.0</identifier>
+        <min_compatible>1.8.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>F19808B5</checksum>
+    </file>
+  </files>
+</measure>

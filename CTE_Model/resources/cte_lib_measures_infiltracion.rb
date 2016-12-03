@@ -34,42 +34,38 @@ C_HU = { 'Clase 1' => 50 * TO4PA,
          'Clase 3' => 9 * TO4PA,
          'Clase 4' => 3 * TO4PA }
 
-def cte_horario_de_infiltracion(runner, space, horario_allways_on)
-    spaceName = space.name.get
+def cte_horario_de_infiltracion(runner, space, horario_always_on)
+    # spaceName = space.name.get
     spaceType = space.spaceType.get.name.get
     habitable = !spaceType.start_with?('CTE_N')
-    runner.registerInfo("___ spaceName #{spaceName}, habitable: #{habitable}")
-    runner.registerInfo("    spaceType #{spaceType}")
 
     if habitable
+      # Habitable
       thermalZone = space.thermalZone.get
-      thermalZoneName = thermalZone.name.get
-      runner.registerInfo("    thermal zone #{thermalZoneName}")
       idealLoads = thermalZone.useIdealAirLoads
-      runner.registerInfo("    cargas ideales: #{idealLoads}")
       if !idealLoads
         listaDeEquipos = thermalZone.zoneConditioningEquipmentListName
         if listaDeEquipos.empty?
-          runner.registerInfo ("  habitable no acondicionado")
-          horarioInfiltracion = horario_allways_on
+          # Habitable no acondicionado
+          horarioInfiltracion = horario_always_on
         else
-          runner.registerInfo ("  habitable acondicionado")
+          # Equipos reales + habitable acondicionado
           horarios =  space.defaultScheduleSet.empty?  ?
                       space.spaceType.get.defaultScheduleSet.get :
                       space.defaultScheduleSet.get
           horarioInfiltracion = horarios.infiltrationSchedule.get
         end
       else
-        runner.registerInfo ("  habitable acondicionado")
+        # Equipos ideales + habitable acondicionado
         horarios =  space.defaultScheduleSet.empty?  ?
                     space.spaceType.get.defaultScheduleSet.get :
                     space.defaultScheduleSet.get
         horarioInfiltracion = horarios.infiltrationSchedule.get
       end
     else
-      runner.registerInfo ("  no habitable")
+      # No habitable
       horarios = space.defaultScheduleSet.get
-      horarioInfiltracion = horarios.infiltrationSchedule.get
+      horarioInfiltracion = horario_always_on
     end
     return horarioInfiltracion
 end
@@ -79,22 +75,22 @@ end
 # y parámetros del documento de condic. técnicas
 def cte_infiltracion(model, runner, user_arguments) #copiado del residencial
 
-  # busca el horario para hacer allways_on
+  # busca el horario para hacer always_on
   horarios = model.getScheduleRulesets
-  horario_allways_on = false
+  horario_always_on = false
   horarios.each do | horario |
     if horario.name.get == 'CTER24B_HINF'
-      horario_allways_on = horario
+      horario_always_on = horario
       break
     end
   end
 
   #hay que tomar el horario del espacio -> zona -> tipo de zona
 
-  tipoEdificio = runner.getStringArgumentValue('tipoEdificio', user_arguments)
-  claseVentana = runner.getStringArgumentValue('permeabilidadVentanas', user_arguments)
-  coefStack = runner.getDoubleArgumentValue('coefStack', user_arguments)
-  coefWind = runner.getDoubleArgumentValue('coefWind', user_arguments)
+  tipoEdificio = runner.getStringArgumentValue('CTE_Tipo_edificio', user_arguments)
+  claseVentana = runner.getStringArgumentValue('CTE_Permeabilidad_ventanas', user_arguments)
+  coefStack = runner.getDoubleArgumentValue('CTE_Coef_stack', user_arguments)
+  coefWind = runner.getDoubleArgumentValue('CTE_Coef_wind', user_arguments)
 
   runner.registerValue("CTE Tipo de Edificio (Nuevo/Existente)", tipoEdificio)
   runner.registerValue("CTE Clase de permeabilidad de Ventanas", claseVentana)
@@ -107,8 +103,7 @@ def cte_infiltracion(model, runner, user_arguments) #copiado del residencial
   runner.registerInfo("** Superficies para ELA **")
   # XXX: pensar como interactúa con los espacios distintos a los acondicionados
   spaces.each do |space|
-    runner.registerInfo("* Espacio '#{ space.name }'")
-    horarioInfiltracion = cte_horario_de_infiltracion(runner, space, horario_allways_on)
+    horarioInfiltracion = cte_horario_de_infiltracion(runner, space, horario_always_on)
     areaOpacos = 0
     areaVentanas = 0
     areaPuertas = 0
@@ -117,10 +112,10 @@ def cte_infiltracion(model, runner, user_arguments) #copiado del residencial
       if surface.outsideBoundaryCondition == 'Outdoors' and surface.windExposure == 'WindExposed'
         surfArea = surface.netArea
         areaOpacos += surfArea
-        runner.registerInfo("- '#{ surface.name }', #{ surface.surfaceType }, #{ surfArea.round(2) }")
+        # runner.registerInfo("- '#{ surface.name }', #{ surface.surfaceType }, #{ surfArea.round(2) }")
         surface.subSurfaces.each do |subsur|
           subSurfArea = subsur.grossArea
-          runner.registerInfo("- '#{subsur.name}', #{ subsur.subSurfaceType }, #{ subSurfArea.round(2) }")
+          # runner.registerInfo("- '#{subsur.name}', #{ subsur.subSurfaceType }, #{ subSurfArea.round(2) }")
           if ['FixedWindow', 'OperableWindow', 'SkyLight'].include?(subsur.subSurfaceType)
             areaVentanas += subSurfArea
           elsif ['Door', 'GlassDoor', 'OverheadDoor'].include?(subsur.subSurfaceType)
@@ -132,7 +127,7 @@ def cte_infiltracion(model, runner, user_arguments) #copiado del residencial
       end
     end
 
-    runner.registerInfo("-- Totales [m2]: opacos: #{ areaOpacos.round(2) }, huecos #{ areaVentanas.round(2) }, puertas #{ areaPuertas.round(2) }\n")
+    runner.registerInfo("Infiltraciones: '#{ space.name }' / '#{ horarioInfiltracion.name.get }' - ELA [m2]: opacos: #{ areaOpacos.round(2) }, huecos #{ areaVentanas.round(2) }, puertas #{ areaPuertas.round(2) }\n")
 
     c_ven = 0.0 # Superficie bocas admisión
     if claseVentana != 'Clase 1'
@@ -159,7 +154,7 @@ def cte_infiltracion(model, runner, user_arguments) #copiado del residencial
     ela.setWindCoefficient(coefWind)
     ela.setSchedule(horarioInfiltracion)
     ela.setEffectiveAirLeakageArea(areaEquivalente)
-    ela.setName('CTE_ELA_#{ space.name }')
+    ela.setName("CTE_ELA_#{ space.name }")
   end
 
   return true # OS necesita saber que todo acaba bien

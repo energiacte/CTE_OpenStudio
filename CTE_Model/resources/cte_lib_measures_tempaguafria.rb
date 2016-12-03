@@ -34,15 +34,21 @@ def cte_tempaguafria(model, runner, user_arguments)
 
   runner.registerInfo("CTE: fijando temperatura de agua de red")
 
-  # Variables
-  provincia = runner.getStringArgumentValue('provincia', user_arguments)
-  altitudEmplazamiento = runner.getDoubleArgumentValue('altitud', user_arguments)
-  if (altitudEmplazamiento > 4000)
-    runner.registerError("Altitud excesiva del emplazamiento: #{ altitudEmplazamiento }")
-    return false
-  end
-
-  # Calcula temperatura de agua de red
+  localidades_de_referencia = {
+    'A3'=> ['Cadiz', 0],
+    'A4'=> ['Almeria', 0],
+    'B3'=> ['Valencia', 8],
+    'B4'=> ['Sevilla', 9],
+    'C1'=> ['Bilbao_Bilbo', 214],
+    'C2'=> ['Barcelona', 1],
+    'C3'=> ['Granada', 754],
+    'C4'=> ['Toledo', 445],
+    'D1'=> ['Vitoria_Gasteiz', 512],
+    'D2'=> ['Zamora', 617],
+    'D3'=> ['Madrid', 589],
+    'E1'=> ['Burgos', 861]}
+  
+  # Lee los valores de las provincias
   filenameAgua = File.dirname(__FILE__) + "/temperaturas_agua_fria.csv"
   temperaturasAguaDeRed = {}
   File.read(filenameAgua).each_line do |line;csv_line, prov, temps, altref|
@@ -58,6 +64,30 @@ def cte_tempaguafria(model, runner, user_arguments)
       return false
     end
   end
+  
+  
+  # Variables
+  provincia = runner.getStringArgumentValue('CTE_Provincia', user_arguments)
+  if provincia != 'Automatico'
+    altitudEmplazamiento = runner.getDoubleArgumentValue('CTE_Altitud', user_arguments)
+    if (altitudEmplazamiento > 4000)
+      runner.registerError("Altitud excesiva del emplazamiento: #{ altitudEmplazamiento }")
+      return false
+    end
+  elsif provincia == 'Automatico'
+    site = model.getSite
+    weather_file = site.name.get
+    if weather_file.include?('canarias')
+      provincia = 'Las_Palmas_de_Gran_Canaria'
+      altitudEmplazamiento = 114.0
+    else
+      zonaclimatica = weather_file[0,2]
+      provincia, altitudEmplazamiento = localidades_de_referencia[zonaclimatica]
+    end
+  else
+    runner.registerError("Error al seleccionar la provincia #{provincia}")
+    return false
+  end
 
   if temperaturasAguaDeRed.has_key?(provincia)
     altitudCapital, temperaturasAguaDeRed = temperaturasAguaDeRed[provincia]
@@ -68,6 +98,7 @@ def cte_tempaguafria(model, runner, user_arguments)
     return false
   end
 
+  runner.registerValue("CTE_Provincia_AF", provincia)
   diffAltitud = altitudEmplazamiento - altitudCapital
 
   factoresCorreccionMensual = [0.0066 * diffAltitud] * 3 + [0.0033 * diffAltitud] * 6 + [0.0066 * diffAltitud] * 3
@@ -102,3 +133,5 @@ def cte_tempaguafria(model, runner, user_arguments)
 
   return true
 end
+
+

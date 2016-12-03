@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>cte_model</name>
   <uid>1f30359f-b316-49d1-b799-73b16ff79478</uid>
-  <version_id>14cf6535-f5aa-44fe-93ad-62f47c8f1568</version_id>
-  <version_modified>20160927T152900Z</version_modified>
+  <version_id>39981c27-5ded-4b59-9b1a-711c9b205c0e</version_id>
+  <version_modified>20161014T143334Z</version_modified>
   <xml_checksum>7C017197</xml_checksum>
   <class_name>CTE_Model</class_name>
   <display_name>CTE Model</display_name>
@@ -11,7 +11,7 @@
   <modeler_description>Introduce variables de salida y aplica medidas para cálculo CTE.</modeler_description>
   <arguments>
     <argument>
-      <name>usoEdificio</name>
+      <name>CTE_Uso_edificio</name>
       <display_name>Uso del edificio</display_name>
       <type>Choice</type>
       <required>true</required>
@@ -29,8 +29,8 @@
       </choices>
     </argument>
     <argument>
-      <name>tipoEdificio</name>
-      <display_name>¿Edificio nuevo o existente?</display_name>
+      <name>CTE_Tipo_edificio</name>
+      <display_name>Edificio nuevo o existente</display_name>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -47,7 +47,7 @@
       </choices>
     </argument>
     <argument>
-      <name>provincia</name>
+      <name>CTE_Provincia</name>
       <display_name>Provincia</display_name>
       <type>Choice</type>
       <required>true</required>
@@ -265,7 +265,7 @@
       </choices>
     </argument>
     <argument>
-      <name>altitud</name>
+      <name>CTE_Altitud</name>
       <display_name>Altitud del emplazamiento</display_name>
       <type>Double</type>
       <units>metros</units>
@@ -274,8 +274,8 @@
       <default_value>650</default_value>
     </argument>
     <argument>
-      <name>design_flow_rate</name>
-      <display_name>Caudal de diseno de ventilacion del edificio</display_name>
+      <name>CTE_Design_flow_rate</name>
+      <display_name>Caudal de diseno de ventilacion del edificio (residencial)</display_name>
       <type>Double</type>
       <units>ren/h</units>
       <required>true</required>
@@ -283,7 +283,7 @@
       <default_value>0.63</default_value>
     </argument>
     <argument>
-      <name>heat_recovery</name>
+      <name>CTE_Heat_recovery</name>
       <display_name>Eficiencia del recuperador de calor</display_name>
       <type>Double</type>
       <units>adimensional</units>
@@ -292,7 +292,25 @@
       <default_value>0</default_value>
     </argument>
     <argument>
-      <name>permeabilidadVentanas</name>
+      <name>CTE_Fan_sfp</name>
+      <display_name>Consumo específico de ventiladores (SFP)</display_name>
+      <type>Double</type>
+      <units>kPa</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>2.5</default_value>
+    </argument>
+    <argument>
+      <name>CTE_Fan_ntot</name>
+      <display_name>Eficiencia global de ventiladores (n_tot)</display_name>
+      <type>Double</type>
+      <units>adimensional</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.5</default_value>
+    </argument>
+    <argument>
+      <name>CTE_Permeabilidad_ventanas</name>
       <display_name>Permeabilidad de la carpintería.</display_name>
       <type>Choice</type>
       <required>true</required>
@@ -318,7 +336,7 @@
       </choices>
     </argument>
     <argument>
-      <name>psiForjadoCubierta</name>
+      <name>CTE_Psi_forjado_cubierta</name>
       <display_name>TTL forjado con cubierta</display_name>
       <type>Double</type>
       <units>W/mK</units>
@@ -327,7 +345,7 @@
       <default_value>0.24</default_value>
     </argument>
     <argument>
-      <name>psiFrenteForjado</name>
+      <name>CTE_Psi_frente_forjado</name>
       <display_name>TTL frente forjado</display_name>
       <type>Double</type>
       <units>W/mK</units>
@@ -336,7 +354,7 @@
       <default_value>0.1</default_value>
     </argument>
     <argument>
-      <name>psiSoleraTerreno</name>
+      <name>CTE_Psi_solera_terreno</name>
       <display_name>TTL forjado con solera</display_name>
       <type>Double</type>
       <units>W/mK</units>
@@ -345,7 +363,7 @@
       <default_value>0.28</default_value>
     </argument>
     <argument>
-      <name>psiForjadoExterior</name>
+      <name>CTE_Psi_forjado_exterior</name>
       <display_name>TTL forjado con suelo exterior</display_name>
       <type>Double</type>
       <required>true</required>
@@ -353,7 +371,7 @@
       <default_value>0.23</default_value>
     </argument>
     <argument>
-      <name>psiContornoHuecos</name>
+      <name>CTE_Psi_contorno_huecos</name>
       <display_name>TTL contorno de huecos</display_name>
       <type>Double</type>
       <units>W/mK</units>
@@ -362,7 +380,7 @@
       <default_value>0.05</default_value>
     </argument>
     <argument>
-      <name>coefStack</name>
+      <name>CTE_Coef_stack</name>
       <display_name>Coeficiente de Stack</display_name>
       <type>Double</type>
       <required>true</required>
@@ -370,7 +388,7 @@
       <default_value>0.00029</default_value>
     </argument>
     <argument>
-      <name>coefWind</name>
+      <name>CTE_Coef_wind</name>
       <display_name>Coeficiente de Viento</display_name>
       <type>Double</type>
       <required>true</required>
@@ -424,40 +442,34 @@
       <checksum>73186073</checksum>
     </file>
     <file>
-      <filename>cte_lib_measures_tempaguafria.rb</filename>
+      <filename>CTE_Model_Test.rb</filename>
       <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>9BA15B37</checksum>
+      <usage_type>test</usage_type>
+      <checksum>B46C4648</checksum>
     </file>
     <file>
       <filename>cte_lib_measures_addvars.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>A123EB86</checksum>
+      <checksum>D4E3FC84</checksum>
     </file>
     <file>
-      <filename>CTE_Model_Test.rb</filename>
+      <filename>cte_lib_measures_tempaguafria.rb</filename>
       <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>331884D1</checksum>
+      <usage_type>resource</usage_type>
+      <checksum>92A9A963</checksum>
     </file>
     <file>
       <filename>cte_lib_measures_infiltracion.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>F0A02764</checksum>
+      <checksum>FF2A1B00</checksum>
     </file>
     <file>
       <filename>cte_lib_measures_puentestermicos.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>61DEBC77</checksum>
-    </file>
-    <file>
-      <filename>cte_lib_measures_ventilacion.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>84E3F03E</checksum>
+      <checksum>44259A97</checksum>
     </file>
     <file>
       <version>
@@ -468,7 +480,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>9B67DD25</checksum>
+      <checksum>BC3B0994</checksum>
+    </file>
+    <file>
+      <filename>cte_lib_measures_ventilacion.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E8992772</checksum>
     </file>
   </files>
 </measure>

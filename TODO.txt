@@ -1,12 +1,14 @@
 - CTE_Model:
+    - Llevar la gestión de las sombras estacionales de CTE_CambiaConstruccion
+      a CTE_Model
     - temperatura_del_agua_de_red:
       Detectar el caso en el que no hay definida demanda de ACS (no hay
       circuito) y evitar el fallo en ese caso.
       Usar WaterEquipment detectando objetos por tipo (los objetos del model
       son subtipo del workspace?): model.getObjectsByTypeAndName("OS:WaterUse:Equipment:Definition".to_IddObjectType,'Water Fixture Definition').empty?
-    - Cálculo de consumos de ventilación (SFP = dp/n_tot), incluso
-      seleccionando según tipo de ventilación (doble/simple flujo), ver nota
-      técnica de AIVC.
+    - Añadir capas ficticias (0,5m terreno + capa ficticia) a suelos siguiendo
+      esquema de UNE EN ISO 13770 en lugar de dejarlo como proceso manual.
+
     - Puentes térmicos de esquina (y pilares embebidos en fachada)
     - Definir envolvente por espacios en area total y no por definición estricta,
       ya que es más flexible.
@@ -14,16 +16,31 @@
     - carga de mobiliario según tipo de edificio
     - Definir coeficientes de paso de vectores energéticos
     - Objetos de dimensionado de ACS
-- OS_15603:
-    - Limpiar plantilla de report y dejar solamente lo que nos interesa
-    - Renombrar a CTE_Report
-    - Que el informe en la tabla "Consumo Final" se incluya o no la iluminación
-	  en función de que sea terciario o no.
-
+CTE_Informe:
+    - Incluir iluminación en "Consumo Final EPB" en función de que sea terciario o no.
+    - Calcular A_sol,ver / A_util pidiendo factor de sombra de protecciones
+      móviles
+    - Calcular K
+    - Arreglar tabla de dimensionado de equipos
+	- Mostrar transmitancia térmica de construcciones incluyendo las resistencias
+	  superficiales. Ver: openstudio-standards/data/lib/openstudio-standards/standards/Standards.Construction.rb
+CTE_EPBDcalc:
+    - Revisar usabilidad de comentarios
+    - Corregir nombre con eficiencia del recuperador, saca 3 dígitos cuando no
+      es 0 (p.e R800 para 0.80 de eficiencia) y R00 cuando es 0.0
+OS_Report_SI:
+    - Comprobar si la tabla de Sizing se corrige igual que en CTE_Informe
+      (Heating Load -> Heating Sensible Load, Cooling Load -> Heating Sensible
+      Load)
 - Otros:
-    - Ver posibilidad de pasar datos entre medidas a través de comentarios
-    model.building.setComment(commentstring), serializando a JSON.
-    Se accede posteriormente leyendo el lastRunModel y con
-    model.building.getComments[2..-1] deserializando el JSON.
-    - Añadir más metadatos para uso en coste óptimo: Volumen envolvente y
-      mediciones
+    - Generar correctamente humedad de días de diseño:
+        El HumidityRatio no es correcto:
+          'Entered Humidity Ratio Invalid (PsyWFnTdpPb)'
+    - Incluir factores de paso a energía primaria y emisiones (habría que
+      solicitar para RED1 y RED2)
+    - Generar XML
+        - ver https://github.com/asparke2/demo-measures/tree/master/ExportXMLMeasure
+- Análisis paramétrico:
+    - Cambiar provincia y altitud de referencia al cambiar archivo de clima
+- Generador Automático de Plantillas:
+	- Para que sean más robustas las plantillas generarlas por script

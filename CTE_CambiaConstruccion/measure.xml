@@ -1,0 +1,88 @@
+<measure>
+  <schema_version>3.0</schema_version>
+  <name>cte_cambia_construccion</name>
+  <uid>8fdb867a-a24a-40a0-9fa5-162f9ceec7e3</uid>
+  <version_id>9920bc0e-80a7-4677-865e-b9dd0c502c6a</version_id>
+  <version_modified>20161117T142239Z</version_modified>
+  <xml_checksum>CA8AE31A</xml_checksum>
+  <class_name>CTE_CambiaConstruccion</class_name>
+  <display_name>CTE_Cambia_construccion</display_name>
+  <description>Cambia el ConstructionSet del edificio y su tipo de hueco/marco.</description>
+  <modeler_description>Cambia el defaultConstructionSet y el FrameAndDivider de los huecos que heredan del defaultConstructionSet.</modeler_description>
+  <arguments>
+    <argument>
+      <name>CTE_Construccion_defecto</name>
+      <display_name>Construcci?n por defecto</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>{febe1ca6-3ff4-4f7d-84c8-c8b7a6eabebb}</default_value>
+      <choices>
+        <choice>
+          <value>{febe1ca6-3ff4-4f7d-84c8-c8b7a6eabebb}</value>
+          <display_name>&lt;clear field></display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>CTE_Carpinteria</name>
+      <display_name>Elige la carpinter?a.</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>{febe1ca6-3ff4-4f7d-84c8-c8b7a6eabebb}</default_value>
+      <choices>
+        <choice>
+          <value>{febe1ca6-3ff4-4f7d-84c8-c8b7a6eabebb}</value>
+          <display_name>&lt;clear field></display_name>
+        </choice>
+      </choices>
+    </argument>
+  </arguments>
+  <provenances/>
+  <tags>
+    <tag>Envelope.Construction Sets</tag>
+  </tags>
+  <attributes>
+    <attribute>
+      <name>Uses SketchUp API</name>
+      <value>false</value>
+      <datatype>boolean</datatype>
+    </attribute>
+    <attribute>
+      <name>Measure Type</name>
+      <value>ModelMeasure</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Use Case</name>
+      <value>Model Articulation</value>
+      <datatype>string</datatype>
+    </attribute>
+  </attributes>
+  <files>
+    <file>
+      <filename>test_CambiaConstruccion.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>106D3140</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.3.1</identifier>
+        <min_compatible>1.8.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>4178FD70</checksum>
+    </file>
+    <file>
+      <filename>test.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>4543CEB1</checksum>
+    </file>
+  </files>
+</measure>

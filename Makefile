@@ -12,7 +12,7 @@ runnrel:
 		-v /var/run/dbus:/var/run/dbus \
 		-v ${HOME}/openstudio:/var/simdata/openstudio \
 		-v ${HOME}/openstudio/Measures:/root/OpenStudio/Measures \
-		-v ${HOME}/openstudio/Models:/root/OpenStudio/Models \
+		-v /mnt/vegacte/03-CTE_en_curso/salaSert/git/OSCTEModels:/root/OpenStudio/Models \
 		nrel/openstudio \
 		bash
 
@@ -79,3 +79,12 @@ installdocker:
 	sudo usermod -aG docker `whoami`
 # cd /usr/local/share/openstudio-1.12.0/Ruby/openstudio/
 # /usr/local/share/openstudio-1.12.0/Ruby/openstudio/examples/RunAllOSMs.rb
+
+
+test:
+	cd ./CTE_Model/tests/ && ruby *.rb
+	cd ./CTE_Workspace/tests/ && ruby *.rb
+	cd ./CTE_InformeDBHE/tests/ && ruby *.rb
+	cd ./CTE_EPBDcalc/tests/ && ruby *.rb
+	cd ./OS_Report_SI/tests/ && ruby *.rb
+

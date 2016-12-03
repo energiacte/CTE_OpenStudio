@@ -77,18 +77,14 @@ def creaConstruccionPT(model, nombre, ttl)
 end
 
 def getExteriorVertices(runner, spaces) # hacer un set
-  runner.registerInfo("-- captura de vertices exteriores (getExteriorVertices)--")
+  runner.registerInfo("PTS: localizando vertices exteriores")
   verticesExteriores = Set.new
   spaces.each do | space |
     # tiene que ser un vector porque lo voy a sumar
     origen = OpenStudio::Vector3d.new(space.xOrigin, space.yOrigin, space.zOrigin)
-    ver = false
-    ver = true if space.name.get == "ACCESO"
-    runner.registerInfo("  space: #{space.name.get}") if ver
     space.surfaces.each do | surface |
       if surface.surfaceType == 'Wall' and
              surface.outsideBoundaryCondition == 'Outdoors'
-        runner.registerInfo("   surface: #{surface.name}") if ver
         surface.vertices.each do | point3d |
           verticesExteriores << verticeID(point3d, origen)
         end
@@ -139,12 +135,11 @@ def getSpaceByName(runner, model, spaceName)
 end
 
 def medicionPTForjados(runner, model)
-  runner.registerInfo("-- medición de forjados (medicionPTForjados) -- ")
+  runner.registerInfo("PTs: midiendo forjados")
   verticesExteriores = getExteriorVertices(runner, model.getSpaces)
   forjadosPorEspacios = getFloors(runner, model.getSpaces)
   salida = []
   forjadosPorEspacios.each do | spaceName, forjadosPorTipo |
-    runner.registerInfo("PTs: procesando #{spaceName}")
     space = getSpaceByName(runner, model, spaceName)
     origen = OpenStudio::Vector3d.new(space.xOrigin, space.yOrigin, space.zOrigin)
     longHash = Hash.new
@@ -173,13 +168,14 @@ def getPerimeter(subSurface)
   vertices = subSurface.vertices
   verticesp = vertices + [vertices[0]]
   long = 0
-  for cnt in 0..vertices.count-1
+  for cnt in 0..vertices.count - 1
     long += (verticesp[cnt+1] - verticesp[cnt]).length
   end
   return long
 end
 
 def medicionPTContornoHuecos(runner, model)
+  runner.registerInfo("PTs: midiendo contornos de heucos")
   salida = []
   model.getSpaces.each do | space |
     long = 0
@@ -192,16 +188,15 @@ def medicionPTContornoHuecos(runner, model)
     end
     salida << [space.name.to_s, long]
   end
-  runner.registerInfo("Puentes térmicos de contorno de huecos: #{salida}")
   return salida
 end
 
 def ttlinealusuario(runner, user_arguments)
-  psiForjadoCubierta = runner.getStringArgumentValue('psiForjadoCubierta', user_arguments).to_f
-  psiFrenteForjado = runner.getStringArgumentValue('psiFrenteForjado', user_arguments).to_f
-  psiSoleraTerreno = runner.getStringArgumentValue('psiSoleraTerreno', user_arguments).to_f
-  psiForjadoExterior = runner.getStringArgumentValue('psiForjadoExterior', user_arguments).to_f
-  psiContornoHuecos = runner.getStringArgumentValue('psiContornoHuecos', user_arguments).to_f
+  psiForjadoCubierta = runner.getStringArgumentValue('CTE_Psi_forjado_cubierta', user_arguments).to_f
+  psiFrenteForjado = runner.getStringArgumentValue('CTE_Psi_frente_forjado', user_arguments).to_f
+  psiSoleraTerreno = runner.getStringArgumentValue('CTE_Psi_solera_terreno', user_arguments).to_f
+  psiForjadoExterior = runner.getStringArgumentValue('CTE_Psi_forjado_exterior', user_arguments).to_f
+  psiContornoHuecos = runner.getStringArgumentValue('CTE_Psi_contorno_huecos', user_arguments).to_f
   ttl_puentesTermicos = {
       :ptForjadoCubierta => psiForjadoCubierta,
       :ptFrenteForjado => psiFrenteForjado,
@@ -223,26 +218,26 @@ def getSpaceBarycenter(space)
         baricentro = baricentro + (v - cero)
       end
       nPuntos = surface.vertices.count
-      #~ puts ("#{surface.vertices[0].x} #{surface.vertices[0].z}")
       return baricentro.x / nPuntos, baricentro.y / nPuntos, baricentro.z / nPuntos
     end
   end
 end
 
   def creaSuperficiePT(model, space, area, construccionPT, direccion)
-    x,y,z = getSpaceBarycenter(space)
+    x, y, z = getSpaceBarycenter(space)
     alto = ALTURA_SUPERFICIE_PT
-    ancho = area/alto
+    ancho = area / alto
     ancho = -1 * ancho unless direccion.include?('+')
     x2 = x
     y2 = y
     x2 += ancho if direccion.include?('x')
     y2 += ancho if direccion.include?('y')
+    # Move surfaces 100m to the north (y)
     vertices = []
-    vertices << OpenStudio::Point3d.new(x, y, z - 50 - alto)
-    vertices << OpenStudio::Point3d.new(x2, y2, z - 50 - alto)
-    vertices << OpenStudio::Point3d.new(x2, y2, z - 50)
-    vertices << OpenStudio::Point3d.new(x, y, z - 50)
+    vertices << OpenStudio::Point3d.new(x, y + 100, z - alto)
+    vertices << OpenStudio::Point3d.new(x2, y2 + 100, z - alto)
+    vertices << OpenStudio::Point3d.new(x2, y2 + 100, z)
+    vertices << OpenStudio::Point3d.new(x, y + 100, z)
     superficie = OpenStudio::Model::Surface.new(vertices, model)
     superficie.setSunExposure('NoSun')
     superficie.setWindExposure('NoWind')
