@@ -157,7 +157,7 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
 
   def consumoMensualIluminacion(runner, model, sqlFile)
     valores = [[0] * 12]
-    model.getThermalZones.each do | thermalZone |
+    model.getThermalZones.each do | thermalZone |      
       spaceTypeNames = thermalZone.spaces().map { |space| space.spaceType.get.name.get }
       validSpaceTypeNames = spaceTypeNames.select { |name| not (name.start_with?('CTE_AR') or name.start_with?('CTE_NOHAB')) }
       next if validSpaceTypeNames.length == 0
@@ -232,7 +232,9 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
   def get_string_rows(model, sqlFile, runner, user_arguments)
     string_rows = []
     string_rows << "# Datos de entrada"
-
+    #~ puts 'subrutina get_string_rows'   
+    
+    
     # General metadata and attributes stored in the model
     string_rows << "#CTE_Name: #{ model.building.get.name }"
     string_rows << "#CTE_Datetime: #{ DateTime.now.strftime '%d/%m/%Y %H:%M' }"
@@ -279,6 +281,13 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     mediciones = CTE_tables.tabla_mediciones_puentes_termicos(model, runner)[:data]
     mediciones.each do | nombre, coefAcop, long, psi|
       string_rows << "#CTE_medicion_PT_#{ nombre }: [#{ coefAcop }, #{ long }, #{ psi }]"
+    end
+    
+    #valores anuales de demanda por servicios
+    tabla = CTE_tables.output_data_end_use_table(model, sqlFile, runner)
+    string_rows << "# Valores anuales de demanda por servicios en Kwh"
+    tabla[:data].each do | key, value|
+      string_rows << "#{self._nombre_variable(key)} #{value}"
     end
 
     # Building services
@@ -331,7 +340,7 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
 
     # Basic consistency check - no fuel types other than disctrict for WATERSYSTEMS, HEATING and COOLING
     checkFuelsAndUses(sqlFile, runner)
-
+    
     string_rows = get_string_rows(model, sqlFile, runner, user_arguments)
 
     outFile = File.open(get_filename(model), 'w')
@@ -359,7 +368,25 @@ FROM
     AND rvdd.KeyValue == '#{thermalzonename}'
     AND rvdd.ReportingFrequency == 'Monthly' "
   end
-
+  
+  def _nombre_variable(key)
+        # Traducción de diversos elementos de la interfaz
+    { 'Calefacción' => '#CTE_Demanda_calefaccion:',
+      'Refrigeración' => '#CTE_Demanda_refrigeracion:',
+      'Iluminación interior' => '#CTE_Demanda_iluminacion_interior:',
+      'Iluminación exterior' => '#CTE_Demanda_iluminacion_exterior:',
+      'Equipos (interiores)' => '#CTE_Demanda_equipos_interiores:',
+      'Equipos (exteriores)' => '#CTE_Demanda_equipos_exteriores:',
+      'Ventiladores' => '#CTE_Demanda_ventiladores:',
+      'Bombas' => '#CTE_Demanda_bombas:',
+      'Disipación de calor' => '#CTE_Demanda_disipacion_calor:',
+      'Humidificación' => '#CTE_Demanda_humidificacion:',
+      'Recuperación de calor' => '#CTE_Demanda_recuperacion_calor:',
+      'Sistemas de agua' => '#CTE_Demanda_sistemas_agua:',
+      'Equipos frigoríficos' => '#CTE_Demanda_equipos_frigorificos:',
+      'Equipos de generación' => '#CTE_Demanda_equipos_generacion:',
+    }.fetch(key) { |nokey| nokey }
+  end 
 end
 
 # register the measure to be used by the application

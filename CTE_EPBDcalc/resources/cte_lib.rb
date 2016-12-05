@@ -525,5 +525,117 @@ WHERE
 "
     return OpenStudio.convert(sqlFile.execAndReturnFirstDouble(query).get, unitsSource, unitsTarget).get
   end
+  
+  def self.output_data_end_use_table(model, sqlFile, runner)
+    # end use data output
+    output_data_end_use = {}
+    output_data_end_use[:title] = 'Consumo de energía final por servicio'
+    output_data_end_use[:header] = ['Servicio', 'Consumo']
+    output_data_end_use[:units] = ['', 'kWh']
+    output_data_end_use[:data] = []
+    output_data_end_use[:chart_type] = 'simple_pie'
+    output_data_end_use[:chart] = []
+
+    end_use_colors = ['#EF1C21', '#0071BD', '#F7DF10', '#DEC310', '#4A4D4A', '#B5B2B5', '#FF79AD', '#632C94', '#F75921', '#293094', '#CE5921', '#FFB239', '#29AAE7', '#8CC739']
+
+    # loop through fuels for consumption tables
+    OpenStudio::EndUseCategoryType.getValues.each_with_index do |end_use, index|
+      # get end uses
+      end_use = OpenStudio::EndUseCategoryType.new(end_use).valueDescription #aquí es un nombre de categoría:
+        # Heating, Cooling, Interior Lighting, Exterior Lighting, Interior Equipment, Exterior Equipment,
+        # Fans, Pumps, Heat Rejection, Humidification, Heat Recovery, Water Systems, Refrigeration, Generators
+
+      query_elec = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' and TableName='End Uses' and RowName= '#{end_use}' and ColumnName= 'Electricity'"
+      query_gas = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' and TableName='End Uses' and RowName= '#{end_use}' and ColumnName= 'Natural Gas'"
+      query_add = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' and TableName='End Uses' and RowName= '#{end_use}' and ColumnName= 'Additional Fuel'"
+      query_dc = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' and TableName='End Uses' and RowName= '#{end_use}' and ColumnName= 'District Cooling'"
+      query_dh = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' and TableName='End Uses' and RowName= '#{end_use}' and ColumnName= 'District Heating'"
+      results_elec = sqlFile.execAndReturnFirstDouble(query_elec).get
+      results_gas = sqlFile.execAndReturnFirstDouble(query_gas).get
+      results_add = sqlFile.execAndReturnFirstDouble(query_add).get
+      results_dc = sqlFile.execAndReturnFirstDouble(query_dc).get
+      results_dh = sqlFile.execAndReturnFirstDouble(query_dh).get
+      total_end_use = results_elec + results_gas + results_add + results_dc + results_dh
+      value = OpenStudio.convert(total_end_use, 'GJ', 'kWh').get
+      end_use_trans = self.translate(end_use)
+      output_data_end_use[:data] << [end_use_trans, '%.0f' % value]
+      runner.registerValue("CTE Uso energia final - #{end_use_trans}", value, 'kWh')
+      if value > 0
+        output_data_end_use[:chart] << JSON.generate(label: end_use_trans, value: value, color: end_use_colors[index])
+      end
+    end
+
+    return output_data_end_use
+  end
+  
+  def self.translate(key)
+    # Traducción de diversos elementos de la interfaz
+    { 'Heating' => 'Calefacción',
+      'Cooling' => 'Refrigeración',
+      'Interior Lighting' => 'Iluminación interior',
+      'Exterior Lighting' => 'Iluminación exterior',
+      'Interior Equipment' => 'Equipos (interiores)',
+      'Exterior Equipment' => 'Equipos (exteriores)',
+      'Fans' => 'Ventiladores',
+      'Pumps' => 'Bombas',
+      'Heat Rejection' => 'Disipación de calor',
+      'Humidification' => 'Humidificación',
+      'Heat Recovery' => 'Recuperación de calor',
+      'Water Systems' => 'Sistemas de agua',
+      'Refrigeration' => 'Equipos frigoríficos',
+      'Generators' => 'Equipos de generación',
+      'Electricity' => 'Electricidad',
+      'Natural Gas' => 'Gas Natural',
+      'Additional Fuel' => 'Otro combustible',
+      'District Cooling' => 'Demanda de refrigeración',
+      'District Heating' => 'Demanda de calefacción',
+      'Water' => 'Agua',
+      'Photovoltaic' => 'Fotovoltaica',
+      'Wind' => 'Eólica',
+      'During Heating' => 'Con calefacción',
+      'During Cooling' => 'Con refrigeración',
+      'During Occupied Heating' => 'Con calefacción y ocupación',
+      'During Occupied Cooling' => 'Con refrigeración y ocupación',
+      'Gross Window-Wall Ratio' => 'Porcentaje bruto de huecos en fachada',
+      'Weather File' => 'Archivo de clima',
+      'Latitude' => 'Latitud',
+      'Longitude' => 'Longitud',
+      'Elevation' => 'Altitud',
+      'Time Zone' => 'Zona horaria',
+      'North Axis Angle' => 'Ángulo respecto al norte',
+      'Area' => 'Área',
+      'Conditioned (Y/N)' => 'Acondicionada (S/N)',
+      'Part of Total Floor Area (Y/N)' => 'Parte del área total (S/N)',
+      'Volume' => 'Volumen',
+      'Multiplier' => 'Multiplicador',
+      'Gross Wall Area' => 'Superficie bruta de muro',
+      'Window Glass Area' => 'Superficie acristalada',
+      'Lighting' => 'Iluminación',
+      'People' => 'Ocupación',
+      'Plug and Process' => 'Carga enchufada y de procesos',
+      'Total Energy' => 'Energía total',
+      'Energy Per Total Building Area' => 'Energía / sup. útil',
+      'Energy Per Conditioned Building Area' => 'Energía / sup. acondicionada',
+      'Total Site Energy' => 'Energía final total',
+      'Net Site Energy' => 'Energía final neta',
+      'Total Source Energy' => 'Energía primaria total',
+      'Net Source Energy' => 'Energía primaria neta',
+      'Total' => 'Total',
+      'Conditioned Total' => 'Total Acondicionada',
+      'Unconditioned Total' => 'Total No acondicionada',
+      'Not Part of Total' => 'Fuera del total',
+      'Heating/Cooling' => 'Calefacción/Refrigeración',
+      'Calculated Design Load' => 'Carga térmica de diseño calculada',
+      'User Design Load' => 'Carga de diseño de usuario',
+      'Design Load With Sizing Factor' => 'Carga térmica para dimensionado',
+      'Calculated Design Air Flow' => 'Flujo de aire de diseño',
+      'User Design Air Flow' => 'Flujo de aire de usuario',
+      'Design Air Flow  With Sizing Factor' => 'Flujo de aire de dimensionado',
+      'Date/Time Of Peak' => 'Fecha/hora pico',
+      'Outdoor Temperature at Peak Load' => 'Temperatura exterior con carga pico',
+      'Outdoor Humidity Ratio at Peak Load' => 'Humedad exterior con carga pico'
+    }.fetch(key) { |nokey| nokey }
+  end  
+   
 
 end

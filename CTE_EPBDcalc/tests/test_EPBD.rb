@@ -7,6 +7,7 @@ require_relative '../measure.rb'
 require 'fileutils'
 require 'set'
 require 'pp'
+require_relative "../resources/cte_lib"
 
 class ConexionEPDB_Test < MiniTest::Unit::TestCase
   def setup
@@ -20,7 +21,6 @@ class ConexionEPDB_Test < MiniTest::Unit::TestCase
     assert(File.exist?(@modelPathTerciario))
     assert(File.exist?(@sqlPathTerciario))
   end
-
 
   def test_residencial
     # create an instance of the measure
