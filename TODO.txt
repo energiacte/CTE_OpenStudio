@@ -5,9 +5,17 @@
       Detectar el caso en el que no hay definida demanda de ACS (no hay
       circuito) y evitar el fallo en ese caso.
       Usar WaterEquipment detectando objetos por tipo (los objetos del model
-      son subtipo del workspace?)
+      son subtipo del workspace?): model.getObjectsByTypeAndName("OS:WaterUse:Equipment:Definition".to_IddObjectType,'Water Fixture Definition').empty?
     - Añadir capas ficticias (0,5m terreno + capa ficticia) a suelos siguiendo
       esquema de UNE EN ISO 13770 en lugar de dejarlo como proceso manual.
+
+    - Puentes térmicos de esquina (y pilares embebidos en fachada)
+    - Definir envolvente por espacios en area total y no por definición estricta,
+      ya que es más flexible.
+- CTE_Workspace:
+    - carga de mobiliario según tipo de edificio
+    - Definir coeficientes de paso de vectores energéticos
+    - Objetos de dimensionado de ACS
 CTE_Informe:
     - Incluir iluminación en "Consumo Final EPB" en función de que sea terciario o no.
     - Calcular A_sol,ver / A_util pidiendo factor de sombra de protecciones
@@ -16,10 +24,6 @@ CTE_Informe:
     - Arreglar tabla de dimensionado de equipos
 	- Mostrar transmitancia térmica de construcciones incluyendo las resistencias
 	  superficiales. Ver: openstudio-standards/data/lib/openstudio-standards/standards/Standards.Construction.rb
-CTE_EPBDcalc:
-    - Revisar usabilidad de comentarios
-    - Corregir nombre con eficiencia del recuperador, saca 3 dígitos cuando no
-      es 0 (p.e R800 para 0.80 de eficiencia) y R00 cuando es 0.0
 OS_Report_SI:
     - Comprobar si la tabla de Sizing se corrige igual que en CTE_Informe
       (Heating Load -> Heating Sensible Load, Cooling Load -> Heating Sensible
