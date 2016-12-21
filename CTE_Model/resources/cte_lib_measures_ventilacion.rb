@@ -75,9 +75,11 @@ def cte_ventresidencial(model, runner, user_arguments)
 
   scheduleRulesets = model.getScheduleRulesets
   scheduleRuleRES = scheduleRulesets.detect { |sch| sch.name.get == HVEN_RES }
-  runner.registerInfo("* Localizado en el modelo el horario '#{ HVEN_RES }' de la plantilla: #{not scheduleRuleRES.nil?}")
+  scheduleRuleRES.remove
+  runner.registerInfo("* Localizado y eliminado del modelo el horario '#{ HVEN_RES }' de la plantilla: #{not scheduleRuleRES.nil?}")
   scheduleRuleNOC = scheduleRulesets.detect { |sch| sch.name.get == HVEN_RESNOC }
-  runner.registerInfo("* Localizado en el modelo el horario '#{ HVEN_RESNOC }' de la plantilla: #{not scheduleRuleNOC.nil?}")
+  scheduleRuleNOC.remove
+  runner.registerInfo("* Localizado y elimindado del modelo el horario '#{ HVEN_RESNOC }' de la plantilla: #{not scheduleRuleNOC.nil?}")
 
   def aplica_horario_a_semana(scheduleRule)
     scheduleRule.setApplyMonday(true)
@@ -89,60 +91,56 @@ def cte_ventresidencial(model, runner, user_arguments)
     scheduleRule.setApplySunday(true)
   end
 
-  if scheduleRuleRES.nil?
-    runner.registerInfo("* Creando horario '#{ HVEN_RES }'")
-    # Reglas para ventilación de diseño
-    scheduleRuleRES = OpenStudio::Model::ScheduleRuleset.new(model)
-    scheduleRuleRES.setName(HVEN_RES)
-    diaDisenoHVEN = OpenStudio::Model::ScheduleDay.new(model)
-    diaDisenoHVEN.setName("Dia_tipo_ventilacion_diseNo")
-    time_24h =  OpenStudio::Time.new(0, 24, 0, 0)
-    diaDisenoHVEN.addValue(time_24h, 1.0)
-    disenoHVENRule = OpenStudio::Model::ScheduleRule.new(scheduleRuleRES, diaDisenoHVEN)  # aquí añade la regla al horario
-    disenoHVENRule.setName("Regla_de_ventilacion_de_diseNo")
-    startDate = OpenStudio::Date.new(OpenStudio::MonthOfYear.new(1), 1)
-    endDate = OpenStudio::Date.new(OpenStudio::MonthOfYear.new(12) , 31 )
-    disenoHVENRule.setStartDate(startDate)
-    disenoHVENRule.setEndDate(endDate)
-    aplica_horario_a_semana(disenoHVENRule)
-  end
+  runner.registerInfo("* Creando horario '#{ HVEN_RES }'")
+  # Reglas para ventilación de diseño
+  scheduleRuleRES = OpenStudio::Model::ScheduleRuleset.new(model)
+  scheduleRuleRES.setName(HVEN_RES)
+  diaDisenoHVEN = OpenStudio::Model::ScheduleDay.new(model)
+  diaDisenoHVEN.setName("Dia_tipo_ventilacion_diseNo")
+  time_24h =  OpenStudio::Time.new(0, 24, 0, 0)
+  diaDisenoHVEN.addValue(time_24h, 1.0)
+  disenoHVENRule = OpenStudio::Model::ScheduleRule.new(scheduleRuleRES, diaDisenoHVEN)  # aquí añade la regla al horario
+  disenoHVENRule.setName("Regla_de_ventilacion_de_diseNo")
+  startDate = OpenStudio::Date.new(OpenStudio::MonthOfYear.new(1), 1)
+  endDate = OpenStudio::Date.new(OpenStudio::MonthOfYear.new(12) , 31 )
+  disenoHVENRule.setStartDate(startDate)
+  disenoHVENRule.setEndDate(endDate)
+  aplica_horario_a_semana(disenoHVENRule)
 
-  if scheduleRuleNOC.nil?
-    runner.registerInfo("* Creando horario '#{ HVEN_RESNOC }'")
-    # Reglas para ventilación de diseño
-    scheduleRuleNOC = OpenStudio::Model::ScheduleRuleset.new(model)
-    scheduleRuleNOC.setName(HVEN_RESNOC)
-    # diaInvierno1
-    diaInvierno1 = OpenStudio::Model::ScheduleDay.new(model)
-    diaInvierno1.setName("Dia_tipo1_ventilacion_nocturna_invierno")
-    diaInvierno1.addValue(OpenStudio::Time.new(0, 24, 0, 0), 0.0) # 0 - 24h -> 0.0
-    diaInvierno1Rule = OpenStudio::Model::ScheduleRule.new(scheduleRuleNOC, diaInvierno1)  # aquí añade la regla al horario
-    diaInvierno1Rule.setName("Regla1_ventilacion_nocturna_invierno")
-    diaInvierno1Rule.setStartDate(OpenStudio::Date.new(OpenStudio::MonthOfYear.new(1), 1))
-    diaInvierno1Rule.setEndDate(OpenStudio::Date.new(OpenStudio::MonthOfYear.new(5), 31))
-    aplica_horario_a_semana(diaInvierno1Rule)
-    #diaVerano
-    diaVerano = OpenStudio::Model::ScheduleDay.new(model)
-    diaVerano.setName("Dia_ventilacion_nocturna_verano")
-    time_8h =  OpenStudio::Time.new(0, 8, 0, 0)
-    time_24h =  OpenStudio::Time.new(0, 24, 0, 0)
-    diaVerano.addValue(time_8h, 1.0) # 0 - 8h -> 1.0
-    diaVerano.addValue(time_24h, 0.0) # 8h - 24h -> 0.0
-    veranoRule = OpenStudio::Model::ScheduleRule.new(scheduleRuleNOC, diaVerano)
-    veranoRule.setName("Regla_ventilacion_nocturna_verano")
-    veranoRule.setStartDate(OpenStudio::Date.new(OpenStudio::MonthOfYear.new(6), 1))
-    veranoRule.setEndDate(OpenStudio::Date.new(OpenStudio::MonthOfYear.new(9), 30))
-    aplica_horario_a_semana(veranoRule)
-    #diaInv2
-    diaInvierno2 = OpenStudio::Model::ScheduleDay.new(model)
-    diaInvierno2.setName("Dia_tipo2_ventilacion_nocturna_invierno")
-    diaInvierno2.addValue(OpenStudio::Time.new(0, 24, 0, 0), 0) # 0 -24h -> 0.0
-    inviernoRule2 = OpenStudio::Model::ScheduleRule.new(scheduleRuleNOC, diaInvierno2)
-    inviernoRule2.setName("Regla2_ventilacion_nocturna_invierno")
-    inviernoRule2.setStartDate(OpenStudio::Date.new(OpenStudio::MonthOfYear.new(10), 1))
-    inviernoRule2.setEndDate(OpenStudio::Date.new(OpenStudio::MonthOfYear.new(12), 31))
-    aplica_horario_a_semana(inviernoRule2)
-  end
+  runner.registerInfo("* Creando horario '#{ HVEN_RESNOC }'")
+  # Reglas para ventilación de diseño
+  scheduleRuleNOC = OpenStudio::Model::ScheduleRuleset.new(model)
+  scheduleRuleNOC.setName(HVEN_RESNOC)
+  # diaInvierno1
+  diaInvierno1 = OpenStudio::Model::ScheduleDay.new(model)
+  diaInvierno1.setName("Dia_tipo1_ventilacion_nocturna_invierno")
+  diaInvierno1.addValue(OpenStudio::Time.new(0, 24, 0, 0), 0.0) # 0 - 24h -> 0.0
+  diaInvierno1Rule = OpenStudio::Model::ScheduleRule.new(scheduleRuleNOC, diaInvierno1)  # aquí añade la regla al horario
+  diaInvierno1Rule.setName("Regla1_ventilacion_nocturna_invierno")
+  diaInvierno1Rule.setStartDate(OpenStudio::Date.new(OpenStudio::MonthOfYear.new(1), 1))
+  diaInvierno1Rule.setEndDate(OpenStudio::Date.new(OpenStudio::MonthOfYear.new(5), 31))
+  aplica_horario_a_semana(diaInvierno1Rule)
+  #diaVerano
+  diaVerano = OpenStudio::Model::ScheduleDay.new(model)
+  diaVerano.setName("Dia_ventilacion_nocturna_verano")
+  time_8h =  OpenStudio::Time.new(0, 8, 0, 0)
+  time_24h =  OpenStudio::Time.new(0, 24, 0, 0)
+  diaVerano.addValue(time_8h, 1.0) # 0 - 8h -> 1.0
+  diaVerano.addValue(time_24h, 0.0) # 8h - 24h -> 0.0
+  veranoRule = OpenStudio::Model::ScheduleRule.new(scheduleRuleNOC, diaVerano)
+  veranoRule.setName("Regla_ventilacion_nocturna_verano")
+  veranoRule.setStartDate(OpenStudio::Date.new(OpenStudio::MonthOfYear.new(6), 1))
+  veranoRule.setEndDate(OpenStudio::Date.new(OpenStudio::MonthOfYear.new(9), 30))
+  aplica_horario_a_semana(veranoRule)
+  #diaInv2
+  diaInvierno2 = OpenStudio::Model::ScheduleDay.new(model)
+  diaInvierno2.setName("Dia_tipo2_ventilacion_nocturna_invierno")
+  diaInvierno2.addValue(OpenStudio::Time.new(0, 24, 0, 0), 0) # 0 -24h -> 0.0
+  inviernoRule2 = OpenStudio::Model::ScheduleRule.new(scheduleRuleNOC, diaInvierno2)
+  inviernoRule2.setName("Regla2_ventilacion_nocturna_invierno")
+  inviernoRule2.setStartDate(OpenStudio::Date.new(OpenStudio::MonthOfYear.new(10), 1))
+  inviernoRule2.setEndDate(OpenStudio::Date.new(OpenStudio::MonthOfYear.new(12), 31))
+  aplica_horario_a_semana(inviernoRule2)
 
   # ------------------------------------------------------------------------------------------------------------------------------------
   # 2 - Incorpora objetos ZoneVentilation:DesignFlowRate a zonas residenciales,
