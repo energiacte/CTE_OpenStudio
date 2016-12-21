@@ -75,11 +75,15 @@ def cte_ventresidencial(model, runner, user_arguments)
 
   scheduleRulesets = model.getScheduleRulesets
   scheduleRuleRES = scheduleRulesets.detect { |sch| sch.name.get == HVEN_RES }
-  scheduleRuleRES.remove
-  runner.registerInfo("* Localizado y eliminado del modelo el horario '#{ HVEN_RES }' de la plantilla: #{not scheduleRuleRES.nil?}")
+  if not scheduleRuleRES.nil?
+    scheduleRuleRES.remove
+    runner.registerInfo("* Localizado y eliminado del modelo el horario '#{ HVEN_RES }' de la plantilla: #{not scheduleRuleRES.nil?}")
+  end
   scheduleRuleNOC = scheduleRulesets.detect { |sch| sch.name.get == HVEN_RESNOC }
-  scheduleRuleNOC.remove
-  runner.registerInfo("* Localizado y elimindado del modelo el horario '#{ HVEN_RESNOC }' de la plantilla: #{not scheduleRuleNOC.nil?}")
+  if not scheduleRuleNOC.nil?
+    scheduleRuleNOC.remove
+    runner.registerInfo("* Localizado y elimindado del modelo el horario '#{ HVEN_RESNOC }' de la plantilla: #{not scheduleRuleNOC.nil?}")
+  end
 
   def aplica_horario_a_semana(scheduleRule)
     scheduleRule.setApplyMonday(true)
