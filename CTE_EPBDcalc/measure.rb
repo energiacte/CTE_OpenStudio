@@ -270,6 +270,13 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     string_rows << "# Datos medidos"
     string_rows << "#CTE_Area_ref: #{ cte_areareferencia.round(2) }"
     string_rows << "#CTE_Vol_ref: #{ CTE_Query.volumenHabitable(sqlFile).round(2) }"
+    
+    volumenHabitable = CTE_Query.volumenHabitable(sqlFile)
+    areaexterior = CTE_Query.envolventeAreaExterior(sqlFile)    
+    areainterior = CTE_Query.envolventeAreaInterior(sqlFile)
+    areatotal = areaexterior + areainterior
+    compacidad = (volumenHabitable / areatotal)
+    string_rows << "#CTE_Compacidad: #{ compacidad.round(2) }"
 
     string_rows << "# Medicion construcciones: [Area [m2], Transmitancia U [W/m2K]]"
     mediciones = CTE_tables.tabla_mediciones_envolvente(model, sqlFile, runner)[:data]
