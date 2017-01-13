@@ -102,8 +102,22 @@ FROM
     INNER JOIN zonasnohabitables AS znh USING (ZoneIndex)
 "
 
+  ENVOLVENTE_EXTERIOR_CONSTRUCCIONES = "
+WITH superficiesexteriores AS ( #{CTE_Query::ENVOLVENTE_SUPERFICIES_EXTERIORES})
+SELECT
+    *
+FROM
+    superficiesexteriores
+    LEFT OUTER JOIN Constructions cons USING(ConstructionIndex)
+"
+
   def CTE_Query.getValueOrFalse(search)
     return (if search.empty? then false else search.get end)
+  end
+  
+  def CTE_Query.envolventeExteriorConstrucciones(sqlFile)
+    result = getValueOrFalse(sqlFile.execAndReturnVectorOfString(CTE_Query::ENVOLVENTE_EXTERIOR_CONSTRUCCIONES))
+    return (result != false) ? result : []
   end
 
   def CTE_Query.zonasHabitables(sqlFile)

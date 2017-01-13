@@ -39,7 +39,7 @@ class ConexionEPDB_Test < MiniTest::Unit::TestCase
     show_output(result)
   end
 
-  def test_terciario
+  def _test_terciario
     # TODO: use model with non residential use
     # create an instance of the measure
     measure = ConexionEPDB.new

@@ -62,6 +62,21 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
                         servicios: ['COOLING'] }
   }
 
+  RESISTENCIASUPERFICIAL = {
+    'Wall'   => {'exterior' => 0.17, 'terreno' => 0.04},
+    'Window' => {'exterior' => 0.17, 'terreno' => 0.04},
+    'Roof' =>   {'exterior' => 0.14, 'terreno' => 0.04},
+    'Floor'  => {'exterior' => 0.21, 'terreno' => 0.04}
+  }
+
+  COD_EXTER = { '0' => 'exterior', '-1' => 'terreno'}
+
+  def actualizaU(uvalue, tipo, condExter)
+    resup = RESISTENCIASUPERFICIAL[tipo][COD_EXTER[condExter]]
+    return uvalue / ( uvalue *resup + 1)
+  end
+
+
   # human readable name
   def name
     return "Conexion con EPBDcalc"
@@ -118,9 +133,6 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     refrigeracion.setDefaultValue("generic_cool")
     args << refrigeracion
 
-
-    # this measure does not require any user arguments, return an empty list
-
     return args
   end
 
@@ -157,7 +169,7 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
 
   def consumoMensualIluminacion(runner, model, sqlFile)
     valores = [[0] * 12]
-    model.getThermalZones.each do | thermalZone |      
+    model.getThermalZones.each do | thermalZone |
       spaceTypeNames = thermalZone.spaces().map { |space| space.spaceType.get.name.get }
       validSpaceTypeNames = spaceTypeNames.select { |name| not (name.start_with?('CTE_AR') or name.start_with?('CTE_NOHAB')) }
       next if validSpaceTypeNames.length == 0
@@ -228,13 +240,101 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     return salida
   end
 
+  def calculoIndicadorK(model, sqlFile, runner)
+    indicador_k = 0
+    area_envolvente_considerada = 0
+    areaVentanas = 0
+    valorAUventanas = 0
+    contadorVentanas = 0
+    search = "SELECT DISTINCT Name FROM (#{CTE_Query::ENVOLVENTE_EXTERIOR_CONSTRUCCIONES})"
+    construcciones = CTE_Query.getValueOrFalse(sqlFile.execAndReturnVectorOfString(search))
+    runner.registerInfo(" construcciones: #{construcciones}")
+    construcciones.each do | cons |
+      search = "SELECT Uvalue FROM Constructions WHERE Name IS '#{cons}'"
+      uvalue = CTE_Query.getValueOrFalse(sqlFile.execAndReturnFirstDouble(search))
+      search = "SELECT DISTINCT ClassName FROM (#{CTE_Query::ENVOLVENTE_EXTERIOR_CONSTRUCCIONES})
+                  WHERE NAME == '#{cons}'"
+      tipos = CTE_Query.getValueOrFalse(sqlFile.execAndReturnVectorOfString(search))
+      tipos.each do | tipo |
+
+        if tipo == 'Window'
+          search = "SELECT SurfaceName FROM (#{CTE_Query::ENVOLVENTE_EXTERIOR_CONSTRUCCIONES})
+                      WHERE NAME == '#{cons}' AND ClassName =='Window' "
+          ventanas = CTE_Query.getValueOrFalse(sqlFile.execAndReturnVectorOfString(search))
+
+          ventanas.each do | nombreVentana |
+            contadorVentanas += 1
+            search = "SELECT Value FROM TabularDataWithStrings
+                      WHERE ColumnName IS 'Glass Area' AND RowName IS '#{nombreVentana}' "
+            areaVidrio = CTE_Query.getValueOrFalse(sqlFile.execAndReturnFirstDouble(search))
+
+            search = "SELECT Value FROM TabularDataWithStrings
+                      WHERE ColumnName IS 'Frame Area' AND RowName IS '#{nombreVentana}' "
+            areaMarco = CTE_Query.getValueOrFalse(sqlFile.execAndReturnFirstDouble(search))
+
+            search = "SELECT Value FROM TabularDataWithStrings
+                      WHERE ColumnName IS 'Glass U-Factor' AND RowName IS '#{nombreVentana}' "
+            transmitanciaVidrio = CTE_Query.getValueOrFalse(sqlFile.execAndReturnFirstDouble(search))
+
+            search = "SELECT Value FROM TabularDataWithStrings
+                      WHERE ColumnName IS 'Frame Conductance' AND RowName IS '#{nombreVentana}' "
+            transmitanciaMarco = CTE_Query.getValueOrFalse(sqlFile.execAndReturnFirstDouble(search))
+
+            areaVentana = areaVidrio + areaMarco
+            valorAU = areaVidrio * transmitanciaVidrio + areaMarco * transmitanciaMarco
+            transmitanciaMediaSinFilm = valorAU/areaVentana
+            resistenciaSuperficial = 0.17
+            transmitanciaMediaConFilm = transmitanciaMediaSinFilm /(transmitanciaMediaSinFilm * resistenciaSuperficial + 1)
+            
+            areaVentanas += areaVentana
+            valorAUventanas += areaVentana * transmitanciaMediaConFilm
+            
+            indicador_k += areaVentana * transmitanciaMediaConFilm            
+            area_envolvente_considerada += areaVentana
+           
+          end
+
+        else
+          search = "SELECT DISTINCT ExtBoundCond FROM (#{CTE_Query::ENVOLVENTE_EXTERIOR_CONSTRUCCIONES})
+                    WHERE NAME == '#{cons}' AND ClassName == '#{tipo}'"
+          condsExters = CTE_Query.getValueOrFalse(sqlFile.execAndReturnVectorOfString(search))
+          condsExters.each do | condExter |
+            search = "SELECT SUM(Area) FROM (#{CTE_Query::ENVOLVENTE_EXTERIOR_CONSTRUCCIONES})
+              WHERE NAME == '#{cons}' AND ClassName == '#{tipo}' AND ExtBoundCond == '#{condExter}' "
+            area = CTE_Query.getValueOrFalse(sqlFile.execAndReturnFirstDouble(search))
+            area_envolvente_considerada += area
+            newUvalue = actualizaU(uvalue, tipo, condExter)
+            valor_AU = area * newUvalue
+            indicador_k = indicador_k + valor_AU
+
+            runner.registerValue("area_#{cons}_#{tipo}_#{condExter}", area, 'm2')
+            runner.registerValue("Uvalue_#{cons}_#{tipo}_#{condExter}", newUvalue, 'W/m2K')
+
+            runner.registerInfo("#{cons}_#{tipo}_#{condExter}")
+            runner.registerInfo("#{newUvalue},#{area},#{valor_AU}")
+          end
+        end
+      end
+    end
+
+    runner.registerInfo("ventanas, numero #{contadorVentanas}")
+    valorU_ventanas = valorAUventanas/areaVentanas
+    runner.registerInfo("#{valorU_ventanas}, #{areaVentanas}, #{valorAUventanas}")
+
+    CTE_tables.tabla_mediciones_puentes_termicos(model, runner)[:data].each do | nombre, acopla, long, psi |
+      runner.registerInfo("#{nombre}, #{acopla}, #{long}, #{psi} ")
+      indicador_k += acopla
+    end
+    
+    indicador_k = indicador_k/area_envolvente_considerada
+    runner.registerInfo("indicador_k  #{indicador_k}")
+    return indicador_k
+  end
 
   def get_string_rows(model, sqlFile, runner, user_arguments)
     string_rows = []
     string_rows << "# Datos de entrada"
-    #~ puts 'subrutina get_string_rows'   
-    
-    
+
     # General metadata and attributes stored in the model
     string_rows << "#CTE_Name: #{ model.building.get.name }"
     string_rows << "#CTE_Datetime: #{ DateTime.now.strftime '%d/%m/%Y %H:%M' }"
@@ -270,13 +370,15 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     string_rows << "# Datos medidos"
     string_rows << "#CTE_Area_ref: #{ cte_areareferencia.round(2) }"
     string_rows << "#CTE_Vol_ref: #{ CTE_Query.volumenHabitable(sqlFile).round(2) }"
-    
+
     volumenHabitable = CTE_Query.volumenHabitable(sqlFile)
-    areaexterior = CTE_Query.envolventeAreaExterior(sqlFile)    
+    areaexterior = CTE_Query.envolventeAreaExterior(sqlFile)
     areainterior = CTE_Query.envolventeAreaInterior(sqlFile)
     areatotal = areaexterior + areainterior
     compacidad = (volumenHabitable / areatotal)
     string_rows << "#CTE_Compacidad: #{ compacidad.round(2) }"
+
+    string_rows << "#CTE_K: #{calculoIndicadorK(model, sqlFile, runner).round(2)}"
 
     string_rows << "# Medicion construcciones: [Area [m2], Transmitancia U [W/m2K]]"
     mediciones = CTE_tables.tabla_mediciones_envolvente(model, sqlFile, runner)[:data]
@@ -289,7 +391,7 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     mediciones.each do | nombre, coefAcop, long, psi|
       string_rows << "#CTE_medicion_PT_#{ nombre }: [#{ coefAcop }, #{ long }, #{ psi }]"
     end
-    
+
     #valores anuales de demanda por servicios
     tabla = CTE_tables.output_data_end_use_table(model, sqlFile, runner)
     string_rows << "# Valores anuales de demanda por servicios en Kwh"
@@ -347,7 +449,7 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
 
     # Basic consistency check - no fuel types other than disctrict for WATERSYSTEMS, HEATING and COOLING
     checkFuelsAndUses(sqlFile, runner)
-    
+
     string_rows = get_string_rows(model, sqlFile, runner, user_arguments)
 
     outFile = File.open(get_filename(model), 'w')
@@ -375,7 +477,7 @@ FROM
     AND rvdd.KeyValue == '#{thermalzonename}'
     AND rvdd.ReportingFrequency == 'Monthly' "
   end
-  
+
   def _nombre_variable(key)
         # Traducción de diversos elementos de la interfaz
     { 'Calefacción' => '#CTE_Demanda_calefaccion:',
@@ -393,7 +495,7 @@ FROM
       'Equipos frigoríficos' => '#CTE_Demanda_equipos_frigorificos:',
       'Equipos de generación' => '#CTE_Demanda_equipos_generacion:',
     }.fetch(key) { |nokey| nokey }
-  end 
+  end
 end
 
 # register the measure to be used by the application
