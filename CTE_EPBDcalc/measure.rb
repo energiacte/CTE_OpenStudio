@@ -240,6 +240,42 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     return salida
   end
 
+
+  def calculoIndicador_qsj(model, sqlFile, runner)
+    search = "
+    WITH ventanas AS(
+    WITH  superficieshabitables AS (
+    WITH zonashabitables AS (
+    SELECT  ZoneIndex, ZoneName, Volume, FloorArea, ZoneListIndex, Name
+    FROM Zones
+        LEFT OUTER JOIN ZoneInfoZoneLists zizl USING (ZoneIndex)
+        LEFT OUTER JOIN ZoneLists zl USING (ZoneListIndex)
+    WHERE   zl.Name NOT LIKE 'CTE_N%'
+    )
+    SELECT  SurfaceName,  ClassName,   surf.ZoneIndex AS ZoneIndex
+    FROM  Surfaces surf
+    INNER JOIN zonashabitables AS zones USING (ZoneIndex)
+    )
+    SELECT     SurfaceName
+    FROM       superficieshabitables
+      WHERE    ClassName == 'Window'
+    )
+    SELECT SUM(VariableValue)
+    FROM  ventanas
+    INNER JOIN ReportVariableDataDictionary AS rvdd ON SurfaceName = rvdd.KeyValue
+    INNER JOIN ReportVariableData USING (ReportVariableDataDictionaryIndex)
+    INNER JOIN Time AS time USING (TimeIndex)
+      WHERE ReportingFrequency = 'Monthly'
+      AND VariableName == 'Surface Window Transmitted Solar Radiation Energy'
+      AND Month = 7"
+
+    radiacionJulio = CTE_Query.getValueOrFalse(sqlFile.execAndReturnFirstDouble(search))
+    raciacionJulioKWh = OpenStudio.convert(radiacionJulio, 'J', 'kWh').get
+
+    return raciacionJulioKWh
+  end
+
+
   def calculoIndicadorK(model, sqlFile, runner)
     indicador_k = 0
     area_envolvente_considerada = 0
@@ -285,13 +321,13 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
             transmitanciaMediaSinFilm = valorAU/areaVentana
             resistenciaSuperficial = 0.17
             transmitanciaMediaConFilm = transmitanciaMediaSinFilm /(transmitanciaMediaSinFilm * resistenciaSuperficial + 1)
-            
+
             areaVentanas += areaVentana
             valorAUventanas += areaVentana * transmitanciaMediaConFilm
-            
-            indicador_k += areaVentana * transmitanciaMediaConFilm            
+
+            indicador_k += areaVentana * transmitanciaMediaConFilm
             area_envolvente_considerada += areaVentana
-           
+
           end
 
         else
@@ -307,29 +343,30 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
             valor_AU = area * newUvalue
             indicador_k = indicador_k + valor_AU
 
-            runner.registerValue("area_#{cons}_#{tipo}_#{condExter}", area, 'm2')
-            runner.registerValue("Uvalue_#{cons}_#{tipo}_#{condExter}", newUvalue, 'W/m2K')
+            #~ runner.registerValue("area_#{cons}_#{tipo}_#{condExter}", area, 'm2')
+            #~ runner.registerValue("Uvalue_#{cons}_#{tipo}_#{condExter}", newUvalue, 'W/m2K')
 
-            runner.registerInfo("#{cons}_#{tipo}_#{condExter}")
-            runner.registerInfo("#{newUvalue},#{area},#{valor_AU}")
+            #~ runner.registerInfo("#{cons}_#{tipo}_#{condExter}")
+            #~ runner.registerInfo("#{newUvalue},#{area},#{valor_AU}")
           end
         end
       end
     end
 
-    runner.registerInfo("ventanas, numero #{contadorVentanas}")
-    valorU_ventanas = valorAUventanas/areaVentanas
-    runner.registerInfo("#{valorU_ventanas}, #{areaVentanas}, #{valorAUventanas}")
+    #~ runner.registerInfo("ventanas, numero #{contadorVentanas}")
+    #~ valorU_ventanas = valorAUventanas/areaVentanas
+    #~ runner.registerInfo("#{valorU_ventanas}, #{areaVentanas}, #{valorAUventanas}")
 
     CTE_tables.tabla_mediciones_puentes_termicos(model, runner)[:data].each do | nombre, acopla, long, psi |
       runner.registerInfo("#{nombre}, #{acopla}, #{long}, #{psi} ")
       indicador_k += acopla
     end
-    
+
     indicador_k = indicador_k/area_envolvente_considerada
     runner.registerInfo("indicador_k  #{indicador_k}")
     return indicador_k
   end
+
 
   def get_string_rows(model, sqlFile, runner, user_arguments)
     string_rows = []
@@ -379,6 +416,7 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     string_rows << "#CTE_Compacidad: #{ compacidad.round(2) }"
 
     string_rows << "#CTE_K: #{calculoIndicadorK(model, sqlFile, runner).round(2)}"
+    string_rows << "#CTE_qsj: #{(calculoIndicador_qsj(model, sqlFile, runner)/cte_areareferencia).round(2)}"
 
     string_rows << "# Medicion construcciones: [Area [m2], Transmitancia U [W/m2K]]"
     mediciones = CTE_tables.tabla_mediciones_envolvente(model, sqlFile, runner)[:data]
