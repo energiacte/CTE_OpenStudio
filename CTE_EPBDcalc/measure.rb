@@ -416,7 +416,10 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     string_rows << "#CTE_Compacidad: #{ compacidad.round(2) }"
 
     string_rows << "#CTE_K: #{calculoIndicadorK(model, sqlFile, runner).round(2)}"
-    string_rows << "#CTE_qsj: #{(calculoIndicador_qsj(model, sqlFile, runner)/cte_areareferencia).round(2)}"
+    fshgl = json["CTE_F_sombras_moviles"].to_f
+    qsj_maxino = calculoIndicador_qsj(model, sqlFile, runner)
+    qsj = (qsj_maxino * fshgl) / cte_areareferencia
+    string_rows << "#CTE_qsj: #{qsj.round(2)}"
 
     string_rows << "# Medicion construcciones: [Area [m2], Transmitancia U [W/m2K]]"
     mediciones = CTE_tables.tabla_mediciones_envolvente(model, sqlFile, runner)[:data]
