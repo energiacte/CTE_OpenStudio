@@ -141,7 +141,7 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
     
     factorSombrasMoviles = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("CTE_F_sombras_moviles", true)
     factorSombrasMoviles.setDisplayName("Factor de sombras móviles")
-    factorSombrasMoviles.setDefaultValue(0.4)
+    factorSombrasMoviles.setDefaultValue(0.3)
     args << factorSombrasMoviles
 
     psiForjadoCubierta = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("CTE_Psi_forjado_cubierta", true)
