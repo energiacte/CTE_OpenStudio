@@ -28,8 +28,8 @@
 require 'set'
 require 'digest/md5'
 
-RESISTENCIA_PT = 1.0
-ALTURA_SUPERFICIE_PT = 2.0
+RESISTENCIA_PT ||= 1.0
+ALTURA_SUPERFICIE_PT ||= 2.0
 
 
 def verticeID(point3d, origenEspacio)
