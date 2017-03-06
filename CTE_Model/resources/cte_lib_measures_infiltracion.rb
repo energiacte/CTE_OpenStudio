@@ -25,14 +25,14 @@
 #            Daniel Jiménez González <dani@ietcc.csic.es>
 #            Marta Sorribes Gil <msorribes@ietcc.csic.es>
 
-TO4PA = 0.11571248 # pow(4/100., 0.67), de 100 a 4 pascales
-C_OP = { 'Nuevo'     => 16 * TO4PA,
-         'Existente' => 29 * TO4PA }
-C_PU = 60 * TO4PA # Permeabilidad puertas a 4Pa
-C_HU = { 'Clase 1' => 50 * TO4PA,
-         'Clase 2' => 27 * TO4PA,
-         'Clase 3' => 9 * TO4PA,
-         'Clase 4' => 3 * TO4PA }
+TO4PA ||= 0.11571248 # pow(4/100., 0.67), de 100 a 4 pascales
+C_OP ||= { 'Nuevo'     => 16 * TO4PA,
+           'Existente' => 29 * TO4PA }
+C_PU ||= 60 * TO4PA # Permeabilidad puertas a 4Pa
+C_HU ||= { 'Clase 1' => 50 * TO4PA,
+           'Clase 2' => 27 * TO4PA,
+           'Clase 3' => 9 * TO4PA,
+           'Clase 4' => 3 * TO4PA }
 
 def cte_horario_de_infiltracion(runner, space, horario_always_on)
     # spaceName = space.name.get
