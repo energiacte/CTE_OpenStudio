@@ -41,7 +41,7 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
   # XXX: la medida asume que WATERSYSTEMS es equivalente a ACS, pero no es correcto porque
   # XXX: un sistema real con distribución por agua (radiadores) podría estar incluído ahí.
 
-  TECNOLOGIAS = {
+  TECNOLOGIAS ||= {
     'gas_boiler' => { descripcion: 'caldera de gas',
                       combustibles: [['GASNATURAL', 0.95]],
                       servicios: ['WATERSYSTEMS', 'HEATING'] },
@@ -62,14 +62,14 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
                         servicios: ['COOLING'] }
   }
 
-  RESISTENCIASUPERFICIAL = {
+  RESISTENCIASUPERFICIAL ||= {
     'Wall'   => {'exterior' => 0.17, 'terreno' => 0.04},
     'Window' => {'exterior' => 0.17, 'terreno' => 0.04},
     'Roof' =>   {'exterior' => 0.14, 'terreno' => 0.04},
     'Floor'  => {'exterior' => 0.21, 'terreno' => 0.04}
   }
 
-  COD_EXTER = { '0' => 'exterior', '-1' => 'terreno'}
+  COD_EXTER ||= { '0' => 'exterior', '-1' => 'terreno'}
 
   def actualizaU(uvalue, tipo, condExter)
     resup = RESISTENCIASUPERFICIAL[tipo][COD_EXTER[condExter]]
