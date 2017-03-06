@@ -29,10 +29,10 @@ require "openstudio"
 require_relative "cte_query"
 
 # TODO: acabar la tabla de remplazo
-REPLACEMENTS = {
+REPLACEMENTS ||= {
   'Ñ' => 'N',
   'ñ' => 'N'}
-ENCODING_OPTIONS = {
+ENCODING_OPTIONS ||= {
   :invalid           => :replace,  # Replace invalid byte sequences
   :replace           => "",        # Use a blank for those replacements
   :universal_newline => true,       # Always break lines with \n
