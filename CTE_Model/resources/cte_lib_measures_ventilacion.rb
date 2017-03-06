@@ -25,8 +25,8 @@
 #            Daniel Jiménez González <dani@ietcc.csic.es>
 #            Marta Sorribes Gil <msorribes@ietcc.csic.es>
 
-HVEN_RES = "CTER24B_HVEN"
-HVEN_RESNOC = "CTER24B_HVNOC"
+HVEN_RES ||= "CTER24B_HVEN"
+HVEN_RESNOC ||= "CTER24B_HVNOC"
 
 
 # Ventilacion Residencial CTE:
