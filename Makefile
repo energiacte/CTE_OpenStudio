@@ -21,6 +21,7 @@ runnrel:
 		-v ${HOME}/openstudio:/var/simdata/openstudio \
 		-v ${HOME}/openstudio/Measures:/root/OpenStudio/Measures \
 		-v /mnt/vegacte/03-CTE_en_curso/salaSert/git/OSCTEModels:/root/OpenStudio/Models \
+		-v /mnt/vegacte/03-CTE_en_curso/salaSert/git/suspat:/root/OpenStudio/suspat \
 		nrel/openstudio:1.13.4 \
 		bash
 
