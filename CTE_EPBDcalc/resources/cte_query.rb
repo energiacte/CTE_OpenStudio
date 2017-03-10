@@ -30,7 +30,7 @@
 # Clases en https://github.com/NREL/EnergyPlus/blob/f8be4f0d31d5988a52c515ac5e0076a7b8b0a322/src/EnergyPlus/DataSurfaces.cc#L442
 # ClassName puede ser ['Wall', 'Floor', 'Roof', 'Window', 'Door', 'Glass Door', 'TubularDaylightDome', 'TubularDaylighDiffuser', 'Internal Mass', 'Shading', 'Detached Shading:Building', 'Detached Shading:Fixed', 'Invalid/Unknown']
 module CTE_Query
-  ZONASHABITABLES = "
+  ZONASHABITABLES ||= "
 SELECT
     ZoneIndex, ZoneName, Volume, FloorArea, ZoneListIndex, Name
 FROM Zones
@@ -40,7 +40,7 @@ WHERE
     zl.Name NOT LIKE 'CTE_N%'
 "
 
-  ZONASNOHABITABLES = "
+  ZONASNOHABITABLES ||= "
 SELECT
     ZoneIndex, ZoneName, Volume, FloorArea, ZoneListIndex, Name
 FROM
@@ -51,7 +51,7 @@ WHERE
     zl.Name LIKE 'CTE_N%'
 "
 
-  ZONASHABITABLES_SUPERFICIES = "
+  ZONASHABITABLES_SUPERFICIES ||= "
 WITH
     zonashabitables AS (#{ CTE_Query::ZONASHABITABLES })
 SELECT
@@ -63,7 +63,7 @@ FROM
 "
 
   # XXX: No está claro que Internal Mass sea un SurfaceType
-  ENVOLVENTE_SUPERFICIES_EXTERIORES = "
+  ENVOLVENTE_SUPERFICIES_EXTERIORES ||= "
 WITH
     superficieshabitables AS (#{ CTE_Query::ZONASHABITABLES_SUPERFICIES })
 SELECT
@@ -78,7 +78,7 @@ WHERE
 "
 
 
-  ENVOLVENTE_SUPERFICIES_INTERIORES = "
+  ENVOLVENTE_SUPERFICIES_INTERIORES ||= "
 WITH
     superficieshabitables AS (#{ CTE_Query::ZONASHABITABLES_SUPERFICIES }),
     zonasnohabitables AS (#{ CTE_Query::ZONASNOHABITABLES }),
@@ -102,7 +102,7 @@ FROM
     INNER JOIN zonasnohabitables AS znh USING (ZoneIndex)
 "
 
-  ENVOLVENTE_EXTERIOR_CONSTRUCCIONES = "
+  ENVOLVENTE_EXTERIOR_CONSTRUCCIONES ||= "
 WITH superficiesexteriores AS ( #{CTE_Query::ENVOLVENTE_SUPERFICIES_EXTERIORES})
 SELECT
     *
@@ -114,7 +114,7 @@ FROM
   def CTE_Query.getValueOrFalse(search)
     return (if search.empty? then false else search.get end)
   end
-  
+
   def CTE_Query.envolventeExteriorConstrucciones(sqlFile)
     result = getValueOrFalse(sqlFile.execAndReturnVectorOfString(CTE_Query::ENVOLVENTE_EXTERIOR_CONSTRUCCIONES))
     return (result != false) ? result : []
