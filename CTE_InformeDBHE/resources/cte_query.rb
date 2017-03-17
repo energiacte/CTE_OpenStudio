@@ -32,7 +32,7 @@
 module CTE_Query
   ZONASHABITABLES ||= "
 SELECT
-    ZoneIndex, ZoneName, Volume, FloorArea, ZoneListIndex, Name
+    ZoneIndex, ZoneName, CeilingHeight, Volume, FloorArea, ZoneListIndex, Name
 FROM Zones
     LEFT OUTER JOIN ZoneInfoZoneLists zizl USING (ZoneIndex)
     LEFT OUTER JOIN ZoneLists zl USING (ZoneListIndex)
@@ -42,7 +42,7 @@ WHERE
 
   ZONASNOHABITABLES ||= "
 SELECT
-    ZoneIndex, ZoneName, Volume, FloorArea, ZoneListIndex, Name
+    ZoneIndex, ZoneName, CeilingHeight, Volume, FloorArea, ZoneListIndex, Name
 FROM
     Zones
     LEFT OUTER JOIN ZoneInfoZoneLists zizl USING (ZoneIndex)
@@ -131,7 +131,7 @@ FROM
   end
 
   def CTE_Query.volumenHabitable(sqlFile)
-    result = getValueOrFalse(sqlFile.execAndReturnFirstDouble("SELECT SUM(Volume) FROM  (#{ CTE_Query::ZONASHABITABLES })"))
+    result = getValueOrFalse(sqlFile.execAndReturnFirstDouble("SELECT SUM(CeilingHeight * FloorArea) FROM  (#{ CTE_Query::ZONASHABITABLES })"))
     return (result != false) ? result : 0
   end
 
@@ -146,7 +146,7 @@ FROM
   end
 
   def CTE_Query.volumenNoHabitable(sqlFile)
-    result = getValueOrFalse(sqlFile.execAndReturnFirstDouble("SELECT SUM(Volume) FROM (#{ CTE_Query::ZONASNOHABITABLES })"))
+    result = getValueOrFalse(sqlFile.execAndReturnFirstDouble("SELECT SUM(CeilingHeight * FloorArea) FROM (#{ CTE_Query::ZONASNOHABITABLES })"))
     return (result != false) ? result : 0
   end
 
