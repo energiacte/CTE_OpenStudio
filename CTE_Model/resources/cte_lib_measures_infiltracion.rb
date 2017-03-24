@@ -102,6 +102,8 @@ def cte_infiltracion(model, runner, user_arguments) #copiado del residencial
 
   runner.registerInfo("** Superficies para ELA **")
   # XXX: pensar como interactúa con los espacios distintos a los acondicionados
+  # ELA_total para comprobaciones
+  ela_total = 0.0
   spaces.each do |space|
     horarioInfiltracion = cte_horario_de_infiltracion(runner, space, horario_always_on)
     areaOpacos = 0
@@ -127,11 +129,16 @@ def cte_infiltracion(model, runner, user_arguments) #copiado del residencial
       end
     end
 
-    runner.registerInfo("Infiltraciones: '#{ space.name }' / '#{ horarioInfiltracion.name.get }' - ELA [m2]: opacos: #{ areaOpacos.round(2) }, huecos #{ areaVentanas.round(2) }, puertas #{ areaPuertas.round(2) }\n")
+    #runner.registerInfo("Infiltraciones: '#{ space.name }' / '#{ horarioInfiltracion.name.get }' - ELA [m2]: opacos: #{ areaOpacos.round(2) }, huecos #{ areaVentanas.round(2) }, puertas #{ areaPuertas.round(2) }\n")
 
-    c_ven = 0.0 # Superficie bocas admisión
-    if claseVentana != 'Clase 1'
+    usoEdificio = runner.getStringArgumentValue('CTE_Uso_edificio',
+                                                user_arguments)
+    # Superficie bocas admisión, según modelo simplificado en residencial
+    if claseVentana != 'Clase 1' and usoEdificio != 'Residencial'
+      # Superficie igual a lo que falta para microventilación
       c_ven = C_HU['Clase 1'] - C_HU[claseVentana]
+    else
+      c_ven = 0.0
     end
 
     # q_total en m3/h a 4 Pa
@@ -155,7 +162,10 @@ def cte_infiltracion(model, runner, user_arguments) #copiado del residencial
     ela.setSchedule(horarioInfiltracion)
     ela.setEffectiveAirLeakageArea(areaEquivalente)
     ela.setName("CTE_ELA_#{ space.name }")
+
+    ela_total += areaEquivalente
   end
+  runner.registerValue("cte_ela_total_espacios", ela_total, "cm2 a 4 Pa")
 
   return true # OS necesita saber que todo acaba bien
 end
