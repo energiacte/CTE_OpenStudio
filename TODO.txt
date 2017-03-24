@@ -17,10 +17,8 @@
     - Definir coeficientes de paso de vectores energéticos
     - Objetos de dimensionado de ACS
 CTE_Informe:
+    - Contemplar el check de "parte del área total" a la hora de calcular superficies útiles
     - Incluir iluminación en "Consumo Final EPB" en función de que sea terciario o no.
-    - Calcular A_sol,ver / A_util pidiendo factor de sombra de protecciones
-      móviles
-    - Calcular K
     - Arreglar tabla de dimensionado de equipos
 	- Mostrar transmitancia térmica de construcciones incluyendo las resistencias
 	  superficiales. Ver: openstudio-standards/data/lib/openstudio-standards/standards/Standards.Construction.rb
