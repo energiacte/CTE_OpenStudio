@@ -213,3 +213,91 @@ def cte_ventresidencial(model, runner, user_arguments)
   return true # OS necesita saber que todo acabó bien
 
 end # end run
+
+
+# Ventilacion Terciario CTE:
+# 1 - Incorpora objetos ZoneVentilation:DesignFlowRate a zonas habitables
+
+def cte_ventterciario(model, runner, user_arguments)
+  runner.registerInfo("CTE: Definición de condiciones de ventilación de espacios habitables en edificios terciarios.")
+
+  design_flow_rate = runner.getDoubleArgumentValue('CTE_Design_flow_rate', user_arguments)
+  heat_recovery = runner.getDoubleArgumentValue('CTE_Heat_recovery', user_arguments)
+  fan_sfp = runner.getDoubleArgumentValue('CTE_Fan_sfp', user_arguments)
+  fan_ntot = runner.getDoubleArgumentValue('CTE_Fan_ntot', user_arguments)
+  #usoEdificio = runner.getStringArgumentValue('CTE_Uso_edificio', user_arguments)
+
+  #XXX: en terciario los recuperadores deben definirse en los sistemas
+  # if usoEdificio != 'Residencial'
+  #   heat_recovery = 0.0
+  # end
+
+  if heat_recovery >= 1.0
+    runner.registerError("Recuperador de calor con eficiencia igual o mayor al 100%")
+    return false
+  end
+
+  q_ven_reduced = design_flow_rate * (1 - heat_recovery)
+  fan_sfp_augmented = fan_sfp / (1 - heat_recovery)
+  ventilationPressureRise = fan_sfp_augmented * 1000 * fan_ntot # delta_p = SFP * n_tot, kPa -> Pa
+  ventilationTotEfficiency = fan_ntot
+
+  runner.registerValue("CTE Fan total efficiency", ventilationTotEfficiency)
+  runner.registerValue("CTE Fan Pressure Rise (energy equivalent)", ventilationPressureRise, "Pa")
+  runner.registerValue("CTE Fan SFP", fan_sfp, "kPa")
+  runner.registerValue("CTE Fan SFP augmented", fan_sfp_augmented, "kPa")
+  runner.registerValue("CTE caudal de ventilacion reducido con caudal de diseno y recuperacion", q_ven_reduced, "[ren/h]")
+
+  runner.registerInfo("[1/1] Incorporando objetos ZoneVentilation:DesignFlowRate a espacios habitables en terciario")
+  zones = model.getThermalZones
+  runner.registerInfo("* Localizada(s) #{ zones.count } zona(s) térmica(s)")
+  zoneVentilationCounter = 0
+  spaceCounter = 0
+  zones.each do | zone |
+    zoneName = zone.name.get
+    zoneIsIdeal = zone.useIdealAirLoads ? true : false
+    spaces = zone.spaces()
+    spaceCounter += spaces.count
+    # XXX: Solamente usamos el primer espacio de la zona? suponemos que solo hay uno? Si hubiese más se duplicarían definiciones
+    spaces.each do |space|
+      spaceName = space.name.get
+      spaceType = space.spaceType.get
+      spaceTypeName = spaceType.name.get
+      # Las zonas con Ideal Air Loads incorporan un objeto ZoneVentilation:DesignFlowRate si la
+      # plantilla define para ese tipo de espacio un objeto 'Design Specification Outdoor Air'
+      if zoneIsIdeal and not spaceType.isDesignSpecificationOutdoorAirDefaulted
+          runner.registerWarning("- El espacio '#{ spaceName }' de la zona '#{ zoneName }' tiene sistemas ideales y un Objeto OutdoorAir en el tipo '#{ spaceTypeName }")
+          next
+      end
+      # Creamos objetos ZoneVentilation para los espacios habitables
+      # XXX: Antiguamente también teníamos tipos CTE_HR* y CTE_AR*
+      if spaceTypeName.start_with?('CTE_AR', 'CTE_AT')
+        zoneVentilationCounter += 1
+
+        schedtype = OpenStudio::Model::DefaultScheduleType.new('InfiltrationSchedule')
+        scheduleINF = space.getDefaultSchedule(schedtype).get
+
+        zone_ventilation = OpenStudio::Model::ZoneVentilationDesignFlowRate.new(model)
+        zone_ventilation.setName("HVEN_#{spaceName}_Zone Ventilation Design Flow Rate NORMAL")
+        zone_ventilation.addToThermalZone(zone)
+        zone_ventilation.setVentilationType("Exhaust")
+        zone_ventilation.setDesignFlowRateCalculationMethod("AirChanges/Hour")
+        zone_ventilation.setAirChangesperHour(q_ven_reduced)
+        zone_ventilation.setConstantTermCoefficient(1)
+        zone_ventilation.setTemperatureTermCoefficient(0)
+        zone_ventilation.setVelocityTermCoefficient(0)
+        zone_ventilation.setVelocitySquaredTermCoefficient(0)
+        zone_ventilation.setMinimumIndoorTemperature(-100)
+        zone_ventilation.setDeltaTemperature(-100)
+        zone_ventilation.setFanPressureRise(ventilationPressureRise)
+        zone_ventilation.setFanTotalEfficiency(ventilationTotEfficiency)
+        zone_ventilation.setSchedule(scheduleINF)
+      end
+    end
+  end
+  runner.registerInfo("* Localizado(s) #{ spaceCounter } espacio(s)")
+  runner.registerInfo("* Creado(s) #{ zoneVentilationCounter } objeto(s) ZoneVentilation:DesignFlowRate. ")
+  runner.registerInfo("CTE: Finalizada definición de condiciones de ventilación de espacios habitables en edificios terciarios.")
+  return true # OS necesita saber que todo acabó bien
+
+end # end run
