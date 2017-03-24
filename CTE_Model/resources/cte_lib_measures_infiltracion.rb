@@ -76,14 +76,8 @@ end
 def cte_infiltracion(model, runner, user_arguments) #copiado del residencial
 
   # busca el horario para hacer always_on
-  horarios = model.getScheduleRulesets
-  horario_always_on = false
-  horarios.each do | horario |
-    if horario.name.get == 'CTER24B_HINF'
-      horario_always_on = horario
-      break
-    end
-  end
+  horario_always_on = model.getScheduleRulesets
+                      .find { |h| h.name.get == 'CTER24B_HINF' } || false
 
   #hay que tomar el horario del espacio -> zona -> tipo de zona
 
