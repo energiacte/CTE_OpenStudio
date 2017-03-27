@@ -55,7 +55,7 @@ WHERE
 WITH
     zonashabitables AS (#{ CTE_Query::ZONASHABITABLES })
 SELECT
-    SurfaceIndex, SurfaceName, ConstructionIndex, ClassName, Area, GrossArea,
+    SurfaceIndex, SurfaceName, ConstructionIndex, ClassName, Area, GrossArea, Azimuth, Tilt,
     ExtBoundCond, surf.ExtWind, surf.ZoneIndex AS ZoneIndex
 FROM
     Surfaces surf
@@ -68,7 +68,7 @@ WITH
     superficieshabitables AS (#{ CTE_Query::ZONASHABITABLES_SUPERFICIES })
 SELECT
     SurfaceIndex, SurfaceName, ConstructionIndex, ClassName, Area,
-    GrossArea, ExtBoundCond, ZoneIndex, ExtWind
+    GrossArea, ExtBoundCond, ZoneIndex, ExtWind, Azimuth, Tilt
 FROM
     superficieshabitables
 WHERE

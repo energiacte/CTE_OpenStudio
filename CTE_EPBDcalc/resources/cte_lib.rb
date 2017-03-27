@@ -216,8 +216,97 @@ module CTE_tables
     return general_table
   end
 
+  def self.areaPorOrientacion_discontinuo(sqlFile, limite1, limite2, tipo)
+    construcciones_search = "SELECT DISTINCT Name FROM (#{CTE_Query::ENVOLVENTE_EXTERIOR_CONSTRUCCIONES})
+      WHERE (Azimuth > #{limite1} OR Azimuth < #{limite2} )
+      AND ClassName IN (#{tipo}) "
+    construcciones = sqlFile.execAndReturnVectorOfString(construcciones_search).get
+
+    construcciones.each do | construccion |
+      area_search = "SELECT SUM(Area) FROM (#{CTE_Query::ENVOLVENTE_EXTERIOR_CONSTRUCCIONES})
+        WHERE (Azimuth > #{limite1} OR Azimuth < #{limite2} )
+        AND ClassName IN (#{tipo})
+        AND Name == '#{construccion}' "
+      area = sqlFile.execAndReturnFirstDouble(area_search).get
+      puts ("construccion: #{construccion}, #{area}")
+    end
+  end
+
+  def self.areaPorOrientacion_continuo(sqlFile, limite1, limite2, tipo)
+    construcciones_search = "SELECT DISTINCT Name FROM (#{CTE_Query::ENVOLVENTE_EXTERIOR_CONSTRUCCIONES})
+      WHERE (Azimuth > #{limite1} AND Azimuth < #{limite2} )
+      AND ClassName IN (#{tipo}) "
+    construcciones = sqlFile.execAndReturnVectorOfString(construcciones_search).get
+
+    construcciones.each do | construccion |
+      area_search = "SELECT SUM(Area) FROM (#{CTE_Query::ENVOLVENTE_EXTERIOR_CONSTRUCCIONES})
+        WHERE (Azimuth > #{limite1} AND Azimuth < #{limite2} )
+        AND ClassName IN (#{tipo})
+        AND Name == '#{construccion}' "
+      area = sqlFile.execAndReturnFirstDouble(area_search).get
+      puts ("construccion: #{construccion}, #{area}")
+    end
+  end
+
+  def self.areaPorOrientacion(sqlFile, limite1, limite2, tipo)
+    if limite1 > limite2
+      return areaPorOrientacion_discontinuo(sqlFile, limite1, limite2, tipo)
+    else
+      return areaPorOrientacion_continuo(sqlFile, limite1, limite2, tipo)
+    end
+  end
 
 
+
+  def self.tabla_mediciones_por_orientaciones(model, sqlFile, runner)
+    puts "__funcion tabla_mediciones_por_orientaciones"
+    # orientación del edificio.
+    search = "SELECT Value FROM TabularDataWithStrings WHERE RowName == 'North Axis Angle' "
+    northAxisAngle = CTE_tables.getValueOrFalse(sqlFile.execAndReturnFirstDouble(search))
+    c1 = 45.0 - northAxisAngle
+    c2 = 135.0 - northAxisAngle
+    c3 = 225.0 - northAxisAngle
+    c4 = 315.0 - northAxisAngle
+    cuadrantes = [c1, c2, c3, c4]
+    cuadrantes.each_with_index do | valor, indice |
+      while valor < 0.0 do
+        valor += 360
+      end
+      cuadrantes[indice] = valor
+    end
+    c1, c2, c3, c4 = cuadrantes
+    puts("Norte")
+    areaPorOrientacion(sqlFile, c4, c1, "\'Wall\', \'Window\'")
+    puts("Este")
+    areaPorOrientacion(sqlFile, c1, c2, "\'Wall\', \'Window\'")
+    puts("Sur")
+    areaPorOrientacion(sqlFile, c2, c3, "\'Wall\', \'Window\'")
+    puts("Oeste")
+    areaPorOrientacion(sqlFile, c3, c4, "\'Wall\', \'Window\'")
+
+    puts "__return__"
+  # para norte
+  #~ construcciones_murosYventanas_search = "SELECT DISTINCT Name FROM (#{CTE_Query::ENVOLVENTE_EXTERIOR_CONSTRUCCIONES})
+      #~ WHERE (Azimuth > #{c4} OR Azimuth < #{c1} )
+      #~ AND ClassName IN ('Wall', 'Window')
+  #~ "
+  #~ construcciones_murosYventanas = sqlFile.execAndReturnVectorOfString(construcciones_murosYventanas_search).get
+  #~ construcciones_murosYventanas.each do | construccion |
+  #~ limite1 = c4
+  #~ limite2 = c1
+  #~ tipo = "\'Wall\', \'Window\'"
+    #~ area2 = areaPorOrientacion(sqlFile, limite1, limite2, construccion, tipo)
+    #~ puts ("Construccion #{construccion}: #{area2}")
+  #~ areaPorOrientacion(sqlFile, limite1, limite2, tipo)
+  #~ end
+
+
+  #~ puts construcciones_murosYventanas
+  #~ search = "SELECT  FROM (#{CTE_Query::ENVOLVENTE_EXTERIOR_CONSTRUCCIONES})"
+  #~ mediciones.each do | orientacion, tipo, construccion, area |
+    #~ end
+
+  end
 
   def self.tabla_mediciones_envolvente(model, sqlFile, runner)
 
@@ -525,7 +614,7 @@ WHERE
 "
     return OpenStudio.convert(sqlFile.execAndReturnFirstDouble(query).get, unitsSource, unitsTarget).get
   end
-  
+
   def self.output_data_end_use_table(model, sqlFile, runner)
     # end use data output
     output_data_end_use = {}
@@ -567,7 +656,11 @@ WHERE
 
     return output_data_end_use
   end
-  
+
+  def self.getValueOrFalse(search)
+    return (if search.empty? then false else search.get end)
+  end
+
   def self.translate(key)
     # Traducción de diversos elementos de la interfaz
     { 'Heating' => 'Calefacción',
@@ -635,7 +728,7 @@ WHERE
       'Outdoor Temperature at Peak Load' => 'Temperatura exterior con carga pico',
       'Outdoor Humidity Ratio at Peak Load' => 'Humedad exterior con carga pico'
     }.fetch(key) { |nokey| nokey }
-  end  
-   
+  end
+
 
 end

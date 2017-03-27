@@ -22,7 +22,51 @@ class ConexionEPDB_Test < MiniTest::Unit::TestCase
     assert(File.exist?(@sqlPathTerciario))
   end
 
-  def test_residencial
+  def _test_NR02_volumen
+    puts "iniciando test NR02 volumen"
+    sqlPath_NR02 = "#{ File.dirname(__FILE__) }/N_R02_plurif_entremedianeras_SFP+HS3_D3.sql"
+    modelPath_NR02 = "#{ File.dirname(__FILE__) }/N_R02_plurif_entremedianeras_SFP+HS3_D3.osm"
+    # create an instance of the measure
+    measure = ConexionEPDB.new
+    # create an instance of a runner
+    runner = OpenStudio::Ruleset::OSRunner.new
+    # get arguments
+    arguments = measure.arguments()
+    argument_map = OpenStudio::Ruleset.convertOSArgumentVectorToMap(arguments)
+
+    runner.setLastEnergyPlusSqlFilePath(OpenStudio::Path.new(sqlPath_NR02))
+    runner.setLastOpenStudioModelPath(OpenStudio::Path.new(modelPath_NR02))
+    puts "corriendo la medida"
+    measure.run(runner, argument_map)
+    puts "media corrida"
+    result = runner.result
+    show_output(result)  
+  end
+
+  def test_NR02_volumen_sombras
+    puts "iniciando test NR02 volumen_sombras"
+    sqlPath_NR02 = "#{ File.dirname(__FILE__) }/N_R02_plurif_entremedianeras_sombrapatios_SFP+HS3_D3.sql"
+    modelPath_NR02 = "#{ File.dirname(__FILE__) }/N_R02_plurif_entremedianeras_sombrapatios_SFP+HS3_D3.osm"
+    # create an instance of the measure
+    measure = ConexionEPDB.new
+    # create an instance of a runner
+    runner = OpenStudio::Ruleset::OSRunner.new
+    # get arguments
+    arguments = measure.arguments()
+    argument_map = OpenStudio::Ruleset.convertOSArgumentVectorToMap(arguments)
+
+    runner.setLastEnergyPlusSqlFilePath(OpenStudio::Path.new(sqlPath_NR02))
+    runner.setLastOpenStudioModelPath(OpenStudio::Path.new(modelPath_NR02))
+    puts "corriendo la medida"
+    measure.run(runner, argument_map)
+    puts "media corrida"
+    result = runner.result
+    show_output(result)  
+  end
+
+
+
+  def _test_residencial
     # create an instance of the measure
     measure = ConexionEPDB.new
     # create an instance of a runner

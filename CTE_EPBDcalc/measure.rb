@@ -22,7 +22,7 @@
 # SOFTWARE.
 #
 # Author(s): Rafael Villar Burke <pachi@ietcc.csic.es>,
-#            Daniel Jiménez González <dani@ietcc.csic.es>
+#            Daniel Jiménez González <danielj@ietcc.csic.es>
 #            Marta Sorribes Gil <msorribes@ietcc.csic.es>
 
 require 'erb'
@@ -427,6 +427,14 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
       string_rows << "#CTE_medicion_#{ nombre }: [#{ area }, #{ transmitancia }]"
     end
 
+    string_rows << "# Medicion de superficies por orientacion: [orientacion, tipo, construccion, area]"
+    puts "este si"
+    mediciones = CTE_tables.tabla_mediciones_por_orientaciones(model, sqlFile, runner)#[:data]
+    #~ mediciones.each do | orientacion, tipo, construccion, area |
+      #~ string_rows << "#CTE_medicion_#{ orientacion}_#{ tipo }_#{ construccion }: #{ area }"
+    #~ end
+    puts "este no"
+    puts "__llamada a puntes termicos"
     string_rows << "# Medicion puentes termicos: ['Coef. acoplamiento [W/K]', 'Longitud [m]', 'PSI [W/mK]']"
     mediciones = CTE_tables.tabla_mediciones_puentes_termicos(model, runner)[:data]
     mediciones.each do | nombre, coefAcop, long, psi|
