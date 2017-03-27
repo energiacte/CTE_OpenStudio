@@ -12,8 +12,9 @@ runnrel:
 		-v /var/run/dbus:/var/run/dbus \
 		-v ${HOME}/openstudio:/var/simdata/openstudio \
 		-v ${HOME}/openstudio/Measures:/root/OpenStudio/Measures \
+		-v ${HOME}/openstudio/sandBox:/root/OpenStudio/sandBox \
 		-v /mnt/vegacte/03-CTE_en_curso/salaSert/git/OSCTEModels:/root/OpenStudio/Models \
-		nrel/openstudio \
+		nrel/openstudio:1.13.4 \
 		bash
 
 # Hay artefactos de dibujado en QT5 con docker por funcionar como root. Se solucionan ejecutando QT_GRAPHICSSYSTEM=native OpenStudio
