@@ -218,8 +218,17 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
     result = cte_tempaguafria(model, runner, user_arguments) # temperatura de agua de red
     return result unless result == true
 
-    result = cte_ventresidencial(model, runner, user_arguments) # modelo de ventilación para residencial
-    return result unless result == true
+    usoEdificio = runner.getStringArgumentValue('CTE_Uso_edificio',
+                                                user_arguments)
+
+    # Modelo de ventilación
+    if usoEdificio == 'Residencial'
+      result = cte_ventresidencial(model, runner, user_arguments)
+      return result unless result == true
+    else
+      result = cte_ventterciario(model, runner, user_arguments)
+      return result unless result == true
+    end
 
     result = cte_infiltracion(model, runner, user_arguments)
     return result unless result == true

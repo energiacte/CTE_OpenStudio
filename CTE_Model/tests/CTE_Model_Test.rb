@@ -29,6 +29,7 @@ require 'openstudio/ruleset/ShowRunnerOutput'
 require_relative "../measure.rb"
 require 'minitest/autorun'
 require 'fileutils'
+require 'json'
 
 class CTE_Model_Test < MiniTest::Unit::TestCase
 
@@ -73,6 +74,11 @@ class CTE_Model_Test < MiniTest::Unit::TestCase
     show_output(result)
 
     assert(result.value.valueName == "Success")
+
+    attributes = JSON.parse(OpenStudio::toJSON(result.attributes))
+    ela_total = attributes['attributes']['cte_ela_total_espacios']
+    #puts "ELA_TOTAL: #{ attributes['attributes']['cte_ela_total_espacios'] }"
+    assert((6317.87 - ela_total).abs < 0.1)
 
     # save the model to test output directory
     output_file_path = OpenStudio::Path.new(File.dirname(__FILE__) + "/output/test_output_terciario.osm")
@@ -122,6 +128,11 @@ class CTE_Model_Test < MiniTest::Unit::TestCase
 
     assert(result.value.valueName == "Success")
 
+    attributes = JSON.parse(OpenStudio::toJSON(result.attributes))
+    ela_total = attributes['attributes']['cte_ela_total_espacios']
+    #puts "ELA_TOTAL_RES1: #{ attributes['attributes']['cte_ela_total_espacios'] }"
+    assert((5691.77 - ela_total).abs < 0.1)
+
     # save the model to test output directory
     output_file_path = OpenStudio::Path.new(File.dirname(__FILE__) + "/output/test_output_residencial.osm")
     model.save(output_file_path,true)
@@ -169,12 +180,16 @@ class CTE_Model_Test < MiniTest::Unit::TestCase
     show_output(result)
     assert(result.value.valueName == "Success")
 
+    attributes = JSON.parse(OpenStudio::toJSON(result.attributes))
+    ela_total = attributes['attributes']['cte_ela_total_espacios']
+    #puts "ELA_TOTAL_RES2: #{ attributes['attributes']['cte_ela_total_espacios'] }"
+    assert((5691.77 - ela_total).abs < 0.1)
     # save the model to test output directory
     output_file_path = OpenStudio::Path.new(File.dirname(__FILE__) + "/output/test_output_residencial_recovery.osm")
     model.save(output_file_path,true)
 
   end
-  
+
   def test_CTE_Model_provincia_automatico
     # create an instance of the measure
     measure = CTE_Model.new
@@ -196,6 +211,7 @@ class CTE_Model_Test < MiniTest::Unit::TestCase
     # create hash of argument values.
     # If the argument has a default that you want to use, you don't need it in the hash
     args_hash = {}
+    args_hash["CTE_Uso_edificio"] = "Residencial"
     args_hash["provincia"] = "Automatico"
     # using defaults values from measure.rb for other arguments
 
@@ -218,10 +234,14 @@ class CTE_Model_Test < MiniTest::Unit::TestCase
 
     assert(result.value.valueName == "Success")
 
+    attributes = JSON.parse(OpenStudio::toJSON(result.attributes))
+    ela_total = attributes['attributes']['cte_ela_total_espacios']
+    #puts "ELA_TOTAL_RES3: #{ attributes['attributes']['cte_ela_total_espacios'] }"
+    assert((5691.77 - ela_total).abs < 0.1)
     # save the model to test output directory
     output_file_path = OpenStudio::Path.new(File.dirname(__FILE__) + "/output/test_output_residencial.osm")
     model.save(output_file_path,true)
 
-  end  
+  end
 
 end
