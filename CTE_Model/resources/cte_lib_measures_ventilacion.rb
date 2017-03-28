@@ -274,7 +274,8 @@ def cte_ventterciario(model, runner, user_arguments)
       if spaceTypeName.start_with?('CTE_AR', 'CTE_AT')
         zoneVentilationCounter += 1
 
-        schedtype = OpenStudio::Model::DefaultScheduleType.new('InfiltrationSchedule')
+        #schedtype = OpenStudio::Model::DefaultScheduleType.new('InfiltrationSchedule')
+        schedtype = "InfiltrationSchedule".to_DefaultScheduleType
         scheduleINF = space.getDefaultSchedule(schedtype).get
 
         zone_ventilation = OpenStudio::Model::ZoneVentilationDesignFlowRate.new(model)
