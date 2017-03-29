@@ -63,11 +63,11 @@ FROM
 "
 
   # XXX: No está claro que Internal Mass sea un SurfaceType
-  ENVOLVENTE_SUPERFICIES_EXTERIORES ||= "
+  ENVOLVENTE_SUPERFICIES_EXTERIORES ||= "  
 WITH
     superficieshabitables AS (#{ CTE_Query::ZONASHABITABLES_SUPERFICIES })
 SELECT
-    SurfaceIndex, SurfaceName, ConstructionIndex, ClassName, Area,
+    SurfaceIndex, SurfaceName, ConstructionIndex, ClassName, Area, Azimuth,
     GrossArea, ExtBoundCond, ZoneIndex, ExtWind, Azimuth, Tilt
 FROM
     superficieshabitables
@@ -94,7 +94,7 @@ WITH
      )
 SELECT
     surf.SurfaceIndex AS SurfaceIndex, SurfaceName,
-    ConstructionIndex, ClassName, Area, GrossArea, ExtBoundCond,
+    ConstructionIndex, ClassName, Azimuth, Area, GrossArea, ExtBoundCond,
     surf.ZoneIndex AS ZoneIndex
 FROM
     superficiesinternasindex AS internas
@@ -102,7 +102,7 @@ FROM
     INNER JOIN zonasnohabitables AS znh USING (ZoneIndex)
 "
 
-  ENVOLVENTE_EXTERIOR_CONSTRUCCIONES ||= "
+  ENVOLVENTE_EXTERIOR_CONSTRUCCIONES ||= "  
 WITH superficiesexteriores AS ( #{CTE_Query::ENVOLVENTE_SUPERFICIES_EXTERIORES})
 SELECT
     *
@@ -167,6 +167,24 @@ FROM
 
   def CTE_Query.envolventeAreaInterior(sqlFile)
     result = getValueOrFalse(sqlFile.execAndReturnFirstDouble("SELECT SUM(Area) FROM (#{ CTE_Query::ENVOLVENTE_SUPERFICIES_INTERIORES })"))
+    return (result != false) ? result : 0
+  end
+  
+  def CTE_Query.districtHeatingMaximunPeak(sqlFile)
+    query = "SELECT Value FROM TabularDataWithStrings 
+    WHERE RowName = 'DistrictHeating:Facility'  
+    AND ColumnName = 'Maximum Value' "
+    result = getValueOrFalse(sqlFile.execAndReturnFirstDouble(query))
+    # debería dar un error si no encuentra esta búsqueda, RubyZen
+    return (result != false) ? result : 0
+  end
+  
+  def CTE_Query.districtCoolingMaximunPeak(sqlFile)
+  query = "SELECT Value FROM TabularDataWithStrings 
+    WHERE RowName = 'DistrictCooling:Facility'  
+    AND ColumnName = 'Maximum Value' "
+    result = getValueOrFalse(sqlFile.execAndReturnFirstDouble(query))
+    # debería dar un error si no encuentra esta búsqueda, RubyZen
     return (result != false) ? result : 0
   end
 end

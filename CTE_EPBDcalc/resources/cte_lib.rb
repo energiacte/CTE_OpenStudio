@@ -117,7 +117,6 @@ module CTE_tables
     return medicion_general
   end
 
-
  def self.energyConsumptionByVectorAndUse(sqlFile, vectorName, useName)
     # las unidades son Julios a tenor de la informacion del SQL:
     # SELECT distinct  reportname, units FROM TabularDataWithStrings
@@ -217,35 +216,42 @@ module CTE_tables
   end
 
   def self.areaPorOrientacion_discontinuo(sqlFile, limite1, limite2, tipo)
+    salida = []
     construcciones_search = "SELECT DISTINCT Name FROM (#{CTE_Query::ENVOLVENTE_EXTERIOR_CONSTRUCCIONES})
       WHERE (Azimuth > #{limite1} OR Azimuth < #{limite2} )
-      AND ClassName IN (#{tipo}) "
-    construcciones = sqlFile.execAndReturnVectorOfString(construcciones_search).get
-
-    construcciones.each do | construccion |
-      area_search = "SELECT SUM(Area) FROM (#{CTE_Query::ENVOLVENTE_EXTERIOR_CONSTRUCCIONES})
-        WHERE (Azimuth > #{limite1} OR Azimuth < #{limite2} )
-        AND ClassName IN (#{tipo})
-        AND Name == '#{construccion}' "
-      area = sqlFile.execAndReturnFirstDouble(area_search).get
-      puts ("construccion: #{construccion}, #{area}")
+      AND ClassName IN (#{tipo}) "    
+    construcciones = CTE_tables.getValueOrFalse(sqlFile.execAndReturnVectorOfString(construcciones_search))    
+    if construcciones != false
+      construcciones.each do | construccion |
+        area_search = "SELECT SUM(Area) FROM (#{CTE_Query::ENVOLVENTE_EXTERIOR_CONSTRUCCIONES})
+          WHERE (Azimuth > #{limite1} OR Azimuth < #{limite2} )
+          AND ClassName IN (#{tipo})
+          AND Name == '#{construccion}' "
+        area = sqlFile.execAndReturnFirstDouble(area_search).get
+        salida << [construccion, area] #"construccion: #{construccion}, #{area}"
+      end    
     end
+    return salida
   end
 
   def self.areaPorOrientacion_continuo(sqlFile, limite1, limite2, tipo)
+    salida = []
     construcciones_search = "SELECT DISTINCT Name FROM (#{CTE_Query::ENVOLVENTE_EXTERIOR_CONSTRUCCIONES})
       WHERE (Azimuth > #{limite1} AND Azimuth < #{limite2} )
       AND ClassName IN (#{tipo}) "
-    construcciones = sqlFile.execAndReturnVectorOfString(construcciones_search).get
-
-    construcciones.each do | construccion |
-      area_search = "SELECT SUM(Area) FROM (#{CTE_Query::ENVOLVENTE_EXTERIOR_CONSTRUCCIONES})
-        WHERE (Azimuth > #{limite1} AND Azimuth < #{limite2} )
-        AND ClassName IN (#{tipo})
-        AND Name == '#{construccion}' "
-      area = sqlFile.execAndReturnFirstDouble(area_search).get
-      puts ("construccion: #{construccion}, #{area}")
+    construcciones = CTE_tables.getValueOrFalse(sqlFile.execAndReturnVectorOfString(construcciones_search))
+    
+    if construcciones != false
+      construcciones.each do | construccion |
+        area_search = "SELECT SUM(Area) FROM (#{CTE_Query::ENVOLVENTE_EXTERIOR_CONSTRUCCIONES})
+          WHERE (Azimuth > #{limite1} AND Azimuth < #{limite2} )
+          AND ClassName IN (#{tipo})
+          AND Name == '#{construccion}' "
+        area = sqlFile.execAndReturnFirstDouble(area_search).get
+        salida << [construccion, area]
+      end    
     end
+    return salida
   end
 
   def self.areaPorOrientacion(sqlFile, limite1, limite2, tipo)
@@ -258,7 +264,7 @@ module CTE_tables
 
 
 
-  def self.tabla_mediciones_por_orientaciones(model, sqlFile, runner)
+  def self.tabla_mediciones_por_orientaciones(model, sqlFile, runner)  
     puts "__funcion tabla_mediciones_por_orientaciones"
     # orientación del edificio.
     search = "SELECT Value FROM TabularDataWithStrings WHERE RowName == 'North Axis Angle' "
@@ -275,37 +281,38 @@ module CTE_tables
       cuadrantes[indice] = valor
     end
     c1, c2, c3, c4 = cuadrantes
-    puts("Norte")
-    areaPorOrientacion(sqlFile, c4, c1, "\'Wall\', \'Window\'")
-    puts("Este")
-    areaPorOrientacion(sqlFile, c1, c2, "\'Wall\', \'Window\'")
-    puts("Sur")
-    areaPorOrientacion(sqlFile, c2, c3, "\'Wall\', \'Window\'")
-    puts("Oeste")
-    areaPorOrientacion(sqlFile, c3, c4, "\'Wall\', \'Window\'")
-
-    puts "__return__"
-  # para norte
-  #~ construcciones_murosYventanas_search = "SELECT DISTINCT Name FROM (#{CTE_Query::ENVOLVENTE_EXTERIOR_CONSTRUCCIONES})
-      #~ WHERE (Azimuth > #{c4} OR Azimuth < #{c1} )
-      #~ AND ClassName IN ('Wall', 'Window')
-  #~ "
-  #~ construcciones_murosYventanas = sqlFile.execAndReturnVectorOfString(construcciones_murosYventanas_search).get
-  #~ construcciones_murosYventanas.each do | construccion |
-  #~ limite1 = c4
-  #~ limite2 = c1
-  #~ tipo = "\'Wall\', \'Window\'"
-    #~ area2 = areaPorOrientacion(sqlFile, limite1, limite2, construccion, tipo)
-    #~ puts ("Construccion #{construccion}: #{area2}")
-  #~ areaPorOrientacion(sqlFile, limite1, limite2, tipo)
-  #~ end
-
-
-  #~ puts construcciones_murosYventanas
-  #~ search = "SELECT  FROM (#{CTE_Query::ENVOLVENTE_EXTERIOR_CONSTRUCCIONES})"
-  #~ mediciones.each do | orientacion, tipo, construccion, area |
-    #~ end
-
+    
+    contenedor_general = {}
+    contenedor_general[:title] = "Mediciones por orientaciones"
+    contenedor_general[:header] = ['orientacion', 'construccion', 'area']
+    contenedor_general[:units] = ['', '', 'm2']
+    contenedor_general[:data] = []
+        
+    area = areaPorOrientacion(sqlFile, c4, c1, "\'Wall\', \'Window\'")
+    if not area.empty?
+      area.each do | construccion, metros |
+        contenedor_general[:data] << ['norte', construccion, metros]
+      end
+    end    
+    area = areaPorOrientacion(sqlFile, c1, c2, "\'Wall\', \'Window\'")
+    if not area.empty?
+      area.each do | construccion, metros |
+        contenedor_general[:data] << ['este', construccion, metros]
+      end
+    end
+    area = areaPorOrientacion(sqlFile, c2, c3, "\'Wall\', \'Window\'")    
+    if not area.empty?
+      area.each do | construccion, metros |
+        contenedor_general[:data] << ['sur', construccion, metros]
+      end
+    end
+    area = areaPorOrientacion(sqlFile, c3, c4, "\'Wall\', \'Window\'")
+    if not area.empty?
+      area.each do | construccion, metros |
+        contenedor_general[:data] << ['oeste', construccion, metros]
+      end
+    end
+    return contenedor_general
   end
 
   def self.tabla_mediciones_envolvente(model, sqlFile, runner)

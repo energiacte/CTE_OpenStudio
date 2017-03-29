@@ -429,10 +429,10 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
 
     string_rows << "# Medicion de superficies por orientacion: [orientacion, tipo, construccion, area]"
     puts "este si"
-    mediciones = CTE_tables.tabla_mediciones_por_orientaciones(model, sqlFile, runner)#[:data]
-    #~ mediciones.each do | orientacion, tipo, construccion, area |
-      #~ string_rows << "#CTE_medicion_#{ orientacion}_#{ tipo }_#{ construccion }: #{ area }"
-    #~ end
+    mediciones = CTE_tables.tabla_mediciones_por_orientaciones(model, sqlFile, runner)[:data]
+    mediciones.each do | orientacion, construccion, area |
+      string_rows << "#CTE_medicion_#{ orientacion }_#{ construccion }: #{ area }"
+    end
     puts "este no"
     puts "__llamada a puntes termicos"
     string_rows << "# Medicion puentes termicos: ['Coef. acoplamiento [W/K]', 'Longitud [m]', 'PSI [W/mK]']"
