@@ -428,12 +428,10 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     end
 
     string_rows << "# Medicion de superficies por orientacion: [orientacion, tipo, construccion, area]"
-    puts "este si"
     mediciones = CTE_tables.tabla_mediciones_por_orientaciones(model, sqlFile, runner)[:data]
     mediciones.each do | orientacion, construccion, area |
       string_rows << "#CTE_medicion_#{ orientacion }_#{ construccion }: #{ area }"
     end
-    puts "este no"
     puts "__llamada a puntes termicos"
     string_rows << "# Medicion puentes termicos: ['Coef. acoplamiento [W/K]', 'Longitud [m]', 'PSI [W/mK]']"
     mediciones = CTE_tables.tabla_mediciones_puentes_termicos(model, runner)[:data]
@@ -442,12 +440,15 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     end
 
     #valores anuales de demanda por servicios
+    puts "__llamada valores anuales de demanda por servicios"
     tabla = CTE_tables.output_data_end_use_table(model, sqlFile, runner)
     string_rows << "# Valores anuales de demanda por servicios en Kwh"
     tabla[:data].each do | key, value|
       string_rows << "#{self._nombre_variable(key)} #{value}"
     end
-
+    
+    puts "__llamada a la potencia pico por servicios"
+    
     # Potencia pico por servicios (W)
     tabla = sqlFile.execAndReturnFirstDouble("
     SELECT
@@ -462,6 +463,7 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
         string_rows << "#CTE_#{ sname }_W: #{ value }"
     end
 
+    puts "__llamada al consumo mensaul por servicios"
     # Building services
     servicios = [['WATERSYSTEMS', runner.getStringArgumentValue('CTE_Watersystems', user_arguments)],
                  ['HEATING', runner.getStringArgumentValue('CTE_Heating', user_arguments)],
