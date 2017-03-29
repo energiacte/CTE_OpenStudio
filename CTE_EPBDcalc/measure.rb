@@ -448,6 +448,20 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
       string_rows << "#{self._nombre_variable(key)} #{value}"
     end
 
+    # Potencia pico por servicios (W)
+    tabla = sqlFile.execAndReturnFirstDouble("
+    SELECT
+      ColumnName, Value
+    FROM TabularDataWithStrings
+    WHERE ReportName LIKE 'BUILDING ENERGY PERFORMANCE - % PEAK DEMAND'
+      AND RowName IS 'Maximum of Months'
+      AND Units IS 'W'").get
+    string_rows << "# Potencia máxima [W] por servicios (genéricos)"
+    tabla.each do |name, value|
+        sname = name.split(' {')[0].gsub(':', '_').gsub(' ', '_')
+        string_rows << "#CTE_#{ sname }_W: #{ value }"
+    end
+
     # Building services
     servicios = [['WATERSYSTEMS', runner.getStringArgumentValue('CTE_Watersystems', user_arguments)],
                  ['HEATING', runner.getStringArgumentValue('CTE_Heating', user_arguments)],
