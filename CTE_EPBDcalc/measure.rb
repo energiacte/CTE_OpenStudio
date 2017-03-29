@@ -450,18 +450,28 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     puts "__llamada a la potencia pico por servicios"
     
     # Potencia pico por servicios (W)
-    tabla = sqlFile.execAndReturnFirstDouble("
-    SELECT
-      ColumnName, Value
+    string_rows << "# Potencia máxima [W] por servicios (genéricos)"
+    servicios = sqlFile.execAndReturnVectorOfString("
+    SELECT  ColumnName
     FROM TabularDataWithStrings
     WHERE ReportName LIKE 'BUILDING ENERGY PERFORMANCE - % PEAK DEMAND'
       AND RowName IS 'Maximum of Months'
-      AND Units IS 'W'").get
-    string_rows << "# Potencia máxima [W] por servicios (genéricos)"
-    tabla.each do |name, value|
-        sname = name.split(' {')[0].gsub(':', '_').gsub(' ', '_')
-        string_rows << "#CTE_#{ sname }_W: #{ value }"
-    end
+      AND Units IS 'W'
+    ").get
+    
+    servicios.each do | servicio |
+      valor_pico = sqlFile.execAndReturnFirstDouble("
+      SELECT Value 
+      FROM TabularDataWithStrings
+      WHERE ReportName LIKE 'BUILDING ENERGY PERFORMANCE - % PEAK DEMAND' 
+        AND ColumnName IS '#{ servicio }' 
+        AND RowName IS 'Maximum of Months' 
+        AND Units IS 'W'").get
+      
+      sname = servicio.split(' {')[0].gsub(':', '_').gsub(' ', '_')
+      string_rows << "#CTE_#{ sname }_W: #{ valor_pico }"
+    end    
+    
 
     puts "__llamada al consumo mensaul por servicios"
     # Building services
