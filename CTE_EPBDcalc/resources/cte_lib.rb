@@ -269,18 +269,24 @@ module CTE_tables
     # orientación del edificio.
     search = "SELECT Value FROM TabularDataWithStrings WHERE RowName == 'North Axis Angle' "
     northAxisAngle = CTE_tables.getValueOrFalse(sqlFile.execAndReturnFirstDouble(search))
-    c1 = 45.0 - northAxisAngle
-    c2 = 135.0 - northAxisAngle
-    c3 = 225.0 - northAxisAngle
-    c4 = 315.0 - northAxisAngle
-    cuadrantes = [c1, c2, c3, c4]
+    c_norte    =  22.5 - northAxisAngle
+    c_noreste  =  60.0 - northAxisAngle
+    c_este     = 111.0 - northAxisAngle
+    c_sureste  = 162.0 - northAxisAngle
+    c_sur      = 198.0 - northAxisAngle
+    c_suroeste = 249.0 - northAxisAngle
+    c_oeste    = 300.0 - northAxisAngle
+    c_noroeste = 337.5 - northAxisAngle
+    
+    cuadrantes = [c_norte, c_noroeste, c_este, c_sureste, c_sur, c_suroeste, c_oeste, c_noroeste]
+    
     cuadrantes.each_with_index do | valor, indice |
       while valor < 0.0 do
         valor += 360
       end
       cuadrantes[indice] = valor
     end
-    c1, c2, c3, c4 = cuadrantes
+    c_norte, c_noroeste, c_este, c_sureste, c_sur, c_suroeste, c_oeste, c_noroeste = cuadrantes
     
     contenedor_general = {}
     contenedor_general[:title] = "Mediciones por orientaciones"
@@ -288,30 +294,24 @@ module CTE_tables
     contenedor_general[:units] = ['', '', 'm2']
     contenedor_general[:data] = []
         
-    area = areaPorOrientacion(sqlFile, c4, c1, "\'Wall\', \'Window\'")
-    if not area.empty?
-      area.each do | construccion, metros |
-        contenedor_general[:data] << ['norte', construccion, metros]
-      end
-    end    
-    area = areaPorOrientacion(sqlFile, c1, c2, "\'Wall\', \'Window\'")
-    if not area.empty?
-      area.each do | construccion, metros |
-        contenedor_general[:data] << ['este', construccion, metros]
-      end
+    def self.anadir_area(etiqueta, c1, c2, sqlFile, contenedor_general)
+      area = areaPorOrientacion(sqlFile, c1, c2, "\'Wall\', \'Window\'")
+      if not area.empty?
+        area.each do | construccion, metros |
+          contenedor_general[:data] << [etiqueta, construccion, metros]
+        end
+      end        
     end
-    area = areaPorOrientacion(sqlFile, c2, c3, "\'Wall\', \'Window\'")    
-    if not area.empty?
-      area.each do | construccion, metros |
-        contenedor_general[:data] << ['sur', construccion, metros]
-      end
-    end
-    area = areaPorOrientacion(sqlFile, c3, c4, "\'Wall\', \'Window\'")
-    if not area.empty?
-      area.each do | construccion, metros |
-        contenedor_general[:data] << ['oeste', construccion, metros]
-      end
-    end
+    
+    anadir_area('norte',   c_noroeste, c_norte,   sqlFile, contenedor_general)
+    anadir_area('noreste', c_norte,    c_noreste, sqlFile, contenedor_general)
+    anadir_area('este',    c_noreste,  c_este,    sqlFile, contenedor_general)
+    anadir_area('sureste', c_este,     c_sureste, sqlFile, contenedor_general)
+    anadir_area('sur',     c_sureste,  c_sur,     sqlFile, contenedor_general)
+    anadir_area('suroeste',c_sur,      c_suroeste,sqlFile, contenedor_general)
+    anadir_area('oeste'   ,c_suroeste, c_oeste,   sqlFile, contenedor_general)
+    anadir_area('noroeste',c_oeste,    c_noroeste,sqlFile, contenedor_general)
+    
     return contenedor_general
   end
 
