@@ -167,7 +167,7 @@ class CTE_InformeDBHE < OpenStudio::Ruleset::ReportingUserScript
     html_out = renderer.result(binding)
 
     # write html file
-    html_out_path = './CTE-DBHE_report.htm'
+    html_out_path = './report.htm'
     File.open(html_out_path, 'w:UTF-8') do |file|
       file << html_out
       # make sure data is written to the disk one way or the other
