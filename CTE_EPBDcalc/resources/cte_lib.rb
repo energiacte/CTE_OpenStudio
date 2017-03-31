@@ -290,15 +290,15 @@ module CTE_tables
     
     contenedor_general = {}
     contenedor_general[:title] = "Mediciones por orientaciones"
-    contenedor_general[:header] = ['orientacion', 'construccion', 'area']
-    contenedor_general[:units] = ['', '', 'm2']
+    contenedor_general[:header] = ['area']
+    contenedor_general[:units] = ['m2']
     contenedor_general[:data] = []
         
     def self.anadir_area(etiqueta, c1, c2, sqlFile, contenedor_general)
       area = areaPorOrientacion(sqlFile, c1, c2, "\'Wall\', \'Window\'")
       if not area.empty?
         area.each do | construccion, metros |
-          contenedor_general[:data] << [etiqueta, construccion, metros]
+          contenedor_general[:data] << [etiqueta, construccion, metros.round(2)]
         end
       end        
     end
