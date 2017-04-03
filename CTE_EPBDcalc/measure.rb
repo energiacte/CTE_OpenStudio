@@ -428,7 +428,7 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     area_envolvente_para_K = mediciones[:area_total]
 
     #~ mediciones[:data].each do | nombre, area, transmitancia |
-      #~ string_rows << "#CTE_medicion_#{ nombre }: [#{ area }, #{ transmitancia }]"
+      #~ string_rows << "#CTE_U_film_#{ nombre }: [#{ area }, #{ transmitancia }]"
     #~ end
 
     string_rows << "# Medicion construcciones: [Area [m2], Transmitancia U [W/m2K]]"
@@ -440,7 +440,7 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     string_rows << "# Medicion de superficies por orientacion: [area]"
     mediciones = CTE_tables.tabla_mediciones_por_orientaciones(model, sqlFile, runner)[:data]
     mediciones.each do | orientacion, construccion, area |
-      string_rows << "#CTE_medicion_#{ orientacion }_#{ construccion }: #{ area }"
+      string_rows << "#CTE_orientacion_#{ orientacion }_#{ construccion }: #{ area }"
     end
 
     puts "__llamada a puntes termicos"
