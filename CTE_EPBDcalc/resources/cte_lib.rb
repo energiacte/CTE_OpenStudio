@@ -324,6 +324,8 @@ module CTE_tables
     contenedor_general[:header] = ['Elemento', 'Superficie', 'U with film']
     contenedor_general[:units] = ['', 'm²', 'W/m²K']
     contenedor_general[:data] = []
+    contenedor_general[:factor_AU] = 0
+    contenedor_general[:area_total] = 0
 
     superficiesQuery = "SELECT SurfaceName FROM (#{ CTE_Query::ENVOLVENTE_SUPERFICIES_EXTERIORES })
     WHERE ClassName IN ('Wall', 'Roof', 'Floor')"
@@ -398,7 +400,7 @@ module CTE_tables
 
     contenedor_general[:factor_AU] = factor_AU
     contenedor_general[:area_total] = area_total
-    return contenedor_general[:data]
+    return contenedor_general
   end
 
   def self.tabla_mediciones_envolvente(model, sqlFile, runner)
@@ -456,11 +458,16 @@ module CTE_tables
     contenedor_general[:header] = ['Tipo', 'Coef. acoplamiento', 'Longitud', 'PSI']
     contenedor_general[:units] = ['', 'W/K', 'm', 'W/mK']
     contenedor_general[:data] = []
+    contenedor_general[:factor_LPsi] = 0
+    factor_LPsi = 0
+    
     coeficienteAcoplamiento.each do | key, value |
       psi = ttl_puenteTermico[key]
       contenedor_general[:data] << [key, value.round(0), (value/psi).round(0), psi.round(2)]
+      factor_LPsi += value
     end
 
+    contenedor_general[:factor_LPsi] = factor_LPsi
     return contenedor_general
 
 

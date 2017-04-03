@@ -415,20 +415,24 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     compacidad = (volumenHabitable / areatotal)
     string_rows << "#CTE_Compacidad: #{ compacidad.round(2) }"
 
-    string_rows << "#CTE_K: #{calculoIndicadorK(model, sqlFile, runner).round(2)}"
+    #~ string_rows << "#CTE_K: #{calculoIndicadorK(model, sqlFile, runner).round(2)}"
+
     fshgl = json["CTE_F_sombras_moviles"].to_f
     qsj_maxino = calculoIndicador_qsj(model, sqlFile, runner)
     qsj = (qsj_maxino * fshgl) / cte_areareferencia
     string_rows << "#CTE_qsj: #{qsj.round(2)}"
 
+    #string_rows <<"# Mediciones de U with film para K:[Area[m2], U with Film [W/m2K]]"
+    mediciones = CTE_tables.tabla_mediciones_elementos_with_film(model, sqlFile, runner)
+    factor_AU = mediciones[:factor_AU]
+    area_envolvente_para_K = mediciones[:area_total]
+
+    #~ mediciones[:data].each do | nombre, area, transmitancia |
+      #~ string_rows << "#CTE_medicion_#{ nombre }: [#{ area }, #{ transmitancia }]"
+    #~ end
+
     string_rows << "# Medicion construcciones: [Area [m2], Transmitancia U [W/m2K]]"
     mediciones = CTE_tables.tabla_mediciones_envolvente(model, sqlFile, runner)[:data]
-    mediciones.each do | nombre, area, transmitancia |
-      string_rows << "#CTE_medicion_#{ nombre }: [#{ area }, #{ transmitancia }]"
-    end
-
-    string_rows <<"# Mediciones de U with film para K:[Area[m2], U with Film [W/m2K]]"
-    mediciones = CTE_tables.tabla_mediciones_elementos_with_film(model, sqlFile, runner)
     mediciones.each do | nombre, area, transmitancia |
       string_rows << "#CTE_medicion_#{ nombre }: [#{ area }, #{ transmitancia }]"
     end
@@ -438,12 +442,20 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     mediciones.each do | orientacion, construccion, area |
       string_rows << "#CTE_medicion_#{ orientacion }_#{ construccion }: #{ area }"
     end
+
     puts "__llamada a puntes termicos"
     string_rows << "# Medicion puentes termicos: ['Coef. acoplamiento [W/K]', 'Longitud [m]', 'PSI [W/mK]']"
-    mediciones = CTE_tables.tabla_mediciones_puentes_termicos(model, runner)[:data]
-    mediciones.each do | nombre, coefAcop, long, psi|
+    mediciones = CTE_tables.tabla_mediciones_puentes_termicos(model, runner)
+    factor_LPsi= mediciones[:factor_LPsi]
+
+    mediciones[:data].each do | nombre, coefAcop, long, psi|
       string_rows << "#CTE_medicion_PT_#{ nombre }: [#{ coefAcop }, #{ long }, #{ psi }]"
     end
+
+
+    #~ string_rows << "#CTE_K: #{calculoIndicadorK(model, sqlFile, runner).round(2)}"
+    string_rows << "#CTE_K: #{ ((factor_AU + factor_LPsi)/area_envolvente_para_K).round(2)}"
+    #~ string_rows << "#area envolvente para K: #{ area_envolvente_para_K }"
 
     #valores anuales de demanda por servicios
     puts "__llamada valores anuales de demanda por servicios"
