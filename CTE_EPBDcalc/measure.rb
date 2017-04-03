@@ -427,7 +427,13 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
       string_rows << "#CTE_medicion_#{ nombre }: [#{ area }, #{ transmitancia }]"
     end
 
-    string_rows << "# Medicion de superficies por orientacion: [orientacion, tipo, construccion, area]"
+    string_rows <<"# Mediciones de U with film para K:[Area[m2], U with Film [W/m2K]]"
+    mediciones = CTE_tables.tabla_mediciones_elementos_with_film(model, sqlFile, runner)
+    mediciones.each do | nombre, area, transmitancia |
+      string_rows << "#CTE_medicion_#{ nombre }: [#{ area }, #{ transmitancia }]"
+    end
+
+    string_rows << "# Medicion de superficies por orientacion: [area]"
     mediciones = CTE_tables.tabla_mediciones_por_orientaciones(model, sqlFile, runner)[:data]
     mediciones.each do | orientacion, construccion, area |
       string_rows << "#CTE_medicion_#{ orientacion }_#{ construccion }: #{ area }"
@@ -446,9 +452,9 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
     tabla[:data].each do | key, value|
       string_rows << "#{self._nombre_variable(key)} #{value}"
     end
-    
+
     puts "__llamada a la potencia pico por servicios"
-    
+
     # Potencia pico por servicios (W)
     string_rows << "# Potencia máxima [W] por servicios (genéricos)"
     servicios = sqlFile.execAndReturnVectorOfString("
@@ -458,20 +464,20 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
       AND RowName IS 'Maximum of Months'
       AND Units IS 'W'
     ").get
-    
+
     servicios.each do | servicio |
       valor_pico = sqlFile.execAndReturnFirstDouble("
-      SELECT Value 
+      SELECT Value
       FROM TabularDataWithStrings
-      WHERE ReportName LIKE 'BUILDING ENERGY PERFORMANCE - % PEAK DEMAND' 
-        AND ColumnName IS '#{ servicio }' 
-        AND RowName IS 'Maximum of Months' 
+      WHERE ReportName LIKE 'BUILDING ENERGY PERFORMANCE - % PEAK DEMAND'
+        AND ColumnName IS '#{ servicio }'
+        AND RowName IS 'Maximum of Months'
         AND Units IS 'W'").get
-      
+
       sname = servicio.split(' {')[0].gsub(':', '_').gsub(' ', '_')
       string_rows << "#CTE_#{ sname }_W: #{ valor_pico }"
-    end    
-    
+    end
+
 
     puts "__llamada al consumo mensaul por servicios"
     # Building services

@@ -219,8 +219,8 @@ module CTE_tables
     salida = []
     construcciones_search = "SELECT DISTINCT Name FROM (#{CTE_Query::ENVOLVENTE_EXTERIOR_CONSTRUCCIONES})
       WHERE (Azimuth > #{limite1} OR Azimuth < #{limite2} )
-      AND ClassName IN (#{tipo}) "    
-    construcciones = CTE_tables.getValueOrFalse(sqlFile.execAndReturnVectorOfString(construcciones_search))    
+      AND ClassName IN (#{tipo}) "
+    construcciones = CTE_tables.getValueOrFalse(sqlFile.execAndReturnVectorOfString(construcciones_search))
     if construcciones != false
       construcciones.each do | construccion |
         area_search = "SELECT SUM(Area) FROM (#{CTE_Query::ENVOLVENTE_EXTERIOR_CONSTRUCCIONES})
@@ -229,7 +229,7 @@ module CTE_tables
           AND Name == '#{construccion}' "
         area = sqlFile.execAndReturnFirstDouble(area_search).get
         salida << [construccion, area] #"construccion: #{construccion}, #{area}"
-      end    
+      end
     end
     return salida
   end
@@ -240,7 +240,7 @@ module CTE_tables
       WHERE (Azimuth > #{limite1} AND Azimuth < #{limite2} )
       AND ClassName IN (#{tipo}) "
     construcciones = CTE_tables.getValueOrFalse(sqlFile.execAndReturnVectorOfString(construcciones_search))
-    
+
     if construcciones != false
       construcciones.each do | construccion |
         area_search = "SELECT SUM(Area) FROM (#{CTE_Query::ENVOLVENTE_EXTERIOR_CONSTRUCCIONES})
@@ -249,7 +249,7 @@ module CTE_tables
           AND Name == '#{construccion}' "
         area = sqlFile.execAndReturnFirstDouble(area_search).get
         salida << [construccion, area]
-      end    
+      end
     end
     return salida
   end
@@ -264,7 +264,7 @@ module CTE_tables
 
 
 
-  def self.tabla_mediciones_por_orientaciones(model, sqlFile, runner)  
+  def self.tabla_mediciones_por_orientaciones(model, sqlFile, runner)
     puts "__funcion tabla_mediciones_por_orientaciones"
     # orientación del edificio.
     search = "SELECT Value FROM TabularDataWithStrings WHERE RowName == 'North Axis Angle' "
@@ -277,9 +277,9 @@ module CTE_tables
     c_suroeste = 249.0 - northAxisAngle
     c_oeste    = 300.0 - northAxisAngle
     c_noroeste = 337.5 - northAxisAngle
-    
+
     cuadrantes = [c_norte, c_noroeste, c_este, c_sureste, c_sur, c_suroeste, c_oeste, c_noroeste]
-    
+
     cuadrantes.each_with_index do | valor, indice |
       while valor < 0.0 do
         valor += 360
@@ -287,22 +287,22 @@ module CTE_tables
       cuadrantes[indice] = valor
     end
     c_norte, c_noroeste, c_este, c_sureste, c_sur, c_suroeste, c_oeste, c_noroeste = cuadrantes
-    
+
     contenedor_general = {}
     contenedor_general[:title] = "Mediciones por orientaciones"
     contenedor_general[:header] = ['area']
     contenedor_general[:units] = ['m2']
     contenedor_general[:data] = []
-        
+
     def self.anadir_area(etiqueta, c1, c2, sqlFile, contenedor_general)
       area = areaPorOrientacion(sqlFile, c1, c2, "\'Wall\', \'Window\'")
       if not area.empty?
         area.each do | construccion, metros |
           contenedor_general[:data] << [etiqueta, construccion, metros.round(2)]
         end
-      end        
+      end
     end
-    
+
     anadir_area('norte',   c_noroeste, c_norte,   sqlFile, contenedor_general)
     anadir_area('noreste', c_norte,    c_noreste, sqlFile, contenedor_general)
     anadir_area('este',    c_noreste,  c_este,    sqlFile, contenedor_general)
@@ -311,8 +311,94 @@ module CTE_tables
     anadir_area('suroeste',c_sur,      c_suroeste,sqlFile, contenedor_general)
     anadir_area('oeste'   ,c_suroeste, c_oeste,   sqlFile, contenedor_general)
     anadir_area('noroeste',c_oeste,    c_noroeste,sqlFile, contenedor_general)
-    
+
     return contenedor_general
+  end
+
+  def self.tabla_mediciones_elementos_with_film(model, sqlFile, runner)
+    factor_AU = 0
+    area_total = 0
+
+    contenedor_general = {}
+    contenedor_general[:title] = "Mediciones elementos de la envolvente con Rsi"
+    contenedor_general[:header] = ['Elemento', 'Superficie', 'U with film']
+    contenedor_general[:units] = ['', 'm²', 'W/m²K']
+    contenedor_general[:data] = []
+
+    superficiesQuery = "SELECT SurfaceName FROM (#{ CTE_Query::ENVOLVENTE_SUPERFICIES_EXTERIORES })
+    WHERE ClassName IN ('Wall', 'Roof', 'Floor')"
+
+    superficies = getValueOrFalse(sqlFile.execAndReturnVectorOfString(superficiesQuery))
+    puts "nombres de las superficies"
+    superficies.each do | surfaceName |
+      areaQuery = "SELECT Area From Surfaces WHERE SurfaceName = '#{ surfaceName }'"
+      area = getValueOrFalse(sqlFile.execAndReturnFirstDouble(areaQuery))
+      ufilmQuery = "SELECT Value FROM TabularDataWithStrings
+        WHERE ColumnName = 'U-Factor with Film' AND RowName = '#{ surfaceName }'"
+      ufilm = getValueOrFalse(sqlFile.execAndReturnFirstDouble(ufilmQuery))
+      factor_AU += area*ufilm
+      area_total += area
+      contenedor_general[:data] << [surfaceName, area.round(2), ufilm.round(3)]
+    end
+
+    superficiesQuery = "SELECT SurfaceName FROM (#{ CTE_Query::ENVOLVENTE_SUPERFICIES_EXTERIORES })
+    WHERE ClassName IN ('Window')"
+
+    superficies = getValueOrFalse(sqlFile.execAndReturnVectorOfString(superficiesQuery))
+    puts "nombres de las superficies"
+    superficies.each do | subSurfaceName |
+      glassAreaQuery = "
+        SELECT Value
+        FROM TabularDataWithStrings
+        WHERE RowName = '#{ subSurfaceName }'
+          AND TableName = 'Exterior Fenestration'
+          AND ColumnName = 'Glass Area' "
+      glassArea = getValueOrFalse(sqlFile.execAndReturnFirstDouble(glassAreaQuery))
+
+      glassUfactorQuery = "
+        SELECT Value
+        FROM TabularDataWithStrings
+        WHERE RowName = '#{ subSurfaceName }'
+          AND TableName = 'Exterior Fenestration'
+          AND ColumnName = 'Glass U-Factor' "
+      glassUfactor = getValueOrFalse(sqlFile.execAndReturnFirstDouble(glassUfactorQuery))
+
+      glassUFactorWithFilm = glassUfactor/(1 + 0.17*glassUfactor)
+
+      factor_AU += glassArea * glassUFactorWithFilm
+      area_total += glassArea
+
+      frameAreaQuery = "
+        SELECT Value
+        FROM TabularDataWithStrings
+        WHERE RowName = '#{ subSurfaceName }'
+          AND TableName = 'Exterior Fenestration'
+          AND ColumnName = 'Frame Area' "
+      frameArea = getValueOrFalse(sqlFile.execAndReturnFirstDouble(frameAreaQuery))
+
+      frameUfactorQuery = "
+        SELECT Value
+        FROM TabularDataWithStrings
+        WHERE RowName = '#{ subSurfaceName }'
+          AND TableName = 'Exterior Fenestration'
+          AND ColumnName = 'Frame Conductance' "
+      frameUfactor = getValueOrFalse(sqlFile.execAndReturnFirstDouble(frameUfactorQuery))
+
+      frameUFactorWithFilm = frameUfactor/(1 + 0.17*frameUfactor)
+
+      factor_AU += frameArea * frameUFactorWithFilm
+      area_total += frameArea
+
+      windowUfactorWithFilm = (glassArea * glassUFactorWithFilm + frameArea * frameUFactorWithFilm) \
+                                /(glassArea + frameArea)
+      windowArea = glassArea + frameArea
+
+      contenedor_general[:data] << [subSurfaceName, windowArea.round(2), windowUfactorWithFilm.round(3)]
+    end
+
+    contenedor_general[:factor_AU] = factor_AU
+    contenedor_general[:area_total] = area_total
+    return contenedor_general[:data]
   end
 
   def self.tabla_mediciones_envolvente(model, sqlFile, runner)
