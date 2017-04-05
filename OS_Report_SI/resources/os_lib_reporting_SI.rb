@@ -2531,11 +2531,11 @@ module OsLib_Reporting
     temperature_bins = {}
     for i in 0..(temperature_bins_temps_si.size - 1)
       if i == 0
-        temperature_bins["< #{temperature_bins_temps_si[i]}"] = 0
+        temperature_bins["< #{temperature_bins_temps_si[i].round(1)}"] = 0
       elsif i == temperature_bins_temps_si.size - 1
-        temperature_bins[">= #{temperature_bins_temps_si[i]}"] = 0
+        temperature_bins[">= #{temperature_bins_temps_si[i].round(1)}"] = 0
       else
-        temperature_bins["#{temperature_bins_temps_si[i - 1]}-#{temperature_bins_temps_si[i]}"] = 0
+        temperature_bins["#{temperature_bins_temps_si[i - 1].round(1)}-#{temperature_bins_temps_si[i].round(1)}"] = 0
       end
     end
 
