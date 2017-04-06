@@ -265,7 +265,6 @@ module CTE_tables
 
 
   def self.tabla_mediciones_por_orientaciones(model, sqlFile, runner)
-    puts "__funcion tabla_mediciones_por_orientaciones"
     # orientación del edificio.
     search = "SELECT Value FROM TabularDataWithStrings WHERE RowName == 'North Axis Angle' "
     northAxisAngle = CTE_tables.getValueOrFalse(sqlFile.execAndReturnFirstDouble(search))
@@ -331,7 +330,6 @@ module CTE_tables
     WHERE ClassName IN ('Wall', 'Roof', 'Floor')"
 
     superficies = getValueOrFalse(sqlFile.execAndReturnVectorOfString(superficiesQuery))
-    puts "nombres de las superficies"
     superficies.each do | surfaceName |
       areaQuery = "SELECT Area From Surfaces WHERE SurfaceName = '#{ surfaceName }'"
       area = getValueOrFalse(sqlFile.execAndReturnFirstDouble(areaQuery))
@@ -347,7 +345,6 @@ module CTE_tables
     WHERE ClassName IN ('Window')"
 
     superficies = getValueOrFalse(sqlFile.execAndReturnVectorOfString(superficiesQuery))
-    puts "nombres de las superficies"
     superficies.each do | subSurfaceName |
       glassAreaQuery = "
         SELECT Value
