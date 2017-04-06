@@ -44,12 +44,12 @@ module CTELib_Reporting
     model = model.get
 
     # get the last idf
-    workspace = runner.lastEnergyPlusWorkspace
-    if workspace.empty?
-      runner.registerError('Cannot find last idf file.')
-      return false
-    end
-    workspace = workspace.get
+    # workspace = runner.lastEnergyPlusWorkspace
+    # if workspace.empty?
+    #   runner.registerError('Cannot find last idf file.')
+    #   return false
+    # end
+    # workspace = workspace.get
 
     # get the last sql file
     sqlFile = runner.lastEnergyPlusSqlFile
