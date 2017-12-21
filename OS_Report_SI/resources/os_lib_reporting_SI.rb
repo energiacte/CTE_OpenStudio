@@ -915,8 +915,8 @@ module OsLib_Reporting
       else
         heating_temps_ranges_pretty = "#{OpenStudio.convert(heating_temps_ranges.min, 'C', 'C').get.round(1)} to #{OpenStudio.convert(heating_temps_ranges.max, 'C', 'C').get.round(1)}"
       end
-      output_data_air_loops[:data] << ['Thermal Zones', '', '', 'thermostat ranges for heating', cooling_temp_ranges_pretty, 'C', '']
-      output_data_air_loops[:data] << ['Thermal Zones', '', '', 'thermostat ranges for cooling', heating_temps_ranges_pretty, 'C', '']
+      output_data_air_loops[:data] << ['Thermal Zones', '', '', 'thermostat ranges for cooling', cooling_temp_ranges_pretty, 'C', '']
+      output_data_air_loops[:data] << ['Thermal Zones', '', '', 'thermostat ranges for heating', heating_temps_ranges_pretty, 'C', '']
       output_data_air_loops[:data] << ['Terminal Types Used', '', '', terminals.uniq.sort.join(', '), '', '', terminals.size]
 
       # controls summary
