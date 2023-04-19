@@ -400,20 +400,20 @@ module CTELib_Reporting
 
   def self.cte_superficies_table(model, sqlFile, runner)
     # TODO: descomponer superficies externas de la envolvente por tipos (muros, cubiertas, huecos, lucernarios, etc)
-    buildingName = model.getBuilding.name.get
+    buildingName = model.getBuilding.name.get    
     # Zonas habitables
-    zonasHabitables = CTE_Query.zonasHabitables(sqlFile)
-    superficieHabitable = CTE_Query.superficieHabitable(sqlFile)
-    volumenHabitable = CTE_Query.volumenHabitable(sqlFile)
+    zonasHabitables = CTE_Query.zonasHabitables(model)
+    superficieHabitable = CTE_Query.superficieHabitable(model, sqlFile)
+    volumenHabitable = CTE_Query.volumenHabitable(model, sqlFile)
     # Zonas no habitables
-    zonasNoHabitables = CTE_Query.zonasNoHabitables(sqlFile)
-    superficieNoHabitable = CTE_Query.superficieNoHabitable(sqlFile)
-    volumenNoHabitable = CTE_Query.volumenNoHabitable(sqlFile)
+    zonasNoHabitables = CTE_Query.zonasNoHabitables(model, sqlFile)
+    superficieNoHabitable = CTE_Query.superficieNoHabitable(model, sqlFile)
+    volumenNoHabitable = CTE_Query.volumenNoHabitable(model, sqlFile)
     # Envolvente térmica
-    superficiesExteriores = CTE_Query.envolventeSuperficiesExteriores(sqlFile)
-    areaexterior = CTE_Query.envolventeAreaExterior(sqlFile)
-    superficiesInteriores = CTE_Query.envolventeSuperficiesInteriores(sqlFile)
-    areainterior = CTE_Query.envolventeAreaInterior(sqlFile)
+    superficiesExteriores = CTE_Query.envolventeSuperficiesExteriores(model, sqlFile)
+    areaexterior = CTE_Query.envolventeAreaExterior(model, sqlFile)
+    superficiesInteriores = CTE_Query.envolventeSuperficiesInteriores(model, sqlFile)
+    areainterior = CTE_Query.envolventeAreaInterior(model, sqlFile)
     areatotal = areaexterior + areainterior
     compacidad = (volumenHabitable / areatotal)
 
@@ -494,7 +494,7 @@ module CTELib_Reporting
 
   def self.cte_end_use_energy_categories_table(model, sqlFile, runner)
 
-    superficiehabitable = CTE_Query.superficieHabitable(sqlFile)
+    superficiehabitable = CTE_Query.superficieHabitable(model, sqlFile)
 
     # XXX: debería considerar de forma diferente la iluminación según se trate de edificios de uso residencial o terciario
 
@@ -795,54 +795,54 @@ module CTELib_Reporting
     data = []
 
     # paredes aire ext.
-    airWallHeat =   _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy',
+    airWallHeat =   _componentValueForPeriod(model, sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy',
                     periodo, 'Wall', "AND ExtBoundCond = 0 AND SurfaceName NOT LIKE '%_PT%'") / superficiehabitable
     data << [airWallHeat, temporada, 'Paredes Exteriores']
 
     # paredes terreno
-    groundWallHeat = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy',
+    groundWallHeat = _componentValueForPeriod(model, sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy',
                                     periodo, 'Wall', "AND ExtBoundCond = -1") / superficiehabitable
     data << [groundWallHeat, temporada, 'Paredes Terreno']
 
     # paredes interiores
-    indoorWallHeat = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy',
+    indoorWallHeat = _componentValueForPeriod(model, sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy',
                                         periodo, 'Wall', "AND ExtBoundCond NOT IN (0, -1)") / superficiehabitable
     data << [indoorWallHeat, temporada, 'Paredes Interiores']
 
     # XXX: no tenemos el balance de las particiones interiores entre zonas
     # cubiertas
-    roofHeat = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy',
+    roofHeat = _componentValueForPeriod(model, sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy',
                                         periodo, 'Roof', "AND ExtBoundCond = 0") / superficiehabitable
     data << [roofHeat, temporada, 'Cubiertas']
 
     # suelos aire ext
-    airFloorHeat = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy',
+    airFloorHeat = _componentValueForPeriod(model, sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy',
                                           periodo, 'Floor', "AND ExtBoundCond = 0") / superficiehabitable
     data << [airFloorHeat, temporada, 'Suelos Aire']
 
     # suelos terreno
-    groundFloorHeat = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy',
+    groundFloorHeat = _componentValueForPeriod(model, sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy',
                                               periodo, 'Floor', "AND ExtBoundCond = -1") / superficiehabitable
     data << [groundFloorHeat, temporada, 'Suelos Terreno']
 
     # puentes termicos
-    thermalBridges = _componentValueForPeriod(sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy',
+    thermalBridges = _componentValueForPeriod(model, sqlFile, 'Surface Inside Face Conduction Heat Transfer Energy',
                                     periodo, 'Wall', "AND SurfaceName LIKE '%_PT%'") / superficiehabitable
     data << [thermalBridges, temporada, 'Puentes Termicos']
 
     # #solar y transmisión ventanas
-    windowRadiation = _componentValueForPeriod(sqlFile, 'Surface Window Transmitted Solar Radiation Energy', periodo, 'Window', "AND ExtBoundCond = 0") / superficiehabitable
+    windowRadiation = _componentValueForPeriod(model, sqlFile, 'Surface Window Transmitted Solar Radiation Energy', periodo, 'Window', "AND ExtBoundCond = 0") / superficiehabitable
     data << [windowRadiation, temporada, 'Solar Ventanas']
-    windowTransmissionGain = _componentValueForPeriod(sqlFile, 'Surface Window Heat Gain Energy', periodo, 'Window', "AND ExtBoundCond = 0") / superficiehabitable
-    windowTransmissionLoss = _componentValueForPeriod(sqlFile, 'Surface Window Heat Loss Energy', periodo, 'Window', "AND ExtBoundCond = 0") / superficiehabitable
+    windowTransmissionGain = _componentValueForPeriod(model, sqlFile, 'Surface Window Heat Gain Energy', periodo, 'Window', "AND ExtBoundCond = 0") / superficiehabitable
+    windowTransmissionLoss = _componentValueForPeriod(model, sqlFile, 'Surface Window Heat Loss Energy', periodo, 'Window', "AND ExtBoundCond = 0") / superficiehabitable
     windowTransmission = windowTransmissionGain - windowTransmissionLoss - windowRadiation
     data << [windowTransmission, temporada, 'Transmision Ventanas']
     # fuentes internas
-    internalHeating = _zoneValueForPeriod(sqlFile, "Zone Total Internal Total Heating Energy", periodo) / superficiehabitable
+    internalHeating = _zoneValueForPeriod(model, sqlFile, "Zone Total Internal Total Heating Energy", periodo) / superficiehabitable
     data << [internalHeating, temporada, 'Fuentes Internas']
     # ventilacion + infiltraciones
-    ventGain = _zoneValueForPeriod(sqlFile, "Zone Combined Outdoor Air Sensible Heat Gain Energy", periodo) / superficiehabitable
-    ventLoss = _zoneValueForPeriod(sqlFile, "Zone Combined Outdoor Air Sensible Heat Loss Energy", periodo) / superficiehabitable
+    ventGain = _zoneValueForPeriod(model, sqlFile, "Zone Combined Outdoor Air Sensible Heat Gain Energy", periodo) / superficiehabitable
+    ventLoss = _zoneValueForPeriod(model, sqlFile, "Zone Combined Outdoor Air Sensible Heat Loss Energy", periodo) / superficiehabitable
     airHeatBalance = ventGain - ventLoss
     data << [airHeatBalance, temporada, 'Ventilación + Infiltraciones']
 
@@ -886,11 +886,11 @@ module CTELib_Reporting
     return medicion_general
   end
 
-  def self._componentValueForPeriod(sqlFile, variableName, periodo, className, extraCond, unitsSource='J', unitsTarget='kWh')
+  def self._componentValueForPeriod(model, sqlFile, variableName, periodo, className, extraCond, unitsSource='J', unitsTarget='kWh')
     meses = (periodo == 'invierno') ? "(1,2,3,4,5,10,11,12)" : "(6,7,8,9)"
     query = "
 WITH
-    supHab AS (#{ CTE_Query::ZONASHABITABLES_SUPERFICIES })
+    supHab AS (#{ CTE_Query::ZONASHABITABLES_SUPERFICIES % CTE_Query.listaZonasHabitables(model)})
 SELECT
     SUM(VariableValue)
 FROM
@@ -909,11 +909,11 @@ WHERE
     return OpenStudio.convert(sqlFile.execAndReturnFirstDouble(query).get, unitsSource, unitsTarget).get
   end
 
-  def self._zoneValueForPeriod(sqlFile, variableName, periodo, unitsSource='J', unitsTarget='kWh')
+  def self._zoneValueForPeriod(model, sqlFile, variableName, periodo, unitsSource='J', unitsTarget='kWh')
     meses = (periodo == 'invierno') ? "(1,2,3,4,5,10,11,12)" : "(6,7,8,9)"
     query = "
 WITH
-    zonashabitables AS (#{ CTE_Query::ZONASHABITABLES })
+    zonashabitables AS (#{ CTE_Query::ZONASHABITABLES % CTE_Query.listaZonasHabitables(model) })
 SELECT
     SUM(VariableValue)
 FROM
@@ -936,17 +936,17 @@ WHERE
 
   def self.tabla_mediciones_envolvente(model, sqlFile, runner)
 
-    indicesquery = "SELECT ConstructionIndex FROM (#{ CTE_Query::ENVOLVENTE_SUPERFICIES_EXTERIORES })
+    indicesquery = "SELECT ConstructionIndex FROM (#{ CTE_Query::ENVOLVENTE_SUPERFICIES_EXTERIORES % CTE_Query.listaZonasHabitables(model) })
                     UNION
-                    SELECT ConstructionIndex FROM (#{ CTE_Query::ENVOLVENTE_SUPERFICIES_INTERIORES })"
+                    SELECT ConstructionIndex FROM (#{ CTE_Query::ENVOLVENTE_SUPERFICIES_INTERIORES % CTE_Query.listaZonasHabitablesYNoHabitables(model) })"
     indices  = sqlFile.execAndReturnVectorOfString(indicesquery).get
 
     data = []
     indices.each do | indiceconstruccion |
       query = "SELECT SUM(Area) FROM
-                   (SELECT Area, ConstructionIndex FROM (#{ CTE_Query::ENVOLVENTE_SUPERFICIES_EXTERIORES })
+                   (SELECT Area, ConstructionIndex FROM (#{ CTE_Query::ENVOLVENTE_SUPERFICIES_EXTERIORES % CTE_Query.listaZonasHabitables(model) })
                     UNION ALL
-                    SELECT Area, ConstructionIndex FROM (#{ CTE_Query::ENVOLVENTE_SUPERFICIES_INTERIORES }))
+                    SELECT Area, ConstructionIndex FROM (#{ CTE_Query::ENVOLVENTE_SUPERFICIES_INTERIORES % CTE_Query.listaZonasHabitablesYNoHabitables(model) }))
                WHERE ConstructionIndex == #{ indiceconstruccion }"
       area = sqlFile.execAndReturnFirstDouble(query).get
       nombre = sqlFile.execAndReturnFirstString("SELECT Name FROM Constructions WHERE ConstructionIndex == #{indiceconstruccion} ").get
