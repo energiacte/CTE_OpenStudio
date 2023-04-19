@@ -26,6 +26,7 @@
 #            Marta Sorribes Gil <msorribes@ietcc.csic.es>
 
 require "openstudio"
+# require_relative "../../cte_query"
 require_relative "cte_query"
 
 # TODO: acabar la tabla de remplazo
@@ -69,18 +70,18 @@ module CTE_tables
     # TODO: descomponer superficies externas de la envolvente por tipos (muros, cubiertas, huecos, lucernarios, etc)
     buildingName = model.getBuilding.name.get
     # Zonas habitables
-    zonasHabitables = CTE_Query.zonasHabitables(sqlFile)
-    superficieHabitable = CTE_Query.superficieHabitable(sqlFile).round(2)
-    volumenHabitable = CTE_Query.volumenHabitable(sqlFile).round(2)
+    zonasHabitables = CTE_Query.zonasHabitables(model, sqlFile)
+    superficieHabitable = CTE_Query.superficieHabitable(model, sqlFile).round(2)
+    volumenHabitable = CTE_Query.volumenHabitable(model, sqlFile).round(2)
     # Zonas no habitables
-    zonasNoHabitables = CTE_Query.zonasNoHabitables(sqlFile)
-    superficieNoHabitable = CTE_Query.superficieNoHabitable(sqlFile).round(2)
-    volumenNoHabitable = CTE_Query.volumenNoHabitable(sqlFile).round(2)
+    zonasNoHabitables = CTE_Query.zonasNoHabitables(model, sqlFile)
+    superficieNoHabitable = CTE_Query.superficieNoHabitable(model, sqlFile).round(2)
+    volumenNoHabitable = CTE_Query.volumenNoHabitable(model, sqlFile).round(2)
     # Envolvente térmica
-    superficiesExteriores = CTE_Query.envolventeSuperficiesExteriores(sqlFile)
-    areaexterior = CTE_Query.envolventeAreaExterior(sqlFile).round(2)
-    superficiesInteriores = CTE_Query.envolventeSuperficiesInteriores(sqlFile)
-    areainterior = CTE_Query.envolventeAreaInterior(sqlFile).round(2)
+    superficiesExteriores = CTE_Query.envolventeSuperficiesExteriores(model, sqlFile)
+    areaexterior = CTE_Query.envolventeAreaExterior(model, sqlFile).round(2)
+    superficiesInteriores = CTE_Query.envolventeSuperficiesInteriores(model, sqlFile)
+    areainterior = CTE_Query.envolventeAreaInterior(model, sqlFile).round(2)
     areatotal = areaexterior + areainterior
     compacidad = (volumenHabitable / areatotal).round(2)
 
@@ -215,15 +216,15 @@ module CTE_tables
     return general_table
   end
 
-  def self.areaPorOrientacion_discontinuo(sqlFile, limite1, limite2, tipo)
+  def self.areaPorOrientacion_discontinuo(model, sqlFile, limite1, limite2, tipo)
     salida = []
-    construcciones_search = "SELECT DISTINCT Name FROM (#{CTE_Query::ENVOLVENTE_EXTERIOR_CONSTRUCCIONES})
+    construcciones_search = "SELECT DISTINCT Name FROM (#{CTE_Query.query_envolvente_exterior_construcciones(model, sqlFile)})
       WHERE (Azimuth > #{limite1} OR Azimuth < #{limite2} )
       AND ClassName IN (#{tipo}) "
     construcciones = CTE_tables.getValueOrFalse(sqlFile.execAndReturnVectorOfString(construcciones_search))
     if construcciones != false
       construcciones.each do | construccion |
-        area_search = "SELECT SUM(Area) FROM (#{CTE_Query::ENVOLVENTE_EXTERIOR_CONSTRUCCIONES})
+        area_search = "SELECT SUM(Area) FROM (#{CTE_Query.query_envolvente_exterior_construcciones(model, sqlFile)})
           WHERE (Azimuth > #{limite1} OR Azimuth < #{limite2} )
           AND ClassName IN (#{tipo})
           AND Name == '#{construccion}' "
@@ -234,16 +235,16 @@ module CTE_tables
     return salida
   end
 
-  def self.areaPorOrientacion_continuo(sqlFile, limite1, limite2, tipo)
+  def self.areaPorOrientacion_continuo(model, sqlFile, limite1, limite2, tipo)
     salida = []
-    construcciones_search = "SELECT DISTINCT Name FROM (#{CTE_Query::ENVOLVENTE_EXTERIOR_CONSTRUCCIONES})
+    construcciones_search = "SELECT DISTINCT Name FROM (#{CTE_Query.query_envolvente_exterior_construcciones(model, sqlFile)})
       WHERE (Azimuth > #{limite1} AND Azimuth < #{limite2} )
       AND ClassName IN (#{tipo}) "
     construcciones = CTE_tables.getValueOrFalse(sqlFile.execAndReturnVectorOfString(construcciones_search))
 
     if construcciones != false
       construcciones.each do | construccion |
-        area_search = "SELECT SUM(Area) FROM (#{CTE_Query::ENVOLVENTE_EXTERIOR_CONSTRUCCIONES})
+        area_search = "SELECT SUM(Area) FROM (#{CTE_Query.query_envolvente_exterior_construcciones(model, sqlFile)})
           WHERE (Azimuth > #{limite1} AND Azimuth < #{limite2} )
           AND ClassName IN (#{tipo})
           AND Name == '#{construccion}' "
@@ -254,11 +255,11 @@ module CTE_tables
     return salida
   end
 
-  def self.areaPorOrientacion(sqlFile, limite1, limite2, tipo)
+  def self.areaPorOrientacion(model, sqlFile, limite1, limite2, tipo)
     if limite1 > limite2
-      return areaPorOrientacion_discontinuo(sqlFile, limite1, limite2, tipo)
+      return areaPorOrientacion_discontinuo(model, sqlFile, limite1, limite2, tipo)
     else
-      return areaPorOrientacion_continuo(sqlFile, limite1, limite2, tipo)
+      return areaPorOrientacion_continuo(model, sqlFile, limite1, limite2, tipo)
     end
   end
 
@@ -293,8 +294,8 @@ module CTE_tables
     contenedor_general[:units] = ['m2']
     contenedor_general[:data] = []
 
-    def self.anadir_area(etiqueta, c1, c2, sqlFile, contenedor_general)
-      area = areaPorOrientacion(sqlFile, c1, c2, "\'Wall\', \'Window\'")
+    def self.anadir_area(model, etiqueta, c1, c2, sqlFile, contenedor_general)
+      area = areaPorOrientacion(model, sqlFile, c1, c2, "\'Wall\', \'Window\'")
       if not area.empty?
         area.each do | construccion, metros |
           contenedor_general[:data] << [etiqueta, construccion, metros.round(2)]
@@ -302,14 +303,14 @@ module CTE_tables
       end
     end
 
-    anadir_area('norte',   c_noroeste, c_norte,   sqlFile, contenedor_general)
-    anadir_area('noreste', c_norte,    c_noreste, sqlFile, contenedor_general)
-    anadir_area('este',    c_noreste,  c_este,    sqlFile, contenedor_general)
-    anadir_area('sureste', c_este,     c_sureste, sqlFile, contenedor_general)
-    anadir_area('sur',     c_sureste,  c_sur,     sqlFile, contenedor_general)
-    anadir_area('suroeste',c_sur,      c_suroeste,sqlFile, contenedor_general)
-    anadir_area('oeste'   ,c_suroeste, c_oeste,   sqlFile, contenedor_general)
-    anadir_area('noroeste',c_oeste,    c_noroeste,sqlFile, contenedor_general)
+    anadir_area(model, 'norte',   c_noroeste, c_norte,   sqlFile, contenedor_general)
+    anadir_area(model, 'noreste', c_norte,    c_noreste, sqlFile, contenedor_general)
+    anadir_area(model, 'este',    c_noreste,  c_este,    sqlFile, contenedor_general)
+    anadir_area(model, 'sureste', c_este,     c_sureste, sqlFile, contenedor_general)
+    anadir_area(model, 'sur',     c_sureste,  c_sur,     sqlFile, contenedor_general)
+    anadir_area(model, 'suroeste',c_sur,      c_suroeste,sqlFile, contenedor_general)
+    anadir_area(model, 'oeste'   ,c_suroeste, c_oeste,   sqlFile, contenedor_general)
+    anadir_area(model, 'noroeste',c_oeste,    c_noroeste,sqlFile, contenedor_general)
 
     return contenedor_general
   end
@@ -326,7 +327,7 @@ module CTE_tables
     contenedor_general[:factor_AU] = 0
     contenedor_general[:area_total] = 0
 
-    superficiesQuery = "SELECT SurfaceName FROM (#{ CTE_Query::ENVOLVENTE_SUPERFICIES_EXTERIORES })
+    superficiesQuery = "SELECT SurfaceName FROM (#{CTE_Query.query_envolvente_superficies_exteriores(model, sqlFile)})
     WHERE ClassName IN ('Wall', 'Roof', 'Floor')"
 
     superficies = getValueOrFalse(sqlFile.execAndReturnVectorOfString(superficiesQuery))
@@ -341,7 +342,7 @@ module CTE_tables
       contenedor_general[:data] << [surfaceName, area.round(2), ufilm.round(3)]
     end
 
-    superficiesQuery = "SELECT SurfaceName FROM (#{ CTE_Query::ENVOLVENTE_SUPERFICIES_EXTERIORES })
+    superficiesQuery = "SELECT SurfaceName FROM (#{CTE_Query.query_envolvente_superficies_exteriores(model, sqlFile)})
     WHERE ClassName IN ('Window')"
 
     superficies = getValueOrFalse(sqlFile.execAndReturnVectorOfString(superficiesQuery))
@@ -402,17 +403,17 @@ module CTE_tables
 
   def self.tabla_mediciones_envolvente(model, sqlFile, runner)
 
-    indicesquery = "SELECT ConstructionIndex FROM (#{ CTE_Query::ENVOLVENTE_SUPERFICIES_EXTERIORES })
+    indicesquery = "SELECT ConstructionIndex FROM (#{ CTE_Query.query_envolvente_superficies_exteriores(model, sqlFile) })
                     UNION
-                    SELECT ConstructionIndex FROM (#{ CTE_Query::ENVOLVENTE_SUPERFICIES_INTERIORES })"
+                    SELECT ConstructionIndex FROM (#{ CTE_Query.query_envolvente_superficies_interiores(model, sqlFile) })"
     indices  = sqlFile.execAndReturnVectorOfString(indicesquery).get
 
     data = []
     indices.each do | indiceconstruccion |
       query = "SELECT SUM(Area) FROM
-                   (SELECT Area, ConstructionIndex FROM (#{ CTE_Query::ENVOLVENTE_SUPERFICIES_EXTERIORES })
+                   (SELECT Area, ConstructionIndex FROM (#{ CTE_Query.query_envolvente_superficies_exteriores(model, sqlFile) })
                     UNION ALL
-                    SELECT Area, ConstructionIndex FROM (#{ CTE_Query::ENVOLVENTE_SUPERFICIES_INTERIORES }))
+                    SELECT Area, ConstructionIndex FROM (#{ CTE_Query.query_envolvente_superficies_interiores(model, sqlFile) }))
                WHERE ConstructionIndex == #{ indiceconstruccion }"
       area = sqlFile.execAndReturnFirstDouble(query).get
       nombre = sqlFile.execAndReturnFirstString("SELECT Name FROM Constructions WHERE ConstructionIndex == #{indiceconstruccion} ").get
@@ -672,7 +673,7 @@ module CTE_tables
     meses = (periodo == 'invierno') ? "(1,2,3,4,5,10,11,12)" : "(6,7,8,9)"
     query = "
 WITH
-    supHab AS (#{ CTE_Query::ZONASHABITABLES_SUPERFICIES })
+    supHab AS (#{ CTE_Query.query_zonashabitables_superficies(model, sqlFile) })
 SELECT
     SUM(VariableValue)
 FROM
@@ -695,7 +696,7 @@ WHERE
     meses = (periodo == 'invierno') ? "(1,2,3,4,5,10,11,12)" : "(6,7,8,9)"
     query = "
 WITH
-    zonashabitables AS (#{ CTE_Query::ZONASHABITABLES })
+    zonashabitables AS (#{ CTE_Query.query_zonashabitables(model, sqlFile) })
 SELECT
     SUM(VariableValue)
 FROM
@@ -733,15 +734,16 @@ WHERE
 
       query_elec = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' and TableName='End Uses' and RowName= '#{end_use}' and ColumnName= 'Electricity'"
       query_gas = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' and TableName='End Uses' and RowName= '#{end_use}' and ColumnName= 'Natural Gas'"
-      query_add = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' and TableName='End Uses' and RowName= '#{end_use}' and ColumnName= 'Additional Fuel'"
+      # query_add = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' and TableName='End Uses' and RowName= '#{end_use}' and ColumnName= 'Additional Fuel'"
       query_dc = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' and TableName='End Uses' and RowName= '#{end_use}' and ColumnName= 'District Cooling'"
       query_dh = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' and TableName='End Uses' and RowName= '#{end_use}' and ColumnName= 'District Heating'"
       results_elec = sqlFile.execAndReturnFirstDouble(query_elec).get
       results_gas = sqlFile.execAndReturnFirstDouble(query_gas).get
-      results_add = sqlFile.execAndReturnFirstDouble(query_add).get
+      # results_add = sqlFile.execAndReturnFirstDouble(query_add).get
       results_dc = sqlFile.execAndReturnFirstDouble(query_dc).get
       results_dh = sqlFile.execAndReturnFirstDouble(query_dh).get
-      total_end_use = results_elec + results_gas + results_add + results_dc + results_dh
+      # total_end_use = results_elec + results_gas + results_add + results_dc + results_dh
+      total_end_use = results_elec + results_gas + results_dc + results_dh
       value = OpenStudio.convert(total_end_use, 'GJ', 'kWh').get
       end_use_trans = self.translate(end_use)
       output_data_end_use[:data] << [end_use_trans, '%.0f' % value]
