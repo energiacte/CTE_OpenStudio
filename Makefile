@@ -10,17 +10,16 @@ runnrel:
 	$(info [INFO] Arrancando consola de bash en contenedor de OpenStudio)
 	$(info [INFO] Directorio de medidas de ~/openstudio/Measures conectado a /root/OpenStudio/Measures)
 	$(info [INFO] Puede acceder al directorio de tests de cada medida y ejecutar ruby test.rb)
-	xhost local:root && \
-		docker run -it \
-		--rm \
-		--net=host \
-		-v ${HOME}/openstudio:/var/simdata/openstudio \
-		-v ${HOME}/openstudio/Measures:/root/OpenStudio/Measures \
-		-v ${HOME}/openstudio/sandBox:/root/OpenStudio/sandBox \
-		-v /mnt/vegacte/03-CTE_en_curso/salaSert/git/OSCTEModels:/root/OpenStudio/Models \
-		-v /mnt/vegacte/03-CTE_en_curso/salaSert/git/suspat:/root/OpenStudio/suspat \
-		nrel/openstudio:1.13.4 \
-		bash
+	docker run -it \
+	--rm \
+	--net=host \
+	-v ${HOME}/openstudio:/var/simdata/openstudio \
+	-v ${HOME}/openstudio/Measures:/root/OpenStudio/Measures \
+	-v ${HOME}/openstudio/sandBox:/root/OpenStudio/sandBox \
+	-v /mnt/vegacte/03-CTE_en_curso/salaSert/git/OSCTEModels:/root/OpenStudio/Models \
+	-v /mnt/vegacte/03-CTE_en_curso/salaSert/git/suspat:/root/OpenStudio/suspat \
+	nrel/openstudio:3.5.1 \
+	bash
 
 # Hay artefactos de dibujado en QT5 con docker por funcionar como root. Se solucionan ejecutando QT_GRAPHICSSYSTEM=native OpenStudio
 # aunque por alguna razón no funciona al pasarlo en el entorno...
