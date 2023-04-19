@@ -75,7 +75,7 @@ class CTE_Model_Test < MiniTest::Test
 
     assert(result.value.valueName == "Success")
 
-    attributes = JSON.parse(OpenStudio::toJSON(result.attributes))
+    attributes = JSON.parse(OpenStudio::to_json(result.attributes))
     ela_total = attributes['attributes']['cte_ela_total_espacios']
     #puts "ELA_TOTAL: #{ attributes['attributes']['cte_ela_total_espacios'] }"
     assert((6317.87 - ela_total).abs < 0.1)
@@ -128,7 +128,7 @@ class CTE_Model_Test < MiniTest::Test
 
     assert(result.value.valueName == "Success")
 
-    attributes = JSON.parse(OpenStudio::toJSON(result.attributes))
+    attributes = JSON.parse(OpenStudio::to_json(result.attributes))
     ela_total = attributes['attributes']['cte_ela_total_espacios']
     #puts "ELA_TOTAL_RES1: #{ attributes['attributes']['cte_ela_total_espacios'] }"
     assert((5691.77 - ela_total).abs < 0.1)
@@ -180,7 +180,7 @@ class CTE_Model_Test < MiniTest::Test
     show_output(result)
     assert(result.value.valueName == "Success")
 
-    attributes = JSON.parse(OpenStudio::toJSON(result.attributes))
+    attributes = JSON.parse(OpenStudio::to_json(result.attributes))
     ela_total = attributes['attributes']['cte_ela_total_espacios']
     #puts "ELA_TOTAL_RES2: #{ attributes['attributes']['cte_ela_total_espacios'] }"
     assert((5691.77 - ela_total).abs < 0.1)
@@ -234,7 +234,7 @@ class CTE_Model_Test < MiniTest::Test
 
     assert(result.value.valueName == "Success")
 
-    attributes = JSON.parse(OpenStudio::toJSON(result.attributes))
+    attributes = JSON.parse(OpenStudio::to_json(result.attributes))
     ela_total = attributes['attributes']['cte_ela_total_espacios']
     #puts "ELA_TOTAL_RES3: #{ attributes['attributes']['cte_ela_total_espacios'] }"
     assert((5691.77 - ela_total).abs < 0.1)
