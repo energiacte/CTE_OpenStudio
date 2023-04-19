@@ -7,6 +7,9 @@
 # y luego $ sudo service docker restart
 #
 runnrel:
+	$(info [INFO] Arrancando consola de bash en contenedor de OpenStudio)
+	$(info [INFO] Directorio de medidas de ~/openstudio/Measures conectado a /root/OpenStudio/Measures)
+	$(info [INFO] Puede acceder al directorio de tests de cada medida y ejecutar ruby test.rb)
 	xhost local:root && \
 		docker run -it \
 		--rm \
