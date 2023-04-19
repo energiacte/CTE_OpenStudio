@@ -590,7 +590,7 @@ module CTELib_Reporting
         ReportName='AnnualBuildingUtilityPerformanceSummary'
         AND TableName='End Uses'
         AND RowName= '#{end_use}'
-        AND ColumnName IN  ('Electricity', 'Natural Gas', 'Additional Fuel',
+        AND ColumnName IN  ('Electricity', 'Natural Gas',
                     'District Cooling', 'District Heating') "
       search = sqlFile.execAndReturnFirstDouble(query_all)
       result += search.get
@@ -622,15 +622,15 @@ module CTELib_Reporting
 
       query_elec = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' and TableName='End Uses' and RowName= '#{end_use}' and ColumnName= 'Electricity'"
       query_gas = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' and TableName='End Uses' and RowName= '#{end_use}' and ColumnName= 'Natural Gas'"
-      query_add = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' and TableName='End Uses' and RowName= '#{end_use}' and ColumnName= 'Additional Fuel'"
+      # query_add = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' and TableName='End Uses' and RowName= '#{end_use}' and ColumnName= 'Additional Fuel'"
       query_dc = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' and TableName='End Uses' and RowName= '#{end_use}' and ColumnName= 'District Cooling'"
       query_dh = "SELECT Value FROM tabulardatawithstrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' and TableName='End Uses' and RowName= '#{end_use}' and ColumnName= 'District Heating'"
       results_elec = sqlFile.execAndReturnFirstDouble(query_elec).get
       results_gas = sqlFile.execAndReturnFirstDouble(query_gas).get
-      results_add = sqlFile.execAndReturnFirstDouble(query_add).get
+      # results_add = sqlFile.execAndReturnFirstDouble(query_add).get
       results_dc = sqlFile.execAndReturnFirstDouble(query_dc).get
       results_dh = sqlFile.execAndReturnFirstDouble(query_dh).get
-      total_end_use = results_elec + results_gas + results_add + results_dc + results_dh
+      total_end_use = results_elec + results_gas + results_dc + results_dh
       value = OpenStudio.convert(total_end_use, 'GJ', 'kWh').get
       end_use_trans = self.translate(end_use)
       output_data_end_use[:data] << [end_use_trans, '%.0f' % value]
