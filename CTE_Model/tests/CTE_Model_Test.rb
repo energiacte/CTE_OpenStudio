@@ -25,20 +25,20 @@
 #            Daniel Jiménez González <dani@ietcc.csic.es>
 
 require 'openstudio'
-require 'openstudio/ruleset/ShowRunnerOutput'
+require 'openstudio/measure/ShowRunnerOutput'
 require_relative "../measure.rb"
 require 'minitest/autorun'
 require 'fileutils'
 require 'json'
 
-class CTE_Model_Test < MiniTest::Unit::TestCase
+class CTE_Model_Test < MiniTest::Test
 
   def test_CTE_Model_Terciario
     # create an instance of the measure
     measure = CTE_Model.new
 
-    # create an instance of a runner
-    runner = OpenStudio::Ruleset::OSRunner.new
+    # create an instance of a runner    
+    runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
 
     # load the test model
     translator = OpenStudio::OSVersion::VersionTranslator.new
@@ -49,7 +49,7 @@ class CTE_Model_Test < MiniTest::Unit::TestCase
 
     # get arguments
     arguments = measure.arguments(model)
-    argument_map = OpenStudio::Ruleset.convertOSArgumentVectorToMap(arguments)
+    argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(arguments)
 
     # create hash of argument values.
     # If the argument has a default that you want to use, you don't need it in the hash
@@ -90,7 +90,7 @@ class CTE_Model_Test < MiniTest::Unit::TestCase
     measure = CTE_Model.new
 
     # create an instance of a runner
-    runner = OpenStudio::Ruleset::OSRunner.new
+    runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
 
     # load the test model
     translator = OpenStudio::OSVersion::VersionTranslator.new
@@ -101,7 +101,7 @@ class CTE_Model_Test < MiniTest::Unit::TestCase
 
     # get arguments
     arguments = measure.arguments(model)
-    argument_map = OpenStudio::Ruleset.convertOSArgumentVectorToMap(arguments)
+    argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(arguments)
 
     # create hash of argument values.
     # If the argument has a default that you want to use, you don't need it in the hash
@@ -144,7 +144,7 @@ class CTE_Model_Test < MiniTest::Unit::TestCase
     measure = CTE_Model.new
 
     # create an instance of a runner
-    runner = OpenStudio::Ruleset::OSRunner.new
+    runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
 
     # load the test model
     translator = OpenStudio::OSVersion::VersionTranslator.new
@@ -153,7 +153,7 @@ class CTE_Model_Test < MiniTest::Unit::TestCase
 
     # get arguments
     arguments = measure.arguments(model)
-    argument_map = OpenStudio::Ruleset.convertOSArgumentVectorToMap(arguments)
+    argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(arguments)
 
     # create hash of argument values.
     # If the argument has a default that you want to use, you don't need it in the hash
@@ -195,7 +195,7 @@ class CTE_Model_Test < MiniTest::Unit::TestCase
     measure = CTE_Model.new
 
     # create an instance of a runner
-    runner = OpenStudio::Ruleset::OSRunner.new
+    runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
 
     # load the test model
     translator = OpenStudio::OSVersion::VersionTranslator.new
@@ -206,7 +206,7 @@ class CTE_Model_Test < MiniTest::Unit::TestCase
 
     # get arguments
     arguments = measure.arguments(model)
-    argument_map = OpenStudio::Ruleset.convertOSArgumentVectorToMap(arguments)
+    argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(arguments)
 
     # create hash of argument values.
     # If the argument has a default that you want to use, you don't need it in the hash
