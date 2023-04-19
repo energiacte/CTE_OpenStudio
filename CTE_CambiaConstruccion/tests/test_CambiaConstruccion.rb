@@ -5,15 +5,16 @@
 # Measure based on previous measure in the BCL "Assign ConstructionSet to Building" by David Goldwasser
 # Change constructionSet of Building and assign FrameAndDivider to windows that inherit from the defaultConstructionSet
 require 'openstudio'
-require 'openstudio/ruleset/ShowRunnerOutput'
-require "#{File.dirname(__FILE__)}/../measure.rb"
+require 'openstudio/measure/ShowRunnerOutput'
+# require "#{File.dirname(__FILE__)}/../measure.rb"
+require_relative '../measure.rb'
 require 'test/unit'
 
 class CTECambiaConstruccion_Test < Test::Unit::TestCase
 
   def test_CTECambiaConstruccion_shadingControl
-    measure = CTE_CambiaConstruccion.new
-    runner = OpenStudio::Ruleset::OSRunner.new
+    measure = CTE_CambiaConstruccion.new    
+    runner = OpenStudio::Measure::OSRunner.new
 
     # load the test model
     translator = OpenStudio::OSVersion::VersionTranslator.new
@@ -26,7 +27,7 @@ class CTECambiaConstruccion_Test < Test::Unit::TestCase
     arguments = measure.arguments(model)
 
     # set argument values to good values and run the measure on model with spaces
-    argument_map = OpenStudio::Ruleset::OSArgumentMap.new
+    argument_map = OpenStudio::Measure::OSArgumentMap.new
 
     # create hash of argument values.
     # If the argument has a default that you want to use, you don't need it in the hash
@@ -58,7 +59,7 @@ class CTECambiaConstruccion_Test < Test::Unit::TestCase
 
   def test_CTECambiaConstruccion_clear
     measure = CTE_CambiaConstruccion.new
-    runner = OpenStudio::Ruleset::OSRunner.new
+    runner = OpenStudio::Measure::OSRunner.new
 
     # load the test model
     translator = OpenStudio::OSVersion::VersionTranslator.new
@@ -71,7 +72,7 @@ class CTECambiaConstruccion_Test < Test::Unit::TestCase
     arguments = measure.arguments(model)
 
     # set argument values to good values and run the measure on model with spaces
-    argument_map = OpenStudio::Ruleset::OSArgumentMap.new
+    argument_map = OpenStudio::Measure::OSArgumentMap.new
 
     construction_set = arguments[0].clone
     assert(construction_set.setValue("<clear field>"))

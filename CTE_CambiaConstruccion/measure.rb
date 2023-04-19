@@ -7,7 +7,8 @@
 
 require 'json'
 
-class CTE_CambiaConstruccion < OpenStudio::Ruleset::ModelUserScript
+class CTE_CambiaConstruccion < OpenStudio::Measure::ModelMeasure
+#class CTE_CambiaConstruccion < OpenStudio::Ruleset::ModelUserScript
 
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
@@ -17,7 +18,7 @@ class CTE_CambiaConstruccion < OpenStudio::Ruleset::ModelUserScript
 
   #define the arguments that the user will input
   def arguments(model)
-    args = OpenStudio::Ruleset::OSArgumentVector.new
+    args = OpenStudio::Measure::OSArgumentVector.new
 
     #make a choice argument for model objects --------------------------
     construction_set_handles = OpenStudio::StringVector.new
