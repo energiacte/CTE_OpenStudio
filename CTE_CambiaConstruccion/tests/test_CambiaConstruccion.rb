@@ -6,15 +6,14 @@
 # Change constructionSet of Building and assign FrameAndDivider to windows that inherit from the defaultConstructionSet
 require 'openstudio'
 require 'openstudio/measure/ShowRunnerOutput'
-# require "#{File.dirname(__FILE__)}/../measure.rb"
 require_relative '../measure.rb'
 require 'test/unit'
 
 class CTECambiaConstruccion_Test < Test::Unit::TestCase
 
   def test_CTECambiaConstruccion_shadingControl
-    measure = CTE_CambiaConstruccion.new    
-    runner = OpenStudio::Measure::OSRunner.new
+    measure = CTE_CambiaConstruccion.new        
+    runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
 
     # load the test model
     translator = OpenStudio::OSVersion::VersionTranslator.new
@@ -58,8 +57,8 @@ class CTECambiaConstruccion_Test < Test::Unit::TestCase
   end
 
   def test_CTECambiaConstruccion_clear
-    measure = CTE_CambiaConstruccion.new
-    runner = OpenStudio::Measure::OSRunner.new
+    measure = CTE_CambiaConstruccion.new    
+    runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
 
     # load the test model
     translator = OpenStudio::OSVersion::VersionTranslator.new
