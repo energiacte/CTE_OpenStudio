@@ -17,7 +17,8 @@ class CTECambiaConstruccion_Test < Test::Unit::TestCase
 
     # load the test model
     translator = OpenStudio::OSVersion::VersionTranslator.new
-    path = OpenStudio::Path.new(File.dirname(__FILE__) + "/test.osm")
+    # path = OpenStudio::Path.new(File.dirname(__FILE__) + "/test.osm")
+    path = OpenStudio::Path.new(File.dirname(__FILE__) + "/in_2023.osm")
     model = translator.loadModel(path)
     assert((not model.empty?))
     model = model.get
