@@ -396,21 +396,15 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
 
     # XXX: Esta superficie incluye los espacios habitables no acondicionados
     # XXX: ¿Deberían excluirse del área de referencia también estos o solo los no habitables?
-    cte_areareferencia = sqlFile.execAndReturnFirstDouble("
-    SELECT
-      SUM(FloorArea)
-    FROM Zones
-      LEFT OUTER JOIN ZoneInfoZoneLists zizl USING (ZoneIndex)
-      LEFT OUTER JOIN ZoneLists zl USING (ZoneListIndex)
-    WHERE zl.Name NOT LIKE 'CTE_N%' ").get
+    cte_areareferencia = CTE_Query.superficieHabitable(model, sqlFile)
 
     string_rows << "# Datos medidos"
     string_rows << "#CTE_Area_ref: #{ cte_areareferencia.round(2) }"
     string_rows << "#CTE_Vol_ref: #{ CTE_Query.volumenHabitable(sqlFile).round(2) }"
 
-    volumenHabitable = CTE_Query.volumenHabitable(sqlFile)
-    areaexterior = CTE_Query.envolventeAreaExterior(sqlFile)
-    areainterior = CTE_Query.envolventeAreaInterior(sqlFile)
+    volumenHabitable = CTE_Query.volumenHabitable(model, sqlFile)
+    areaexterior = CTE_Query.envolventeAreaExterior(model, sqlFile)
+    areainterior = CTE_Query.envolventeAreaInterior(model, sqlFile)
     areatotal = areaexterior + areainterior
     compacidad = (volumenHabitable / areatotal)
     string_rows << "#CTE_Compacidad: #{ compacidad.round(2) }"
