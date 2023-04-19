@@ -37,7 +37,7 @@ require_relative "resources/cte_lib_measures_fijaclima.rb"
 # Medida de OpenStudio (ModelUserScript) que modifica el modelo para su uso con el CTE
 # Para su correcto funcionamiento esta medida debe emplearse con una plantilla adecuada.
 # La plantilla define objetos tipo como horarios, tipos de espacios, etc.
-class CTE_Model < OpenStudio::Ruleset::ModelUserScript
+class CTE_Model < OpenStudio::Measure::ModelMeasure
 
   def name
     return "CTE Model"
@@ -52,12 +52,12 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
   end
 
   def arguments(model)
-    args = OpenStudio::Ruleset::OSArgumentVector.new
+    args = OpenStudio::Measure::OSArgumentVector.new
 
     usoedificio_chs = OpenStudio::StringVector.new
     usoedificio_chs << 'Residencial'
     usoedificio_chs << 'Terciario'
-    usoEdificio = OpenStudio::Ruleset::OSArgument::makeChoiceArgument('CTE_Uso_edificio', usoedificio_chs, true)
+    usoEdificio = OpenStudio::Measure::OSArgument::makeChoiceArgument('CTE_Uso_edificio', usoedificio_chs, true)
     usoEdificio.setDisplayName("Uso del edificio")
     #~ usoEdificio.setDefaultValue('Residencial')
     usoEdificio.setDefaultValue('Terciario')
@@ -66,7 +66,7 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
     tipoEdificio = OpenStudio::StringVector.new
     tipoEdificio << 'Nuevo'
     tipoEdificio << 'Existente'
-    tipo = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("CTE_Tipo_edificio", tipoEdificio, true)
+    tipo = OpenStudio::Measure::OSArgument::makeChoiceArgument("CTE_Tipo_edificio", tipoEdificio, true)
     tipo.setDisplayName("Edificio nuevo o existente")
     tipo.setDefaultValue('Nuevo')
     args << tipo
@@ -80,7 +80,7 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
     'B1_canarias', 'B2_canarias', 'B3_canarias', 'B4_canarias',
     'C1_canarias', 'C2_canarias', 'C3_canarias',
     'D1_canarias', 'D2_canarias', 'D3_canarias', 'E1_canarias'  ].each{ |zclima| zonas_climaticas_chs << zclima }
-    zona_climatica = OpenStudio::Ruleset::OSArgument::makeChoiceArgument('CTE_Zona_climatica', zonas_climaticas_chs, true)
+    zona_climatica = OpenStudio::Measure::OSArgument::makeChoiceArgument('CTE_Zona_climatica', zonas_climaticas_chs, true)
     zona_climatica.setDisplayName("Zona Climática")
     zona_climatica.setDescription("Selecciona manual si quieres que la zona climática se tome del fichero climático asociado")
     zona_climatica.setDefaultValue("Manual")
@@ -96,37 +96,37 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
      'Santander', 'Segovia', 'Sevilla', 'Soria', 'Tarragona', 'Teruel', 'Toledo', 'Valencia', 'Valladolid',
      'Vitoria_Gasteiz', 'Zamora', 'Zaragoza'].each{ |prov|  provincias_chs << prov }
 
-    provincia = OpenStudio::Ruleset::OSArgument::makeChoiceArgument('CTE_Provincia', provincias_chs, true)
+    provincia = OpenStudio::Measure::OSArgument::makeChoiceArgument('CTE_Provincia', provincias_chs, true)
     provincia.setDisplayName("Provincia")
     provincia.setDefaultValue("Automatico")
 
     args << provincia
 
-    altitud = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("CTE_Altitud", true)
+    altitud = OpenStudio::Measure::OSArgument::makeDoubleArgument("CTE_Altitud", true)
     altitud.setDisplayName("Altitud del emplazamiento")
     altitud.setUnits("metros")
     altitud.setDefaultValue(650)
     args << altitud
 
-    design_flow_rate = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("CTE_Design_flow_rate", true)
+    design_flow_rate = OpenStudio::Measure::OSArgument::makeDoubleArgument("CTE_Design_flow_rate", true)
     design_flow_rate.setDisplayName("Caudal de diseno de ventilacion del edificio (residencial)")
     design_flow_rate.setUnits("ren/h")
     design_flow_rate.setDefaultValue(0.63)
     args << design_flow_rate
 
-    heat_recovery = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("CTE_Heat_recovery", true)
+    heat_recovery = OpenStudio::Measure::OSArgument::makeDoubleArgument("CTE_Heat_recovery", true)
     heat_recovery.setDisplayName("Eficiencia del recuperador de calor")
     heat_recovery.setUnits("adimensional")
     heat_recovery.setDefaultValue(0.0)
     args << heat_recovery
 
-    fan_sfp = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("CTE_Fan_sfp", true)
+    fan_sfp = OpenStudio::Measure::OSArgument::makeDoubleArgument("CTE_Fan_sfp", true)
     fan_sfp.setDisplayName("Consumo específico global de ventiladores (SFP)")
     fan_sfp.setUnits("kPa")
     fan_sfp.setDefaultValue(2.5)
     args << fan_sfp
 
-    fan_ntot = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("CTE_Fan_ntot", true)
+    fan_ntot = OpenStudio::Measure::OSArgument::makeDoubleArgument("CTE_Fan_ntot", true)
     fan_ntot.setDisplayName("Eficiencia total de ventiladores (n_tot)")
     fan_ntot.setUnits("adimensional")
     fan_ntot.setDefaultValue(0.5)
@@ -137,53 +137,53 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
     claseVentana << 'Clase 2'
     claseVentana << 'Clase 3'
     claseVentana << 'Clase 4'
-    permeabilidad = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("CTE_Permeabilidad_ventanas", claseVentana, true)
+    permeabilidad = OpenStudio::Measure::OSArgument::makeChoiceArgument("CTE_Permeabilidad_ventanas", claseVentana, true)
     permeabilidad.setDisplayName("Permeabilidad de la carpintería.")
     permeabilidad.setDefaultValue('Clase 1')
     args << permeabilidad
 
-    factorSombrasMoviles = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("CTE_F_sombras_moviles", true)
+    factorSombrasMoviles = OpenStudio::Measure::OSArgument::makeDoubleArgument("CTE_F_sombras_moviles", true)
     factorSombrasMoviles.setDisplayName("Factor de sombras móviles")
     factorSombrasMoviles.setDefaultValue(0.3)
     args << factorSombrasMoviles
 
-    psiForjadoCubierta = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("CTE_Psi_forjado_cubierta", true)
+    psiForjadoCubierta = OpenStudio::Measure::OSArgument::makeDoubleArgument("CTE_Psi_forjado_cubierta", true)
     psiForjadoCubierta.setDisplayName("TTL forjado con cubierta")
     psiForjadoCubierta.setUnits("W/mK")
     psiForjadoCubierta.setDefaultValue(0.24)
     args << psiForjadoCubierta
 
-    psiFrenteForjado = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("CTE_Psi_frente_forjado", true)
+    psiFrenteForjado = OpenStudio::Measure::OSArgument::makeDoubleArgument("CTE_Psi_frente_forjado", true)
     psiFrenteForjado.setDisplayName("TTL frente forjado")
     psiFrenteForjado.setUnits("W/mK")
     psiFrenteForjado.setDefaultValue(0.1)
     args << psiFrenteForjado
 
-    psiSoleraTerreno = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("CTE_Psi_solera_terreno", true)
+    psiSoleraTerreno = OpenStudio::Measure::OSArgument::makeDoubleArgument("CTE_Psi_solera_terreno", true)
     psiSoleraTerreno.setDisplayName("TTL forjado con solera")
     psiSoleraTerreno.setUnits("W/mK")
     psiSoleraTerreno.setDefaultValue(0.28)
     args << psiSoleraTerreno
 
-    psiForjadoExterior = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("CTE_Psi_forjado_exterior", true)
+    psiForjadoExterior = OpenStudio::Measure::OSArgument::makeDoubleArgument("CTE_Psi_forjado_exterior", true)
     psiForjadoExterior.setDisplayName("TTL forjado con suelo exterior")
     psiForjadoExterior.setDefaultValue(0.23)
     args << psiForjadoExterior
 
 
-    psiContornoHuecos = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("CTE_Psi_contorno_huecos", true)
+    psiContornoHuecos = OpenStudio::Measure::OSArgument::makeDoubleArgument("CTE_Psi_contorno_huecos", true)
     psiContornoHuecos.setDisplayName("TTL contorno de huecos")
     psiContornoHuecos.setUnits("W/mK")
     psiContornoHuecos.setDefaultValue(0.05)
     args << psiContornoHuecos
 
 
-    coefStack = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("CTE_Coef_stack", true)
+    coefStack = OpenStudio::Measure::OSArgument::makeDoubleArgument("CTE_Coef_stack", true)
     coefStack.setDisplayName("Coeficiente de Stack")
     coefStack.setDefaultValue(0.00029)
     args << coefStack
 
-    coefWind = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("CTE_Coef_wind", true)
+    coefWind = OpenStudio::Measure::OSArgument::makeDoubleArgument("CTE_Coef_wind", true)
     coefWind.setDisplayName("Coeficiente de Viento")
     coefWind.setDefaultValue(0.000231)
     args << coefWind
