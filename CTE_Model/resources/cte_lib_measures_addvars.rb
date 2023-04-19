@@ -29,7 +29,7 @@
 def cte_addvars(model, runner, user_arguments)
 
   # Get initial conditions ==========================================
-  meters = model.getMeters
+  meters = model.getOutputMeters
   output_variables = model.getOutputVariables
   runner.registerInfo("CTE_ADDVARS: The model started with #{meters.size} meter objects, and #{output_variables.size} output variables.")
 
@@ -53,7 +53,7 @@ def cte_addvars(model, runner, user_arguments)
         runner.registerInfo("Changing meter #{new_meter_name} reporting frequency to #{new_reporting_frequency}.")
       end
     else
-      meter = OpenStudio::Model::Meter.new(model)
+      meter = OpenStudio::Model::OutputMeter.new(model)
       meter.setName(new_meter_name)
       meter.setReportingFrequency(new_reporting_frequency)
       runner.registerInfo("Adding meter for #{new_meter_name} reporting #{ new_reporting_frequency }")
@@ -96,14 +96,14 @@ def cte_addvars(model, runner, user_arguments)
   ]
 
   new_output_meteres.each do | meterName, reporting_frequency, key |
-    outputMeter = OpenStudio::Model::Meter.new(model)
+    outputMeter = OpenStudio::Model::OutputMeter.new(model)
     #~ outputMeter.setCumulative(true)
     outputMeter.setName(meterName)
     outputMeter.setReportingFrequency(reporting_frequency)
     runner.registerInfo("Adding output meter #{meterName} with reporting frequency #{reporting_frequency} for key #{key}.")
   end
 
-  meters = model.getMeters
+  meters = model.getOutputMeters
   output_variables = model.getOutputVariables
   runner.registerInfo("CTE_ADDVARS: The model finished with #{meters.size} meter objects and #{output_variables.size} output variables.")
 
