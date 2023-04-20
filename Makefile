@@ -6,6 +6,19 @@
 # }
 # y luego $ sudo service docker restart
 #
+runprueba:
+	$(info [INFO] Arrancando consola de bash en contenedor de OpenStudio)
+	$(info [INFO] Directorio de medidas de ~/openstudio/Measures conectado a /root/OpenStudio/Measures)
+	$(info [INFO] Puede acceder al directorio de tests de cada medida y ejecutar ruby test.rb)
+	docker run -it \
+	--rm \
+	--net=host \
+	-v ${HOME}/openstudio:/var/simdata/openstudio \
+	-v ${HOME}/repos/CTE_OpenStudio/:/root/OpenStudio/Measures \
+	nrel/openstudio:3.5.1 \
+	bash
+
+
 runnrel:
 	$(info [INFO] Arrancando consola de bash en contenedor de OpenStudio)
 	$(info [INFO] Directorio de medidas de ~/openstudio/Measures conectado a /root/OpenStudio/Measures)
@@ -23,7 +36,7 @@ runnrel:
 
 # Hay artefactos de dibujado en QT5 con docker por funcionar como root. Se solucionan ejecutando QT_GRAPHICSSYSTEM=native OpenStudio
 # aunque por alguna razón no funciona al pasarlo en el entorno...
-run:
+run_old:
 	xhost local:root && \
 		docker run -it \
 		--rm \
