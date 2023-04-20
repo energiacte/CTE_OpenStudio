@@ -406,7 +406,7 @@ module CTELib_Reporting
     superficieHabitable = CTE_Query.superficieHabitable(model, sqlFile)
     volumenHabitable = CTE_Query.volumenHabitable(model, sqlFile)
     # Zonas no habitables
-    zonasNoHabitables = CTE_Query.zonasNoHabitables(model, sqlFile)
+    zonasNoHabitables = CTE_Query.zonasNoHabitables(model)
     superficieNoHabitable = CTE_Query.superficieNoHabitable(model, sqlFile)
     volumenNoHabitable = CTE_Query.volumenNoHabitable(model, sqlFile)
     # Envolvente térmica
@@ -789,7 +789,7 @@ module CTELib_Reporting
   # Tablas de demanda energética =====================================================
 
   def self.cte_energy_needs_table(model, sqlFile, runner, periodo)
-    superficiehabitable =  CTE_Query.superficieHabitable(sqlFile).round(2)
+    superficiehabitable =  CTE_Query.superficieHabitable(model, sqlFile).round(2)
     temporada = {'invierno' => 'calefaccion', 'verano'   => 'refrigeracion' }[periodo]
     color = {'invierno' => '#EF1C21', 'verano'   => '#008FF0' }[periodo]
     data = []

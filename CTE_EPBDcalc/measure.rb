@@ -400,7 +400,7 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
 
     string_rows << "# Datos medidos"
     string_rows << "#CTE_Area_ref: #{ cte_areareferencia.round(2) }"
-    string_rows << "#CTE_Vol_ref: #{ CTE_Query.volumenHabitable(sqlFile).round(2) }"
+    string_rows << "#CTE_Vol_ref: #{ CTE_Query.volumenHabitable(model, sqlFile).round(2) }"
 
     volumenHabitable = CTE_Query.volumenHabitable(model, sqlFile)
     areaexterior = CTE_Query.envolventeAreaExterior(model, sqlFile)
