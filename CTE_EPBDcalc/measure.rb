@@ -239,18 +239,15 @@ class ConexionEPDB < OpenStudio::Ruleset::ReportingUserScript
 
     return salida
   end
-
-
+  
   def calculoIndicador_qsj(model, sqlFile, runner)
     search = "
     WITH ventanas AS(
     WITH  superficieshabitables AS (
     WITH zonashabitables AS (
-    SELECT  ZoneIndex, ZoneName, Volume, FloorArea, ZoneListIndex, Name
+    SELECT  ZoneIndex, ZoneName, Volume, FloorArea
     FROM Zones
-        LEFT OUTER JOIN ZoneInfoZoneLists zizl USING (ZoneIndex)
-        LEFT OUTER JOIN ZoneLists zl USING (ZoneListIndex)
-    WHERE   zl.Name NOT LIKE 'CTE_N%'
+    WHERE ZoneName IN #{CTE_Query.listaZonasHabitables(model)}
     )
     SELECT  SurfaceName,  ClassName,   surf.ZoneIndex AS ZoneIndex
     FROM  Surfaces surf
