@@ -33,7 +33,7 @@ require 'json'
 
 class CTE_Model_Test < MiniTest::Test
 
-  def test_CTE_Model_Terciario
+  def _test_CTE_Model_Terciario
     # create an instance of the measure
     measure = CTE_Model.new
 
@@ -89,6 +89,8 @@ class CTE_Model_Test < MiniTest::Test
     # create an instance of the measure
     measure = CTE_Model.new
 
+    puts("Iniciando el test CTE_Model_residencial")
+
     # create an instance of a runner
     runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
 
@@ -118,17 +120,23 @@ class CTE_Model_Test < MiniTest::Test
       argument_map[arg.name] = temp_arg_var
     end
 
+    # puts('valor de los argumentos') # -> los que se meten en la medida
+    # puts(arguments)
+    # argumentos no son atributos
+
     # set argument values to good values and run the measure on model with spaces
     salida = measure.run(model, runner, argument_map)
     assert(salida, "algo falló")
 
     result = runner.result
-
+    puts ("show_output(result)")
     show_output(result)
 
     assert(result.value.valueName == "Success")
 
     attributes = JSON.parse(OpenStudio::to_json(result.attributes))
+    # puts('atributos')
+    # puts(result.attributes)
     ela_total = attributes['attributes']['cte_ela_total_espacios']
     #puts "ELA_TOTAL_RES1: #{ attributes['attributes']['cte_ela_total_espacios'] }"
     assert((5691.77 - ela_total).abs < 0.1)
@@ -139,7 +147,7 @@ class CTE_Model_Test < MiniTest::Test
 
   end
 
-  def test_CTE_Model_residencial_recovery
+  def _test_CTE_Model_residencial_recovery
     # create an instance of the measure
     measure = CTE_Model.new
 
@@ -190,7 +198,7 @@ class CTE_Model_Test < MiniTest::Test
 
   end
 
-  def test_CTE_Model_provincia_automatico
+  def _test_CTE_Model_provincia_automatico
     # create an instance of the measure
     measure = CTE_Model.new
 

@@ -179,21 +179,30 @@ def cte_ventresidencial(model, runner, user_arguments)
         zone_ventilation_noc.setName("HVNOC_#{spaceName}_Zone Ventilation Design Flow Rate NOCTURNO")
         zone_ventilation_noc.addToThermalZone(zone)
         zone_ventilation_noc.setVentilationType('Natural')
-        # zone_ventilation_noc.setDesignFlowRateCalculationMethod("AirChanges/Hour")
+        if OpenStudio::VersionString.new(OpenStudio.openStudioVersion) < OpenStudio::VersionString.new('3.5.0')
+          # Design Flow Rate Calculation Method is automatically set in 3.5.0+
+          zone_ventilation_noc.setDesignFlowRateCalculationMethod('AirChanges/Hour')
+        end
+        # Infiltration = (I_design)(F_schedule)[A + B|T_zone-T_out|+C(windspeed)+D(windspeed2)]
+        # I_design es el design volume flow rate
         zone_ventilation_noc.setAirChangesperHour(q_ven_noct)
+        zone_ventilation_noc.setSchedule(scheduleRuleNOC)
         zone_ventilation_noc.setConstantTermCoefficient(1)
         zone_ventilation_noc.setTemperatureTermCoefficient(0)
         zone_ventilation_noc.setVelocityTermCoefficient(0)
         zone_ventilation_noc.setVelocitySquaredTermCoefficient(0)
         zone_ventilation_noc.setMinimumIndoorTemperature(-100)
         zone_ventilation_noc.setDeltaTemperature(-100)
-        zone_ventilation_noc.setSchedule(scheduleRuleNOC)
+        
 
         zone_ventilation = OpenStudio::Model::ZoneVentilationDesignFlowRate.new(model)
         zone_ventilation.setName("HVEN_#{spaceName}_Zone Ventilation Design Flow Rate NORMAL")
         zone_ventilation.addToThermalZone(zone)
         zone_ventilation.setVentilationType("Exhaust")
-        # zone_ventilation.setDesignFlowRateCalculationMethod("AirChanges/Hour")
+        if OpenStudio::VersionString.new(OpenStudio.openStudioVersion) < OpenStudio::VersionString.new('3.5.0')
+          # Design Flow Rate Calculation Method is automatically set in 3.5.0+
+          zone_ventilation.setDesignFlowRateCalculationMethod('AirChanges/Hour')
+        end
         zone_ventilation.setAirChangesperHour(q_ven_reduced)
         zone_ventilation.setConstantTermCoefficient(1)
         zone_ventilation.setTemperatureTermCoefficient(0)

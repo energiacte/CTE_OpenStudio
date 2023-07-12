@@ -1,9 +1,11 @@
+<?xml version="1.0"?>
 <measure>
   <schema_version>3.0</schema_version>
+  <error>wrong number of arguments (given 1, expected 0)</error>
   <name>cte_informe_dbhe</name>
   <uid>fda88851-76a7-48cb-8cbd-d0d6f803b8e5</uid>
-  <version_id>c1d01120-4b16-4ad2-8caa-ab55cdc3cb27</version_id>
-  <version_modified>20161013T154459Z</version_modified>
+  <version_id>9757b16c-1a95-4e57-bed3-87437970de63</version_id>
+  <version_modified>20230421T115044Z</version_modified>
   <xml_checksum>72C8354A</xml_checksum>
   <class_name>CTE_InformeDBHE</class_name>
   <display_name> Informe DBHE</display_name>
@@ -14,7 +16,9 @@
     <argument>
       <name>mediciones_de_superficies_segun_CTE</name>
       <display_name>Mediciones de superficies segun CTE</display_name>
+      <description></description>
       <type>Boolean</type>
+      <units></units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>true</default_value>
@@ -28,11 +32,15 @@
           <display_name>false</display_name>
         </choice>
       </choices>
+      <min_value></min_value>
+      <max_value></max_value>
     </argument>
     <argument>
       <name>demandas_por_componentes</name>
       <display_name>Demandas por componentes</display_name>
+      <description></description>
       <type>Boolean</type>
+      <units></units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>true</default_value>
@@ -46,11 +54,15 @@
           <display_name>false</display_name>
         </choice>
       </choices>
+      <min_value></min_value>
+      <max_value></max_value>
     </argument>
     <argument>
       <name>annual_overview_section</name>
       <display_name>Resumen anual</display_name>
+      <description></description>
       <type>Boolean</type>
+      <units></units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>true</default_value>
@@ -64,11 +76,15 @@
           <display_name>false</display_name>
         </choice>
       </choices>
+      <min_value></min_value>
+      <max_value></max_value>
     </argument>
     <argument>
       <name>building_summary_section</name>
       <display_name>Resumen del Modelo (Building summary section)</display_name>
+      <description></description>
       <type>Boolean</type>
+      <units></units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>true</default_value>
@@ -82,11 +98,15 @@
           <display_name>false</display_name>
         </choice>
       </choices>
+      <min_value></min_value>
+      <max_value></max_value>
     </argument>
     <argument>
       <name>mediciones_envolvente</name>
       <display_name>Mediciones de la envolvente</display_name>
+      <description></description>
       <type>Boolean</type>
+      <units></units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>true</default_value>
@@ -100,11 +120,15 @@
           <display_name>false</display_name>
         </choice>
       </choices>
+      <min_value></min_value>
+      <max_value></max_value>
     </argument>
     <argument>
       <name>cte_envelope_section_section</name>
       <display_name>Envelope</display_name>
+      <description></description>
       <type>Boolean</type>
+      <units></units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>true</default_value>
@@ -118,11 +142,15 @@
           <display_name>false</display_name>
         </choice>
       </choices>
+      <min_value></min_value>
+      <max_value></max_value>
     </argument>
     <argument>
       <name>space_type_breakdown_section</name>
       <display_name>Space Type Breakdown</display_name>
+      <description></description>
       <type>Boolean</type>
+      <units></units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>true</default_value>
@@ -136,11 +164,15 @@
           <display_name>false</display_name>
         </choice>
       </choices>
+      <min_value></min_value>
+      <max_value></max_value>
     </argument>
     <argument>
       <name>space_type_details_section</name>
       <display_name>Space Type Summary</display_name>
+      <description></description>
       <type>Boolean</type>
+      <units></units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>true</default_value>
@@ -154,11 +186,15 @@
           <display_name>false</display_name>
         </choice>
       </choices>
+      <min_value></min_value>
+      <max_value></max_value>
     </argument>
     <argument>
       <name>zone_summary_section</name>
       <display_name>Zone Overview</display_name>
+      <description></description>
       <type>Boolean</type>
+      <units></units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>true</default_value>
@@ -172,11 +208,15 @@
           <display_name>false</display_name>
         </choice>
       </choices>
+      <min_value></min_value>
+      <max_value></max_value>
     </argument>
     <argument>
       <name>cte_outdoor_air_section</name>
       <display_name>Aire exterior</display_name>
+      <description></description>
       <type>Boolean</type>
+      <units></units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>true</default_value>
@@ -190,11 +230,15 @@
           <display_name>false</display_name>
         </choice>
       </choices>
+      <min_value></min_value>
+      <max_value></max_value>
     </argument>
     <argument>
       <name>source_energy_section</name>
       <display_name>Site and Source Summary</display_name>
+      <description></description>
       <type>Boolean</type>
+      <units></units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>true</default_value>
@@ -208,9 +252,12 @@
           <display_name>false</display_name>
         </choice>
       </choices>
+      <min_value></min_value>
+      <max_value></max_value>
     </argument>
   </arguments>
-  <provenances/>
+  <outputs />
+  <provenances />
   <tags>
     <tag>Reporting.QAQC</tag>
   </tags>
@@ -288,34 +335,16 @@
   </attributes>
   <files>
     <file>
-      <filename>os_lib_schedules.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>23C2D011</checksum>
-    </file>
-    <file>
-      <filename>os_lib_helper_methods.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>34FB017D</checksum>
-    </file>
-    <file>
       <filename>cte_query.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>B364975F</checksum>
+      <checksum>6DCFAC26</checksum>
     </file>
     <file>
       <filename>report.html.erb</filename>
       <filetype>erb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>8F926B34</checksum>
-    </file>
-    <file>
-      <filename>os_lib_reporting_SI.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>EABB82D2</checksum>
+      <checksum>04458219</checksum>
     </file>
     <file>
       <version>
@@ -326,13 +355,37 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>D23A0811</checksum>
+      <checksum>95C12082</checksum>
     </file>
     <file>
-      <filename>cte_lib.rb</filename>
+      <filename>out.idf</filename>
+      <filetype>idf</filetype>
+      <usage_type>test</usage_type>
+      <checksum>2E62FF4C</checksum>
+    </file>
+    <file>
+      <filename>test_InformeDBHE.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>63332CE6</checksum>
+    </file>
+    <file>
+      <filename>out.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>9E6B551B</checksum>
+    </file>
+    <file>
+      <filename>eplusout.sql</filename>
+      <filetype>sql</filetype>
+      <usage_type>test</usage_type>
+      <checksum>EEB234A0</checksum>
+    </file>
+    <file>
+      <filename>cte_lib_reporting.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>B527D461</checksum>
+      <checksum>95F31765</checksum>
     </file>
   </files>
 </measure>

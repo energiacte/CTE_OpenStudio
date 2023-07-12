@@ -1,9 +1,11 @@
+<?xml version="1.0"?>
 <measure>
   <schema_version>3.0</schema_version>
+  <error>wrong number of arguments (given 1, expected 0)</error>
   <name>conexion_epdb</name>
   <uid>648a813c-f8d9-44f9-912f-53b891198a35</uid>
-  <version_id>9505a2e1-890d-44cb-8127-0eaf6ad644dd</version_id>
-  <version_modified>20161014T133959Z</version_modified>
+  <version_id>84af8f18-6e4a-42cd-9a48-31ded83bcd3a</version_id>
+  <version_modified>20230424T120428Z</version_modified>
   <xml_checksum>9BF1E6AC</xml_checksum>
   <class_name>ConexionEPDB</class_name>
   <display_name>Conexion con EPBDcalc</display_name>
@@ -13,7 +15,9 @@
     <argument>
       <name>CTE_Watersystems</name>
       <display_name>Agua Caliente Sanitaria</display_name>
+      <description></description>
       <type>Choice</type>
+      <units></units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>generic_acs</default_value>
@@ -24,18 +28,22 @@
         </choice>
         <choice>
           <value>generic_acs</value>
-          <display_name>equipo genérico ACS</display_name>
+          <display_name>equipo genï¿½rico ACS</display_name>
         </choice>
         <choice>
           <value>hp_heat</value>
           <display_name>bomba de calor en calefaccion</display_name>
         </choice>
       </choices>
+      <min_value></min_value>
+      <max_value></max_value>
     </argument>
     <argument>
       <name>CTE_Heating</name>
-      <display_name>Calefacción</display_name>
+      <display_name>Calefacciï¿½n</display_name>
+      <description></description>
       <type>Choice</type>
+      <units></units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>generic_heat</default_value>
@@ -50,14 +58,18 @@
         </choice>
         <choice>
           <value>generic_heat</value>
-          <display_name>equipo genérico en calefaccion</display_name>
+          <display_name>equipo genï¿½rico en calefaccion</display_name>
         </choice>
       </choices>
+      <min_value></min_value>
+      <max_value></max_value>
     </argument>
     <argument>
       <name>CTE_Cooling</name>
-      <display_name>Refrigeración</display_name>
+      <display_name>Refrigeraciï¿½n</display_name>
+      <description></description>
       <type>Choice</type>
+      <units></units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>generic_cool</default_value>
@@ -68,12 +80,15 @@
         </choice>
         <choice>
           <value>generic_cool</value>
-          <display_name>equipo genérico en refrigeración</display_name>
+          <display_name>equipo genï¿½rico en refrigeraciï¿½n</display_name>
         </choice>
       </choices>
+      <min_value></min_value>
+      <max_value></max_value>
     </argument>
   </arguments>
-  <provenances/>
+  <outputs />
+  <provenances />
   <tags>
     <tag>Reporting.QAQC</tag>
   </tags>
@@ -102,28 +117,46 @@
       <checksum>3501204C</checksum>
     </file>
     <file>
-      <filename>consumoParaEPBDcalc.csv</filename>
-      <filetype>csv</filetype>
-      <usage_type>test</usage_type>
-      <checksum>4C808133</checksum>
-    </file>
-    <file>
-      <filename>cubito+garaje_NH_ideal.osm</filename>
+      <filename>out.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>5212C4C7</checksum>
+      <checksum>F2ECD35C</checksum>
     </file>
     <file>
-      <filename>cubito+garaje_NH_ideal.sql</filename>
-      <filetype>sql</filetype>
-      <usage_type>test</usage_type>
-      <checksum>E5126B44</checksum>
-    </file>
-    <file>
-      <filename>ConexionEPBD_test.rb</filename>
+      <filename>test_EPBD.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>53227DDA</checksum>
+      <checksum>BE71CC58</checksum>
+    </file>
+    <file>
+      <filename>eplusout.sql</filename>
+      <filetype>sql</filetype>
+      <usage_type>test</usage_type>
+      <checksum>5C64DC33</checksum>
+    </file>
+    <file>
+      <filename>eplusout_terciario.sql</filename>
+      <filetype>sql</filetype>
+      <usage_type>test</usage_type>
+      <checksum>B5DECA55</checksum>
+    </file>
+    <file>
+      <filename>out_terciario.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>F152726B</checksum>
+    </file>
+    <file>
+      <filename>cte_query.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>6DCFAC26</checksum>
+    </file>
+    <file>
+      <filename>cte_lib.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>5C146698</checksum>
     </file>
     <file>
       <version>
@@ -134,7 +167,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>8A580703</checksum>
+      <checksum>1AF6DDB0</checksum>
     </file>
   </files>
 </measure>

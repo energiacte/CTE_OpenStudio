@@ -1,16 +1,18 @@
+<?xml version="1.0"?>
 <measure>
-  <schema_version>3.0</schema_version>
+  <schema_version>3.0</schema_version>  
   <name>cte_workspace</name>
   <uid>a4172009-822d-40f3-8c80-725f59797c02</uid>
-  <version_id>a95c485e-9bb0-4dde-bf3c-6b86773e11be</version_id>
-  <version_modified>20161014T142943Z</version_modified>
+  <version_id>7b1fa331-5d72-4999-8133-ebba2ccbf750</version_id>
+  <version_modified>20230419T110708Z</version_modified>
   <xml_checksum>31E4D2D4</xml_checksum>
   <class_name>CTE_Workspace</class_name>
   <display_name>Aplica las medidas al Workspace</display_name>
-  <description>Asegura que los objetos ZoneVentilation:DesignFlowRate usan el horario CTER24B_HVEN y añade objetos ZoneAirBalance:OutdoorAir.</description>
-  <modeler_description>Recorre objetos ZoneVentilation:DesignFlowRate y comprueba horario. Añade a todos los objetos Zone un objeto ZoneAirBalance:OutdoorAir.</modeler_description>
-  <arguments/>
-  <provenances/>
+  <description>Asegura que los objetos ZoneVentilation:DesignFlowRate usan el horario CTER24B_HVEN y aï¿½ade objetos ZoneAirBalance:OutdoorAir.</description>
+  <modeler_description>Recorre objetos ZoneVentilation:DesignFlowRate y comprueba horario. Aï¿½ade a todos los objetos Zone un objeto ZoneAirBalance:OutdoorAir.</modeler_description>
+  <arguments />
+  <outputs />
+  <provenances />
   <tags>
     <tag>Whole Building.Space Types</tag>
   </tags>
@@ -112,12 +114,6 @@
       <checksum>20973965</checksum>
     </file>
     <file>
-      <filename>cte_lib_measures_groundtemperature.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>27FB504B</checksum>
-    </file>
-    <file>
       <filename>cte_lib_measures_horarioestacional.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -130,10 +126,10 @@
       <checksum>84D20F22</checksum>
     </file>
     <file>
-      <filename>cte_lib_measures_ventresidencial.rb</filename>
+      <filename>cte_lib_measures_groundtemperature.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>204A9CDC</checksum>
+      <checksum>8B77CD6E</checksum>
     </file>
     <file>
       <version>
@@ -144,7 +140,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>EC7F380E</checksum>
+      <checksum>C883CFBF</checksum>
     </file>
   </files>
 </measure>
