@@ -25,7 +25,7 @@
 #            Daniel Jiménez González <dani@ietcc.csic.es>
 #            Marta Sorribes Gil <msorribes@ietcc.csic.es>
 
-require 'json'
+require "json"
 
 require_relative "resources/cte_lib_measures_addvars.rb"
 require_relative "resources/cte_lib_measures_tempaguafria.rb"
@@ -37,8 +37,7 @@ require_relative "resources/cte_lib_measures_fijaclima.rb"
 # Medida de OpenStudio (ModelUserScript) que modifica el modelo para su uso con el CTE
 # Para su correcto funcionamiento esta medida debe emplearse con una plantilla adecuada.
 # La plantilla define objetos tipo como horarios, tipos de espacios, etc.
-class CTE_Model < OpenStudio::Measure::ModelMeasure
-
+class CTE_Model < OpenStudio::Ruleset::ModelUserScript
   def name
     return "CTE Model"
   end
@@ -54,33 +53,39 @@ class CTE_Model < OpenStudio::Measure::ModelMeasure
   def arguments(model)
     args = OpenStudio::Measure::OSArgumentVector.new
 
+    u_opacos = OpenStudio::Measure::OSArgument::makeDoubleArgument("CTE_U_opacos", true)
+    u_opacos.setDisplayName("U de opacos")
+    u_opacos.setUnits("W/m2·K")
+    u_opacos.setDefaultValue(10)
+    args << u_opacos
+
     usoedificio_chs = OpenStudio::StringVector.new
-    usoedificio_chs << 'Residencial'
-    usoedificio_chs << 'Terciario'
-    usoEdificio = OpenStudio::Measure::OSArgument::makeChoiceArgument('CTE_Uso_edificio', usoedificio_chs, true)
+    usoedificio_chs << "Residencial"
+    usoedificio_chs << "Terciario"
+    usoEdificio = OpenStudio::Measure::OSArgument::makeChoiceArgument("CTE_Uso_edificio", usoedificio_chs, true)
     usoEdificio.setDisplayName("Uso del edificio")
     #~ usoEdificio.setDefaultValue('Residencial')
-    usoEdificio.setDefaultValue('Terciario')
+    usoEdificio.setDefaultValue("Terciario")
     args << usoEdificio
 
     tipoEdificio = OpenStudio::StringVector.new
-    tipoEdificio << 'Nuevo'
-    tipoEdificio << 'Existente'
+    tipoEdificio << "Nuevo"
+    tipoEdificio << "Existente"
     tipo = OpenStudio::Measure::OSArgument::makeChoiceArgument("CTE_Tipo_edificio", tipoEdificio, true)
     tipo.setDisplayName("Edificio nuevo o existente")
-    tipo.setDefaultValue('Nuevo')
+    tipo.setDefaultValue("Nuevo")
     args << tipo
 
     zonas_climaticas_chs = OpenStudio::StringVector.new
-    ['Manual', 'A3_peninsula', 'A4_peninsula', 'B3_peninsula', 'B4_peninsula',
-    'C1_peninsula', 'C2_peninsula', 'C3_peninsula', 'C4_peninsula',
-    'D1_peninsula', 'D2_peninsula', 'D3_peninsula', 'E1_peninsula',
-    'alpha1_canarias', 'alpha2_canarias', 'alpha3_canarias', 'alpha4_canarias',
-    'A1_canarias', 'A2_canarias', 'A3_canarias', 'A4_canarias',
-    'B1_canarias', 'B2_canarias', 'B3_canarias', 'B4_canarias',
-    'C1_canarias', 'C2_canarias', 'C3_canarias',
-    'D1_canarias', 'D2_canarias', 'D3_canarias', 'E1_canarias'  ].each{ |zclima| zonas_climaticas_chs << zclima }
-    zona_climatica = OpenStudio::Measure::OSArgument::makeChoiceArgument('CTE_Zona_climatica', zonas_climaticas_chs, true)
+    ["Manual", "A3_peninsula", "A4_peninsula", "B3_peninsula", "B4_peninsula",
+     "C1_peninsula", "C2_peninsula", "C3_peninsula", "C4_peninsula",
+     "D1_peninsula", "D2_peninsula", "D3_peninsula", "E1_peninsula",
+     "alpha1_canarias", "alpha2_canarias", "alpha3_canarias", "alpha4_canarias",
+     "A1_canarias", "A2_canarias", "A3_canarias", "A4_canarias",
+     "B1_canarias", "B2_canarias", "B3_canarias", "B4_canarias",
+     "C1_canarias", "C2_canarias", "C3_canarias",
+     "D1_canarias", "D2_canarias", "D3_canarias", "E1_canarias"].each { |zclima| zonas_climaticas_chs << zclima }
+    zona_climatica = OpenStudio::Measure::OSArgument::makeChoiceArgument("CTE_Zona_climatica", zonas_climaticas_chs, true)
     zona_climatica.setDisplayName("Zona Climática")
     zona_climatica.setDescription("Selecciona manual si quieres que la zona climática se tome del fichero climático asociado")
     zona_climatica.setDefaultValue("Manual")
@@ -88,15 +93,15 @@ class CTE_Model < OpenStudio::Measure::ModelMeasure
 
     provincias_chs = OpenStudio::StringVector.new
 
-    ['Automatico', 'A_Coruna', 'Albacete', 'Alicante_Alacant', 'Almeria', 'Avila', 'Badajoz', 'Barcelona', 'Bilbao_Bilbo',
-     'Burgos', 'Caceres', 'Cadiz', 'Castellon_Castello', 'Ceuta', 'Ciudad_Real', 'Cordoba', 'Cuenca',
-     'Girona', 'Granada', 'Guadalajara', 'Huelva', 'Huesca', 'Jaen', 'Las_Palmas_de_Gran_Canaria', 'Leon',
-     'Lleida', 'Logrono', 'Lugo', 'Madrid', 'Malaga', 'Melilla', 'Murcia', 'Ourense', 'Oviedo', 'Palencia',
-     'Palma_de_Mallorca', 'Pamplona_Iruna', 'Pontevedra', 'Salamanca', 'San_Sebastian', 'Santa_Cruz_de_Tenerife',
-     'Santander', 'Segovia', 'Sevilla', 'Soria', 'Tarragona', 'Teruel', 'Toledo', 'Valencia', 'Valladolid',
-     'Vitoria_Gasteiz', 'Zamora', 'Zaragoza'].each{ |prov|  provincias_chs << prov }
+    ["Automatico", "A_Coruna", "Albacete", "Alicante_Alacant", "Almeria", "Avila", "Badajoz", "Barcelona", "Bilbao_Bilbo",
+     "Burgos", "Caceres", "Cadiz", "Castellon_Castello", "Ceuta", "Ciudad_Real", "Cordoba", "Cuenca",
+     "Girona", "Granada", "Guadalajara", "Huelva", "Huesca", "Jaen", "Las_Palmas_de_Gran_Canaria", "Leon",
+     "Lleida", "Logrono", "Lugo", "Madrid", "Malaga", "Melilla", "Murcia", "Ourense", "Oviedo", "Palencia",
+     "Palma_de_Mallorca", "Pamplona_Iruna", "Pontevedra", "Salamanca", "San_Sebastian", "Santa_Cruz_de_Tenerife",
+     "Santander", "Segovia", "Sevilla", "Soria", "Tarragona", "Teruel", "Toledo", "Valencia", "Valladolid",
+     "Vitoria_Gasteiz", "Zamora", "Zaragoza"].each { |prov| provincias_chs << prov }
 
-    provincia = OpenStudio::Measure::OSArgument::makeChoiceArgument('CTE_Provincia', provincias_chs, true)
+    provincia = OpenStudio::Measure::OSArgument::makeChoiceArgument("CTE_Provincia", provincias_chs, true)
     provincia.setDisplayName("Provincia")
     provincia.setDefaultValue("Automatico")
 
@@ -133,13 +138,13 @@ class CTE_Model < OpenStudio::Measure::ModelMeasure
     args << fan_ntot
 
     claseVentana = OpenStudio::StringVector.new
-    claseVentana << 'Clase 1'
-    claseVentana << 'Clase 2'
-    claseVentana << 'Clase 3'
-    claseVentana << 'Clase 4'
+    claseVentana << "Clase 1"
+    claseVentana << "Clase 2"
+    claseVentana << "Clase 3"
+    claseVentana << "Clase 4"
     permeabilidad = OpenStudio::Measure::OSArgument::makeChoiceArgument("CTE_Permeabilidad_ventanas", claseVentana, true)
     permeabilidad.setDisplayName("Permeabilidad de la carpintería.")
-    permeabilidad.setDefaultValue('Clase 1')
+    permeabilidad.setDefaultValue("Clase 1")
     args << permeabilidad
 
     factorSombrasMoviles = OpenStudio::Measure::OSArgument::makeDoubleArgument("CTE_F_sombras_moviles", true)
@@ -170,13 +175,11 @@ class CTE_Model < OpenStudio::Measure::ModelMeasure
     psiForjadoExterior.setDefaultValue(0.23)
     args << psiForjadoExterior
 
-
     psiContornoHuecos = OpenStudio::Measure::OSArgument::makeDoubleArgument("CTE_Psi_contorno_huecos", true)
     psiContornoHuecos.setDisplayName("TTL contorno de huecos")
     psiContornoHuecos.setUnits("W/mK")
     psiContornoHuecos.setDefaultValue(0.05)
     args << psiContornoHuecos
-
 
     coefStack = OpenStudio::Measure::OSArgument::makeDoubleArgument("CTE_Coef_stack", true)
     coefStack.setDisplayName("Coeficiente de Stack")
@@ -203,7 +206,7 @@ class CTE_Model < OpenStudio::Measure::ModelMeasure
     end
 
     argumentos = Hash.new
-    user_arguments.each do | name, argument |
+    user_arguments.each do |name, argument|
       argumentos[name] = argument.printValue
     end
     model.building.get.setComment(argumentos.to_json)
@@ -218,11 +221,11 @@ class CTE_Model < OpenStudio::Measure::ModelMeasure
     result = cte_tempaguafria(model, runner, user_arguments) # temperatura de agua de red
     return result unless result == true
 
-    usoEdificio = runner.getStringArgumentValue('CTE_Uso_edificio',
+    usoEdificio = runner.getStringArgumentValue("CTE_Uso_edificio",
                                                 user_arguments)
 
     # Modelo de ventilación
-    if usoEdificio == 'Residencial'
+    if usoEdificio == "Residencial"
       result = cte_ventresidencial(model, runner, user_arguments)
       return result unless result == true
     else
@@ -246,4 +249,5 @@ class CTE_Model < OpenStudio::Measure::ModelMeasure
     return true
   end #end the run method
 end #end the measure
+
 CTE_Model.new.registerWithApplication

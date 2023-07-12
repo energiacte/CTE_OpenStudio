@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <measure>
-  <schema_version>3.0</schema_version>
+  <schema_version>3.0</schema_version>  
   <name>cte_model</name>
   <uid>1f30359f-b316-49d1-b799-73b16ff79478</uid>
-  <version_id>cc3903c3-c503-4288-8bd3-dc3554a30283</version_id>
-  <version_modified>20230428T084925Z</version_modified>
+  <version_id>6bb9c519-786c-4774-b3be-53ae42325514</version_id>
+  <version_modified>20230712T160212Z</version_modified>
   <xml_checksum>7C017197</xml_checksum>
   <class_name>CTE_Model</class_name>
   <display_name>CTE Model</display_name>
@@ -12,9 +12,23 @@
   <modeler_description>Introduce variables de salida y aplica medidas para cálculo CTE.</modeler_description>
   <arguments>
     <argument>
+      <name>CTE_U_opacos</name>
+      <display_name>U de opacos</display_name>
+      <description></description>
+      <type>Double</type>
+      <units>W/m2·K</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value></default_value>
+      <min_value></min_value>
+      <max_value></max_value>
+    </argument>
+    <argument>
       <name>CTE_Uso_edificio</name>
       <display_name>Uso del edificio</display_name>
+      <description></description>
       <type>Choice</type>
+      <units></units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>Terciario</default_value>
@@ -28,11 +42,15 @@
           <display_name>Terciario</display_name>
         </choice>
       </choices>
+      <min_value></min_value>
+      <max_value></max_value>
     </argument>
     <argument>
       <name>CTE_Tipo_edificio</name>
       <display_name>Edificio nuevo o existente</display_name>
+      <description></description>
       <type>Choice</type>
+      <units></units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>Nuevo</default_value>
@@ -46,12 +64,15 @@
           <display_name>Existente</display_name>
         </choice>
       </choices>
+      <min_value></min_value>
+      <max_value></max_value>
     </argument>
     <argument>
       <name>CTE_Zona_climatica</name>
       <display_name>Zona Climática</display_name>
       <description>Selecciona manual si quieres que la zona climática se tome del fichero climático asociado</description>
       <type>Choice</type>
+      <units></units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>Manual</default_value>
@@ -185,11 +206,15 @@
           <display_name>E1_canarias</display_name>
         </choice>
       </choices>
+      <min_value></min_value>
+      <max_value></max_value>
     </argument>
     <argument>
       <name>CTE_Provincia</name>
       <display_name>Provincia</display_name>
+      <description></description>
       <type>Choice</type>
+      <units></units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>Automatico</default_value>
@@ -407,56 +432,75 @@
           <display_name>Zaragoza</display_name>
         </choice>
       </choices>
+      <min_value></min_value>
+      <max_value></max_value>
     </argument>
     <argument>
       <name>CTE_Altitud</name>
       <display_name>Altitud del emplazamiento</display_name>
+      <description></description>
       <type>Double</type>
       <units>metros</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>650</default_value>
+      <min_value></min_value>
+      <max_value></max_value>
     </argument>
     <argument>
       <name>CTE_Design_flow_rate</name>
       <display_name>Caudal de diseno de ventilacion del edificio (residencial)</display_name>
+      <description></description>
       <type>Double</type>
       <units>ren/h</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>0.63</default_value>
+      <min_value></min_value>
+      <max_value></max_value>
     </argument>
     <argument>
       <name>CTE_Heat_recovery</name>
       <display_name>Eficiencia del recuperador de calor</display_name>
+      <description></description>
       <type>Double</type>
       <units>adimensional</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>0</default_value>
+      <min_value></min_value>
+      <max_value></max_value>
     </argument>
     <argument>
       <name>CTE_Fan_sfp</name>
       <display_name>Consumo específico global de ventiladores (SFP)</display_name>
+      <description></description>
       <type>Double</type>
       <units>kPa</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>2.5</default_value>
+      <min_value></min_value>
+      <max_value></max_value>
     </argument>
     <argument>
       <name>CTE_Fan_ntot</name>
       <display_name>Eficiencia total de ventiladores (n_tot)</display_name>
+      <description></description>
       <type>Double</type>
       <units>adimensional</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>0.5</default_value>
+      <min_value></min_value>
+      <max_value></max_value>
     </argument>
     <argument>
       <name>CTE_Permeabilidad_ventanas</name>
       <display_name>Permeabilidad de la carpintería.</display_name>
+      <description></description>
       <type>Choice</type>
+      <units></units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>Clase 1</default_value>
@@ -478,74 +522,104 @@
           <display_name>Clase 4</display_name>
         </choice>
       </choices>
+      <min_value></min_value>
+      <max_value></max_value>
     </argument>
     <argument>
       <name>CTE_F_sombras_moviles</name>
       <display_name>Factor de sombras móviles</display_name>
+      <description></description>
       <type>Double</type>
+      <units></units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>0.3</default_value>
+      <min_value></min_value>
+      <max_value></max_value>
     </argument>
     <argument>
       <name>CTE_Psi_forjado_cubierta</name>
       <display_name>TTL forjado con cubierta</display_name>
+      <description></description>
       <type>Double</type>
       <units>W/mK</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>0.24</default_value>
+      <min_value></min_value>
+      <max_value></max_value>
     </argument>
     <argument>
       <name>CTE_Psi_frente_forjado</name>
       <display_name>TTL frente forjado</display_name>
+      <description></description>
       <type>Double</type>
       <units>W/mK</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>0.1</default_value>
+      <min_value></min_value>
+      <max_value></max_value>
     </argument>
     <argument>
       <name>CTE_Psi_solera_terreno</name>
       <display_name>TTL forjado con solera</display_name>
+      <description></description>
       <type>Double</type>
       <units>W/mK</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>0.28</default_value>
+      <min_value></min_value>
+      <max_value></max_value>
     </argument>
     <argument>
       <name>CTE_Psi_forjado_exterior</name>
       <display_name>TTL forjado con suelo exterior</display_name>
+      <description></description>
       <type>Double</type>
+      <units></units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>0.23</default_value>
+      <min_value></min_value>
+      <max_value></max_value>
     </argument>
     <argument>
       <name>CTE_Psi_contorno_huecos</name>
       <display_name>TTL contorno de huecos</display_name>
+      <description></description>
       <type>Double</type>
       <units>W/mK</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>0.05</default_value>
+      <min_value></min_value>
+      <max_value></max_value>
     </argument>
     <argument>
       <name>CTE_Coef_stack</name>
       <display_name>Coeficiente de Stack</display_name>
+      <description></description>
       <type>Double</type>
+      <units></units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>0.00029</default_value>
+      <min_value></min_value>
+      <max_value></max_value>
     </argument>
     <argument>
       <name>CTE_Coef_wind</name>
       <display_name>Coeficiente de Viento</display_name>
+      <description></description>
       <type>Double</type>
+      <units></units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>0.000231</default_value>
+      <min_value></min_value>
+      <max_value></max_value>
     </argument>
   </arguments>
   <outputs />
@@ -595,12 +669,6 @@
       <checksum>73186073</checksum>
     </file>
     <file>
-      <filename>CTE_Model_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>F7BEB468</checksum>
-    </file>
-    <file>
       <filename>cte_lib_measures_addvars.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -623,17 +691,6 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>3F2D9071</checksum>
-    </file>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.0.0</identifier>
-        <min_compatible>1.0.0</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>B47E383F</checksum>
     </file>
     <file>
       <filename>D3_peninsula.ddy</filename>
@@ -1038,10 +1095,27 @@
       <checksum>58C53E70</checksum>
     </file>
     <file>
+      <filename>CTE_Model_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>0FC8CB90</checksum>
+    </file>
+    <file>
       <filename>cte_lib_measures_ventilacion.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>299DE9F8</checksum>
+      <checksum>49078A65</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.0.0</identifier>
+        <min_compatible>1.0.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>6B8FF483</checksum>
     </file>
   </files>
 </measure>
