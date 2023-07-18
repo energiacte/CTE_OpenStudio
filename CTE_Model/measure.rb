@@ -33,11 +33,12 @@ require_relative "resources/cte_lib_measures_ventilacion.rb"
 require_relative "resources/cte_lib_measures_infiltracion.rb"
 require_relative "resources/cte_lib_measures_puentestermicos.rb"
 require_relative "resources/cte_lib_measures_fijaclima.rb"
+require_relative "resources/cte_lib_measures_cambia_u_opacos.rb"
 
 # Medida de OpenStudio (ModelUserScript) que modifica el modelo para su uso con el CTE
 # Para su correcto funcionamiento esta medida debe emplearse con una plantilla adecuada.
 # La plantilla define objetos tipo como horarios, tipos de espacios, etc.
-class CTE_Model < OpenStudio::Ruleset::ModelUserScript
+class CTE_Model < OpenStudio::Measure::ModelMeasure
   def name
     return "CTE Model"
   end
@@ -196,7 +197,7 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
 
   def run(model, runner, user_arguments)
     super(model, runner, user_arguments)
-
+    puts("CTE: Aplicando medidas de modelo.")
     runner.registerInitialCondition("CTE: Aplicando medidas de modelo.")
 
     # use the built-in error checking
@@ -211,6 +212,12 @@ class CTE_Model < OpenStudio::Ruleset::ModelUserScript
     end
     model.building.get.setComment(argumentos.to_json)
 
+    puts('cambia modelos opaco')
+    runner.registerInfo('Llamada a la actualización de opacos')
+    result = cte_cambia_u_opacos(model, runner, user_arguments)
+    return result unless result == true
+
+    puts('fija clima')
     result = cte_fijaclima(model, runner, user_arguments) # gestiona el archivo de clima
     return result unless result == true
 

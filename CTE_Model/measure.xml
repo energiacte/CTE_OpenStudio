@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <measure>
-  <schema_version>3.0</schema_version>  
+  <schema_version>3.0</schema_version>
   <name>cte_model</name>
   <uid>1f30359f-b316-49d1-b799-73b16ff79478</uid>
-  <version_id>6bb9c519-786c-4774-b3be-53ae42325514</version_id>
-  <version_modified>20230712T160212Z</version_modified>
+  <version_id>a26a5dff-cc4c-44a4-a009-81d1ecd789a2</version_id>
+  <version_modified>20230714T104631Z</version_modified>
   <xml_checksum>7C017197</xml_checksum>
   <class_name>CTE_Model</class_name>
   <display_name>CTE Model</display_name>
@@ -14,21 +14,16 @@
     <argument>
       <name>CTE_U_opacos</name>
       <display_name>U de opacos</display_name>
-      <description></description>
       <type>Double</type>
       <units>W/m2·K</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value></default_value>
-      <min_value></min_value>
-      <max_value></max_value>
+      <default_value>10</default_value>
     </argument>
     <argument>
       <name>CTE_Uso_edificio</name>
       <display_name>Uso del edificio</display_name>
-      <description></description>
       <type>Choice</type>
-      <units></units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>Terciario</default_value>
@@ -42,15 +37,11 @@
           <display_name>Terciario</display_name>
         </choice>
       </choices>
-      <min_value></min_value>
-      <max_value></max_value>
     </argument>
     <argument>
       <name>CTE_Tipo_edificio</name>
       <display_name>Edificio nuevo o existente</display_name>
-      <description></description>
       <type>Choice</type>
-      <units></units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>Nuevo</default_value>
@@ -64,15 +55,12 @@
           <display_name>Existente</display_name>
         </choice>
       </choices>
-      <min_value></min_value>
-      <max_value></max_value>
     </argument>
     <argument>
       <name>CTE_Zona_climatica</name>
       <display_name>Zona Climática</display_name>
       <description>Selecciona manual si quieres que la zona climática se tome del fichero climático asociado</description>
       <type>Choice</type>
-      <units></units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>Manual</default_value>
@@ -206,15 +194,11 @@
           <display_name>E1_canarias</display_name>
         </choice>
       </choices>
-      <min_value></min_value>
-      <max_value></max_value>
     </argument>
     <argument>
       <name>CTE_Provincia</name>
       <display_name>Provincia</display_name>
-      <description></description>
       <type>Choice</type>
-      <units></units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>Automatico</default_value>
@@ -432,75 +416,56 @@
           <display_name>Zaragoza</display_name>
         </choice>
       </choices>
-      <min_value></min_value>
-      <max_value></max_value>
     </argument>
     <argument>
       <name>CTE_Altitud</name>
       <display_name>Altitud del emplazamiento</display_name>
-      <description></description>
       <type>Double</type>
       <units>metros</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>650</default_value>
-      <min_value></min_value>
-      <max_value></max_value>
     </argument>
     <argument>
       <name>CTE_Design_flow_rate</name>
       <display_name>Caudal de diseno de ventilacion del edificio (residencial)</display_name>
-      <description></description>
       <type>Double</type>
       <units>ren/h</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>0.63</default_value>
-      <min_value></min_value>
-      <max_value></max_value>
     </argument>
     <argument>
       <name>CTE_Heat_recovery</name>
       <display_name>Eficiencia del recuperador de calor</display_name>
-      <description></description>
       <type>Double</type>
       <units>adimensional</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>0</default_value>
-      <min_value></min_value>
-      <max_value></max_value>
     </argument>
     <argument>
       <name>CTE_Fan_sfp</name>
       <display_name>Consumo específico global de ventiladores (SFP)</display_name>
-      <description></description>
       <type>Double</type>
       <units>kPa</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>2.5</default_value>
-      <min_value></min_value>
-      <max_value></max_value>
     </argument>
     <argument>
       <name>CTE_Fan_ntot</name>
       <display_name>Eficiencia total de ventiladores (n_tot)</display_name>
-      <description></description>
       <type>Double</type>
       <units>adimensional</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>0.5</default_value>
-      <min_value></min_value>
-      <max_value></max_value>
     </argument>
     <argument>
       <name>CTE_Permeabilidad_ventanas</name>
       <display_name>Permeabilidad de la carpintería.</display_name>
-      <description></description>
       <type>Choice</type>
-      <units></units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>Clase 1</default_value>
@@ -522,104 +487,74 @@
           <display_name>Clase 4</display_name>
         </choice>
       </choices>
-      <min_value></min_value>
-      <max_value></max_value>
     </argument>
     <argument>
       <name>CTE_F_sombras_moviles</name>
       <display_name>Factor de sombras móviles</display_name>
-      <description></description>
       <type>Double</type>
-      <units></units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>0.3</default_value>
-      <min_value></min_value>
-      <max_value></max_value>
     </argument>
     <argument>
       <name>CTE_Psi_forjado_cubierta</name>
       <display_name>TTL forjado con cubierta</display_name>
-      <description></description>
       <type>Double</type>
       <units>W/mK</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>0.24</default_value>
-      <min_value></min_value>
-      <max_value></max_value>
     </argument>
     <argument>
       <name>CTE_Psi_frente_forjado</name>
       <display_name>TTL frente forjado</display_name>
-      <description></description>
       <type>Double</type>
       <units>W/mK</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>0.1</default_value>
-      <min_value></min_value>
-      <max_value></max_value>
     </argument>
     <argument>
       <name>CTE_Psi_solera_terreno</name>
       <display_name>TTL forjado con solera</display_name>
-      <description></description>
       <type>Double</type>
       <units>W/mK</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>0.28</default_value>
-      <min_value></min_value>
-      <max_value></max_value>
     </argument>
     <argument>
       <name>CTE_Psi_forjado_exterior</name>
       <display_name>TTL forjado con suelo exterior</display_name>
-      <description></description>
       <type>Double</type>
-      <units></units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>0.23</default_value>
-      <min_value></min_value>
-      <max_value></max_value>
     </argument>
     <argument>
       <name>CTE_Psi_contorno_huecos</name>
       <display_name>TTL contorno de huecos</display_name>
-      <description></description>
       <type>Double</type>
       <units>W/mK</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>0.05</default_value>
-      <min_value></min_value>
-      <max_value></max_value>
     </argument>
     <argument>
       <name>CTE_Coef_stack</name>
       <display_name>Coeficiente de Stack</display_name>
-      <description></description>
       <type>Double</type>
-      <units></units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>0.00029</default_value>
-      <min_value></min_value>
-      <max_value></max_value>
     </argument>
     <argument>
       <name>CTE_Coef_wind</name>
       <display_name>Coeficiente de Viento</display_name>
-      <description></description>
       <type>Double</type>
-      <units></units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>0.000231</default_value>
-      <min_value></min_value>
-      <max_value></max_value>
     </argument>
   </arguments>
   <outputs />
@@ -693,136 +628,10 @@
       <checksum>3F2D9071</checksum>
     </file>
     <file>
-      <filename>D3_peninsula.ddy</filename>
-      <filetype>ddy</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>D6B6EA17</checksum>
-    </file>
-    <file>
       <filename>epw.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>32A9564D</checksum>
-    </file>
-    <file>
-      <filename>A4_peninsula.ddy</filename>
-      <filetype>ddy</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>09385A76</checksum>
-    </file>
-    <file>
-      <filename>D2_peninsula.epw</filename>
-      <filetype>epw</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>22F0F531</checksum>
-    </file>
-    <file>
-      <filename>B4_peninsula.epw</filename>
-      <filetype>epw</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>E4B8FDA4</checksum>
-    </file>
-    <file>
-      <filename>A3_peninsula.ddy</filename>
-      <filetype>ddy</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>27BEBB45</checksum>
-    </file>
-    <file>
-      <filename>A4_canarias.epw</filename>
-      <filetype>epw</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>10BD6512</checksum>
-    </file>
-    <file>
-      <filename>C1_canarias.ddy</filename>
-      <filetype>ddy</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>15912BD5</checksum>
-    </file>
-    <file>
-      <filename>C1_peninsula.ddy</filename>
-      <filetype>ddy</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>99C0CD44</checksum>
-    </file>
-    <file>
-      <filename>C2_canarias.ddy</filename>
-      <filetype>ddy</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>CC9FE0C8</checksum>
-    </file>
-    <file>
-      <filename>C4_canarias.epw</filename>
-      <filetype>epw</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>9047FCDC</checksum>
-    </file>
-    <file>
-      <filename>B4_canarias.ddy</filename>
-      <filetype>ddy</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>A47457AF</checksum>
-    </file>
-    <file>
-      <filename>B3_canarias.ddy</filename>
-      <filetype>ddy</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>4834DE70</checksum>
-    </file>
-    <file>
-      <filename>C1_canarias.epw</filename>
-      <filetype>epw</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>0C5E2337</checksum>
-    </file>
-    <file>
-      <filename>C3_peninsula.ddy</filename>
-      <filetype>ddy</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>21BA264C</checksum>
-    </file>
-    <file>
-      <filename>B4_peninsula.ddy</filename>
-      <filetype>ddy</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>13DCEBC7</checksum>
-    </file>
-    <file>
-      <filename>A3_peninsula.epw</filename>
-      <filetype>epw</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>322A361A</checksum>
-    </file>
-    <file>
-      <filename>B4_canarias.epw</filename>
-      <filetype>epw</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B90AB717</checksum>
-    </file>
-    <file>
-      <filename>A2_canarias.epw</filename>
-      <filetype>epw</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>7F0BA24C</checksum>
-    </file>
-    <file>
-      <filename>C2_canarias.epw</filename>
-      <filetype>epw</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>57276040</checksum>
-    </file>
-    <file>
-      <filename>C2_peninsula.epw</filename>
-      <filetype>epw</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DA9F3B5B</checksum>
-    </file>
-    <file>
-      <filename>A4_canarias.ddy</filename>
-      <filetype>ddy</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>83F30426</checksum>
     </file>
     <file>
       <filename>LICENSE-LGPL-2.1.txt</filename>
@@ -831,280 +640,22 @@
       <checksum>5622583E</checksum>
     </file>
     <file>
-      <filename>E1_canarias.ddy</filename>
-      <filetype>ddy</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>E50307AA</checksum>
-    </file>
-    <file>
-      <filename>alpha1_canarias.epw</filename>
-      <filetype>epw</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>A06FC119</checksum>
-    </file>
-    <file>
-      <filename>C4_canarias.ddy</filename>
-      <filetype>ddy</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>CEA71183</checksum>
-    </file>
-    <file>
-      <filename>D3_peninsula.epw</filename>
-      <filetype>epw</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>65D14084</checksum>
-    </file>
-    <file>
-      <filename>A2_canarias.ddy</filename>
-      <filetype>ddy</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>81CBF56D</checksum>
-    </file>
-    <file>
-      <filename>D2_canarias.epw</filename>
-      <filetype>epw</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>480D8CF9</checksum>
-    </file>
-    <file>
-      <filename>D2_peninsula.ddy</filename>
-      <filetype>ddy</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>063BAA09</checksum>
-    </file>
-    <file>
-      <filename>alpha4_canarias.epw</filename>
-      <filetype>epw</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B1FB0831</checksum>
-    </file>
-    <file>
-      <filename>D1_peninsula.ddy</filename>
-      <filetype>ddy</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>6ECC011F</checksum>
-    </file>
-    <file>
-      <filename>C2_peninsula.ddy</filename>
-      <filetype>ddy</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>68A0AC9D</checksum>
-    </file>
-    <file>
-      <filename>C1_peninsula.epw</filename>
-      <filetype>epw</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>F70E9C27</checksum>
-    </file>
-    <file>
-      <filename>B2_canarias.ddy</filename>
-      <filetype>ddy</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>A64CA6E4</checksum>
-    </file>
-    <file>
-      <filename>D3_canarias.epw</filename>
-      <filetype>epw</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>04247A74</checksum>
-    </file>
-    <file>
-      <filename>alpha3_canarias.epw</filename>
-      <filetype>epw</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>55F404F9</checksum>
-    </file>
-    <file>
-      <filename>A3_canarias.ddy</filename>
-      <filetype>ddy</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>6FB38DF9</checksum>
-    </file>
-    <file>
-      <filename>C3_peninsula.epw</filename>
-      <filetype>epw</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>E62E4A71</checksum>
-    </file>
-    <file>
-      <filename>D1_canarias.epw</filename>
-      <filetype>epw</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>1066A54A</checksum>
-    </file>
-    <file>
-      <filename>E1_peninsula.ddy</filename>
-      <filetype>ddy</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>47F06ED2</checksum>
-    </file>
-    <file>
-      <filename>B1_canarias.ddy</filename>
-      <filetype>ddy</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>7F426DF9</checksum>
-    </file>
-    <file>
-      <filename>E1_peninsula.epw</filename>
-      <filetype>epw</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>D7362C40</checksum>
-    </file>
-    <file>
       <filename>cte_lib_measures_fijaclima.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>2B84F0BD</checksum>
     </file>
     <file>
-      <filename>alpha4_canarias.ddy</filename>
-      <filetype>ddy</filetype>
+      <filename>cte_lib_measures_ventilacion.rb</filename>
+      <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>85C04198</checksum>
-    </file>
-    <file>
-      <filename>D2_canarias.ddy</filename>
-      <filetype>ddy</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>EF5AB19B</checksum>
-    </file>
-    <file>
-      <filename>A3_canarias.epw</filename>
-      <filetype>epw</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>E29AF83B</checksum>
-    </file>
-    <file>
-      <filename>C3_canarias.epw</filename>
-      <filetype>epw</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>75670248</checksum>
-    </file>
-    <file>
-      <filename>E1_canarias.epw</filename>
-      <filetype>epw</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>94088182</checksum>
-    </file>
-    <file>
-      <filename>A4_peninsula.epw</filename>
-      <filetype>epw</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>FE0E041E</checksum>
-    </file>
-    <file>
-      <filename>D1_canarias.ddy</filename>
-      <filetype>ddy</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>36547A86</checksum>
-    </file>
-    <file>
-      <filename>B2_canarias.epw</filename>
-      <filetype>epw</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>1C59DEBE</checksum>
-    </file>
-    <file>
-      <filename>alpha2_canarias.epw</filename>
-      <filetype>epw</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>EAE5023F</checksum>
-    </file>
-    <file>
-      <filename>alpha2_canarias.ddy</filename>
-      <filetype>ddy</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>87F8B0D3</checksum>
-    </file>
-    <file>
-      <filename>alpha1_canarias.ddy</filename>
-      <filetype>ddy</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>5EF67BCE</checksum>
-    </file>
-    <file>
-      <filename>C3_canarias.ddy</filename>
-      <filetype>ddy</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>22E7985C</checksum>
-    </file>
-    <file>
-      <filename>B3_peninsula.epw</filename>
-      <filetype>epw</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B7FD651F</checksum>
-    </file>
-    <file>
-      <filename>C4_peninsula.epw</filename>
-      <filetype>epw</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>4FEB92C1</checksum>
-    </file>
-    <file>
-      <filename>D1_peninsula.epw</filename>
-      <filetype>epw</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>F94C4AB2</checksum>
-    </file>
-    <file>
-      <filename>C4_peninsula.ddy</filename>
-      <filetype>ddy</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>0F3CC77F</checksum>
-    </file>
-    <file>
-      <filename>A1_canarias.epw</filename>
-      <filetype>epw</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>1C48244F</checksum>
-    </file>
-    <file>
-      <filename>B3_peninsula.ddy</filename>
-      <filetype>ddy</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>3D5A0AF4</checksum>
-    </file>
-    <file>
-      <filename>D3_canarias.ddy</filename>
-      <filetype>ddy</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>0122C90F</checksum>
-    </file>
-    <file>
-      <filename>alpha3_canarias.ddy</filename>
-      <filetype>ddy</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>6980C847</checksum>
-    </file>
-    <file>
-      <filename>B3_canarias.epw</filename>
-      <filetype>epw</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>6A98CBC9</checksum>
-    </file>
-    <file>
-      <filename>B1_canarias.epw</filename>
-      <filetype>epw</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>D4E72CCF</checksum>
-    </file>
-    <file>
-      <filename>A1_canarias.ddy</filename>
-      <filetype>ddy</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>58C53E70</checksum>
+      <checksum>49078A65</checksum>
     </file>
     <file>
       <filename>CTE_Model_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>0FC8CB90</checksum>
-    </file>
-    <file>
-      <filename>cte_lib_measures_ventilacion.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>49078A65</checksum>
+      <checksum>480B3CD8</checksum>
     </file>
     <file>
       <version>
@@ -1115,7 +666,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>6B8FF483</checksum>
+      <checksum>660AB50B</checksum>
+    </file>
+    <file>
+      <filename>cte_lib_measures_cambia_u_opacos.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>558021F1</checksum>
     </file>
   </files>
 </measure>

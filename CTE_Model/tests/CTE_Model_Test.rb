@@ -97,11 +97,13 @@ class CTE_Model_Test < MiniTest::Test
     # load the test model
     translator = OpenStudio::OSVersion::VersionTranslator.new
     path = OpenStudio::Path.new(File.dirname(__FILE__) + "/residencial.osm")
+    puts('cargando el modelo ', path)
     model = translator.loadModel(path)
     assert((not model.empty?))
     model = model.get
 
     # get arguments
+    puts('tomando los argumentos')
     arguments = measure.arguments(model)
     argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(arguments)
 
@@ -125,8 +127,10 @@ class CTE_Model_Test < MiniTest::Test
     # argumentos no son atributos
 
     # set argument values to good values and run the measure on model with spaces
+    puts('ejecutando la medida')
     salida = measure.run(model, runner, argument_map)
     assert(salida, "algo falló")
+    puts('fin de la medida')
 
     result = runner.result
     puts ("show_output(result)")
