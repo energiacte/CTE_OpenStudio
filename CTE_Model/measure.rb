@@ -34,6 +34,7 @@ require_relative "resources/cte_lib_measures_infiltracion.rb"
 require_relative "resources/cte_lib_measures_puentestermicos.rb"
 require_relative "resources/cte_lib_measures_fijaclima.rb"
 require_relative "resources/cte_lib_measures_cambia_u_opacos.rb"
+require_relative "resources/cte_lib_measures_cambia_u_huecos.rb"
 
 # Medida de OpenStudio (ModelUserScript) que modifica el modelo para su uso con el CTE
 # Para su correcto funcionamiento esta medida debe emplearse con una plantilla adecuada.
@@ -59,6 +60,12 @@ class CTE_Model < OpenStudio::Measure::ModelMeasure
     u_opacos.setUnits("W/m2·K")
     u_opacos.setDefaultValue(10)
     args << u_opacos
+
+    u_huecos = OpenStudio::Measure::OSArgument::makeDoubleArgument("CTE_U_huecos", true)
+    u_huecos.setDisplayName("U de huecos")
+    u_huecos.setUnits("W/m2·K")
+    u_huecos.setDefaultValue(10)
+    args << u_huecos
 
     usoedificio_chs = OpenStudio::StringVector.new
     usoedificio_chs << "Residencial"
@@ -212,9 +219,14 @@ class CTE_Model < OpenStudio::Measure::ModelMeasure
     end
     model.building.get.setComment(argumentos.to_json)
 
-    puts('cambia modelos opaco')
+    puts('cambia las transmitancias de los opacos')
     runner.registerInfo('Llamada a la actualización de opacos')
     result = cte_cambia_u_opacos(model, runner, user_arguments)
+    return result unless result == true
+
+    puts('cambia las transmitancias de los huecos')
+    runner.registerInfo('Llamada a la actualización de huecos')
+    result = cte_cambia_u_huecos(model, runner, user_arguments)
     return result unless result == true
 
     puts('fija clima')
