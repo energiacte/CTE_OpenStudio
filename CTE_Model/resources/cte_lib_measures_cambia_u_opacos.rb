@@ -105,14 +105,14 @@ def cte_cambia_u_opacos(model, runner, user_arguments)
     end
 
     resistencia_capa = 1 / u_opacos - resistencia_termica_sin_aislante # siempre que sea positiva, claro
-    puts("__la resistencia del aislante es #{max_mat_hash["mat"].to_OpaqueMaterial.get.thermalResistance.to_f}")
-    puts("__la resistencia sin aislante es #{resistencia_termica_sin_aislante}")
-    puts("__la resistencia de la capa aislante debe ser #{resistencia_capa}")
+    # puts("__la resistencia del aislante es #{max_mat_hash["mat"].to_OpaqueMaterial.get.thermalResistance.to_f}")
+    # puts("__la resistencia sin aislante es #{resistencia_termica_sin_aislante}")
+    # puts("__la resistencia de la capa aislante debe ser #{resistencia_capa}")
 
     max_thermal_resistance_material = max_mat_hash["mat"] # objeto OS
     max_thermal_resistance_material_index = max_mat_hash["index"] # indice de la capa
     max_thermal_resistance = max_thermal_resistance_material.to_OpaqueMaterial.get.thermalResistance
-    puts("max_thermal_resistance -> #{max_thermal_resistance}__")
+    # puts("max_thermal_resistance -> #{max_thermal_resistance}__")
 
     if resistencia_capa <= 0
       runner.registerInfo("La U que se pide para los opacos mayor que la que tienen las capas sin contar el aislamiento. No se modifica")
