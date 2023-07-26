@@ -57,9 +57,9 @@ def cte_cambia_u_opacos(model, runner, user_arguments)
   final_constructions_array = []
 
   # loop through all constructions and materials used on exterior walls, edit and clone
-  puts("__Itera por ")
-  exterior_surface_constructions.each { |elemento| puts(elemento.name) }
-  puts("___")
+  # puts("__Itera por ")
+  # exterior_surface_constructions.each { |elemento| puts(elemento.name) }
+  # puts("___")
   exterior_surface_constructions.each do |exterior_surface_construction|
     puts("___Nombre de la construcción #{exterior_surface_construction.name}___")
     # puts(exterior_surface_construction.name)
@@ -88,6 +88,7 @@ def cte_cambia_u_opacos(model, runner, user_arguments)
       max_mat_hash = mass_materials.select { |material| material["mat"].to_OpaqueMaterial.get.thermalConductivity.to_f <= thermal_conductivity_values.min }[0]
     end
     puts("__aislante es el material #{max_mat_hash["name"]}__")
+    puts(max_mat_hash)
 
     # ! 04 calcula la resistencia del muro sin la capa aislante
     materiales = exterior_surface_construction.layers
