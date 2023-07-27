@@ -13,8 +13,6 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
   windows = []
   window_constructions = []
   window_construction_names = []
-  window_frameanddividers = []
-  window_frameanddivider_names = []
   puts(" __huecos__ recorriendo las ventanas")
   spaces = model.getSpaces
   spaces.each do |space|
@@ -24,27 +22,6 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
           # puts("__ ventana ___", subsur.name)
 
           windows << subsur
-
-          begin
-            frame = subsur.windowPropertyFrameAndDivider.get
-            tiene_marco = true
-          rescue
-            tiene_marco = false
-          end
-
-          window_construccion = subsur.construction.get
-          if !window_construction_names.include?(window_construccion.name.to_s)
-            window_constructions << window_construccion.to_Construction.get
-            window_construction_names << window_construccion.name.to_s
-          end
-
-          if tiene_marco
-            window_frameanddivider = subsur.windowPropertyFrameAndDivider.get
-            if !window_frameanddivider_names.include?(window_frameanddivider.name.to_s)
-              window_frameanddividers << window_frameanddivider.to_WindowPropertyFrameAndDivider.get
-              window_frameanddivider_names << window_frameanddivider.name.to_s
-            end
-          end
 
           # window_construction_names << window_construccion.name.to_s
           # ext_wall_resistance << 1 / ext_wall_const.thermalConductance.to_f
@@ -63,7 +40,7 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
       end
     end
   end
-  puts("__ cosas__", window_construction_names, window_frameanddivider_names)
+  puts("__ cosas__", window_construction_names)
   puts("... ya ...")
 
   if windows.empty?
@@ -107,6 +84,12 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
 
     if materials_in_construction.length == 1
       max_mat_hash = materials_in_construction[0]
+    end
+
+    window_construccion = subsur.construction.get
+    if !window_construction_names.include?(window_construccion.name.to_s)
+      window_constructions << window_construccion.to_Construction.get
+      window_construction_names << window_construccion.name.to_s
     end
 
     # puts(construction_layers)
@@ -210,7 +193,6 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
         new_default_construction_set.setDefaultExteriorSubSurfaceConstructions(new_default_subsurface_const_set)
         puts("__ new_default_construction_set__ #{new_default_construction_set}")
 
-
         # use the hash to find the proper construction and link to new_default_subsurface_const_set
         target_const = new_default_subsurface_const_set.fixedWindowConstruction
         if !target_const.empty?
@@ -274,6 +256,42 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
       end
     end
   end
+
+  # ! -1 rutina para cambiar los frameanddivider de todas las ventas
+
+  window_frameanddividers = []
+  window_frameanddivider_names = []
+
+  windows.each do |window|
+    begin
+      frame = window.windowPropertyFrameAndDivider.get
+      frame_name = frame.name
+      puts("__frame_name__ #{frame_name}")
+      if !window_frameanddivider_names.include?(frame.name.to_s)
+        window_frameanddividers << frame
+        window_frameanddivider_names << frame.name.to_s
+      end
+      tiene_marco = true
+    rescue
+      tiene_marco = false
+    end
+  end
+
+  window_frameanddividers.each do |frame|
+    # transmitancia = frame.frameConductance()
+    # puts("transmitancia #{transmitancia}")
+    frame.setFrameConductance(u_huecos)
+    name = frame.name.to_s
+    frame.setName("Frame forzado a #{u_huecos}")
+  end
+
+  # if tiene_marco
+  #   window_frameanddivider = subsur.windowPropertyFrameAndDivider.get
+  #   if !window_frameanddivider_names.include?(window_frameanddivider.name.to_s)
+  #     window_frameanddividers << window_frameanddivider.to_WindowPropertyFrameAndDivider.get
+  #     window_frameanddivider_names << window_frameanddivider.name.to_s
+  #   end
+  # end
 
   runner.registerFinalCondition("Modificadas las transmitancias de los huecos.")
   return true
