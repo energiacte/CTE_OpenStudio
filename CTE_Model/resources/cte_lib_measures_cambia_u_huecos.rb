@@ -13,35 +13,30 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
   windows = []
   window_constructions = []
   window_construction_names = []
-  puts(" __huecos__ recorriendo las ventanas")
+  tipos_cubiertos = ['FixedWindow', 'Door']
   spaces = model.getSpaces
   spaces.each do |space|
     space.surfaces.each do |surface|
       if surface.outsideBoundaryCondition == "Outdoors" and surface.windExposure == "WindExposed"
         surface.subSurfaces.each do |subsur|
-          # puts("__ ventana ___", subsur.name)
+          windows << subsur # también las puertas y esas cosas
+          # puts("__subsurface Type #{subsur.subSurfaceType()} -> #{subsur.construction.get.name}")
+          if !tipos_cubiertos.include?(subsur.subSurfaceType().to_s)
+            puts("Tipo de hueco no cubierto por esta medida #{subsur.subSurfaceType().to_s}")
+          end
 
-          windows << subsur
-
-          # window_construction_names << window_construccion.name.to_s
-          # ext_wall_resistance << 1 / ext_wall_const.thermalConductance.to_f
-          # ext_wall_transsmitance << ext_wall_const.thermalConductance.to_f
-
-          # puts(subsur.construction.get.name)
-          # puts(subsur.subSurfaceType())
-          # puts(subsur.windowPropertyFrameAndDivider())
-
-          # puts('__ frame__ ', frame)
-          # puts('__ frame conductance__ ', frame.frameConductance())
-          # frame.setFrameConductance(2.25)
-          # puts('__ frame conductance__ ', frame.frameConductance())
-
+          # begin
+          #   puts("   #{subsur.windowPropertyFrameAndDivider.get.name}")
+          # rescue
+          #   # no hago nada
+          # end
+          
         end
       end
     end
   end
-  puts("__ cosas__", window_construction_names)
-  puts("... ya ...")
+# # 
+#   variable = no_definida
 
   if windows.empty?
     runner.registerAsNotApplicable("El modelo no tiene ventanas.")
@@ -64,7 +59,7 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
   window_constructions.each { |construccion| puts(construccion.name) } #construccion =elemento
   # puts("___")
   window_constructions.each do |window_construction|
-    puts("___Nombre de la construcción #{window_construction.name}___")
+    # puts("___Nombre de la construcción #{window_construction.name}___")
     # puts(exterior_surface_construction.name)
     runner.registerInfo("nombre de la construcción #{window_construction.name}")
     construction_layers = window_construction.layers
@@ -154,21 +149,6 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
       # edit insulation material
       new_material_matt = new_material
       new_material_matt.setUFactor(u_huecos)
-      # if !new_material_matt.empty?
-      #   # starting_thickness = new_material_matt.get.thickness
-      #   # target_thickness = starting_thickness / u_opacos / thermal_resistance_values.max
-      #   # final_thickness = new_material_matt.get.setThickness(target_thickness)
-      # end
-
-      # new_material_massless = new_material.to_MasslessOpaqueMaterial
-      # if !new_material_massless.empty?
-      #   puts("__!new_material_massless.empty?__")
-      #   final_thermal_resistance = new_material_massless.get.setThermalResistance(resistencia_capa)
-      # end
-      # new_material_airgap = new_material.to_AirGap
-      # if !new_material_airgap.empty?
-      #   final_thermal_resistance = new_material_airgap.get.setThermalResistance(resistencia_capa)
-      # end
     end
   end
 
@@ -257,7 +237,8 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
     end
   end
 
-  # ! -1 rutina para cambiar los frameanddivider de todas las ventas
+  # ! -1 rutina para cambiar los frameanddivider de todas las ventas  
+
 
   window_frameanddividers = []
   window_frameanddivider_names = []
@@ -266,7 +247,7 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
     begin
       frame = window.windowPropertyFrameAndDivider.get
       frame_name = frame.name
-      puts("__frame_name__ #{frame_name}")
+      # puts("__frame_name__ #{frame_name}")
       if !window_frameanddivider_names.include?(frame.name.to_s)
         window_frameanddividers << frame
         window_frameanddivider_names << frame.name.to_s
@@ -292,6 +273,21 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
   #     window_frameanddivider_names << window_frameanddivider.name.to_s
   #   end
   # end
+
+  spaces.each do |space|
+    space.surfaces.each do |surface|
+      if surface.outsideBoundaryCondition == "Outdoors" and surface.windExposure == "WindExposed"
+        surface.subSurfaces.each do |subsur|     
+          puts("__subsurface Type #{subsur.subSurfaceType()} -> #{subsur.construction.get.name}")
+          begin
+            puts("   #{subsur.windowPropertyFrameAndDivider.get.name}")
+          rescue
+            puts("   no tiene marco ")
+          end
+        end
+      end
+    end
+  end
 
   runner.registerFinalCondition("Modificadas las transmitancias de los huecos.")
   return true

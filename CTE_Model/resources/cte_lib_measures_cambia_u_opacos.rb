@@ -61,8 +61,7 @@ def cte_cambia_u_opacos(model, runner, user_arguments)
   # exterior_surface_constructions.each { |elemento| puts(elemento.name) }
   # puts("___")
   exterior_surface_constructions.each do |exterior_surface_construction|
-    puts("___Nombre de la construcción #{exterior_surface_construction.name}___")
-    # puts(exterior_surface_construction.name)
+    # puts("___Nombre de la construcción #{exterior_surface_construction.name}___")    
     runner.registerInfo("nombre de la construcción #{exterior_surface_construction.name}")
     construction_layers = exterior_surface_construction.layers
     max_thermal_resistance_material = ""
@@ -79,16 +78,16 @@ def cte_cambia_u_opacos(model, runner, user_arguments)
     mass_materials = materials_in_construction.select { |mat| mat["nomass"] == false }
 
     if !no_mass_materials.empty? #Entra si hay algún material en no_mass_material. Los aislantes son no_mass
-      puts("hay materias aislantes: sin masa")
+      # puts("hay materias aislantes: sin masa")
       thermal_resistance_values = no_mass_materials.map { |mat| mat["r_value"] } # crea un nuevo array con los valores R mapeando el de materiales
       max_mat_hash = no_mass_materials.select { |mat| mat["r_value"] >= thermal_resistance_values.max }[0] # se queda con el que tiene más resistencia
     else
-      puts("no hay materias aislantes: sin masa")
+      # puts("no hay materias aislantes: sin masa")
       thermal_conductivity_values = mass_materials.map { |material| material["mat"].to_OpaqueMaterial.get.thermalConductivity.to_f }
       max_mat_hash = mass_materials.select { |material| material["mat"].to_OpaqueMaterial.get.thermalConductivity.to_f <= thermal_conductivity_values.min }[0]
     end
-    puts("__aislante es el material #{max_mat_hash["name"]}__")
-    puts(max_mat_hash)
+    puts("__ se ha tomado como material aislante -->  #{max_mat_hash["name"]}__")
+    # puts(max_mat_hash)
 
     # ! 04 calcula la resistencia del muro sin la capa aislante
     materiales = exterior_surface_construction.layers
