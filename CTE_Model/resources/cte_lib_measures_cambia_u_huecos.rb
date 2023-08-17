@@ -13,7 +13,7 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
   windows = []
   window_constructions = []
   window_construction_names = []
-  tipos_cubiertos = ['FixedWindow', 'Door']
+  tipos_cubiertos = ["FixedWindow", "Door"]
   spaces = model.getSpaces
   spaces.each do |space|
     space.surfaces.each do |surface|
@@ -24,19 +24,10 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
           if !tipos_cubiertos.include?(subsur.subSurfaceType().to_s)
             puts("Tipo de hueco no cubierto por esta medida #{subsur.subSurfaceType().to_s}")
           end
-
-          # begin
-          #   puts("   #{subsur.windowPropertyFrameAndDivider.get.name}")
-          # rescue
-          #   # no hago nada
-          # end
-          
         end
       end
     end
   end
-# # 
-#   variable = no_definida
 
   if windows.empty?
     runner.registerAsNotApplicable("El modelo no tiene ventanas.")
@@ -57,11 +48,8 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
 
   # loop through all constructions and materials used on exterior walls, edit and clone
   window_constructions.each { |construccion| puts(construccion.name) } #construccion =elemento
-  # puts("___")
   window_constructions.each do |window_construction|
-    # puts("___Nombre de la construcción #{window_construction.name}___")
-    # puts(exterior_surface_construction.name)
-    runner.registerInfo("nombre de la construcción #{window_construction.name}")
+    # runner.registerInfo("nombre de la construcción #{window_construction.name}")
     construction_layers = window_construction.layers
     max_thermal_resistance_material = ""
     max_thermal_resistance_material_index = ""
@@ -74,9 +62,6 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
         "mat" => layer }
     end
 
-    puts("__materiales de las ventanas, a ver que sale__")
-    puts(materials_in_construction)
-
     if materials_in_construction.length == 1
       max_mat_hash = materials_in_construction[0]
     end
@@ -86,26 +71,12 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
       window_constructions << window_construccion.to_Construction.get
       window_construction_names << window_construccion.name.to_s
     end
-
-    # puts(construction_layers)
-    # puts(construction_layers.length)
-    # puts(construction_layers.length == 1)
-
-    # default_construction_sets = model.getDefaultConstructionSets
-    # puts('__ default contructions sets__', default_construction_sets.length)
-    # # * ¿cual es el default construction set que está activo?
-    # default_construction_sets.each do |default_construction_set|
-    #   puts("nombre #{default_construction_set.name}")
-    #   puts("usos -> #{default_construction_set.directUseCount}")
-    # end
-
-    # target_material = max_thermal_resistance_material
-
+    
     max_thermal_resistance_material = max_mat_hash["mat"] # objeto OS
     max_thermal_resistance_material_index = max_mat_hash["index"] # indice de la capa
     max_thermal_resistance = max_thermal_resistance_material.to_SimpleGlazing.get.uFactor()
 
-    # ! 04 calcula la transmitancia de la capa de muro.
+    # ! 04 modifica la composición
     final_construction = window_construction.clone(model)
     final_construction = final_construction.to_Construction.get
     final_construction.setName("#{window_construction.name} U huecos mod.")
@@ -237,8 +208,7 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
     end
   end
 
-  # ! -1 rutina para cambiar los frameanddivider de todas las ventas  
-
+  # ! -1 rutina para cambiar los frameanddivider de todas las ventas
 
   window_frameanddividers = []
   window_frameanddivider_names = []
@@ -277,7 +247,7 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
   spaces.each do |space|
     space.surfaces.each do |surface|
       if surface.outsideBoundaryCondition == "Outdoors" and surface.windExposure == "WindExposed"
-        surface.subSurfaces.each do |subsur|     
+        surface.subSurfaces.each do |subsur|
           puts("__subsurface Type #{subsur.subSurfaceType()} -> #{subsur.construction.get.name}")
           begin
             puts("   #{subsur.windowPropertyFrameAndDivider.get.name}")
