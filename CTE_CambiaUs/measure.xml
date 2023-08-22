@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+<measure>
+  <schema_version>3.0</schema_version>
+  <name>cte_model</name>
+  <uid>9761ad0d-76b4-4394-822b-e231e15435d6</uid>
+  <version_id>50895849-2689-488d-89ce-6fcd3c815813</version_id>
+  <version_modified>20230822T151859Z</version_modified>
+  <xml_checksum>7C017197</xml_checksum>
+  <class_name>CTE_Model</class_name>
+  <display_name>CTE Cambia Us</display_name>
+  <description>Modifica los valores de las transmitancias por tipo de elemento.</description>
+  <modeler_description>Busca los objetos referidos y modifica su transmitancia.</modeler_description>
+  <arguments>
+    <argument>
+      <name>CTE_U_muros</name>
+      <display_name>U de muros</display_name>
+      <type>Double</type>
+      <units>W/m2·K</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>10</default_value>
+    </argument>
+    <argument>
+      <name>CTE_U_cubiertas</name>
+      <display_name>U de cubiertas</display_name>
+      <type>Double</type>
+      <units>W/m2·K</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>10</default_value>
+    </argument>
+    <argument>
+      <name>CTE_U_suelos</name>
+      <display_name>U de cubiertas</display_name>
+      <type>Double</type>
+      <units>W/m2·K</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>10</default_value>
+    </argument>
+  </arguments>
+  <outputs />
+  <provenances />
+  <tags>
+    <tag>Whole Building.Space Types</tag>
+  </tags>
+  <attributes>
+    <attribute>
+      <name>Measure Function</name>
+      <value>Measure</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Requires EnergyPlus Results</name>
+      <value>false</value>
+      <datatype>boolean</datatype>
+    </attribute>
+    <attribute>
+      <name>Uses SketchUp API</name>
+      <value>false</value>
+      <datatype>boolean</datatype>
+    </attribute>
+    <attribute>
+      <name>Measure Type</name>
+      <value>ModelMeasure</value>
+      <datatype>string</datatype>
+    </attribute>
+  </attributes>
+  <files>
+    <file>
+      <filename>residencial.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>9CB50B9F</checksum>
+    </file>
+    <file>
+      <filename>terciario.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>73186073</checksum>
+    </file>
+    <file>
+      <filename>CTE_CambiaUs_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>480B3CD8</checksum>
+    </file>
+    <file>
+      <filename>LICENSE-LGPL-2.1.txt</filename>
+      <filetype>txt</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>5622583E</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>3.5.1</identifier>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>3D6C7143</checksum>
+    </file>
+    <file>
+      <filename>README.md</filename>
+      <filetype>md</filetype>
+      <usage_type>readme</usage_type>
+      <checksum>50CEE1E5</checksum>
+    </file>
+  </files>
+</measure>
