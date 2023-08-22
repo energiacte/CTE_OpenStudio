@@ -60,7 +60,7 @@ class CTE_Model < OpenStudio::Measure::ModelMeasure
     args << u_cubiertas
 
     u_suelos = OpenStudio::Measure::OSArgument::makeDoubleArgument("CTE_U_suelos", true)
-    u_suelos.setDisplayName("U de cubiertas")
+    u_suelos.setDisplayName("U de suelos")
     u_suelos.setUnits("W/m2·K")
     u_suelos.setDefaultValue(10)
     args << u_suelos
