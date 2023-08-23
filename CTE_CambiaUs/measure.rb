@@ -26,12 +26,12 @@
 #            Marta Sorribes Gil <msorribes@ietcc.csic.es>
 
 require "json"
-
+require_relative "resources/cte_lib_measures_cambia_u_muros.rb"
 
 # Medida de OpenStudio (ModelUserScript) que modifica el modelo para su uso con el CTE
 # Para su correcto funcionamiento esta medida debe emplearse con una plantilla adecuada.
 # La plantilla define objetos tipo como horarios, tipos de espacios, etc.
-class CTE_Model < OpenStudio::Measure::ModelMeasure
+class CTE_CambiaUs < OpenStudio::Measure::ModelMeasure
   def name
     return "CTE Cambia Us"
   end
@@ -85,16 +85,14 @@ class CTE_Model < OpenStudio::Measure::ModelMeasure
     end
     model.building.get.setComment(argumentos.to_json)
 
-    puts('cambia las transmitancias de los opacos')
-    runner.registerInfo('Llamada a la actualización de opacos')
-    result = cte_cambia_u_opacos(model, runner, user_arguments)
+    puts("cambia las transmitancias de los opacos")
+    runner.registerInfo("Llamada a la actualización de opacos")
+    result = cte_cambia_u_muros(model, runner, user_arguments)
     return result unless result == true
 
-    
-    result = cte_addvars(model, runner, user_arguments) # Nuevas variables y meters
-    return result unless result == true
+    # result = cte_addvars(model, runner, user_arguments) # Nuevas variables y meters
+    # return result unless result == true
 
-    
     # site = model.getSite
     # weather_file = site.name.get
     # runner.registerValue("CTE_Weather_file", weather_file)
@@ -106,4 +104,4 @@ class CTE_Model < OpenStudio::Measure::ModelMeasure
   end #end the run method
 end #end the measure
 
-CTE_Model.new.registerWithApplication
+CTE_CambiaUs.new.registerWithApplication
