@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <measure>
   <schema_version>3.0</schema_version>
-  <error>wrong number of arguments (given 1, expected 0)</error>
   <name>conexion_epdb</name>
   <uid>648a813c-f8d9-44f9-912f-53b891198a35</uid>
   <version_id>84af8f18-6e4a-42cd-9a48-31ded83bcd3a</version_id>

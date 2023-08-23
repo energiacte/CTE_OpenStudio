@@ -33,7 +33,7 @@ require 'json'
 
 class CTE_Model_Test < MiniTest::Test
 
-  def _test_CTE_Model_Terciario
+  def NO_test_CTE_Model_Terciario
     # create an instance of the measure
     measure = CTE_Model.new
 
@@ -83,27 +83,28 @@ class CTE_Model_Test < MiniTest::Test
     # save the model to test output directory
     output_file_path = OpenStudio::Path.new(File.dirname(__FILE__) + "/output/test_output_terciario.osm")
     model.save(output_file_path,true)
-  end
-
+  end    
+  
   def test_CTE_Model_residencial
     # create an instance of the measure
     measure = CTE_Model.new
 
-    puts("Iniciando el test CTE_Model_residencial")
+    puts("__test__Iniciando el test CTE_Model_residencial")
 
     # create an instance of a runner
     runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
 
     # load the test model
     translator = OpenStudio::OSVersion::VersionTranslator.new
-    path = OpenStudio::Path.new(File.dirname(__FILE__) + "/residencial.osm")
-    puts('cargando el modelo ', path)
+    # path = OpenStudio::Path.new(File.dirname(__FILE__) + "/residencial.osm")
+    path = OpenStudio::Path.new(File.dirname(__FILE__) + "/N_R01_unif_adosadaV23.osm")
+    puts('__test__cargando el modelo ', path)
     model = translator.loadModel(path)
     assert((not model.empty?))
     model = model.get
 
     # get arguments
-    puts('tomando los argumentos')
+    puts('__test__tomando los argumentos')
     arguments = measure.arguments(model)
     argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(arguments)
 
@@ -112,7 +113,8 @@ class CTE_Model_Test < MiniTest::Test
     args_hash = {}
     args_hash["CTE_Uso_edificio"] = "Residencial"
     # using defaults values from measure.rb for other arguments
-
+    args_hash["CTE_U_opacos"] = 0.82
+    args_hash["CTE_U_huecos"] = 1.76
     # populate argument with specified hash value if specified
     arguments.each do |arg|
       temp_arg_var = arg.clone
@@ -127,10 +129,10 @@ class CTE_Model_Test < MiniTest::Test
     # argumentos no son atributos
 
     # set argument values to good values and run the measure on model with spaces
-    puts('ejecutando la medida')
+    puts('__test__ejecutando la medida')
     salida = measure.run(model, runner, argument_map)
     assert(salida, "algo falló")
-    puts('fin de la medida')
+    puts('__test__fin de la medida')
 
     result = runner.result
     puts ("show_output(result)")
@@ -151,7 +153,7 @@ class CTE_Model_Test < MiniTest::Test
 
   end
 
-  def _test_CTE_Model_residencial_recovery
+  def NO_test_CTE_Model_residencial_recovery
     # create an instance of the measure
     measure = CTE_Model.new
 
@@ -202,7 +204,7 @@ class CTE_Model_Test < MiniTest::Test
 
   end
 
-  def _test_CTE_Model_provincia_automatico
+  def NO_test_CTE_Model_provincia_automatico
     # create an instance of the measure
     measure = CTE_Model.new
 

@@ -47,7 +47,7 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
   final_frame_array = []
 
   # loop through all constructions and materials used on exterior walls, edit and clone
-  window_constructions.each { |construccion| puts(construccion.name) } #construccion =elemento
+  # window_constructions.each { |construccion| puts(construccion.name) } #construccion =elemento
   window_constructions.each do |window_construction|
     # runner.registerInfo("nombre de la construcción #{window_construction.name}")
     construction_layers = window_construction.layers
@@ -135,14 +135,14 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
         new_default_construction_set = default_construction_set.clone(model)
         new_default_construction_set = new_default_construction_set.to_DefaultConstructionSet.get
         new_default_construction_set.setName("#{default_construction_set.name} adj u_huecos")
-        puts("__ new_default_construction_set__ #{new_default_construction_set}")
+        # puts("__ new_default_construction_set__ #{new_default_construction_set}")
 
         # create new surface set and link to construction set
         new_default_subsurface_const_set = default_subsurface_const_set.get.clone(model)
         new_default_subsurface_const_set = new_default_subsurface_const_set.to_DefaultSubSurfaceConstructions.get
         new_default_subsurface_const_set.setName("#{default_subsurface_const_set.get.name}  u_huecos adj")
         new_default_construction_set.setDefaultExteriorSubSurfaceConstructions(new_default_subsurface_const_set)
-        puts("__ new_default_construction_set__ #{new_default_construction_set}")
+        # puts("__ new_default_construction_set__ #{new_default_construction_set}")
 
         # use the hash to find the proper construction and link to new_default_subsurface_const_set
         target_const = new_default_subsurface_const_set.fixedWindowConstruction
@@ -248,7 +248,7 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
     space.surfaces.each do |surface|
       if surface.outsideBoundaryCondition == "Outdoors" and surface.windExposure == "WindExposed"
         surface.subSurfaces.each do |subsur|
-          puts("__subsurface Type #{subsur.subSurfaceType()} -> #{subsur.construction.get.name}")
+          # puts("__subsurface Type #{subsur.subSurfaceType()} -> #{subsur.construction.get.name}")
           begin
             puts("   #{subsur.windowPropertyFrameAndDivider.get.name}")
           rescue
