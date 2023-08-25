@@ -1,39 +1,34 @@
 def cte_cambia_u_muros(model, runner, user_arguments)
+  # tenemos que testear:
+  # 1.- que la medida se aplica pero no queremos cambiar la U
+  # 2.- cómo añade una capa aislante o cámara de aire si ya existe una
+  # 3.- cómo aborta si no hay capa aislante o cámara de aire
+  # 4.- cómo reacciona a que los elementos esté definidos en distintos niveles y de distintas maneras
   runner.registerInfo("CTE: Cambiando la U de muros")
 
   # toma el valor de la medida
   u_muros = runner.getDoubleArgumentValue("CTE_U_muros", user_arguments)
 
   if u_muros == 0
-    puts('__no se desa cambiar la transmitancia de los muros__')
+    #    puts('__no se desa cambiar la transmitancia de los muros__')
     runner.registerFinalCondition("No se desea cambiar la transmitancia de los muros.")
     return true
   end
 
   u_opacos = u_muros
-  puts("__Se ha seleccionado un valor de U_opacos de #{u_opacos} -> R=#{1 / u_opacos}.")
-
-  # ! __01__ verifica que el valor de entrada está dentro de un rango
-  min_expected_u_value = 0.1 # si units
-  max_expected_r_value = 1 / min_expected_u_value
-  max_expected_u_value = 70 # si units
-  min_expected_r_value = 1 / max_expected_u_value
-
-  if (u_opacos < min_expected_u_value) || (u_opacos > max_expected_u_value)
-    runner.registerError("El valor de U proporcionado (#{u_opacos} está fuera del rango indicado en cte_lib_measures_cambia_u_opacos")
-    return false
-  end
+  puts("__Se ha seleccionado un valor de U_opacos de #{u_muros} -> R=#{1 / u_muros}.")
 
   # !  __02__ crea un array de muros exteriores y busca un rango de construcciones en el rango de transmitancias.
   # create an array of exterior walls and find range of starting construction R-value (not just insulation layer)
   # el objeto OS:Surface tiene: handle, name, type, construction name(vacio), space name, condiciones exteriores, vertices
   #                           si la construcción está toma la establecida por defecto
-  surfaces = model.getSurfaces
+
   exterior_surfaces = []
   exterior_surface_constructions = []
   exterior_surface_construction_names = []
-  ext_wall_resistance = []
-  ext_wall_transsmitance = []
+  # ext_wall_resistance = []
+  # ext_wall_transsmitance = []
+  surfaces = model.getSurfaces
   surfaces.each do |surface|
     if (surface.outsideBoundaryCondition == "Outdoors") && (surface.surfaceType == "Wall")
       # el objeto OS:Construction tiene: Handle, name, surface rendering name y varias layers
@@ -45,8 +40,8 @@ def cte_cambia_u_muros(model, runner, user_arguments)
         exterior_surface_constructions << ext_wall_const.to_Construction.get
       end
       exterior_surface_construction_names << ext_wall_const.name.to_s
-      ext_wall_resistance << 1 / ext_wall_const.thermalConductance.to_f
-      ext_wall_transsmitance << ext_wall_const.thermalConductance.to_f
+      # ext_wall_resistance << 1 / ext_wall_const.thermalConductance.to_f esto no sé para que vale
+      # ext_wall_transsmitance << ext_wall_const.thermalConductance.to_f
     end
   end
 
@@ -71,16 +66,18 @@ def cte_cambia_u_muros(model, runner, user_arguments)
 
   "" "
   La casuística para decidir como se procede a cambiar la transmitancia del muro es:
-  1.- si hay una capa de material sin masa (aislamiento o cámara de aire) se añade una capa de aislamiento genérico con el valor r necesario
+  1.- si hay una capa de material sin masa (aislamiento o cámara de aire) se modifica su r lo necesario
   2.- si NO hay una capa de material sin masa se lanza un error y se interrumpe la ejecución.
   " ""
 
+  #! 04_ recorre las construcciones para editar su contenido
   exterior_surface_constructions.each do |exterior_surface_construction|
-    puts("___(Construccion, U) ->  (#{exterior_surface_construction.name},#{exterior_surface_construction.thermalConductance.to_f})___")    
-    runner.registerInfo("nombre de la construcción #{exterior_surface_construction.name}")    
+    # puts("___(Construccion, U) ->  (#{exterior_surface_construction.name},#{exterior_surface_construction.thermalConductance.to_f})___")
+    # runner.registerInfo("nombre de la construcción #{exterior_surface_construction.name}")
     construction_layers = exterior_surface_construction.layers
     max_thermal_resistance_material = ""
     max_thermal_resistance_material_index = ""
+    # crea un array con los datos de las capas y su orden en la construcción
     materials_in_construction = construction_layers.map.with_index do |layer, i|
       { "name" => layer.name.to_s,
         "index" => i,
@@ -102,11 +99,10 @@ def cte_cambia_u_muros(model, runner, user_arguments)
       return false
 
       # puts("no hay materias aislantes: sin masa")
-      thermal_conductivity_values = mass_materials.map { |material| material["mat"].to_OpaqueMaterial.get.thermalConductivity.to_f }
-      max_mat_hash = mass_materials.select { |material| material["mat"].to_OpaqueMaterial.get.thermalConductivity.to_f <= thermal_conductivity_values.min }[0]
+      # thermal_conductivity_values = mass_materials.map { |material| material["mat"].to_OpaqueMaterial.get.thermalConductivity.to_f }
+      # max_mat_hash = mass_materials.select { |material| material["mat"].to_OpaqueMaterial.get.thermalConductivity.to_f <= thermal_conductivity_values.min }[0]
     end
     puts("__ se ha tomado como material aislante -->  #{max_mat_hash["name"]}__")
-    # puts(max_mat_hash)
 
     # ! 04 calcula la resistencia del muro sin la capa aislante
     materiales = exterior_surface_construction.layers
@@ -123,7 +119,7 @@ def cte_cambia_u_muros(model, runner, user_arguments)
       end
     end
 
-    resistencia_capa = 1 / u_opacos - resistencia_termica_sin_aislante # siempre que sea positiva, claro
+    resistencia_capa = 1 / u_muros - resistencia_termica_sin_aislante # siempre que sea positiva, claro
     # puts("__la resistencia del aislante es #{max_mat_hash["mat"].to_OpaqueMaterial.get.thermalResistance.to_f}")
     # puts("__la resistencia sin aislante es #{resistencia_termica_sin_aislante}")
     # puts("__la resistencia de la capa aislante debe ser #{resistencia_capa}")
@@ -134,6 +130,7 @@ def cte_cambia_u_muros(model, runner, user_arguments)
     # puts("max_thermal_resistance -> #{max_thermal_resistance}__")
 
     if resistencia_capa <= 0
+      puts("#{exterior_surface_construction.name} sin aislante tiene una resistencia superior a la que se pide")
       runner.registerInfo("La U que se pide para los opacos mayor que la que tienen las capas sin contar el aislamiento. No se modifica")
     else
       # clone the construction
@@ -175,7 +172,7 @@ def cte_cambia_u_muros(model, runner, user_arguments)
           final_thickness = new_material_matt.get.setThickness(target_thickness)
         end
         new_material_massless = new_material.to_MasslessOpaqueMaterial
-        if !new_material_massless.empty?          
+        if !new_material_massless.empty?
           final_thermal_resistance = new_material_massless.get.setThermalResistance(resistencia_capa)
         end
         new_material_airgap = new_material.to_AirGap
@@ -271,7 +268,7 @@ def cte_cambia_u_muros(model, runner, user_arguments)
 
   # # activa este comentario para verficar que se produce el cambio
   # exterior_surfaces.each do |exterior_surface_construction|
-  #   puts("___(Construccion, U) ->  (#{exterior_surface_construction.name},#{exterior_surface_construction.thermalConductance.to_f})___")    
+  #   puts("___(Construccion, U) ->  (#{exterior_surface_construction.name},#{exterior_surface_construction.thermalConductance.to_f})___")
   # end
 
   runner.registerFinalCondition("The existing insulation for exterior walls was set.")
