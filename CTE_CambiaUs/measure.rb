@@ -27,6 +27,7 @@
 
 require "json"
 require_relative "resources/cte_lib_measures_cambia_u_muros.rb"
+require_relative "resources/cte_lib_measures_cambia_u_cubiertas.rb"
 
 # Medida de OpenStudio (ModelUserScript) que modifica el modelo para su uso con el CTE
 # Para su correcto funcionamiento esta medida debe emplearse con una plantilla adecuada.
@@ -85,9 +86,14 @@ class CTE_CambiaUs < OpenStudio::Measure::ModelMeasure
     end
     model.building.get.setComment(argumentos.to_json)
 
-    puts("cambia las transmitancias de los opacos")
-    runner.registerInfo("Llamada a la actualización de opacos")
+    puts("cambia las transmitancias de los muros")
+    runner.registerInfo("Llamada a la actualización de muros")
     result = cte_cambia_u_muros(model, runner, user_arguments)
+    return result unless result == true
+
+    puts("cambia las transmitancias de las cubiertas")
+    runner.registerInfo("Llamada a la actualización de cubiertas")
+    result = cte_cambia_u_cubiertas(model, runner, user_arguments)
     return result unless result == true
 
     # result = cte_addvars(model, runner, user_arguments) # Nuevas variables y meters
