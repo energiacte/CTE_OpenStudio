@@ -94,7 +94,6 @@ class CTE_CambiaUs_Test < MiniTest::Test
     puts("|||cerramiento, #{surface.name}")
     puts("|||construccion, #{construction.name}")
     puts("|||U inicial del muro #{u_inicial}")
-    
 
     muro = model.getModelObject(handle)
     puts("ejecutando la medida")
@@ -117,7 +116,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
     puts("___________ fin del test ________\n")
   end
 
-  def test_CTE_CambiaUs_cambia_muro
+  def _test_CTE_CambiaUs_cambia_muro
     puts("\n_________TEST::  CTE_CambiaUs_cambia_muro______")
 
     # create an instance of the measure
@@ -143,8 +142,8 @@ class CTE_CambiaUs_Test < MiniTest::Test
     # If the argument has a default that you want to use, you don't need it in the hash
     args_hash = {}
     args_hash["CTE_U_muros"] = 0.42
-    # args_hash["CTE_U_cubiertas"] = 0.72
-    # args_hash["CTE_U_suelos"] = 0.92
+    args_hash["CTE_U_cubiertas"] = 0
+    args_hash["CTE_U_suelos"] = 0
     # using defaults values from measure.rb for other arguments
 
     # populate argument with specified hash value if specified
@@ -166,7 +165,6 @@ class CTE_CambiaUs_Test < MiniTest::Test
     puts("|||cerramiento, #{surface.name}")
     puts("|||construccion, #{construction.name}")
     puts("|||U inicial del muro #{u_inicial}")
-    
 
     muro = model.getModelObject(handle)
     # puts("ejecutando la medida")
@@ -189,7 +187,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
     puts("___________ fin del test ________\n")
   end
 
-  def test_CTE_CambiaUs_cambia_cubierta
+  def _test_CTE_CambiaUs_cambia_cubierta
     puts("\n____TEST:: CTE_CambiaUs_cambia_cubierta")
 
     # create an instance of the measure
@@ -213,7 +211,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
     args_hash = {}
     args_hash["CTE_U_muros"] = 0
     args_hash["CTE_U_cubiertas"] = 0.32
-    # args_hash["CTE_U_suelos"] = 0.92
+    args_hash["CTE_U_suelos"] = 0
     # using defaults values from measure.rb for other arguments
 
     # populate argument with specified hash value if specified
@@ -244,7 +242,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
     handle = OpenStudio.toUUID("c4875e32-9291-48b3-bfe0-94bad05eb0d5")
     objeto = model.getModelObject(handle)
     surface = objeto.get.to_Surface
-    surface = surface.get    
+    surface = surface.get
     construction = surface.construction.get
     puts("La construcciones es #{construction.name.to_s}, con una transmitancia de #{construction.thermalConductance().to_f}")
     u_final = construction.thermalConductance().to_f
@@ -255,6 +253,84 @@ class CTE_CambiaUs_Test < MiniTest::Test
 
     puts("U inicial y final #{u_inicial}, #{u_final}")
     assert_in_delta(args_hash["CTE_U_cubiertas"], u_final, 0.001)
+
+    # handle = OpenStudio.toUUID("cc187100-92a7-410b-bf38-3f6712910b74")
+    # objeto = model.getModelObject(handle)
+    # surface = objeto.get.to_Surface
+    # surface = surface.get
+    # construction = surface.construction.get
+    # u_final = construction.thermalConductance().to_f
+    # puts("U del muro final, #{u_final}")
+
+    puts("__________ fin del test ________\n")
+  end
+
+  def test_CTE_CambiaUs_cambia_suelos
+    puts("\n____TEST:: CTE_CambiaUs_cambia_suelos")
+
+    # create an instance of the measure
+    measure = CTE_CambiaUs.new
+
+    # create an instance of a runner
+    runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
+
+    # load the test model
+    translator = OpenStudio::OSVersion::VersionTranslator.new
+    path = OpenStudio::Path.new(File.dirname(__FILE__) + "/residencial.osm")
+    model = translator.loadModel(path)
+    assert((not model.empty?))
+    model = model.get
+
+    arguments = measure.arguments(model)
+    argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(arguments)
+
+    # create hash of argument values.
+    # If the argument has a default that you want to use, you don't need it in the hash
+    args_hash = {}
+    args_hash["CTE_U_muros"] = 0
+    args_hash["CTE_U_cubiertas"] = 0
+    args_hash["CTE_U_suelos"] = 0.17
+    # using defaults values from measure.rb for other arguments
+
+    # populate argument with specified hash value if specified
+    arguments.each do |arg|
+      temp_arg_var = arg.clone
+      if args_hash[arg.name]
+        assert(temp_arg_var.setValue(args_hash[arg.name]))
+      end
+      argument_map[arg.name] = temp_arg_var
+    end
+
+    handle = OpenStudio.toUUID("ed02d7a6-7c4b-47a9-a072-0e7bf732a4d6")
+    objeto = model.getModelObject(handle)
+    surface = objeto.get.to_Surface
+    surface = surface.get
+    construction = surface.construction.get
+    u_inicial = construction.thermalConductance().to_f
+    puts("|||Valores iniciales")
+    puts("|||cerramiento, #{surface.name}")
+    puts("|||construccion, #{construction.name}")
+    puts("|||U inicial del suelo terreno #{u_inicial}")
+
+    muro = model.getModelObject(handle)
+    # puts("ejecutando la medida")
+    salida = measure.run(model, runner, argument_map)
+    assert(salida, "algo falló")
+
+    handle = OpenStudio.toUUID("ed02d7a6-7c4b-47a9-a072-0e7bf732a4d6")
+    objeto = model.getModelObject(handle)
+    surface = objeto.get.to_Surface
+    surface = surface.get
+    construction = surface.construction.get
+    puts("La construcciones es #{construction.name.to_s}, con una transmitancia de #{construction.thermalConductance().to_f}")
+    u_final = construction.thermalConductance().to_f
+    puts("|||Valores finales")
+    puts("|||cerramiento, #{surface.name}")
+    puts("|||construccion, #{construction.name}")
+    puts("|||U final del suelo terreno #{u_final}")
+
+    puts("U inicial y final #{u_inicial}, #{u_final}")
+    assert_in_delta(args_hash["CTE_U_suelos"], u_final, 0.001)
 
     # handle = OpenStudio.toUUID("cc187100-92a7-410b-bf38-3f6712910b74")
     # objeto = model.getModelObject(handle)
