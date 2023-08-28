@@ -71,8 +71,8 @@ class CTE_CambiaUs < OpenStudio::Measure::ModelMeasure
 
   def run(model, runner, user_arguments)
     super(model, runner, user_arguments)
-    puts("CTE: Cambiando las transmitancias de los elementos.")
-    runner.registerInitialCondition("CTE: Cambiando las transmitancias de los elementos.")
+    puts("Medida -> CTE_Cambia Us")
+    runner.registerInitialCondition("CTE: Cambiando las transmitancias de los elementos CTE_CambiaUs.")
 
     # use the built-in error checking
     if !runner.validateUserArguments(arguments(model), user_arguments)
@@ -86,12 +86,12 @@ class CTE_CambiaUs < OpenStudio::Measure::ModelMeasure
     end
     model.building.get.setComment(argumentos.to_json)
 
-    puts("cambia las transmitancias de los muros")
+    puts("--> (cte_lib) cambia las transmitancias de los muros")
     runner.registerInfo("Llamada a la actualización de muros")
     result = cte_cambia_u_muros(model, runner, user_arguments)
     return result unless result == true
 
-    puts("cambia las transmitancias de las cubiertas")
+    puts("--> (cte_lib) cambia las transmitancias de las cubiertas")
     runner.registerInfo("Llamada a la actualización de cubiertas")
     result = cte_cambia_u_cubiertas(model, runner, user_arguments)
     return result unless result == true

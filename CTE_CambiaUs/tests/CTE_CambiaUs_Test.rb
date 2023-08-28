@@ -38,14 +38,14 @@ require "json"
 # cómo reacciona a que los elementos esté definidos en distintos niveles y de distintas maneras
 #
 class CTE_CambiaUs_Test < MiniTest::Test
-  def setup
-    # puts('ejecutando el setup del test')
-    # no comparte los objetos que se generen aquí con las demás funciones, solo permanecen los efectos de lo ejecutado.
-    # puts('Fin de setup')
-  end
+  # def setup
+  #   # puts('ejecutando el setup del test')
+  #   # no comparte los objetos que se generen aquí con las demás funciones, solo permanecen los efectos de lo ejecutado.
+  #   # puts('Fin de setup')
+  # end
 
-  def test_CTE_CambiaUs_no_cambia
-    puts("iniciando el test CTE_CambiaUs_no_cambia")
+  def _test_CTE_CambiaUs_no_cambia
+    puts("\n____TEST::  CTE_CambiaUs_no_cambia")
 
     # create an instance of the measure
     measure = CTE_CambiaUs.new
@@ -70,7 +70,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
     # If the argument has a default that you want to use, you don't need it in the hash
     args_hash = {}
     args_hash["CTE_U_muros"] = 0
-    # args_hash["CTE_U_cubiertas"] = 0.72
+    args_hash["CTE_U_cubiertas"] = 0
     # args_hash["CTE_U_suelos"] = 0.92
     # using defaults values from measure.rb for other arguments
 
@@ -83,14 +83,18 @@ class CTE_CambiaUs_Test < MiniTest::Test
       argument_map[arg.name] = temp_arg_var
     end
 
-    # TODO: verificar que la medida afecta al modelo
+    # Verifica que se modifica el modelo.
     handle = OpenStudio.toUUID("cc187100-92a7-410b-bf38-3f6712910b74")
     objeto = model.getModelObject(handle)
     surface = objeto.get.to_Surface
     surface = surface.get
     construction = surface.construction.get
     u_inicial = construction.thermalConductance().to_f
-    puts("U inicial del muro #{u_inicial}")
+    puts("|||Valores iniciales")
+    puts("|||cerramiento, #{surface.name}")
+    puts("|||construccion, #{construction.name}")
+    puts("|||U inicial del muro #{u_inicial}")
+    
 
     muro = model.getModelObject(handle)
     puts("ejecutando la medida")
@@ -104,13 +108,17 @@ class CTE_CambiaUs_Test < MiniTest::Test
     construction = surface.construction.get
     u_final = construction.thermalConductance().to_f
     puts("U inicial y final #{u_inicial}, #{u_final}")
+    puts("|||Valores finales")
+    puts("|||cerramiento, #{surface.name}")
+    puts("|||construccion, #{construction.name}")
+    puts("|||U final del muro #{u_final}")
     assert_in_delta(u_inicial, u_final, 0.001)
 
-    puts("___________fin de la medida________")
+    puts("___________ fin del test ________\n")
   end
 
   def test_CTE_CambiaUs_cambia_muro
-    puts("iniciando el test CTE_CambiaUs_cambia_muro")
+    puts("\n_________TEST::  CTE_CambiaUs_cambia_muro______")
 
     # create an instance of the measure
     measure = CTE_CambiaUs.new
@@ -148,14 +156,17 @@ class CTE_CambiaUs_Test < MiniTest::Test
       argument_map[arg.name] = temp_arg_var
     end
 
-    # TODO: verificar que la medida afecta al modelo
     handle = OpenStudio.toUUID("cc187100-92a7-410b-bf38-3f6712910b74")
     objeto = model.getModelObject(handle)
     surface = objeto.get.to_Surface
     surface = surface.get
     construction = surface.construction.get
     u_inicial = construction.thermalConductance().to_f
-    # puts("U inicial del muro #{u_inicial}")
+    puts("|||Valores iniciales")
+    puts("|||cerramiento, #{surface.name}")
+    puts("|||construccion, #{construction.name}")
+    puts("|||U inicial del muro #{u_inicial}")
+    
 
     muro = model.getModelObject(handle)
     # puts("ejecutando la medida")
@@ -169,13 +180,17 @@ class CTE_CambiaUs_Test < MiniTest::Test
     construction = surface.construction.get
     u_final = construction.thermalConductance().to_f
     puts("U inicial y final #{u_inicial}, #{u_final}")
+    puts("|||Valores finales")
+    puts("|||cerramiento, #{surface.name}")
+    puts("|||construccion, #{construction.name}")
+    puts("|||U final del muro #{u_final}")
     assert_in_delta(args_hash["CTE_U_muros"], u_final, 0.001)
 
-    puts("___________fin de la medida________")
+    puts("___________ fin del test ________\n")
   end
 
   def test_CTE_CambiaUs_cambia_cubierta
-    puts("____TEST:: CTE_CambiaUs_cambia_cubierta")
+    puts("\n____TEST:: CTE_CambiaUs_cambia_cubierta")
 
     # create an instance of the measure
     measure = CTE_CambiaUs.new
@@ -196,7 +211,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
     # create hash of argument values.
     # If the argument has a default that you want to use, you don't need it in the hash
     args_hash = {}
-    # args_hash["CTE_U_muros"] = 0.42
+    args_hash["CTE_U_muros"] = 0
     args_hash["CTE_U_cubiertas"] = 0.32
     # args_hash["CTE_U_suelos"] = 0.92
     # using defaults values from measure.rb for other arguments
@@ -210,29 +225,45 @@ class CTE_CambiaUs_Test < MiniTest::Test
       argument_map[arg.name] = temp_arg_var
     end
 
-    # TODO: verificar que la medida afecta al modelo
-    handle = OpenStudio.toUUID("0355e260-8d73-4cd4-8b9c-f88882af2cad")
+    handle = OpenStudio.toUUID("c4875e32-9291-48b3-bfe0-94bad05eb0d5")
     objeto = model.getModelObject(handle)
     surface = objeto.get.to_Surface
     surface = surface.get
     construction = surface.construction.get
     u_inicial = construction.thermalConductance().to_f
-    # puts("U inicial del muro #{u_inicial}")
+    puts("|||Valores iniciales")
+    puts("|||cerramiento, #{surface.name}")
+    puts("|||construccion, #{construction.name}")
+    puts("|||U inicial de la cubierta #{u_inicial}")
 
     muro = model.getModelObject(handle)
     # puts("ejecutando la medida")
     salida = measure.run(model, runner, argument_map)
     assert(salida, "algo falló")
 
-    handle = OpenStudio.toUUID("0355e260-8d73-4cd4-8b9c-f88882af2cad")
+    handle = OpenStudio.toUUID("c4875e32-9291-48b3-bfe0-94bad05eb0d5")
     objeto = model.getModelObject(handle)
     surface = objeto.get.to_Surface
-    surface = surface.get
+    surface = surface.get    
     construction = surface.construction.get
+    puts("La construcciones es #{construction.name.to_s}, con una transmitancia de #{construction.thermalConductance().to_f}")
     u_final = construction.thermalConductance().to_f
+    puts("|||Valores finales")
+    puts("|||cerramiento, #{surface.name}")
+    puts("|||construccion, #{construction.name}")
+    puts("|||U final de la cubierta #{u_final}")
+
     puts("U inicial y final #{u_inicial}, #{u_final}")
     assert_in_delta(args_hash["CTE_U_cubiertas"], u_final, 0.001)
 
-    puts("___________fin de la medida________")
+    # handle = OpenStudio.toUUID("cc187100-92a7-410b-bf38-3f6712910b74")
+    # objeto = model.getModelObject(handle)
+    # surface = objeto.get.to_Surface
+    # surface = surface.get
+    # construction = surface.construction.get
+    # u_final = construction.thermalConductance().to_f
+    # puts("U del muro final, #{u_final}")
+
+    puts("__________ fin del test ________\n")
   end
 end

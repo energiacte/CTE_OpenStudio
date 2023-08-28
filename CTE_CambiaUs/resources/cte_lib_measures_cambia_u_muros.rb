@@ -10,13 +10,13 @@ def cte_cambia_u_muros(model, runner, user_arguments)
   u_muros = runner.getDoubleArgumentValue("CTE_U_muros", user_arguments)
 
   if u_muros == 0
-    #    puts('__no se desa cambiar la transmitancia de los muros__')
+    puts('__ No se cambia el valor de muros (U = 0) __')
     runner.registerFinalCondition("No se desea cambiar la transmitancia de los muros.")
     return true
   end
 
   u_opacos = u_muros
-  puts("__Se ha seleccionado un valor de U_opacos de #{u_muros} -> R=#{1 / u_muros}.")
+  puts("__ Se ha seleccionado un valor de U_muros de #{u_muros} -> R=#{1 / u_muros}.")
 
   # !  __02__ crea un array de muros exteriores y busca un rango de construcciones en el rango de transmitancias.
   # create an array of exterior walls and find range of starting construction R-value (not just insulation layer)
@@ -40,6 +40,7 @@ def cte_cambia_u_muros(model, runner, user_arguments)
         exterior_surface_constructions << ext_wall_const.to_Construction.get
       end
       exterior_surface_construction_names << ext_wall_const.name.to_s
+      # puts("--- transmitancia muro: #{ext_wall_const.thermalConductance.to_f}")
       # ext_wall_resistance << 1 / ext_wall_const.thermalConductance.to_f esto no sé para que vale
       # ext_wall_transsmitance << ext_wall_const.thermalConductance.to_f
     end
