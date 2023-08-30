@@ -17,7 +17,7 @@ def cte_cambia_u_suelos(model, runner, user_arguments)
 
   puts("__ Se ha seleccionado un valor de u_suelos de #{u_suelos} -> R=#{1 / u_suelos}.")
 
-  # !  __02__ crea un array de suelos terreno y busca un rango de construcciones en el rango de transmitancias.
+  # !  __01__ crea un array de suelos terreno y busca un rango de construcciones en el rango de transmitancias.
   # create an array of ground floors and find range of starting construction R-value (not just insulation layer)
   # el objeto OS:Surface tiene: handle, name, type, construction name(vacio), space name, condiciones exteriores, vertices
   #                           si la construcción está toma la establecida por defecto
@@ -37,6 +37,7 @@ def cte_cambia_u_suelos(model, runner, user_arguments)
       # añade la construcción únicamente si no lo ha hecho antes
       if !exterior_surface_construction_names.include?(ext_ground_floor_const.name.to_s)
         exterior_surface_constructions << ext_ground_floor_const.to_Construction.get
+        puts("... construcciones añadidas #{ext_ground_floor_const.to_Construction.get.name}")
       end
       exterior_surface_construction_names << ext_ground_floor_const.name.to_s
       puts("--- transmitancia suelos terreno: #{ext_ground_floor_const.thermalConductance.to_f}")      
@@ -48,7 +49,13 @@ def cte_cambia_u_suelos(model, runner, user_arguments)
     return true
   end
 
-  # !  __03__ recorre todas las construcciones y materiales usados en los muros exterios, los edita y los clona
+  puts("_1_ fin primera parte, con el array de exterior_surface_construction")
+  exterior_surface_constructions.each do |exterior_surface_construction|
+    puts("   #{exterior_surface_construction.name}")
+  end
+  puts("__________________________")
+
+  # !  __02__ recorre todas las construcciones y materiales usados en los muros exterios, los edita y los clona
 
   # construye los hashes para hacer un seguimiento y evitar duplicados
   constructions_hash_old_new = {}
@@ -63,8 +70,8 @@ def cte_cambia_u_suelos(model, runner, user_arguments)
   1.- si hay una capa de material sin masa (aislamiento o cámara de aire) se modifica su r lo necesario
   2.- si NO hay una capa de material sin masa se lanza un error y se interrumpe la ejecución.
   " ""
-  puts(exterior_surface_constructions)
-  #! 04_ recorre las construcciones para editar su contenido
+  
+  #! 03_ recorre las construcciones para editar su contenido
   exterior_surface_constructions.each do |exterior_surface_construction|
     # puts("___ Construccion __ #{exterior_surface_construction.name} U= #{exterior_surface_construction.thermalConductance.to_f})")
     # runner.registerInfo("nombre de la construcción #{exterior_surface_construction.name}")
@@ -187,6 +194,8 @@ def cte_cambia_u_suelos(model, runner, user_arguments)
     end
   end
 
+  puts("_2_ final de segunda parte, ")
+
   # loop through construction sets used in the model
   default_construction_sets = model.getDefaultConstructionSets
   default_construction_sets.each do |default_construction_set|
@@ -271,6 +280,24 @@ def cte_cambia_u_suelos(model, runner, user_arguments)
       end
     end
   end
+
+  exterior_surface_construction_names = []
+  surfaces.each do |surface|
+    if (surface.outsideBoundaryCondition == "Ground") && (surface.surfaceType == "Floor")
+      # puts("nombre de la superficie #{surface.name}")      
+      exterior_surfaces << surface
+      ext_ground_floor_const = surface.construction.get # algunas surfaces no tienen construcción.
+
+      # añade la construcción únicamente si no lo ha hecho antes
+      if !exterior_surface_construction_names.include?(ext_ground_floor_const.name.to_s)
+        exterior_surface_constructions << ext_ground_floor_const.to_Construction.get
+        puts("... construcciones modificadas añadidas #{ext_ground_floor_const.to_Construction.get.name}")
+      end
+      exterior_surface_construction_names << ext_ground_floor_const.name.to_s
+      # puts("--- transmitancia suelos terreno: #{ext_ground_floor_const.thermalConductance.to_f}")      
+    end
+  end
+
 
   # activa este comentario para verficar que se produce el cambio
   exterior_surfaces.each do |exterior_surface_construction|
