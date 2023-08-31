@@ -1,4 +1,4 @@
-def cte_cambia_u_suelos(model, runner, user_arguments)
+def cte_cambia_u_suelos_terreno(model, runner, user_arguments)
   # tenemos que testear:
   # 1.- que la medida se aplica pero no queremos cambiar la U
   # 2.- cómo añade una capa aislante o cámara de aire si ya existe una
@@ -10,7 +10,7 @@ def cte_cambia_u_suelos(model, runner, user_arguments)
   u_suelos = runner.getDoubleArgumentValue("CTE_U_suelos", user_arguments)
 
   if u_suelos == 0
-    puts(' No se cambia el valor de los suelos (U = 0) __')
+    puts(" No se cambia el valor de los suelos (U = 0) __")
     runner.registerFinalCondition("No se desea cambiar la transmitancia de los suelos.")
     return true
   end
@@ -30,17 +30,17 @@ def cte_cambia_u_suelos(model, runner, user_arguments)
   #outSideBoundaryConditions ['Ground', 'Outdoors'] # ground = {ed02d7a6-7c4b-47a9-a072-0e7bf732a4d6}
   surfaces.each do |surface|
     if (surface.outsideBoundaryCondition == "Ground") && (surface.surfaceType == "Floor")
-      # puts("nombre de la superficie #{surface.name}")      
+      # puts("nombre de la superficie #{surface.name}")
       exterior_surfaces << surface
       ext_ground_floor_const = surface.construction.get # algunas surfaces no tienen construcción.
 
       # añade la construcción únicamente si no lo ha hecho antes
       if !exterior_surface_construction_names.include?(ext_ground_floor_const.name.to_s)
         exterior_surface_constructions << ext_ground_floor_const.to_Construction.get
-        puts("... construcciones añadidas #{ext_ground_floor_const.to_Construction.get.name}")
+        # puts("... construcciones añadidas #{ext_ground_floor_const.to_Construction.get.name}")
       end
       exterior_surface_construction_names << ext_ground_floor_const.name.to_s
-      puts("--- transmitancia suelos terreno: #{ext_ground_floor_const.thermalConductance.to_f}")      
+      # puts("--- transmitancia suelos terreno: #{ext_ground_floor_const.thermalConductance.to_f}")
     end
   end
 
@@ -49,11 +49,11 @@ def cte_cambia_u_suelos(model, runner, user_arguments)
     return true
   end
 
-  puts("_1_ fin primera parte, con el array de exterior_surface_construction")
-  exterior_surface_constructions.each do |exterior_surface_construction|
-    puts("   #{exterior_surface_construction.name}")
-  end
-  puts("__________________________")
+  # puts("_1_ fin primera parte, con el array de exterior_surface_construction")
+  # exterior_surface_constructions.each do |exterior_surface_construction|
+  #   puts("   #{exterior_surface_construction.name}")
+  # end
+  # puts("__________________________")
 
   # !  __02__ recorre todas las construcciones y materiales usados en los muros exterios, los edita y los clona
 
@@ -64,13 +64,13 @@ def cte_cambia_u_suelos(model, runner, user_arguments)
   # array and counter for new constructions that are made, used for reporting final condition
   final_constructions_array = []
 
-  # loop through all constructions and materials used on ground floors, edit and clone  
+  # loop through all constructions and materials used on ground floors, edit and clone
   "" "
   La casuística para decidir como se procede a cambiar la transmitancia de suelo terreno es:
   1.- si hay una capa de material sin masa (aislamiento o cámara de aire) se modifica su r lo necesario
   2.- si NO hay una capa de material sin masa se lanza un error y se interrumpe la ejecución.
   " ""
-  
+
   #! 03_ recorre las construcciones para editar su contenido
   exterior_surface_constructions.each do |exterior_surface_construction|
     # puts("___ Construccion __ #{exterior_surface_construction.name} U= #{exterior_surface_construction.thermalConductance.to_f})")
@@ -94,7 +94,6 @@ def cte_cambia_u_suelos(model, runner, user_arguments)
       # puts("hay materias aislantes o cámara de aire: sin masa")
       thermal_resistance_values = no_mass_materials.map { |mat| mat["r_value"] } # crea un nuevo array con los valores R mapeando el de materiales
       max_mat_hash = no_mass_materials.select { |mat| mat["r_value"] >= thermal_resistance_values.max }[0] # se queda con el que tiene más resistencia
-
     else
       puts("La composición del cerramiento no tiene una capa susceptible de modificar su resistencia -> #{exterior_surface_construction.name}")
       runner.registerError("La composición del cerramiento no tiene una capa susceptible de modificar su resistencia (#{exterior_surface_construction.name}")
@@ -122,10 +121,12 @@ def cte_cambia_u_suelos(model, runner, user_arguments)
     end
 
     # La resistencia de 0.5 corresponde a una capa de material "terreno" de conductividad (lambda) 2 W/mk de 1 m de profundidad
-    resistencia_capa = 1 / u_suelos - resistencia_termica_sin_aislante - 0.5# siempre que sea positiva, claro
-    puts("__la resistencia del aislante es #{max_mat_hash["mat"].to_OpaqueMaterial.get.thermalResistance.to_f}")
-    puts("__la resistencia sin aislante es #{resistencia_termica_sin_aislante}")
-    puts("__la resistencia de la capa aislante debe ser #{resistencia_capa}")
+    resistencia_capa = 1 / u_suelos - resistencia_termica_sin_aislante - 0.5 # siempre que sea positiva, claro
+    # puts("__la resistencia del aislante es #{max_mat_hash["mat"].to_OpaqueMaterial.get.thermalResistance.to_f}")
+    # puts("__la resistencia sin aislante es #{resistencia_termica_sin_aislante}")
+    # puts("__la resistencia de la capa aislante debe ser #{resistencia_capa}")
+
+    # ! 05 crea la construcción final y la añade al final_constructions_array
 
     max_thermal_resistance_material = max_mat_hash["mat"] # objeto OS
     max_thermal_resistance_material_index = max_mat_hash["index"] # indice de la capa
@@ -139,7 +140,7 @@ def cte_cambia_u_suelos(model, runner, user_arguments)
       # clone the construction
       final_construction = exterior_surface_construction.clone(model)
       final_construction = final_construction.to_Construction.get
-      final_construction.setName("#{exterior_surface_construction.name} con aislamiento corregido")      
+      final_construction.setName("#{exterior_surface_construction.name} con aislamiento corregido")
       final_constructions_array << final_construction
       constructions_hash_old_new[exterior_surface_construction.name.to_s] = final_construction
       constructions_hash_new_old[final_construction] = exterior_surface_construction # push the object to hash key vs. name
@@ -187,20 +188,23 @@ def cte_cambia_u_suelos(model, runner, user_arguments)
           final_thermal_resistance = new_material_airgap.get.setThermalResistance(resistencia_capa)
         end
 
-        puts("For construction'#{final_construction.name}', material'#{new_material.name}' was altered.")
-        puts("Para #{final_construction.name} la transmitancia es #{final_construction.thermalConductance()}")
-
+        # puts("For construction'#{final_construction.name}', material'#{new_material.name}' was altered.")
+        # puts("Para #{final_construction.name} la transmitancia es #{final_construction.thermalConductance()}")
       end
     end
   end
 
-  puts("_2_ final de segunda parte, ")
+  # puts("_2_ final de segunda parte, ")
+
+  # ! 06 asigna la nueva construcción a las superficies
 
   # loop through construction sets used in the model
   default_construction_sets = model.getDefaultConstructionSets
   default_construction_sets.each do |default_construction_set|
     if default_construction_set.directUseCount > 0
-      default_surface_const_set = default_construction_set.defaultExteriorSurfaceConstructions
+      # default_surface_const_set = default_construction_set.defaultExteriorSurfaceConstructions
+      default_surface_const_set = default_construction_set.defaultGroundContactSurfaceConstructions
+
       if !default_surface_const_set.empty?
         starting_construction = default_surface_const_set.get.floorConstruction
         #puts("starting_construction #{starting_construction.get.name}")
@@ -214,11 +218,11 @@ def cte_cambia_u_suelos(model, runner, user_arguments)
         new_default_surface_const_set = default_surface_const_set.get.clone(model)
         new_default_surface_const_set = new_default_surface_const_set.to_DefaultSurfaceConstructions.get
         new_default_surface_const_set.setName("#{default_surface_const_set.get.name} adj ext grn floor insulation")
-        new_default_construction_set.setDefaultExteriorSurfaceConstructions(new_default_surface_const_set)
+        # new_default_construction_set.setDefaultExteriorSurfaceConstructions(new_default_surface_const_set)
+        new_default_construction_set.setDefaultGroundContactSurfaceConstructions(new_default_surface_const_set)
 
         # use the hash to find the proper construction and link to new_default_surface_const_set
         target_const = new_default_surface_const_set.floorConstruction
-        puts("target const #{target_const.get.name}")
         if !target_const.empty?
           target_const = target_const.get.name.to_s
           found_const_flag = false
@@ -284,25 +288,24 @@ def cte_cambia_u_suelos(model, runner, user_arguments)
   exterior_surface_construction_names = []
   surfaces.each do |surface|
     if (surface.outsideBoundaryCondition == "Ground") && (surface.surfaceType == "Floor")
-      # puts("nombre de la superficie #{surface.name}")      
+      # puts("nombre de la superficie #{surface.name}")
       exterior_surfaces << surface
       ext_ground_floor_const = surface.construction.get # algunas surfaces no tienen construcción.
 
       # añade la construcción únicamente si no lo ha hecho antes
       if !exterior_surface_construction_names.include?(ext_ground_floor_const.name.to_s)
         exterior_surface_constructions << ext_ground_floor_const.to_Construction.get
-        puts("... construcciones modificadas añadidas #{ext_ground_floor_const.to_Construction.get.name}")
+        # puts("... construcciones modificadas añadidas #{ext_ground_floor_const.to_Construction.get.name}")
       end
       exterior_surface_construction_names << ext_ground_floor_const.name.to_s
-      # puts("--- transmitancia suelos terreno: #{ext_ground_floor_const.thermalConductance.to_f}")      
+      # puts("--- transmitancia suelos terreno: #{ext_ground_floor_const.thermalConductance.to_f}")
     end
   end
 
-
   # activa este comentario para verficar que se produce el cambio
-  exterior_surfaces.each do |exterior_surface_construction|
-    puts("___  #{exterior_surface_construction.name} U=#{exterior_surface_construction.thermalConductance.to_f} ___")
-  end
+  # exterior_surfaces.each do |exterior_surface_construction|
+  #   puts("___  #{exterior_surface_construction.name} U=#{exterior_surface_construction.thermalConductance.to_f} ___")
+  # end
 
   runner.registerFinalCondition("The existing insulation for exterior ground floor was set.")
   return true

@@ -28,7 +28,8 @@
 require "json"
 require_relative "resources/cte_lib_measures_cambia_u_muros.rb"
 require_relative "resources/cte_lib_measures_cambia_u_cubiertas.rb"
-require_relative "resources/cte_lib_measures_cambia_u_suelos.rb"
+require_relative "resources/cte_lib_measures_cambia_u_suelos_terreno.rb"
+require_relative "resources/cte_lib_measures_cambia_u_suelos_exterior.rb"
 
 # Medida de OpenStudio (ModelUserScript) que modifica el modelo para su uso con el CTE
 # Para su correcto funcionamiento esta medida debe emplearse con una plantilla adecuada.
@@ -97,9 +98,14 @@ class CTE_CambiaUs < OpenStudio::Measure::ModelMeasure
     result = cte_cambia_u_cubiertas(model, runner, user_arguments)
     return result unless result == true
 
-    puts("--> (cte_lib) cambia las transmitancias de los suelos")
-    runner.registerInfo("Llamada a la actualización de los suelos")
-    result = cte_cambia_u_suelos(model, runner, user_arguments)
+    puts("--> (cte_lib) cambia las transmitancias de los suelos en contacto con el terreno")
+    runner.registerInfo("Llamada a la actualización de los suelos en contacto con el terreno")
+    result = cte_cambia_u_suelos_terreno(model, runner, user_arguments)
+    return result unless result == true
+
+    puts("--> (cte_lib) cambia las transmitancias de los suelos exteriores")
+    runner.registerInfo("Llamada a la actualización de los suelos exteriores")
+    result = cte_cambia_u_suelos_exteriores(model, runner, user_arguments)
     return result unless result == true
 
     # result = cte_addvars(model, runner, user_arguments) # Nuevas variables y meters

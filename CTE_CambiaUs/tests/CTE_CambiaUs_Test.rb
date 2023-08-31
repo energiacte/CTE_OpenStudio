@@ -265,7 +265,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
     puts("__________ fin del test ________\n")
   end
 
-  def test_CTE_CambiaUs_cambia_suelos
+  def test_CTE_CambiaUs_cambia_suelos_terreno
     puts("\n____TEST:: CTE_CambiaUs_cambia_suelos")
 
     # create an instance of the measure
@@ -289,7 +289,8 @@ class CTE_CambiaUs_Test < MiniTest::Test
     args_hash = {}
     args_hash["CTE_U_muros"] = 0
     args_hash["CTE_U_cubiertas"] = 0
-    args_hash["CTE_U_suelos"] = 0.17
+    args_hash["CTE_U_suelos"] = 0.37
+    u_terreno = 1 / (1 / args_hash["CTE_U_suelos"] - 0.5)
     # using defaults values from measure.rb for other arguments
 
     # populate argument with specified hash value if specified
@@ -330,7 +331,8 @@ class CTE_CambiaUs_Test < MiniTest::Test
     puts("|||U final del suelo terreno #{u_final}")
 
     puts("U inicial y final #{u_inicial}, #{u_final}")
-    assert_in_delta(args_hash["CTE_U_suelos"], u_final, 0.001)
+    # se le añade la capa de suelo args_hash["CTE_U_suelos"]
+    assert_in_delta(u_terreno, u_final, 0.001)
 
     # handle = OpenStudio.toUUID("cc187100-92a7-410b-bf38-3f6712910b74")
     # objeto = model.getModelObject(handle)
