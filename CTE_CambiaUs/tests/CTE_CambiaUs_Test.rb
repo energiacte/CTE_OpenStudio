@@ -265,22 +265,27 @@ class CTE_CambiaUs_Test < MiniTest::Test
     puts("__________ fin del test ________\n")
   end
 
+  def get_runner_model(file_path, measure)
+    # create an instance of a runner
+    runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
+
+    # load the test model
+    translator = OpenStudio::OSVersion::VersionTranslator.new
+    path = OpenStudio::Path.new(File.dirname(__FILE__) + file_path)
+    model = translator.loadModel(path)
+    assert((not model.empty?))
+    model = model.get
+
+    return runner, model
+  end
+
   def test_CTE_CambiaUs_cambia_suelos_terreno
     puts("\n____TEST:: CTE_CambiaUs_cambia_suelos")
 
     # create an instance of the measure
     measure = CTE_CambiaUs.new
 
-    # create an instance of a runner
-    runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
-
-    # load the test model
-    translator = OpenStudio::OSVersion::VersionTranslator.new
-    path = OpenStudio::Path.new(File.dirname(__FILE__) + "/residencial.osm")
-    model = translator.loadModel(path)
-    assert((not model.empty?))
-    model = model.get
-
+    runner, model = get_runner_model("/residencial.osm", measure)
     arguments = measure.arguments(model)
     argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(arguments)
 
