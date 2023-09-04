@@ -28,6 +28,7 @@
 require "json"
 require_relative "resources/cte_lib_measures_cambia_u_muros.rb"
 require_relative "resources/cte_lib_measures_cambia_u_cubiertas.rb"
+require_relative "resources/cte_lib_measures_cambia_u_huecos.rb"
 require_relative "resources/cte_lib_measures_cambia_u_suelos_terreno.rb"
 require_relative "resources/cte_lib_measures_cambia_u_suelos_exterior.rb"
 
@@ -68,6 +69,12 @@ class CTE_CambiaUs < OpenStudio::Measure::ModelMeasure
     u_suelos.setDefaultValue(10)
     args << u_suelos
 
+    u_huecos = OpenStudio::Measure::OSArgument::makeDoubleArgument("CTE_U_huecos", true)
+    u_huecos.setDisplayName("U de huecos")
+    u_huecos.setUnits("W/m2·K")
+    u_huecos.setDefaultValue(10)
+    args << u_huecos
+
     return args
   end
 
@@ -106,6 +113,11 @@ class CTE_CambiaUs < OpenStudio::Measure::ModelMeasure
     puts("--> (cte_lib) cambia las transmitancias de los suelos exteriores")
     runner.registerInfo("Llamada a la actualización de los suelos exteriores")
     result = cte_cambia_u_suelos_exteriores(model, runner, user_arguments)
+    return result unless result == true
+
+    puts("--> (cte_lib) cambia las transmitancias de los huecos")
+    runner.registerInfo("Llamada a la actualización de los huecos")
+    result = cte_cambia_u_huecos(model, runner, user_arguments)
     return result unless result == true
 
     # result = cte_addvars(model, runner, user_arguments) # Nuevas variables y meters
