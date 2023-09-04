@@ -18,8 +18,8 @@ def cte_cambia_u_muros(model, runner, user_arguments)
   u_opacos = u_muros
   puts("__ Se ha seleccionado un valor de U_muros de #{u_muros} -> R=#{1 / u_muros}.")
 
-  # !  __02__ crea un array de muros exteriores y busca un rango de construcciones en el rango de transmitancias.
-  # create an array of exterior walls and find range of starting construction R-value (not just insulation layer)
+  # !  __02__ crea un array de muros en contacto con el terreno y busca un rango de construcciones en el rango de transmitancias.
+  # create an array of ground walls and find range of starting construction R-value (not just insulation layer)
   # el objeto OS:Surface tiene: handle, name, type, construction name(vacio), space name, condiciones exteriores, vertices
   #                           si la construcción está toma la establecida por defecto
 
@@ -196,12 +196,12 @@ def cte_cambia_u_muros(model, runner, user_arguments)
         # creating new default construction set
         new_default_construction_set = default_construction_set.clone(model)
         new_default_construction_set = new_default_construction_set.to_DefaultConstructionSet.get
-        new_default_construction_set.setName("#{default_construction_set.name} adj ext wall insulation")
+        new_default_construction_set.setName("#{default_construction_set.name} adj grnd wall insulation")
 
         # create new surface set and link to construction set
         new_default_surface_const_set = default_surface_const_set.get.clone(model)
         new_default_surface_const_set = new_default_surface_const_set.to_DefaultSurfaceConstructions.get
-        new_default_surface_const_set.setName("#{default_surface_const_set.get.name} adj ext wall insulation")
+        new_default_surface_const_set.setName("#{default_surface_const_set.get.name} adj grnd wall insulation")
         new_default_construction_set.setDefaultExteriorSurfaceConstructions(new_default_surface_const_set)
 
         # use the hash to find the proper construction and link to new_default_surface_const_set
@@ -217,7 +217,7 @@ def cte_cambia_u_muros(model, runner, user_arguments)
             end
           end
           if found_const_flag == false # this should never happen but is just an extra test in case something goes wrong with the measure code
-            runner.registerWarning("Measure couldn't find the construction named '#{target_const}' in the exterior surface hash.")
+            runner.registerWarning("Measure couldn't find the construction named '#{target_const}' in the ground surface hash.")
           end
         end
 
@@ -273,6 +273,6 @@ def cte_cambia_u_muros(model, runner, user_arguments)
   #   puts("___(Construccion, U) ->  (#{exterior_surface_construction.name},#{exterior_surface_construction.thermalConductance.to_f})___")
   # end
 
-  runner.registerFinalCondition("The existing insulation for exterior walls was set.")
+  runner.registerFinalCondition("The existing insulation for ground walls was set.")
   return true
 end #end the measure
