@@ -87,8 +87,19 @@ class CTE_CambiaUs_Test < MiniTest::Test
     # glass door
     puertas = ["089b1b05-c16f-46c8-acf6-461e97125a7f"]
     elementos = { "muros_exteriores" => muros_exteriores, "cubiertas_exteriores" => cubiertas_exteriores, "cubiertas_interiores" => cubiertas_interiores,
-    "suelos_interiores" => suelos_interiores, "suelos_terrenos" => suelos_terrenos}
+                  "suelos_interiores" => suelos_interiores, "suelos_terrenos" => suelos_terrenos }
 
+    return elementos
+  end
+
+  def carga_elementos(model, elementos_para_test)
+    elementos = {}
+    elementos_para_test.each do |tipo, lista|
+      lista.each do |uuid|
+        u_inicial = get_transmitance(model, uuid)
+        elementos[uuid] = { "tipo" => tipo, "u_inicial" => u_inicial }
+      end
+    end
     return elementos
   end
 
@@ -111,8 +122,6 @@ class CTE_CambiaUs_Test < MiniTest::Test
     args_hash["CTE_U_suelos"] = 0
     args_hash["CTE_U_huecos"] = 0
 
-    # using defaults values from measure.rb for other arguments
-
     # populate argument with specified hash value if specified
     arguments.each do |arg|
       temp_arg_var = arg.clone
@@ -123,29 +132,21 @@ class CTE_CambiaUs_Test < MiniTest::Test
     end
 
     elementos_para_test = carga_elementos_residencial_osm()
+    elementos = carga_elementos(model, elementos_para_test)
 
-    # todos tienen que permanecer iguales
-    elementos = {}
-    elementos_para_test.each do |tipo, lista|
-      lista.each do |uuid|
-        u_inicial = get_transmitance(model, uuid)
-        elementos[uuid] = {"tipo" => tipo, "u_inicial" => u_inicial}
-      end
-    end
-    
     puts("  ejecutando la medida")
     salida = measure.run(model, runner, argument_map)
     assert(salida, "algo falló")
 
     elementos.each do |uuid, atributos|
       u_final = get_transmitance(model, uuid)
-      atributos['u_final'] = u_final
+      atributos["u_final"] = u_final
     end
 
     elementos.each do |uuid, atr|
-      assert_in_delta(atr['u_inicial'], atr['u_final'], 0.001)
+      assert_in_delta(atr["u_inicial"], atr["u_final"], 0.001)
     end
-    
+
     puts("___________ fin del test ________\n")
   end
 
