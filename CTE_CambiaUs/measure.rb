@@ -27,6 +27,7 @@
 
 require "json"
 require_relative "resources/cte_lib_measures_cambia_u_muros.rb"
+require_relative "resources/cte_lib_measures_cambia_u_muros_terreno.rb"
 require_relative "resources/cte_lib_measures_cambia_u_cubiertas.rb"
 require_relative "resources/cte_lib_measures_cambia_u_huecos.rb"
 require_relative "resources/cte_lib_measures_cambia_u_suelos_terreno.rb"
@@ -54,27 +55,26 @@ class CTE_CambiaUs < OpenStudio::Measure::ModelMeasure
     u_muros = OpenStudio::Measure::OSArgument::makeDoubleArgument("CTE_U_muros", true)
     u_muros.setDisplayName("U de muros")
     u_muros.setUnits("W/m2·K")
-    u_muros.setDefaultValue(10)
+    u_muros.setDefaultValue(0)
     args << u_muros
 
     u_cubiertas = OpenStudio::Measure::OSArgument::makeDoubleArgument("CTE_U_cubiertas", true)
     u_cubiertas.setDisplayName("U de cubiertas")
     u_cubiertas.setUnits("W/m2·K")
-    u_cubiertas.setDefaultValue(10)
+    u_cubiertas.setDefaultValue(0)
     args << u_cubiertas
 
     u_suelos = OpenStudio::Measure::OSArgument::makeDoubleArgument("CTE_U_suelos", true)
     u_suelos.setDisplayName("U de suelos")
     u_suelos.setUnits("W/m2·K")
-    u_suelos.setDefaultValue(10)
+    u_suelos.setDefaultValue(0)
     args << u_suelos
 
     u_huecos = OpenStudio::Measure::OSArgument::makeDoubleArgument("CTE_U_huecos", true)
     u_huecos.setDisplayName("U de huecos")
     u_huecos.setUnits("W/m2·K")
-    u_huecos.setDefaultValue(10)
+    u_huecos.setDefaultValue(0)
     args << u_huecos
-
     return args
   end
 
@@ -98,6 +98,11 @@ class CTE_CambiaUs < OpenStudio::Measure::ModelMeasure
     puts("--> (cte_lib u muros)")
     runner.registerInfo("Llamada a la actualización de muros")
     result = cte_cambia_u_muros(model, runner, user_arguments)
+    return result unless result == true
+
+    puts("--> (cte_lib u muros terreno)")
+    runner.registerInfo("Llamada a la actualización de muros")
+    result = cte_cambia_u_muros_terreno(model, runner, user_arguments)
     return result unless result == true
 
     puts("--> (cte_lib) u cubiertas")
