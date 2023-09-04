@@ -1,4 +1,4 @@
-def cte_cambia_u_muros(model, runner, user_arguments)
+def cte_cambia_u_muros_terreno(model, runner, user_arguments)
   # tenemos que testear:
   # 1.- que la medida se aplica pero no queremos cambiar la U
   # 2.- cómo añade una capa aislante o cámara de aire si ya existe una
@@ -40,9 +40,7 @@ def cte_cambia_u_muros(model, runner, user_arguments)
         exterior_surface_constructions << ext_wall_const.to_Construction.get
       end
       exterior_surface_construction_names << ext_wall_const.name.to_s
-      # puts("--- transmitancia muro: #{ext_wall_const.thermalConductance.to_f}")
-      # ext_wall_resistance << 1 / ext_wall_const.thermalConductance.to_f esto no sé para que vale
-      # ext_wall_transsmitance << ext_wall_const.thermalConductance.to_f
+      puts("  __nombre #{surface.name.to_s}, construccion#{ext_wall_const.name.to_s}, U= #{ext_wall_const.thermalConductance.to_f}")
     end
   end
 
@@ -73,7 +71,7 @@ def cte_cambia_u_muros(model, runner, user_arguments)
 
   #! 04_ recorre las construcciones para editar su contenido
   exterior_surface_constructions.each do |exterior_surface_construction|
-    # puts("___(Construccion, U) ->  (#{exterior_surface_construction.name},#{exterior_surface_construction.thermalConductance.to_f})___")
+    puts("___(Construccion, U) ->  (#{exterior_surface_construction.name},#{exterior_surface_construction.thermalConductance.to_f})___")
     # runner.registerInfo("nombre de la construcción #{exterior_surface_construction.name}")
     construction_layers = exterior_surface_construction.layers
     max_thermal_resistance_material = ""
@@ -189,7 +187,7 @@ def cte_cambia_u_muros(model, runner, user_arguments)
   default_construction_sets = model.getDefaultConstructionSets
   default_construction_sets.each do |default_construction_set|
     if default_construction_set.directUseCount > 0
-      default_surface_const_set = default_construction_set.defaultExteriorSurfaceConstructions
+      default_surface_const_set = default_construction_set.defaultGroundContactSurfaceConstructions
       if !default_surface_const_set.empty?
         starting_construction = default_surface_const_set.get.wallConstruction
 
@@ -202,7 +200,7 @@ def cte_cambia_u_muros(model, runner, user_arguments)
         new_default_surface_const_set = default_surface_const_set.get.clone(model)
         new_default_surface_const_set = new_default_surface_const_set.to_DefaultSurfaceConstructions.get
         new_default_surface_const_set.setName("#{default_surface_const_set.get.name} adj grnd wall insulation")
-        new_default_construction_set.setDefaultExteriorSurfaceConstructions(new_default_surface_const_set)
+        new_default_construction_set.setDefaultGroundContactSurfaceConstructions(new_default_surface_const_set)
 
         # use the hash to find the proper construction and link to new_default_surface_const_set
         target_const = new_default_surface_const_set.wallConstruction
