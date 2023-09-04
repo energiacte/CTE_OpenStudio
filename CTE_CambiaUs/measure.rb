@@ -95,27 +95,27 @@ class CTE_CambiaUs < OpenStudio::Measure::ModelMeasure
     end
     model.building.get.setComment(argumentos.to_json)
 
-    puts("--> (cte_lib) cambia las transmitancias de los muros")
+    puts("--> (cte_lib u muros)")
     runner.registerInfo("Llamada a la actualización de muros")
     result = cte_cambia_u_muros(model, runner, user_arguments)
     return result unless result == true
 
-    puts("--> (cte_lib) cambia las transmitancias de las cubiertas")
+    puts("--> (cte_lib) u cubiertas")
     runner.registerInfo("Llamada a la actualización de cubiertas")
     result = cte_cambia_u_cubiertas(model, runner, user_arguments)
     return result unless result == true
 
-    puts("--> (cte_lib) cambia las transmitancias de los suelos en contacto con el terreno")
+    puts("--> (cte_lib) u suelo terreno")
     runner.registerInfo("Llamada a la actualización de los suelos en contacto con el terreno")
     result = cte_cambia_u_suelos_terreno(model, runner, user_arguments)
     return result unless result == true
 
-    puts("--> (cte_lib) cambia las transmitancias de los suelos exteriores")
+    puts("--> (cte_lib) u suelos exteriores")
     runner.registerInfo("Llamada a la actualización de los suelos exteriores")
     result = cte_cambia_u_suelos_exteriores(model, runner, user_arguments)
     return result unless result == true
 
-    puts("--> (cte_lib) cambia las transmitancias de los huecos")
+    puts("--> (cte_lib) u huecos")
     runner.registerInfo("Llamada a la actualización de los huecos")
     result = cte_cambia_u_huecos(model, runner, user_arguments)
     return result unless result == true
