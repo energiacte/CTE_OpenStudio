@@ -3,6 +3,13 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
 
   # toma el valor de la medida
   u_huecos = runner.getDoubleArgumentValue("CTE_U_huecos", user_arguments)
+
+  if u_huecos == 0
+    puts('  No se cambia el valor de huecos (U = 0) __')
+    runner.registerFinalCondition("No se desea cambiar la transmitancia de los huecos.")
+    return true
+  end
+
   puts("__Se ha seleccionado un valor de U_huecos de #{u_huecos} -> R=#{1 / u_huecos}.")
 
   # ! __01__ si queremos poner valores de seguridad irían aquí
