@@ -5,7 +5,7 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
   u_huecos = runner.getDoubleArgumentValue("CTE_U_huecos", user_arguments)
 
   if u_huecos == 0
-    puts("  No se cambia el valor de huecos (U = 0) __")
+    # puts("  No se cambia el valor de huecos (U = 0) __")
     runner.registerFinalCondition("No se desea cambiar la transmitancia de los huecos.")
     return true
   end
@@ -34,8 +34,7 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
             window_constructions << window_construction.to_Construction.get
             window_construction_names << window_construction.name.to_s
           end
-
-          puts("__subsurface Type #{subsur.subSurfaceType()} -> #{subsur.construction.get.name}, #{subsur.uFactor()}")
+          # puts("__subsurface Type #{subsur.subSurfaceType()} -> #{subsur.construction.get.name}, #{subsur.uFactor()}")
           if !tipos_cubiertos.include?(subsur.subSurfaceType().to_s)
             puts("Tipo de hueco no cubierto por esta medida #{subsur.subSurfaceType().to_s}")
           end
@@ -43,12 +42,7 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
       end
     end
   end
-
-  # ! track
-  # windows.each do |surface|
-  #   puts(surface.name)
-  # end
-
+  
   if windows.empty?
     runner.registerAsNotApplicable("El modelo no tiene ventanas.")
     return true
@@ -97,15 +91,6 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
     final_constructions_array << final_construction
     constructions_hash_old_new[window_construction.name.to_s] = final_construction
     constructions_hash_new_old[final_construction] = window_construction # push the object to hash key vs. name
-
-    # puts("__final construction", final_construction)
-    # puts("__layer__", final_construction.layers[0])
-    # # buscar aquí como son los wrappers de OS a objeto Ruby:
-    # # https://openstudio-sdk-documentation.s3.amazonaws.com/cpp/OpenStudio-3.5.1-doc/model/html/annotated.html
-    # simpleGlazing = final_construction.layers[0].to_SimpleGlazing.get
-    # puts("__layer__", simpleGlazing.uFactor())
-    # simpleGlazing.setUFactor(u_huecos)
-    # puts("__final construction", final_construction.layers[0])
 
     # # find already cloned insulation material and link to construction
     target_material = max_thermal_resistance_material
@@ -258,20 +243,19 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
   #   end
   # end
 
-  spaces.each do |space|
-    space.surfaces.each do |surface|
-      if surface.outsideBoundaryCondition == "Outdoors" and surface.windExposure == "WindExposed"
-        surface.subSurfaces.each do |subsur|
-          # puts("__subsurface Type #{subsur.subSurfaceType()} -> #{subsur.construction.get.name}")
-          begin
-            puts("   #{subsur.windowPropertyFrameAndDivider.get.name}")
-          rescue
-            puts("   no tiene marco ")
-          end
-        end
-      end
-    end
-  end
+  # spaces.each do |space|
+  #   space.surfaces.each do |surface|
+  #     if surface.outsideBoundaryCondition == "Outdoors" and surface.windExposure == "WindExposed"
+  #       surface.subSurfaces.each do |subsur|
+  #         begin
+  #           puts("   #{subsur.windowPropertyFrameAndDivider.get.name}")
+  #         rescue
+  #           puts("   no tiene marco ")
+  #         end
+  #       end
+  #     end
+  #   end
+  # end
 
   spaces = model.getSpaces
   spaces.each do |space|
@@ -279,7 +263,7 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
       if surface.outsideBoundaryCondition == "Outdoors" and surface.windExposure == "WindExposed"
         surface.subSurfaces.each do |subsur|
           windows << subsur # también las puertas y esas cosas
-          puts("__subsurface Type #{subsur.subSurfaceType()} -> #{subsur.construction.get.name}, #{subsur.uFactor()}")
+          # puts("__subsurface Type #{subsur.subSurfaceType()} -> #{subsur.construction.get.name}, #{subsur.uFactor()}")
           if !tipos_cubiertos.include?(subsur.subSurfaceType().to_s)
             puts("Tipo de hueco no cubierto por esta medida #{subsur.subSurfaceType().to_s}")
           end

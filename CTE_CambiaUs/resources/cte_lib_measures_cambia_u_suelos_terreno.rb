@@ -10,7 +10,7 @@ def cte_cambia_u_suelos_terreno(model, runner, user_arguments)
   u_suelos = runner.getDoubleArgumentValue("CTE_U_suelos", user_arguments)
 
   if u_suelos == 0
-    puts(" No se cambia el valor de los suelos (U = 0) __")
+    # puts(" No se cambia el valor de los suelos (U = 0) __")
     runner.registerFinalCondition("No se desea cambiar la transmitancia de los suelos.")
     return true
   end
