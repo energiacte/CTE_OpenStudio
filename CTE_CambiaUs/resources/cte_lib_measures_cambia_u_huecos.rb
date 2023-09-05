@@ -5,7 +5,7 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
   u_huecos = runner.getDoubleArgumentValue("CTE_U_huecos", user_arguments)
 
   if u_huecos == 0
-    puts('  No se cambia el valor de huecos (U = 0) __')
+    puts("  No se cambia el valor de huecos (U = 0) __")
     runner.registerFinalCondition("No se desea cambiar la transmitancia de los huecos.")
     return true
   end
@@ -27,6 +27,14 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
       if surface.outsideBoundaryCondition == "Outdoors" and surface.windExposure == "WindExposed"
         surface.subSurfaces.each do |subsur|
           windows << subsur # también las puertas y esas cosas
+
+          window_construction = subsur.construction.get
+          # añade la construcción únicamente si no lo ha hecho antes
+          if !window_construction_names.include?(window_construction.name.to_s)
+            window_constructions << window_construction.to_Construction.get
+            window_construction_names << window_construction.name.to_s
+          end
+
           puts("__subsurface Type #{subsur.subSurfaceType()} -> #{subsur.construction.get.name}, #{subsur.uFactor()}")
           if !tipos_cubiertos.include?(subsur.subSurfaceType().to_s)
             puts("Tipo de hueco no cubierto por esta medida #{subsur.subSurfaceType().to_s}")
@@ -35,6 +43,11 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
       end
     end
   end
+
+  # ! track
+  # windows.each do |surface|
+  #   puts(surface.name)
+  # end
 
   if windows.empty?
     runner.registerAsNotApplicable("El modelo no tiene ventanas.")
@@ -73,12 +86,6 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
       max_mat_hash = materials_in_construction[0]
     end
 
-    window_construccion = subsur.construction.get
-    if !window_construction_names.include?(window_construccion.name.to_s)
-      window_constructions << window_construccion.to_Construction.get
-      window_construction_names << window_construccion.name.to_s
-    end
-    
     max_thermal_resistance_material = max_mat_hash["mat"] # objeto OS
     max_thermal_resistance_material_index = max_mat_hash["index"] # indice de la capa
     max_thermal_resistance = max_thermal_resistance_material.to_SimpleGlazing.get.uFactor()
@@ -265,7 +272,6 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
       end
     end
   end
-
 
   spaces = model.getSpaces
   spaces.each do |space|
