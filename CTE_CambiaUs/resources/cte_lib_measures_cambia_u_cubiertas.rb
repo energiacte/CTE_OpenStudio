@@ -10,7 +10,7 @@ def cte_cambia_u_cubiertas(model, runner, user_arguments)
   u_cubiertas = runner.getDoubleArgumentValue("CTE_U_cubiertas", user_arguments)
 
   if u_cubiertas == 0
-    puts('  No se cambia el valor de cubiertas (U = 0) __')
+    # puts('  No se cambia el valor de cubiertas (U = 0) __')
     runner.registerFinalCondition("No se desea cambiar la transmitancia de las cubiertas.")
     return true
   end
@@ -39,7 +39,7 @@ def cte_cambia_u_cubiertas(model, runner, user_arguments)
         exterior_surface_constructions << ext_roof_const.to_Construction.get
       end
       exterior_surface_construction_names << ext_roof_const.name.to_s
-      puts("--- transmitancia cubiertas: #{ext_roof_const.thermalConductance.to_f}")
+      # puts("--- transmitancia cubiertas: #{ext_roof_const.thermalConductance.to_f}")
       # ext_roof_resistance << 1 / ext_roof_const.thermalConductance.to_f esto no sé para que vale
       # ext_roof_transsmitance << ext_roof_const.thermalConductance.to_f
     end
@@ -72,7 +72,7 @@ def cte_cambia_u_cubiertas(model, runner, user_arguments)
 
   #! 04_ recorre las construcciones para editar su contenido
   exterior_surface_constructions.each do |exterior_surface_construction|
-    puts("___ Construccion __ #{exterior_surface_construction.name} U= #{exterior_surface_construction.thermalConductance.to_f})")
+    # puts("___ Construccion __ #{exterior_surface_construction.name} U= #{exterior_surface_construction.thermalConductance.to_f})")
     # runner.registerInfo("nombre de la construcción #{exterior_surface_construction.name}")
     construction_layers = exterior_surface_construction.layers
     max_thermal_resistance_material = ""
@@ -277,9 +277,9 @@ def cte_cambia_u_cubiertas(model, runner, user_arguments)
   end
 
   # activa este comentario para verficar que se produce el cambio
-  exterior_surfaces.each do |exterior_surface_construction|
-    puts("___  #{exterior_surface_construction.name} U=#{exterior_surface_construction.thermalConductance.to_f} ___")
-  end
+  # exterior_surfaces.each do |exterior_surface_construction|
+  #   puts("___  #{exterior_surface_construction.name} U=#{exterior_surface_construction.thermalConductance.to_f} ___")
+  # end
 
   runner.registerFinalCondition("The existing insulation for exterior roof ceiling was set.")
   return true

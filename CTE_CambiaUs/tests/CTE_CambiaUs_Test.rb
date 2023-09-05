@@ -453,7 +453,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
     puts("__________ fin del test ________\n")
   end
 
-  def test_CTE_CambiaUs_cambia_huecos
+  def _test_CTE_CambiaUs_cambia_huecos
     puts("\n------------------------------------------")
     puts("____TEST:: CTE_CambiaUs_cambia_huecos_____")
 
@@ -525,7 +525,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
     puts("__________ fin del test ________\n")
   end
 
-  def _test_CTE_CambiaUs_extenso
+  def test_CTE_CambiaUs_extenso
     puts("\n____TEST:: CTE_CambiaUs_cambia_suelos")
 
     # create an instance of the measure
@@ -584,13 +584,13 @@ class CTE_CambiaUs_Test < MiniTest::Test
       atributos["u_final"] = u_final
     end
 
-    elementos.each do |uuid, atrib|
-      puts("#{atrib["u_final"]},  #{transmitancias[atrib["tipo"]]}")
-      delta = atrib["u_final"] - transmitancias[atrib["tipo"]]
-      if delta.abs > 0.01
-        puts(" __ no cumple para #{atrib["tipo"]}, #{atrib["u_final"]}, #{transmitancias[atrib["tipo"]]}, #{uuid}")
-      end
-    end
+    # elementos.each do |uuid, atrib|
+    #   puts("#{atrib["u_final"]},  #{transmitancias[atrib["tipo"]]}")
+    #   delta = atrib["u_final"] - transmitancias[atrib["tipo"]]
+    #   if delta.abs > 0.01
+    #     puts(" __ no cumple para #{atrib["tipo"]}, #{atrib["u_final"]}, #{transmitancias[atrib["tipo"]]}, #{uuid}")
+    #   end
+    # end
 
     elementos.each do |uuid, atrib|
       assert_in_delta(atrib["u_final"], transmitancias[atrib["tipo"]], 0.01, message = "#{uuid}")
