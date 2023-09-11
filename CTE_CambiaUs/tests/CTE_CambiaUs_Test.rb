@@ -116,9 +116,10 @@ class CTE_CambiaUs_Test < MiniTest::Test
     return elementos
   end
 
-  def _test_CTE_CambiaUs_no_cambia
-    puts("\n------------------------------------------")
-    puts("____TEST::  CTE_CambiaUs_no_cambia______")
+  def test_CTE_CambiaUs_no_cambia
+
+    # puts("\n------------------------------------------")
+    # puts("____TEST::  CTE_CambiaUs_no_cambia______")
 
     # create an instance of the measure
     measure = CTE_CambiaUs.new
@@ -147,7 +148,6 @@ class CTE_CambiaUs_Test < MiniTest::Test
     elementos_para_test = carga_elementos_residencial_osm()
     elementos = carga_elementos(model, elementos_para_test)
 
-    puts("  ejecutando la medida")
     salida = measure.run(model, runner, argument_map)
     assert(salida, "algo falló")
 
@@ -159,12 +159,14 @@ class CTE_CambiaUs_Test < MiniTest::Test
     elementos.each do |uuid, atr|
       assert_in_delta(atr["u_inicial"], atr["u_final"], 0.001)
     end
-
-    puts("___________ fin del test ________\n")
+    
+    # puts("___________ fin del test ________\n")    
   end
 
-  def _test_CTE_CambiaUs_cambia_muro
-    puts("\n_________TEST::  CTE_CambiaUs_cambia_muro______")
+  def test_CTE_CambiaUs_cambia_muro
+
+    # puts("\n------------------------------------------")
+    # puts("_________TEST::  CTE_CambiaUs_cambia_muro______")
 
     # create an instance of the measure
     measure = CTE_CambiaUs.new
@@ -208,10 +210,11 @@ class CTE_CambiaUs_Test < MiniTest::Test
     surface = surface.get
     construction = surface.construction.get
     u_inicial = construction.thermalConductance().to_f
-    puts("|||Valores iniciales")
-    puts("|||cerramiento, #{surface.name}")
-    puts("|||construccion, #{construction.name}")
-    puts("|||U inicial del muro #{u_inicial}")
+
+    # puts("|||Valores iniciales")
+    # puts("|||cerramiento, #{surface.name}")
+    # puts("|||construccion, #{construction.name}")
+    # puts("|||U inicial del muro #{u_inicial}")
 
     muro = model.getModelObject(handle)
     # puts("ejecutando la medida")
@@ -224,18 +227,21 @@ class CTE_CambiaUs_Test < MiniTest::Test
     surface = surface.get
     construction = surface.construction.get
     u_final = construction.thermalConductance().to_f
-    puts("U inicial y final #{u_inicial}, #{u_final}")
-    puts("|||Valores finales")
-    puts("|||cerramiento, #{surface.name}")
-    puts("|||construccion, #{construction.name}")
-    puts("|||U final del muro #{u_final}")
-    assert_in_delta(args_hash["CTE_U_muros"], u_final, 0.001)
 
-    puts("___________ fin del test ________\n")
+    # puts("U inicial y final #{u_inicial}, #{u_final}")
+    # puts("|||Valores finales")
+    # puts("|||cerramiento, #{surface.name}")
+    # puts("|||construccion, #{construction.name}")
+    # puts("|||U final del muro #{u_final}")
+    # puts("___________ fin del test ________\n")
+
+    assert_in_delta(args_hash["CTE_U_muros"], u_final, 0.001)
   end
 
-  def _test_CTE_CambiaUs_cambia_cubierta
-    puts("\n____TEST:: CTE_CambiaUs_cambia_cubierta")
+  def test_CTE_CambiaUs_cambia_cubierta
+
+    # puts("------------------------------------------")
+    # puts("\n____TEST:: CTE_CambiaUs_cambia_cubierta")
 
     # create an instance of the measure
     measure = CTE_CambiaUs.new
@@ -276,10 +282,11 @@ class CTE_CambiaUs_Test < MiniTest::Test
     surface = surface.get
     construction = surface.construction.get
     u_inicial = construction.thermalConductance().to_f
-    puts("|||Valores iniciales")
-    puts("|||cerramiento, #{surface.name}")
-    puts("|||construccion, #{construction.name}")
-    puts("|||U inicial de la cubierta #{u_inicial}")
+
+    # puts("|||Valores iniciales")
+    # puts("|||cerramiento, #{surface.name}")
+    # puts("|||construccion, #{construction.name}")
+    # puts("|||U inicial de la cubierta #{u_inicial}")
 
     muro = model.getModelObject(handle)
     # puts("ejecutando la medida")
@@ -291,14 +298,19 @@ class CTE_CambiaUs_Test < MiniTest::Test
     surface = objeto.get.to_Surface
     surface = surface.get
     construction = surface.construction.get
-    puts("La construcciones es #{construction.name.to_s}, con una transmitancia de #{construction.thermalConductance().to_f}")
-    u_final = construction.thermalConductance().to_f
-    puts("|||Valores finales")
-    puts("|||cerramiento, #{surface.name}")
-    puts("|||construccion, #{construction.name}")
-    puts("|||U final de la cubierta #{u_final}")
 
-    puts("U inicial y final #{u_inicial}, #{u_final}")
+    u_final = construction.thermalConductance().to_f
+
+    # puts("La construcciones es #{construction.name.to_s}, con una transmitancia de #{construction.thermalConductance().to_f}")
+    # puts("|||Valores finales")
+    # puts("|||cerramiento, #{surface.name}")
+    # puts("|||construccion, #{construction.name}")
+    # puts("|||U final de la cubierta #{u_final}")
+
+    # puts("U inicial y final #{u_inicial}, #{u_final}")
+
+    # puts("__________ fin del test ________\n")
+
     assert_in_delta(args_hash["CTE_U_cubiertas"], u_final, 0.001)
 
     # handle = OpenStudio.toUUID("cc187100-92a7-410b-bf38-3f6712910b74")
@@ -309,11 +321,11 @@ class CTE_CambiaUs_Test < MiniTest::Test
     # u_final = construction.thermalConductance().to_f
     # puts("U del muro final, #{u_final}")
 
-    puts("__________ fin del test ________\n")
   end
 
-  def _test_CTE_CambiaUs_cambia_suelos_residencial
-    puts("\n____TEST:: CTE_CambiaUs_cambia_suelos")
+  def test_CTE_CambiaUs_cambia_suelos_residencial
+
+    # puts("\n____TEST:: CTE_CambiaUs_cambia_suelos")
 
     # create an instance of the measure
     measure = CTE_CambiaUs.new
@@ -346,10 +358,11 @@ class CTE_CambiaUs_Test < MiniTest::Test
     surface = surface.get
     construction = surface.construction.get
     u_inicial = construction.thermalConductance().to_f
-    puts("|||Valores iniciales")
-    puts("|||cerramiento, #{surface.name}")
-    puts("|||construccion, #{construction.name}")
-    puts("|||U inicial del suelo terreno #{u_inicial}")
+
+    # puts("|||Valores iniciales")
+    # puts("|||cerramiento, #{surface.name}")
+    # puts("|||construccion, #{construction.name}")
+    # puts("|||U inicial del suelo terreno #{u_inicial}")
 
     muro = model.getModelObject(handle)
     # puts("ejecutando la medida")
@@ -361,22 +374,26 @@ class CTE_CambiaUs_Test < MiniTest::Test
     surface = objeto.get.to_Surface
     surface = surface.get
     construction = surface.construction.get
-    puts("La construcciones es #{construction.name.to_s}, con una transmitancia de #{construction.thermalConductance().to_f}")
     u_final = construction.thermalConductance().to_f
-    puts("|||Valores finales")
-    puts("|||cerramiento, #{surface.name}")
-    puts("|||construccion, #{construction.name}")
-    puts("|||U final del suelo terreno #{u_final}")
 
-    puts("U inicial y final #{u_inicial}, #{u_final}")
+    # puts("La construcciones es #{construction.name.to_s}, con una transmitancia de #{construction.thermalConductance().to_f}")
+
+    # puts("|||Valores finales")
+    # puts("|||cerramiento, #{surface.name}")
+    # puts("|||construccion, #{construction.name}")
+    # puts("|||U final del suelo terreno #{u_final}")
+
+    # puts("U inicial y final #{u_inicial}, #{u_final}")
+
+    # puts("__________ fin del test ________\n")
+
     # se le añade la capa de suelo args_hash["CTE_U_suelos"]
     assert_in_delta(u_terreno, u_final, 0.001)
-
-    puts("__________ fin del test ________\n")
   end
 
-  def _test_CTE_CambiaUs_cambia_suelos_N_R01_unif_adosadaV23
-    puts("\n____TEST:: CTE_CambiaUs_cambia_suelos")
+  def test_CTE_CambiaUs_cambia_suelos_N_R01_unif_adosadaV23
+
+    # puts("\n____TEST:: CTE_CambiaUs_cambia_suelos")
 
     # create an instance of the measure
     measure = CTE_CambiaUs.new
@@ -408,54 +425,52 @@ class CTE_CambiaUs_Test < MiniTest::Test
     surface, construction, u = get_surface(model, "24252951-3545-42e5-a381-db75ffc3c395")
     u_inicial_terreno = u
 
-    puts("" "
-      |||Valores iniciales terreno
-      |||cerramiento, #{surface.name}
-      |||U inicial del suelo terreno #{u_inicial_terreno}
-      " "")
+    # puts("" "
+    #   |||Valores iniciales terreno
+    #   |||cerramiento, #{surface.name}
+    #   |||U inicial del suelo terreno #{u_inicial_terreno}
+    #   " "")
 
-    surface, construction, u = get_surface(model, "24252951-3545-42e5-a381-db75ffc3c395")
-    u_inicial_exterior = u
-
-    puts("" "
-      |||Valores iniciales exterior
-      |||cerramiento, #{surface.name}
-      |||U inicial del suelo exterior #{u_inicial_exterior}
-      " "")
+    surface, construction, u_inicial_exterior = get_surface(model, "24252951-3545-42e5-a381-db75ffc3c395")
+    
+    # puts("" "
+    #   |||Valores iniciales exterior
+    #   |||cerramiento, #{surface.name}
+    #   |||U inicial del suelo exterior #{u_inicial_exterior}
+    #   " "")    
 
     salida = measure.run(model, runner, argument_map)
     assert(salida, "algo falló")
 
-    surface, construction, u = get_surface(model, "21f60244-fb64-4abe-abc3-464182337e27")
-    u_final_terreno = u
+    surface, construction, u_final_terreno = get_surface(model, "21f60244-fb64-4abe-abc3-464182337e27")
 
-    puts("" "
-      |||Valores finales
-      |||cerramiento, #{surface.name}
-      |||U inicial del suelo terreno #{u_final_terreno}
-      " "")
+    # puts("" "
+    #   |||Valores finales
+    #   |||cerramiento, #{surface.name}
+    #   |||U inicial del suelo terreno #{u_final_terreno}
+    #   " "")
 
-    surface, construction, u = get_surface(model, "24252951-3545-42e5-a381-db75ffc3c395")
-    u_final_exterior = u
+    surface, construction, u_final_exterior = get_surface(model, "24252951-3545-42e5-a381-db75ffc3c395")
 
-    puts("" "
-      |||Valores finales exterior
-      |||cerramiento, #{surface.name}
-      |||U inicial del suelo exterior #{u_final_exterior}
-      " "")
+    # puts("" "
+    #   |||Valores finales exterior
+    #   |||cerramiento, #{surface.name}
+    #   |||U inicial del suelo exterior #{u_final_exterior}
+    #   " "")
 
-    puts("U inicial y final terreno #{u_inicial_terreno}, #{u_final_terreno}")
-    puts("U inicial y final exterior #{u_inicial_exterior}, #{u_final_exterior}")
+    # puts("U inicial y final terreno #{u_inicial_terreno}, #{u_final_terreno}")
+    # puts("U inicial y final exterior #{u_inicial_exterior}, #{u_final_exterior}")
+    # puts("__________ fin del test ________\n")
+
     # se le añade la capa de suelo args_hash["CTE_U_suelos"]
     assert_in_delta(u_terreno, u_final_terreno, 0.001)
     assert_in_delta(u_exterior, u_final_exterior, 0.001)
-
-    puts("__________ fin del test ________\n")
   end
 
   def _test_CTE_CambiaUs_cambia_huecos
-    puts("\n------------------------------------------")
-    puts("____TEST:: CTE_CambiaUs_cambia_huecos_____")
+
+    # puts("\n------------------------------------------")
+    # puts("____TEST:: CTE_CambiaUs_cambia_huecos_____")
 
     # create an instance of the measure
     measure = CTE_CambiaUs.new
@@ -483,50 +498,38 @@ class CTE_CambiaUs_Test < MiniTest::Test
       argument_map[arg.name] = temp_arg_var
     end
 
-    puts('-----------------------------------')
     uuid = "9971a391-9f3d-4035-b8c5-b6d182b46e33"
     handle = OpenStudio.toUUID(uuid)
     objeto = model.getModelObject(handle)
     # puts(objeto)
     surface = objeto.get.to_SubSurface
     surface = surface.get
-    puts(surface)
     construction = surface.construction.get
     u = construction.uFactor().to_f
-    puts(u)
-    puts('-----------------------------------')
-    
-    
 
     salida = measure.run(model, runner, argument_map)
     assert(salida, "algo falló")
 
-    puts('-----------------------------------')
     uuid = "9971a391-9f3d-4035-b8c5-b6d182b46e33"
     handle = OpenStudio.toUUID(uuid)
     objeto = model.getModelObject(handle)
-    puts(objeto)
     surface = objeto.get.to_SubSurface
     surface = surface.get
-    puts(surface)
     construction = surface.construction.get
     u = construction.uFactor().to_f
-    puts(u)
-    puts('-----------------------------------')
-    
 
     surface, construction, u_final = get_surface(model, "9971a391-9f3d-4035-b8c5-b6d182b46e33")
-
 
     # puts("U inicial y final #{u_inicial}, #{u_final}")
     # se le añade la capa de suelo args_hash["CTE_U_suelos"]
     assert_in_delta(u_huecos, u_final, 0.001)
 
-    puts("__________ fin del test ________\n")
+    # puts("__________ fin del test ________\n")
+
   end
 
   def test_CTE_CambiaUs_extenso
-    puts("\n____TEST:: CTE_CambiaUs_cambia_suelos")
+    # puts("\n____TEST:: CTE_CambiaUs_cambia_suelos")
 
     # create an instance of the measure
     measure = CTE_CambiaUs.new
@@ -591,20 +594,10 @@ class CTE_CambiaUs_Test < MiniTest::Test
     #     puts(" __ no cumple para #{atrib["tipo"]}, #{atrib["u_final"]}, #{transmitancias[atrib["tipo"]]}, #{uuid}")
     #   end
     # end
-
     elementos.each do |uuid, atrib|
       assert_in_delta(atrib["u_final"], transmitancias[atrib["tipo"]], 0.01, message = "#{uuid}")
     end
-
-    # elementos.each do |uuid, atrib|
-    #   singleton_class.instance_eval do
-    #     # puts("#{atrib['tipo']}, uuid #{uuid}")
-    #     define_method("test_#{uuid}") do
-    #       assert_in_delta(atrib["u_final"], transmitancias[atrib["tipo"]], 0.01, message = "#{uuid}")
-    #     end
-    #   end
-    # end
-
-    puts("__________ fin del test ________\n")
+    
+    # puts("__________ fin del test ________\n")
   end
 end

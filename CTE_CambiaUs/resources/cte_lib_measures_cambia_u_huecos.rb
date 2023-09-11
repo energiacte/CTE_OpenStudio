@@ -10,7 +10,7 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
     return true
   end
 
-  puts("__Se ha seleccionado un valor de U_huecos de #{u_huecos} -> R=#{1 / u_huecos}.")
+  # puts("__Se ha seleccionado un valor de U_huecos de #{u_huecos} -> R=#{1 / u_huecos}.")
 
   # ! __01__ si queremos poner valores de seguridad irían aquí
 

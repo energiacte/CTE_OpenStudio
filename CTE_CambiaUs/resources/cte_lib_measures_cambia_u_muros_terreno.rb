@@ -16,7 +16,7 @@ def cte_cambia_u_muros_terreno(model, runner, user_arguments)
   end
 
   u_opacos = u_muros
-  puts("__ Se ha seleccionado un valor de U_muros de #{u_muros} -> R=#{1 / u_muros}.")
+  # puts("__ Se ha seleccionado un valor de U_muros de #{u_muros} -> R=#{1 / u_muros}.")
 
   # !  __02__ crea un array de muros en contacto con el terreno y busca un rango de construcciones en el rango de transmitancias.
   # create an array of ground walls and find range of starting construction R-value (not just insulation layer)
@@ -40,7 +40,7 @@ def cte_cambia_u_muros_terreno(model, runner, user_arguments)
         exterior_surface_constructions << ext_wall_const.to_Construction.get
       end
       exterior_surface_construction_names << ext_wall_const.name.to_s
-      puts("  __nombre #{surface.name.to_s}, construccion#{ext_wall_const.name.to_s}, U= #{ext_wall_const.thermalConductance.to_f}")
+      # puts("  __nombre #{surface.name.to_s}, construccion#{ext_wall_const.name.to_s}, U= #{ext_wall_const.thermalConductance.to_f}")
     end
   end
 
@@ -71,7 +71,7 @@ def cte_cambia_u_muros_terreno(model, runner, user_arguments)
 
   #! 04_ recorre las construcciones para editar su contenido
   exterior_surface_constructions.each do |exterior_surface_construction|
-    puts("___(Construccion, U) ->  (#{exterior_surface_construction.name},#{exterior_surface_construction.thermalConductance.to_f})___")
+    # puts("___(Construccion, U) ->  (#{exterior_surface_construction.name},#{exterior_surface_construction.thermalConductance.to_f})___")
     # runner.registerInfo("nombre de la construcción #{exterior_surface_construction.name}")
     construction_layers = exterior_surface_construction.layers
     max_thermal_resistance_material = ""
@@ -101,7 +101,7 @@ def cte_cambia_u_muros_terreno(model, runner, user_arguments)
       # thermal_conductivity_values = mass_materials.map { |material| material["mat"].to_OpaqueMaterial.get.thermalConductivity.to_f }
       # max_mat_hash = mass_materials.select { |material| material["mat"].to_OpaqueMaterial.get.thermalConductivity.to_f <= thermal_conductivity_values.min }[0]
     end
-    puts("__ se ha tomado como material aislante -->  #{max_mat_hash["name"]}__")
+    # puts("__ se ha tomado como material aislante -->  #{max_mat_hash["name"]}__")
 
     # ! 04 calcula la resistencia del muro sin la capa aislante
     materiales = exterior_surface_construction.layers

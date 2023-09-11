@@ -16,7 +16,7 @@ def cte_cambia_u_muros(model, runner, user_arguments)
   end
 
   u_opacos = u_muros
-  puts("__ Se ha seleccionado un valor de U_muros de #{u_muros} -> R=#{1 / u_muros}.")
+  # puts("__ Se ha seleccionado un valor de U_muros de #{u_muros} -> R=#{1 / u_muros}.")
 
   # !  __02__ crea un array de muros exteriores y busca un rango de construcciones en el rango de transmitancias.
   # create an array of exterior walls and find range of starting construction R-value (not just insulation layer)
@@ -103,7 +103,7 @@ def cte_cambia_u_muros(model, runner, user_arguments)
       # thermal_conductivity_values = mass_materials.map { |material| material["mat"].to_OpaqueMaterial.get.thermalConductivity.to_f }
       # max_mat_hash = mass_materials.select { |material| material["mat"].to_OpaqueMaterial.get.thermalConductivity.to_f <= thermal_conductivity_values.min }[0]
     end
-    puts("__ se ha tomado como material aislante -->  #{max_mat_hash["name"]}__")
+    # puts("__ se ha tomado como material aislante -->  #{max_mat_hash["name"]}__")
 
     # ! 04 calcula la resistencia del muro sin la capa aislante
     materiales = exterior_surface_construction.layers
