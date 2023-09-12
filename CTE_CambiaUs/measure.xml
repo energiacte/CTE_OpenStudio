@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <measure>
   <schema_version>3.0</schema_version>
-  <name>cte_model</name>
+  <name>cte_cambia_us</name>
   <uid>9761ad0d-76b4-4394-822b-e231e15435d6</uid>
-  <version_id>50895849-2689-488d-89ce-6fcd3c815813</version_id>
-  <version_modified>20230822T151859Z</version_modified>
+  <version_id>d2b43952-d1dc-45fa-8820-b426b43091f7</version_id>
+  <version_modified>20230912T202746Z</version_modified>
   <xml_checksum>7C017197</xml_checksum>
-  <class_name>CTE_Model</class_name>
+  <class_name>CTE_CambiaUs</class_name>
   <display_name>CTE Cambia Us</display_name>
   <description>Modifica los valores de las transmitancias por tipo de elemento.</description>
   <modeler_description>Busca los objetos referidos y modifica su transmitancia.</modeler_description>
@@ -18,7 +18,7 @@
       <units>W/m2·K</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>10</default_value>
+      <default_value>0</default_value>
     </argument>
     <argument>
       <name>CTE_U_cubiertas</name>
@@ -27,16 +27,25 @@
       <units>W/m2·K</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>10</default_value>
+      <default_value>0</default_value>
     </argument>
     <argument>
       <name>CTE_U_suelos</name>
-      <display_name>U de cubiertas</display_name>
+      <display_name>U de suelos</display_name>
       <type>Double</type>
       <units>W/m2·K</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>10</default_value>
+      <default_value>0</default_value>
+    </argument>
+    <argument>
+      <name>CTE_U_huecos</name>
+      <display_name>U de huecos</display_name>
+      <type>Double</type>
+      <units>W/m2·K</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0</default_value>
     </argument>
   </arguments>
   <outputs />
@@ -80,32 +89,75 @@
       <checksum>73186073</checksum>
     </file>
     <file>
-      <filename>CTE_CambiaUs_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>480B3CD8</checksum>
-    </file>
-    <file>
       <filename>LICENSE-LGPL-2.1.txt</filename>
       <filetype>txt</filetype>
       <usage_type>resource</usage_type>
       <checksum>5622583E</checksum>
     </file>
     <file>
+      <filename>CTE_CambiaUs_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>D9B89BD6</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>3.5.1</identifier>
+        <min_compatible>3.5.1</min_compatible>
       </version>
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>3D6C7143</checksum>
+      <checksum>0C14E0DD</checksum>
     </file>
     <file>
       <filename>README.md</filename>
       <filetype>md</filetype>
       <usage_type>readme</usage_type>
-      <checksum>50CEE1E5</checksum>
+      <checksum>7FFE9883</checksum>
+    </file>
+    <file>
+      <filename>N_R01_unif_adosadaV23.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>94A971E0</checksum>
+    </file>
+    <file>
+      <filename>cte_lib_measures_cambia_u_suelos_terreno.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>52659DC3</checksum>
+    </file>
+    <file>
+      <filename>cte_lib_measures_cambia_u_muros_terreno.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>678AC980</checksum>
+    </file>
+    <file>
+      <filename>cte_lib_measures_cambia_u_muros.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>185E0C9C</checksum>
+    </file>
+    <file>
+      <filename>cte_lib_measures_cambia_u_cubiertas.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>018F59D0</checksum>
+    </file>
+    <file>
+      <filename>cte_lib_measures_cambia_u_huecos.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>EA885A9A</checksum>
+    </file>
+    <file>
+      <filename>cte_lib_measures_cambia_u_suelos_exterior.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>9D824A60</checksum>
     </file>
   </files>
 </measure>
