@@ -3,7 +3,7 @@ def cte_cambia_u_opacos(model, runner, user_arguments)
 
   # toma el valor de la medida
   u_opacos = runner.getDoubleArgumentValue("CTE_U_opacos", user_arguments)
-  puts("__Se ha seleccionado un valor de U_opacos de #{u_opacos} -> R=#{1 / u_opacos}.")
+  # puts("__Se ha seleccionado un valor de U_opacos de #{u_opacos} -> R=#{1 / u_opacos}.")
 
   # ! __01__ verifica que el valor de entrada está dentro de un rango
   min_expected_u_value = 0.1 # si units
@@ -68,7 +68,7 @@ def cte_cambia_u_opacos(model, runner, user_arguments)
   " ""
 
   exterior_surface_constructions.each do |exterior_surface_construction|
-    puts("___(Construccion, U) ->  (#{exterior_surface_construction.name},#{exterior_surface_construction.thermalConductance.to_f})___")    
+    # puts("___(Construccion, U) ->  (#{exterior_surface_construction.name},#{exterior_surface_construction.thermalConductance.to_f})___")    
     runner.registerInfo("nombre de la construcción #{exterior_surface_construction.name}")    
     construction_layers = exterior_surface_construction.layers
     max_thermal_resistance_material = ""
@@ -97,7 +97,7 @@ def cte_cambia_u_opacos(model, runner, user_arguments)
       thermal_conductivity_values = mass_materials.map { |material| material["mat"].to_OpaqueMaterial.get.thermalConductivity.to_f }
       max_mat_hash = mass_materials.select { |material| material["mat"].to_OpaqueMaterial.get.thermalConductivity.to_f <= thermal_conductivity_values.min }[0]
     end
-    puts("__ se ha tomado como material aislante -->  #{max_mat_hash["name"]}__")
+    # puts("__ se ha tomado como material aislante -->  #{max_mat_hash["name"]}__")
     # puts(max_mat_hash)
 
     # ! 04 calcula la resistencia del muro sin la capa aislante

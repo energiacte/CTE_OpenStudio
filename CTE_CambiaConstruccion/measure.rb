@@ -81,6 +81,7 @@ class CTE_CambiaConstruccion < OpenStudio::Measure::ModelMeasure
   #define what happens when the measure is run
   def run(model, runner, user_arguments)
     super(model, runner, user_arguments)
+    puts("CTE_Cambia_construccion")
 
     #use the built-in error checking
     if not runner.validateUserArguments(arguments(model), user_arguments)
@@ -242,6 +243,8 @@ class CTE_CambiaConstruccion < OpenStudio::Measure::ModelMeasure
     model.building.get.setComment(argumentos.to_json)
 
     return true
+    puts("fin CTE_Cambia_construccion")
+
   end #end the run method
 
 end #end the measure

@@ -10,7 +10,7 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
     return true
   end
 
-  puts("__Se ha seleccionado un valor de U_huecos de #{u_huecos} -> R=#{1 / u_huecos}.")
+  # puts("__Se ha seleccionado un valor de U_huecos de #{u_huecos} -> R=#{1 / u_huecos}.")
 
   # ! __01__ si queremos poner valores de seguridad irían aquí
 
@@ -35,7 +35,7 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
             window_construction_names << window_construction.name.to_s
           end
 
-          puts("__subsurface Type #{subsur.subSurfaceType()} -> #{subsur.construction.get.name}, #{subsur.uFactor()}")
+          # puts("__subsurface Type #{subsur.subSurfaceType()} -> #{subsur.construction.get.name}, #{subsur.uFactor()}")
           if !tipos_cubiertos.include?(subsur.subSurfaceType().to_s)
             puts("Tipo de hueco no cubierto por esta medida #{subsur.subSurfaceType().to_s}")
           end
@@ -258,20 +258,20 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
   #   end
   # end
 
-  spaces.each do |space|
-    space.surfaces.each do |surface|
-      if surface.outsideBoundaryCondition == "Outdoors" and surface.windExposure == "WindExposed"
-        surface.subSurfaces.each do |subsur|
-          # puts("__subsurface Type #{subsur.subSurfaceType()} -> #{subsur.construction.get.name}")
-          begin
-            puts("   #{subsur.windowPropertyFrameAndDivider.get.name}")
-          rescue
-            puts("   no tiene marco ")
-          end
-        end
-      end
-    end
-  end
+  # spaces.each do |space|
+  #   space.surfaces.each do |surface|
+  #     if surface.outsideBoundaryCondition == "Outdoors" and surface.windExposure == "WindExposed"
+  #       surface.subSurfaces.each do |subsur|
+  #         # puts("__subsurface Type #{subsur.subSurfaceType()} -> #{subsur.construction.get.name}")
+  #         # begin
+  #         #   puts("   #{subsur.windowPropertyFrameAndDivider.get.name}")
+  #         # rescue
+  #         #   puts("   no tiene marco ")
+  #         # end
+  #       end
+  #     end
+  #   end
+  # end
 
   spaces = model.getSpaces
   spaces.each do |space|
@@ -279,7 +279,7 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
       if surface.outsideBoundaryCondition == "Outdoors" and surface.windExposure == "WindExposed"
         surface.subSurfaces.each do |subsur|
           windows << subsur # también las puertas y esas cosas
-          puts("__subsurface Type #{subsur.subSurfaceType()} -> #{subsur.construction.get.name}, #{subsur.uFactor()}")
+          # puts("__subsurface Type #{subsur.subSurfaceType()} -> #{subsur.construction.get.name}, #{subsur.uFactor()}")
           if !tipos_cubiertos.include?(subsur.subSurfaceType().to_s)
             puts("Tipo de hueco no cubierto por esta medida #{subsur.subSurfaceType().to_s}")
           end
