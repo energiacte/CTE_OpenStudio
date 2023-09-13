@@ -9,8 +9,9 @@ def cte_cambia_u_cubiertas(model, runner, user_arguments)
   # toma el valor de la medida
   u_cubiertas = runner.getDoubleArgumentValue("CTE_U_cubiertas", user_arguments)
 
-  if u_cubiertas == 0
-    # puts('  No se cambia el valor de cubiertas (U = 0) __')
+  if u_cubiertas.to_f < 0.001
+    
+    puts('  No se cambia el valor de cubiertas (U = 0) __')
     runner.registerFinalCondition("No se desea cambiar la transmitancia de las cubiertas.")
     return true
   end

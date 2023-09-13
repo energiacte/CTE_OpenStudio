@@ -9,8 +9,8 @@ def cte_cambia_u_muros(model, runner, user_arguments)
   # toma el valor de la medida
   u_muros = runner.getDoubleArgumentValue("CTE_U_muros", user_arguments)
 
-  if u_muros == 0
-    # puts('  No se cambia el valor de muros (U = 0)')
+  if u_muros.to_f < 0.001
+    puts('  No se cambia el valor de muros (U = 0)')
     runner.registerFinalCondition("No se desea cambiar la transmitancia de los muros.")
     return true
   end

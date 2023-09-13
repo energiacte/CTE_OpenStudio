@@ -9,8 +9,8 @@ def cte_cambia_u_suelos_exteriores(model, runner, user_arguments)
   # toma el valor de la medida
   u_suelos = runner.getDoubleArgumentValue("CTE_U_suelos", user_arguments)
 
-  if u_suelos == 0
-    # puts(" No se cambia el valor de los suelos (U = 0) __")
+  if u_suelos.to_f < 0.001
+    puts("  No se cambia el valor de los suelos exteriores (U = 0) __")
     runner.registerFinalCondition("No se desea cambiar la transmitancia de los suelos.")
     return true
   end
