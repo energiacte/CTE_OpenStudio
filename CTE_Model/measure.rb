@@ -219,15 +219,15 @@ class CTE_Model < OpenStudio::Measure::ModelMeasure
     end
     model.building.get.setComment(argumentos.to_json)
 
-    puts('cambia las transmitancias de los opacos')
-    runner.registerInfo('Llamada a la actualización de opacos')
-    result = cte_cambia_u_opacos(model, runner, user_arguments)
-    return result unless result == true
+    # puts('cambia las transmitancias de los opacos')
+    # runner.registerInfo('Llamada a la actualización de opacos')
+    # result = cte_cambia_u_opacos(model, runner, user_arguments)
+    # return result unless result == true
 
-    puts('cambia las transmitancias de los huecos')
-    runner.registerInfo('Llamada a la actualización de huecos')
-    result = cte_cambia_u_huecos(model, runner, user_arguments)
-    return result unless result == true
+    # puts('cambia las transmitancias de los huecos')
+    # runner.registerInfo('Llamada a la actualización de huecos')
+    # result = cte_cambia_u_huecos(model, runner, user_arguments)
+    # return result unless result == true
 
     puts('fija clima')
     result = cte_fijaclima(model, runner, user_arguments) # gestiona el archivo de clima
