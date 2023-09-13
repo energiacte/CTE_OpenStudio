@@ -131,9 +131,9 @@ class CTE_CambiaUs_Test < MiniTest::Test
     # create hash of argument values.
     # If the argument has a default that you want to use, you don't need it in the hash
     args_hash = {}
-    args_hash["CTE_U_muros"] = 0
+    args_hash["CTE_U_muros"] = 0.0
     args_hash["CTE_U_cubiertas"] = 0
-    args_hash["CTE_U_suelos"] = 0
+    args_hash["CTE_U_suelos"] = '0'
     args_hash["CTE_U_huecos"] = 0
 
     # populate argument with specified hash value if specified

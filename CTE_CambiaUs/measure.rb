@@ -97,9 +97,11 @@ class CTE_CambiaUs < OpenStudio::Measure::ModelMeasure
     model.building.get.setComment(argumentos.to_json)
 
     # puts("--> (cte_lib u muros)")
+    # if arguments.CTE_U_muros.to_f > 0.01
     runner.registerInfo("Llamada a la actualización de muros")
     result = cte_cambia_u_muros(model, runner, user_arguments)
     return result unless result == true
+    # end
 
     # puts("--> (cte_lib u muros terreno)")
     runner.registerInfo("Llamada a la actualización de muros")
