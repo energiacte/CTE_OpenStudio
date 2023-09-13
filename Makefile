@@ -73,7 +73,20 @@ installdocker:
 	sudo usermod -aG docker `whoami`
 
 test:
-	cd ./CTE_Model/tests/ && ruby e.rb
+	$(info [INFO] Arrancando consola de bash en contenedor de OpenStudio)
+	$(info [INFO] Directorio de medidas de ~/openstudio/Measures conectado a /root/OpenStudio/Measures)
+	$(info [INFO] Puede acceder al directorio de tests de cada medida y ejecutar ruby test.rb)
+	docker run -it \
+	--rm \
+	--net=host \
+	-v ${HOME}/openstudio:/var/simdata/openstudio \
+	-v ${HOME}/repos/CTE_OpenStudio/:/root/OpenStudio/Measures \
+	nrel/openstudio:3.5.1 \
+	bash -c 'cd /root/OpenStudio/Measures/ && make all_tests'
+
+all_tests:
+	cd ./CTE_CambiaUs/tests/ && ruby *.rb
+	cd ./CTE_Model/tests/ && ruby *.rb
 	cd ./CTE_Workspace/tests/ && ruby *.rb
 	cd ./CTE_InformeDBHE/tests/ && ruby *.rb
 	cd ./CTE_EPBDcalc/tests/ && ruby *.rb
