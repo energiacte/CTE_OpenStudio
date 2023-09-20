@@ -78,7 +78,7 @@ def cte_addvars(model, runner, user_arguments)
     ["Zone Combined Outdoor Air Sensible Heat Gain Energy", "monthly", "*"],
     ["Zone Combined Outdoor Air Changes per Hour", "monthly", "*"],
     ["Zone Combined Outdoor Air Fan Electric Energy", "monthly", "*"],
-    ["Zone Ideal Loads Economizer Active Time", "monthly", "*"]
+    ["Zone Ideal Loads Economizer Active Time", "monthly", "*"],
     ["Zone Ideal Loads Heat Recovery Active Time", "monthly", "*"]
   ]
 
