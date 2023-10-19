@@ -141,7 +141,7 @@ def cte_infiltracion(model, runner, user_arguments) #copiado del residencial
     usoEdificio = runner.getStringArgumentValue('CTE_Uso_edificio',
                                                 user_arguments)
     # Superficie bocas admisión, según modelo simplificado en residencial
-    if claseVentana != 'Clase 1' and usoEdificio != 'Residencial'
+    if claseVentana != 'Clase 1' and usoEdificio == 'Residencial'
       # Superficie igual a lo que falta para microventilación
       c_ven = C_HU['Clase 1'] - C_HU[claseVentana]
     else
