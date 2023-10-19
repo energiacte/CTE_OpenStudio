@@ -24,6 +24,19 @@
 # Author(s): Rafael Villar Burke <pachi@ietcc.csic.es>,
 #            Daniel Jiménez González <dani@ietcc.csic.es>
 #            Marta Sorribes Gil <msorribes@ietcc.csic.es>
+#
+# Horarios de infiltración:
+# - espacios no habitables y en habitables no acondicionados: permanente
+# - espacios habitables acondicionados: horario específico
+#
+# Nivel de infiltraciones usando el modelo ELA (Effective Leakage Area):
+# - fugas por opacos + fugas por huecos + (residencial) fugas por aireadores
+#
+# En residencial se considera una infiltración adicional por los aireadores,
+# y consideramos que la podemos aproximar por ventanas en posición de microventilación.
+#
+# DUDA: Esta última superficie:
+# - ¿tiene sentido añadirla o es redundante con la ventilación?
 
 TO4PA ||= 0.11571248 # pow(4/100., 0.67), de 100 a 4 pascales
 C_OP ||= { 'Nuevo'     => 16 * TO4PA,
