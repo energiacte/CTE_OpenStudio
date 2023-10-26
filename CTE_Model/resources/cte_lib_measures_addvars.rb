@@ -57,9 +57,9 @@ def cte_addvars(model, runner, user_arguments)
       end
     else
       meter = OpenStudio::Model::OutputMeter.new(model)
-      meter.setName(new_meter_name)
-      meter.setReportingFrequency(new_reporting_frequency)
-      runner.registerInfo("Adding output meter #{new_meter_name} with reporting frequency #{ new_reporting_frequency } for key #{key}.")
+      meter.setName(meterName)
+      meter.setReportingFrequency(reporting_frequency)
+      runner.registerInfo("Adding output meter #{meterName} with reporting frequency #{ reporting_frequency } for key #{key}.")
     end
   end
 
