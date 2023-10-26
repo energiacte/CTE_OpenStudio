@@ -39,10 +39,10 @@ def cte_addvars(model, runner, user_arguments)
     #["Propane:Facility", "RunPeriod"], # this meter exists in the exampleModel
     ["DistrictHeating:Facility", "RunPeriod"],
     ["DistrictCooling:Facility", "RunPeriod"],
-    ["Fans:Electricity", "monthly", "*"],
-    ["InteriorLights:Electricity", "monthly", "*"],
-    ["Heating:DistrictHeating", "hourly", "*"],
-    ["Cooling:DistrictCooling", "hourly", "*"],
+    ["Fans:Electricity", "Monthly", "*"],
+    ["InteriorLights:Electricity", "Monthly", "*"],
+    ["Heating:DistrictHeating", "Hourly", "*"],
+    ["Cooling:DistrictCooling", "Hourly", "*"],
   ]
 
   existing_meters = Hash[meters.map{ |meter| [meter.name, meter] }.compact]
@@ -67,28 +67,28 @@ def cte_addvars(model, runner, user_arguments)
 
   new_oputput_variables = [
     # Monthly variables
-    ["Site Outdoor Air Drybulb Temperature", "monthly", "*"],
-    ["Surface Inside Face Conduction Heat Transfer Energy", "monthly", "*"],
-    ["Surface Window Heat Gain Energy", "monthly", "*"],
-    ["Surface Window Heat Loss Energy", "monthly", "*"],
-    ["Surface Window Transmitted Solar Radiation Energy", "monthly", "*"],
-    ["Zone Lights Electricity Energy", "monthly", "*"],
-    ["Zone Total Internal Total Heating Energy", "monthly", "*"],
-    ["Zone Ideal Loads Zone Total Heating Energy", "monthly", "*"],
-    ["Zone Ideal Loads Zone Total Cooling Energy", "monthly", "*"],
-    ["Zone Combined Outdoor Air Sensible Heat Loss Energy", "monthly", "*"],
-    ["Zone Combined Outdoor Air Sensible Heat Loss Energy", "daily", "*"],
-    ["Zone Combined Outdoor Air Sensible Heat Gain Energy", "monthly", "*"],
-    ["Zone Combined Outdoor Air Changes per Hour", "monthly", "*"],
-    ["Zone Combined Outdoor Air Fan Electric Energy", "monthly", "*"],
-    ["Zone Ideal Loads Economizer Active Time", "monthly", "*"],
-    ["Zone Ideal Loads Heat Recovery Active Time", "monthly", "*"],
-    ["Zone Ideal Loads Economizer Active Time", "daily", "*"],
-    ["Zone Ideal Loads Heat Recovery Active Time", "daily", "*"],
-    ["Zone Ideal Loads Economizer Active Time", "hourly", "*"],
-    ["Zone Ideal Loads Heat Recovery Active Time", "hourly", "*"],    
-    ["Zone Combined Outdoor Air Changes per Hour", "hourly", "*"],
-    ["Zone Combined Outdoor Air Changes per Hour", "daily", "*"]
+    ["Site Outdoor Air Drybulb Temperature", "Monthly", "*"],
+    ["Surface Inside Face Conduction Heat Transfer Energy", "Monthly", "*"],
+    ["Surface Window Heat Gain Energy", "Monthly", "*"],
+    ["Surface Window Heat Loss Energy", "Monthly", "*"],
+    ["Surface Window Transmitted Solar Radiation Energy", "Monthly", "*"],
+    ["Zone Lights Electricity Energy", "Monthly", "*"],
+    ["Zone Total Internal Total Heating Energy", "Monthly", "*"],
+    ["Zone Ideal Loads Zone Total Heating Energy", "Monthly", "*"],
+    ["Zone Ideal Loads Zone Total Cooling Energy", "Monthly", "*"],
+    ["Zone Combined Outdoor Air Sensible Heat Loss Energy", "Monthly", "*"],
+    ["Zone Combined Outdoor Air Sensible Heat Loss Energy", "Daily", "*"],
+    ["Zone Combined Outdoor Air Sensible Heat Gain Energy", "Monthly", "*"],
+    ["Zone Combined Outdoor Air Changes per Hour", "Monthly", "*"],
+    ["Zone Combined Outdoor Air Fan Electric Energy", "Monthly", "*"],
+    ["Zone Ideal Loads Economizer Active Time", "Monthly", "*"],
+    ["Zone Ideal Loads Heat Recovery Active Time", "Monthly", "*"],
+    ["Zone Ideal Loads Economizer Active Time", "Daily", "*"],
+    ["Zone Ideal Loads Heat Recovery Active Time", "Daily", "*"],
+    ["Zone Ideal Loads Economizer Active Time", "Hourly", "*"],
+    ["Zone Ideal Loads Heat Recovery Active Time", "Hourly", "*"],    
+    ["Zone Combined Outdoor Air Changes per Hour", "Hourly", "*"],
+    ["Zone Combined Outdoor Air Changes per Hour", "Daily", "*"]
   ]
 
   new_oputput_variables.each do | variable_name, reporting_frequency, key |
