@@ -69,7 +69,7 @@ def cte_addvars(model, runner, user_arguments)
     ["Surface Window Heat Gain Energy", "monthly", "*"],
     ["Surface Window Heat Loss Energy", "monthly", "*"],
     ["Surface Window Transmitted Solar Radiation Energy", "monthly", "*"],
-    ["Zone Lights Electric Energy", "monthly", "*"],
+    ["Zone Lights Electricity Energy", "monthly", "*"],
     ["Zone Total Internal Total Heating Energy", "monthly", "*"],
     ["Zone Ideal Loads Zone Total Heating Energy", "monthly", "*"],
     ["Zone Ideal Loads Zone Total Cooling Energy", "monthly", "*"],
@@ -98,13 +98,14 @@ def cte_addvars(model, runner, user_arguments)
 
   # Get final condition ================================================
 
-  new_output_meteres = [
+  new_output_meters = [
   ["Fans:Electricity", "monthly", "*"],
+  ["InteriorLights:Electricity", "monthly", "*"],
   ["Heating:DistrictHeating", "hourly", "*"],
   ["Cooling:DistrictCooling", "hourly", "*"],
   ]
 
-  new_output_meteres.each do | meterName, reporting_frequency, key |
+  new_output_meters.each do | meterName, reporting_frequency, key |
     outputMeter = OpenStudio::Model::OutputMeter.new(model)
     #~ outputMeter.setCumulative(true)
     outputMeter.setName(meterName)
