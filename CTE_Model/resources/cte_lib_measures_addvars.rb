@@ -48,7 +48,6 @@ def cte_addvars(model, runner, user_arguments)
   existing_meters = Hash[meters.map{ |meter| [meter.name, meter] }.compact]
 
   new_meters.each do | meterName, reporting_frequency, key |
-    meterName, reporting_frequency = new_meter
     if existing_meters.has_key?(meterName)
       runner.registerInfo("Meter #{meterName} already in meters")
       meter = existing_meters[meterName]
