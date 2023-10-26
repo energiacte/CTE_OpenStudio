@@ -36,27 +36,31 @@ def cte_addvars(model, runner, user_arguments)
   # Add CTE meters ==================================================
 
   new_meters = [
+    #["Propane:Facility", "RunPeriod"], # this meter exists in the exampleModel
     ["DistrictHeating:Facility", "RunPeriod"],
     ["DistrictCooling:Facility", "RunPeriod"],
-    #["Propane:Facility", "RunPeriod"] # this meter exists in the exampleModel
+    ["Fans:Electricity", "monthly", "*"],
+    ["InteriorLights:Electricity", "monthly", "*"],
+    ["Heating:DistrictHeating", "hourly", "*"],
+    ["Cooling:DistrictCooling", "hourly", "*"],
   ]
 
   existing_meters = Hash[meters.map{ |meter| [meter.name, meter] }.compact]
 
-  new_meters.each do | new_meter |
-    new_meter_name, new_reporting_frequency = new_meter
-    if existing_meters.has_key?(new_meter_name)
-      runner.registerInfo("Meter #{new_meter_name} already in meters")
-      meter = existing_meters[new_meter_name]
-      if not meter.reportingFrequency == new_reporting_frequency
-        meter.setReportingFrequency(new_reporting_frequency)
-        runner.registerInfo("Changing meter #{new_meter_name} reporting frequency to #{new_reporting_frequency}.")
+  new_meters.each do | meterName, reporting_frequency, key |
+    meterName, reporting_frequency = new_meter
+    if existing_meters.has_key?(meterName)
+      runner.registerInfo("Meter #{meterName} already in meters")
+      meter = existing_meters[meterName]
+      if not meter.reportingFrequency == reporting_frequency
+        meter.setReportingFrequency(reporting_frequency)
+        runner.registerInfo("Changing meter #{meterName} reporting frequency to #{reporting_frequency}.")
       end
     else
       meter = OpenStudio::Model::OutputMeter.new(model)
       meter.setName(new_meter_name)
       meter.setReportingFrequency(new_reporting_frequency)
-      runner.registerInfo("Adding meter for #{new_meter_name} reporting #{ new_reporting_frequency }")
+      runner.registerInfo("Adding output meter #{new_meter_name} with reporting frequency #{ new_reporting_frequency } for key #{key}.")
     end
   end
 
@@ -97,21 +101,6 @@ def cte_addvars(model, runner, user_arguments)
 
 
   # Get final condition ================================================
-
-  new_output_meters = [
-  ["Fans:Electricity", "monthly", "*"],
-  ["InteriorLights:Electricity", "monthly", "*"],
-  ["Heating:DistrictHeating", "hourly", "*"],
-  ["Cooling:DistrictCooling", "hourly", "*"],
-  ]
-
-  new_output_meters.each do | meterName, reporting_frequency, key |
-    outputMeter = OpenStudio::Model::OutputMeter.new(model)
-    #~ outputMeter.setCumulative(true)
-    outputMeter.setName(meterName)
-    outputMeter.setReportingFrequency(reporting_frequency)
-    runner.registerInfo("Adding output meter #{meterName} with reporting frequency #{reporting_frequency} for key #{key}.")
-  end
 
   meters = model.getOutputMeters
   output_variables = model.getOutputVariables
