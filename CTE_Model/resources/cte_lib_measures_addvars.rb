@@ -88,7 +88,9 @@ def cte_addvars(model, runner, user_arguments)
     ["Zone Ideal Loads Economizer Active Time", "Hourly", "*"],
     ["Zone Ideal Loads Heat Recovery Active Time", "Hourly", "*"],    
     ["Zone Combined Outdoor Air Changes per Hour", "Hourly", "*"],
-    ["Zone Combined Outdoor Air Changes per Hour", "Daily", "*"]
+    ["Zone Combined Outdoor Air Changes per Hour", "Daily", "*"],
+    ["Zone Ventilation Air Change Rate", "monthly", "*"],
+    ["Zone Mechanical Ventilation Air Changes per Hour", "hourly", "*"]    
   ]
 
   new_oputput_variables.each do | variable_name, reporting_frequency, key |
