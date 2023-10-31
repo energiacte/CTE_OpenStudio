@@ -87,6 +87,12 @@ class CTE_Workspace < OpenStudio::Ruleset::WorkspaceUserScript
     result = cte_horarioestacional(runner, workspace)
     return result unless result == true
 
+    # Añade report con detalles de vértices en superficies
+    # SELECT * FROM TabularDataWithStrings WHERE ReportName = 'InitializationSummary' AND TableName = 'HeatTransfer Surface'
+    # https://bigladdersoftware.com/epx/docs/23-2/input-output-reference/input-for-output.html#outputsurfaceslist
+    sf_list = workspace.addObject(OpenStudio::IdfObject.new("Output:SurfaceList".to_IddObjectType))
+    sf_list.setString(0, "DetailsWithVertices")
+
     return true
     puts("fin CTE_Workspace")
   end
