@@ -25,7 +25,7 @@ def cte_cambia_u_opacos(model, runner, user_arguments)
   ext_wall_transsmitance = []
   model.getSurfaces.each do |surface|
     # Excluimos las superficies de PTs
-    if (surface.name.to_s.include?("_PT"))
+    if (surface.name.to_s.include?("PT_") || surface.name.to_s.include?("_PT"))
       next
     end
 

@@ -23,10 +23,10 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
   spaces.each do |space|
     space.surfaces.each do |surface|
       # Excluimos las superficies de PTs
-      if (surface.name.to_s.include?("_PT"))
+      if (surface.name.to_s.include?("PT_") || surface.name.to_s.include?("_PT"))
         next
       end
-      
+
       if surface.outsideBoundaryCondition == "Outdoors" and surface.windExposure == "WindExposed"
         surface.subSurfaces.each do |subsur|
           windows << subsur # también las puertas y esas cosas

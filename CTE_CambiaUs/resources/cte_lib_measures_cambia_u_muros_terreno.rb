@@ -26,7 +26,7 @@ def cte_cambia_u_muros_terreno(model, runner, user_arguments)
   exterior_surface_construction_names = []
   model.getSurfaces.each do |surface|
     # Excluimos las superficies de PTs
-    if (surface.name.to_s.include?("_PT"))
+    if (surface.name.to_s.include?("PT_") || surface.name.to_s.include?("_PT"))
       next
     end
 
