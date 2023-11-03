@@ -276,23 +276,6 @@ def cte_cambia_u_suelos_exteriores(model, runner, user_arguments)
     end
   end
 
-  # exterior_surface_construction_names = []
-  # surfaces.each do |surface|
-  #   if (surface.outsideBoundaryCondition == "Outdoors") && (surface.surfaceType == "Floor")
-  #     puts("nombre de la superficie #{surface.name}")
-  #     exterior_surfaces << surface
-  #     ext_ground_floor_const = surface.construction.get # algunas surfaces no tienen construcción.
-
-  #     # añade la construcción únicamente si no lo ha hecho antes
-  #     if !exterior_surface_construction_names.include?(ext_ground_floor_const.name.to_s)
-  #       exterior_surface_constructions << ext_ground_floor_const.to_Construction.get
-  #       puts("... construcciones modificadas añadidas #{ext_ground_floor_const.to_Construction.get.name}")
-  #     end
-  #     exterior_surface_construction_names << ext_ground_floor_const.name.to_s
-  #     puts("--- transmitancia suelos terreno: #{ext_ground_floor_const.thermalConductance.to_f}")
-  #   end
-  # end
-
   # activa este comentario para verficar que se produce el cambio
   # exterior_surfaces.each do |exterior_surface_construction|
   #   puts("___  #{exterior_surface_construction.name} U=#{exterior_surface_construction.thermalConductance.to_f} ___")
