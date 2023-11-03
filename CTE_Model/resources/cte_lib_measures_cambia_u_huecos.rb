@@ -5,8 +5,8 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
   u_huecos = runner.getDoubleArgumentValue("CTE_U_huecos", user_arguments)
 
   if u_huecos == 0
-    puts("  No se cambia el valor de huecos (U = 0) __")
-    runner.registerFinalCondition("No se desea cambiar la transmitancia de los huecos.")
+    # puts("  No se cambia el valor de huecos (U = 0) __")
+    runner.registerFinalCondition("No se cambia la transmitancia de los huecos (U=0)")
     return true
   end
 
@@ -43,11 +43,6 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
       end
     end
   end
-
-  # ! track
-  # windows.each do |surface|
-  #   puts(surface.name)
-  # end
 
   if windows.empty?
     runner.registerAsNotApplicable("El modelo no tiene ventanas.")
@@ -249,29 +244,6 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
     name = frame.name.to_s
     frame.setName("Frame forzado a #{u_huecos}")
   end
-
-  # if tiene_marco
-  #   window_frameanddivider = subsur.windowPropertyFrameAndDivider.get
-  #   if !window_frameanddivider_names.include?(window_frameanddivider.name.to_s)
-  #     window_frameanddividers << window_frameanddivider.to_WindowPropertyFrameAndDivider.get
-  #     window_frameanddivider_names << window_frameanddivider.name.to_s
-  #   end
-  # end
-
-  # spaces.each do |space|
-  #   space.surfaces.each do |surface|
-  #     if surface.outsideBoundaryCondition == "Outdoors" and surface.windExposure == "WindExposed"
-  #       surface.subSurfaces.each do |subsur|
-  #         # puts("__subsurface Type #{subsur.subSurfaceType()} -> #{subsur.construction.get.name}")
-  #         # begin
-  #         #   puts("   #{subsur.windowPropertyFrameAndDivider.get.name}")
-  #         # rescue
-  #         #   puts("   no tiene marco ")
-  #         # end
-  #       end
-  #     end
-  #   end
-  # end
 
   spaces = model.getSpaces
   spaces.each do |space|

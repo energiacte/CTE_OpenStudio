@@ -50,7 +50,6 @@ class CTE_CambiaUs < OpenStudio::Measure::ModelMeasure
   end
 
   def arguments(model)
-    puts('llamada argumentos')
     args = OpenStudio::Measure::OSArgumentVector.new
 
     u_muros = OpenStudio::Measure::OSArgument::makeDoubleArgument("CTE_U_muros", true)
@@ -81,7 +80,6 @@ class CTE_CambiaUs < OpenStudio::Measure::ModelMeasure
 
   def run(model, runner, user_arguments)
     super(model, runner, user_arguments)
-    puts("Medida -> CTE_Cambia Us")
     runner.registerInitialCondition("CTE: Cambiando las transmitancias de los elementos CTE_CambiaUs.")
 
     # use the built-in error checking

@@ -86,18 +86,15 @@ def cte_cambia_u_suelos_exteriores(model, runner, user_arguments)
     no_mass_materials = materials_in_construction.select { |mat| mat["nomass"] == true }
     mass_materials = materials_in_construction.select { |mat| mat["nomass"] == false }
 
-    if !no_mass_materials.empty? #Entra si hay algún material en no_mass_material -> hay una cámara de aire o capa aislante
+    # Si hay algún material en no_mass_material -> hay una cámara de aire o capa aislante
+    if !no_mass_materials.empty?
       # puts("hay materias aislantes o cámara de aire: sin masa")
       thermal_resistance_values = no_mass_materials.map { |mat| mat["r_value"] } # crea un nuevo array con los valores R mapeando el de materiales
       max_mat_hash = no_mass_materials.select { |mat| mat["r_value"] >= thermal_resistance_values.max }[0] # se queda con el que tiene más resistencia
     else
-      puts("La composición del cerramiento no tiene una capa susceptible de modificar su resistencia -> #{exterior_surface_construction.name}")
+      # puts("La composición del cerramiento no tiene una capa susceptible de modificar su resistencia -> #{exterior_surface_construction.name}")
       runner.registerError("La composición del cerramiento no tiene una capa susceptible de modificar su resistencia (#{exterior_surface_construction.name}")
       return false
-
-      # puts("no hay materias aislantes: sin masa")
-      # thermal_conductivity_values = mass_materials.map { |material| material["mat"].to_OpaqueMaterial.get.thermalConductivity.to_f }
-      # max_mat_hash = mass_materials.select { |material| material["mat"].to_OpaqueMaterial.get.thermalConductivity.to_f <= thermal_conductivity_values.min }[0]
     end
     # puts(" _se ha tomado como material aislante -->  #{max_mat_hash["name"]}__ ")
 
@@ -130,7 +127,7 @@ def cte_cambia_u_suelos_exteriores(model, runner, user_arguments)
     # puts("max_thermal_resistance -> #{max_thermal_resistance}__")
 
     if resistencia_capa <= 0
-      puts("#{exterior_surface_construction.name} sin aislante tiene una resistencia superior a la que se pide")
+      # puts("#{exterior_surface_construction.name} sin aislante tiene una resistencia superior a la que se pide")
       runner.registerInfo("La U que se pide para los suelos es mayor que la que tienen las capas sin contar el aislamiento. No se modifica")
     else
       # clone the construction

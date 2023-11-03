@@ -29,7 +29,7 @@ def cte_cambia_u_muros_terreno(model, runner, user_arguments)
     if (surface.name.to_s.include?("_PT"))
       next
     end
-    
+
     if (surface.outsideBoundaryCondition == "Ground") && (surface.surfaceType == "Wall")
       exterior_surfaces << surface
       
@@ -84,7 +84,7 @@ def cte_cambia_u_muros_terreno(model, runner, user_arguments)
       thermal_resistance_values = no_mass_materials.map { |mat| mat["r_value"] } # crea un nuevo array con los valores R mapeando el de materiales
       max_mat_hash = no_mass_materials.select { |mat| mat["r_value"] >= thermal_resistance_values.max }[0] # se queda con el que tiene más resistencia
     else
-      puts("La composición del cerramiento no tiene una capa susceptible de modificar su resistencia -> #{exterior_surface_construction.name}")
+      # puts("La composición del cerramiento no tiene una capa susceptible de modificar su resistencia -> #{exterior_surface_construction.name}")
       runner.registerError("La composición del cerramiento no tiene una capa susceptible de modificar su resistencia (#{exterior_surface_construction.name}")
       return false
 
@@ -121,7 +121,7 @@ def cte_cambia_u_muros_terreno(model, runner, user_arguments)
     # puts("max_thermal_resistance -> #{max_thermal_resistance}__")
 
     if resistencia_capa <= 0
-      puts("#{exterior_surface_construction.name} sin aislante tiene una resistencia superior a la que se pide")
+      # puts("#{exterior_surface_construction.name} sin aislante tiene una resistencia superior a la que se pide")
       runner.registerInfo("La U que se pide para los opacos mayor que la que tienen las capas sin contar el aislamiento. No se modifica")
     else
       # clone the construction

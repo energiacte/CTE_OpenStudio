@@ -1,11 +1,9 @@
 def cte_cambia_u_huecos(model, runner, user_arguments)
   runner.registerInfo("CTE: Cambiando la U de huecos")
 
-  # toma el valor de la medida
   u_huecos = runner.getDoubleArgumentValue("CTE_U_huecos", user_arguments)
 
   if u_huecos.to_f < 0.001
-    puts("  No se cambia el valor de huecos (U = 0) __")
     runner.registerFinalCondition("No se desea cambiar la transmitancia de los huecos.")
     return true
   end
@@ -61,7 +59,6 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
   final_frame_array = []
 
   # loop through all constructions and materials used on exterior walls, edit and clone
-  # window_constructions.each { |construccion| puts(construccion.name) } #construccion =elemento
   window_constructions.each do |window_construction|
     # runner.registerInfo("nombre de la construcción #{window_construction.name}")
     construction_layers = window_construction.layers
@@ -235,28 +232,6 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
     frame.setName("Frame forzado a #{u_huecos}")
   end
 
-  # if tiene_marco
-  #   window_frameanddivider = subsur.windowPropertyFrameAndDivider.get
-  #   if !window_frameanddivider_names.include?(window_frameanddivider.name.to_s)
-  #     window_frameanddividers << window_frameanddivider.to_WindowPropertyFrameAndDivider.get
-  #     window_frameanddivider_names << window_frameanddivider.name.to_s
-  #   end
-  # end
-
-  # spaces.each do |space|
-  #   space.surfaces.each do |surface|
-  #     if surface.outsideBoundaryCondition == "Outdoors" and surface.windExposure == "WindExposed"
-  #       surface.subSurfaces.each do |subsur|
-  #         begin
-  #           puts("   #{subsur.windowPropertyFrameAndDivider.get.name}")
-  #         rescue
-  #           puts("   no tiene marco ")
-  #         end
-  #       end
-  #     end
-  #   end
-  # end
-
   spaces = model.getSpaces
   spaces.each do |space|
     space.surfaces.each do |surface|
@@ -274,4 +249,4 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
 
   runner.registerFinalCondition("Modificadas las transmitancias de los huecos.")
   return true
-end #end the measure
+end

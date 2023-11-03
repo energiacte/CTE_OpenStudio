@@ -54,8 +54,6 @@ class CTE_Workspace < OpenStudio::Ruleset::WorkspaceUserScript
 
   def run(workspace, runner, user_arguments)
     super(workspace, runner, user_arguments)
-    puts("CTE_Workspace")
-
 
     runner.registerInitialCondition("CTE: aplicando medidas de Workspace")
 
@@ -96,7 +94,6 @@ class CTE_Workspace < OpenStudio::Ruleset::WorkspaceUserScript
     sf_list.setString(0, "DetailsWithVertices")
 
     return true
-    puts("fin CTE_Workspace")
   end
 
 end #end the measure
