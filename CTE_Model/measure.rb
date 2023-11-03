@@ -204,7 +204,7 @@ class CTE_Model < OpenStudio::Measure::ModelMeasure
 
   def run(model, runner, user_arguments)
     super(model, runner, user_arguments)
-    puts("\nCTE_Model measure: Aplicando medida de modelo.")
+    puts("\nCTE_Model measure: Aplicando medida de Modelo.")
     runner.registerInitialCondition("CTE: Aplicando medidas de modelo.")
 
     # use the built-in error checking
