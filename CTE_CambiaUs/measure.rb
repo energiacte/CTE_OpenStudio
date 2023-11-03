@@ -96,44 +96,29 @@ class CTE_CambiaUs < OpenStudio::Measure::ModelMeasure
     end
     model.building.get.setComment(argumentos.to_json)
 
-    # puts("--> (cte_lib u muros)")
-    # if arguments.CTE_U_muros.to_f > 0.01
     runner.registerInfo("Llamada a la actualización de muros")
     result = cte_cambia_u_muros(model, runner, user_arguments)
     return result unless result == true
-    # end
 
-    # puts("--> (cte_lib u muros terreno)")
-    runner.registerInfo("Llamada a la actualización de muros")
+    runner.registerInfo("Llamada a la actualización de muros enterrados")
     result = cte_cambia_u_muros_terreno(model, runner, user_arguments)
     return result unless result == true
 
-    # puts("--> (cte_lib) u cubiertas")
     runner.registerInfo("Llamada a la actualización de cubiertas")
     result = cte_cambia_u_cubiertas(model, runner, user_arguments)
     return result unless result == true
 
-    # puts("--> (cte_lib) u suelo terreno")
     runner.registerInfo("Llamada a la actualización de los suelos en contacto con el terreno")
     result = cte_cambia_u_suelos_terreno(model, runner, user_arguments)
     return result unless result == true
 
-    # puts("--> (cte_lib) u suelos exteriores")
-    runner.registerInfo("Llamada a la actualización de los suelos exteriores")
+    runner.registerInfo("Llamada a la actualización de los suelos en contacto con el aire")
     result = cte_cambia_u_suelos_exteriores(model, runner, user_arguments)
     return result unless result == true
 
-    # puts("--> (cte_lib) u huecos")
     runner.registerInfo("Llamada a la actualización de los huecos")
     result = cte_cambia_u_huecos(model, runner, user_arguments)
     return result unless result == true
-
-    # result = cte_addvars(model, runner, user_arguments) # Nuevas variables y meters
-    # return result unless result == true
-
-    # site = model.getSite
-    # weather_file = site.name.get
-    # runner.registerValue("CTE_Weather_file", weather_file)
 
     # Get final condition ================================================
     runner.registerFinalCondition("CTE: Finalizado el cambio de las transmitancias de los elementos.")
