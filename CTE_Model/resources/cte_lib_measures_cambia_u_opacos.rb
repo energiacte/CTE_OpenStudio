@@ -18,13 +18,17 @@ def cte_cambia_u_opacos(model, runner, user_arguments)
   # create an array of exterior walls and find range of starting construction R-value (not just insulation layer)
   # el objeto OS:Surface tiene: handle, name, type, construction name(vacio), space name, condiciones exteriores, vertices
   #                           si la construcción está toma la establecida por defecto
-  surfaces = model.getSurfaces
   exterior_surfaces = []
   exterior_surface_constructions = []
   exterior_surface_construction_names = []
   ext_wall_resistance = []
   ext_wall_transsmitance = []
-  surfaces.each do |surface|
+  model.getSurfaces.each do |surface|
+    # Excluimos las superficies de PTs
+    if (surface.name.to_s.include?("_PT"))
+      next
+    end
+
     if (surface.outsideBoundaryCondition == "Outdoors") && (surface.surfaceType == "Wall")
       # el objeto OS:Construction tiene: Handle, name, surface rendering name y varias layers
       exterior_surfaces << surface
