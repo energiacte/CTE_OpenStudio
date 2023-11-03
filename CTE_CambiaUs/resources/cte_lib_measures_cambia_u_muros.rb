@@ -6,12 +6,10 @@ def cte_cambia_u_muros(model, runner, user_arguments)
   # 4.- cómo reacciona a que los elementos esté definidos en distintos niveles y de distintas maneras
   runner.registerInfo("CTE: Cambiando la U de muros")
 
-  # toma el valor de la medida
   u_muros = runner.getDoubleArgumentValue("CTE_U_muros", user_arguments)
 
   if u_muros.to_f < 0.001
-    puts('  No se cambia el valor de muros (U = 0)')
-    runner.registerFinalCondition("No se desea cambiar la transmitancia de los muros.")
+    runner.registerFinalCondition("No se cambia la transmitancia de los muros (U=0)")
     return true
   end
 
@@ -26,10 +24,11 @@ def cte_cambia_u_muros(model, runner, user_arguments)
   exterior_surfaces = []
   exterior_surface_constructions = []
   exterior_surface_construction_names = []
-  # ext_wall_resistance = []
-  # ext_wall_transsmitance = []
-  surfaces = model.getSurfaces
-  surfaces.each do |surface|
+  model.getSurfaces.each do |surface|
+    # Excluimos las superficies de PTs
+    if (surface.name.to_s.include?("_PT"))
+      next
+    end
     if (surface.outsideBoundaryCondition == "Outdoors") && (surface.surfaceType == "Wall")
       # el objeto OS:Construction tiene: Handle, name, surface rendering name y varias layers
       exterior_surfaces << surface

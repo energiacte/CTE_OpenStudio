@@ -6,13 +6,10 @@ def cte_cambia_u_cubiertas(model, runner, user_arguments)
   # 4.- cómo reacciona a que los elementos esté definidos en distintos niveles y de distintas maneras
   runner.registerInfo("CTE: Cambiando la U de cubiertas")
 
-  # toma el valor de la medida
   u_cubiertas = runner.getDoubleArgumentValue("CTE_U_cubiertas", user_arguments)
 
   if u_cubiertas.to_f < 0.001
-    
-    puts('  No se cambia el valor de cubiertas (U = 0) __')
-    runner.registerFinalCondition("No se desea cambiar la transmitancia de las cubiertas.")
+    runner.registerFinalCondition("No se cambia la transmitancia de las cubiertas (U=0)")
     return true
   end
 
@@ -26,23 +23,20 @@ def cte_cambia_u_cubiertas(model, runner, user_arguments)
   exterior_surfaces = []
   exterior_surface_constructions = []
   exterior_surface_construction_names = []
-  # ext_roof_resistance = []
-  # ext_roof_transsmitance = []
-  surfaces = model.getSurfaces
-  surfaces.each do |surface|
+  model.getSurfaces.each do |surface|
+    # Excluimos las superficies de PTs
+    if (surface.name.to_s.include?("_PT"))
+      next
+    end
     if (surface.outsideBoundaryCondition == "Outdoors") && (surface.surfaceType == "RoofCeiling")
-      # el objeto OS:Construction tiene: Handle, name, surface rendering name y varias layers
       exterior_surfaces << surface
-      ext_roof_const = surface.construction.get # algunas surfaces no tienen construcción.
 
-      # añade la construcción únicamente si no lo ha hecho antes
+      ext_roof_const = surface.construction.get # algunas surfaces no tienen construcción.
       if !exterior_surface_construction_names.include?(ext_roof_const.name.to_s)
         exterior_surface_constructions << ext_roof_const.to_Construction.get
       end
       exterior_surface_construction_names << ext_roof_const.name.to_s
       # puts("--- transmitancia cubiertas: #{ext_roof_const.thermalConductance.to_f}")
-      # ext_roof_resistance << 1 / ext_roof_const.thermalConductance.to_f esto no sé para que vale
-      # ext_roof_transsmitance << ext_roof_const.thermalConductance.to_f
     end
   end
 
@@ -52,6 +46,9 @@ def cte_cambia_u_cubiertas(model, runner, user_arguments)
   end
 
   # !  __03__ recorre todas las construcciones y materiales usados en los muros exterios, los edita y los clona
+  # La casuística para decidir como se procede a cambiar la transmitancia de cubierta es:
+  # 1.- si hay una capa de material sin masa (aislamiento o cámara de aire) se modifica su r lo necesario
+  # 2.- si NO hay una capa de material sin masa se lanza un error y se interrumpe la ejecución.
 
   # construye los hashes para hacer un seguimiento y evitar duplicados
   constructions_hash_old_new = {}
@@ -59,19 +56,6 @@ def cte_cambia_u_cubiertas(model, runner, user_arguments)
   materials_hash = {}
   # array and counter for new constructions that are made, used for reporting final condition
   final_constructions_array = []
-
-  # loop through all constructions and materials used on exterior roofs, edit and clone
-  # puts("__Itera por ")
-  # exterior_surface_constructions.each { |elemento| puts(elemento.name) }
-  # puts("___")
-
-  "" "
-  La casuística para decidir como se procede a cambiar la transmitancia de cubierta es:
-  1.- si hay una capa de material sin masa (aislamiento o cámara de aire) se modifica su r lo necesario
-  2.- si NO hay una capa de material sin masa se lanza un error y se interrumpe la ejecución.
-  " ""
-
-  #! 04_ recorre las construcciones para editar su contenido
   exterior_surface_constructions.each do |exterior_surface_construction|
     # puts("___ Construccion __ #{exterior_surface_construction.name} U= #{exterior_surface_construction.thermalConductance.to_f})")
     # runner.registerInfo("nombre de la construcción #{exterior_surface_construction.name}")
@@ -283,4 +267,4 @@ def cte_cambia_u_cubiertas(model, runner, user_arguments)
 
   runner.registerFinalCondition("The existing insulation for exterior roof ceiling was set.")
   return true
-end #end the measure
+end

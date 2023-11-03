@@ -6,12 +6,10 @@ def cte_cambia_u_suelos_terreno(model, runner, user_arguments)
   # 4.- cómo reacciona a que los elementos esté definidos en distintos niveles y de distintas maneras
   runner.registerInfo("CTE: Cambiando la U los suelos")
 
-  # toma el valor de la medida
   u_suelos = runner.getDoubleArgumentValue("CTE_U_suelos", user_arguments)
 
   if u_suelos.to_f < 0.001
-    puts("  No se cambia el valor de los suelos en contacto con el terreno(U = 0) __")
-    runner.registerFinalCondition("No se desea cambiar la transmitancia de los suelos.")
+    runner.registerFinalCondition("No se cambia la transmitancia de los suelos con el terreno (U=0)")
     return true
   end
 
@@ -25,10 +23,11 @@ def cte_cambia_u_suelos_terreno(model, runner, user_arguments)
   exterior_surfaces = []
   exterior_surface_constructions = []
   exterior_surface_construction_names = []
-  surfaces = model.getSurfaces
-
-  #outSideBoundaryConditions ['Ground', 'Outdoors'] # ground = {ed02d7a6-7c4b-47a9-a072-0e7bf732a4d6}
-  surfaces.each do |surface|
+  model.getSurfaces.each do |surface|
+    # Excluimos las superficies de PTs
+    if (surface.name.to_s.include?("_PT"))
+      next
+    end
     if (surface.outsideBoundaryCondition == "Ground") && (surface.surfaceType == "Floor")
       # puts("nombre de la superficie #{surface.name}")
       exterior_surfaces << surface
