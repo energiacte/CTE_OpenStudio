@@ -23,7 +23,7 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
   spaces.each do |space|
     space.surfaces.each do |surface|
       # Excluimos las superficies de PTs
-      if (surface.name.to_s.include?("PT_") || surface.name.to_s.include?("_PT"))
+      if (surface.name.to_s.upcase.include?("PT_") || surface.name.to_s.upcase.include?("_PT"))
         next
       end
 
