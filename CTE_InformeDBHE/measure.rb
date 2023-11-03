@@ -61,7 +61,7 @@ class CTE_InformeDBHE < OpenStudio::Ruleset::ReportingUserScript
   end
 
   # define the arguments that the user will input
-  def arguments
+  def arguments(model)
     args = OpenStudio::Ruleset::OSArgumentVector.new
 
     # populate arguments
