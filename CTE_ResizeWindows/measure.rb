@@ -39,6 +39,7 @@ class ResizeExistingWindows < OpenStudio::Ruleset::ModelUserScript
   # define what happens when the measure is run
   def run(model, runner, user_arguments)
     super(model, runner, user_arguments)
+    puts("\nCTE_ResizeWindows measure: Aplicando medida de Modelo.")
 
     # use the built-in error checking
     if !runner.validateUserArguments(arguments(model), user_arguments)

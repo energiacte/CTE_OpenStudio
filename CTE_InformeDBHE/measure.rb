@@ -119,6 +119,8 @@ class CTE_InformeDBHE < OpenStudio::Ruleset::ReportingUserScript
   # define what happens when the measure is run
   def run(runner, user_arguments)
     super(runner, user_arguments)
+    puts("\nCTE_InformeDBHE measure: Aplicando medida de Report.")
+    runner.registerInitialCondition('Recopilando datos de archivo SQL de EnergyPlus y model OSM.')
 
     # get sql, model, and web assets
     setup = CTELib_Reporting.setup(runner)
@@ -135,9 +137,6 @@ class CTE_InformeDBHE < OpenStudio::Ruleset::ReportingUserScript
     unless args
       return false
     end
-
-    # reporting final condition
-    runner.registerInitialCondition('Recopilando datos de archivo SQL de EnergyPlus y model OSM.')
 
     # generate data for requested sections
     # create a array of sections to loop through in erb file

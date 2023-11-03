@@ -81,7 +81,7 @@ class CTE_CambiaConstruccion < OpenStudio::Measure::ModelMeasure
   #define what happens when the measure is run
   def run(model, runner, user_arguments)
     super(model, runner, user_arguments)
-    puts("CTE_Cambia_construccion")
+    puts("\nCTE_Cambia_construccion measure: Aplicando medida de Modelo.")
 
     #use the built-in error checking
     if not runner.validateUserArguments(arguments(model), user_arguments)

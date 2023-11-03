@@ -80,6 +80,7 @@ class CTE_CambiaUs < OpenStudio::Measure::ModelMeasure
 
   def run(model, runner, user_arguments)
     super(model, runner, user_arguments)
+    puts("\nCTE_CambiaUs: Aplicando medida de Modelo.")
     runner.registerInitialCondition("CTE: Cambiando las transmitancias de los elementos CTE_CambiaUs.")
 
     # use the built-in error checking

@@ -54,7 +54,7 @@ class CTE_Workspace < OpenStudio::Ruleset::WorkspaceUserScript
 
   def run(workspace, runner, user_arguments)
     super(workspace, runner, user_arguments)
-
+    puts("\nCTE_Model measure: Aplicando medida de Workspace.")
     runner.registerInitialCondition("CTE: aplicando medidas de Workspace")
 
     # use the built-in error checking

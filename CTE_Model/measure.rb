@@ -204,7 +204,7 @@ class CTE_Model < OpenStudio::Measure::ModelMeasure
 
   def run(model, runner, user_arguments)
     super(model, runner, user_arguments)
-    puts("\nCTE_Model measure: Aplicando medidas de modelo.")
+    puts("\nCTE_Model measure: Aplicando medida de modelo.")
     runner.registerInitialCondition("CTE: Aplicando medidas de modelo.")
 
     # use the built-in error checking
@@ -229,11 +229,9 @@ class CTE_Model < OpenStudio::Measure::ModelMeasure
     # result = cte_cambia_u_huecos(model, runner, user_arguments)
     # return result unless result == true
 
-    puts('fija clima')
     result = cte_fijaclima(model, runner, user_arguments) # gestiona el archivo de clima
     return result unless result == true
 
-    puts("añade variables")
     result = cte_addvars(model, runner, user_arguments) # Nuevas variables y meters
     return result unless result == true
 
@@ -264,7 +262,6 @@ class CTE_Model < OpenStudio::Measure::ModelMeasure
     runner.registerValue("CTE_Weather_file", weather_file)
 
     # Get final condition ================================================
-    puts("\nfin de CTE_Model measure.")
     runner.registerFinalCondition("CTE: Finalizada la aplicación de medidas de modelo.")
 
     return true
