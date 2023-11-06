@@ -217,7 +217,7 @@ end
 def getSpaceBarycenter(space)
   # Devuelve coordenadas del baricentro de la primera superficie de tipo Floor del espacio
   # devuelve el primer Floor que encuentre, independientemente de su OutBoundCond
-  surface = space.surfaces.find { surface.surfaceType == 'Floor' }
+  surface = space.surfaces.find { |s| s.surfaceType == 'Floor' }
 
   baricentro = OpenStudio::Vector3d.new(0, 0, 0)
   cero = OpenStudio::Point3d.new(0, 0, 0)
