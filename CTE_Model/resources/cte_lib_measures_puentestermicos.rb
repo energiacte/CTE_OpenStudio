@@ -189,7 +189,7 @@ def medicionPTContornoHuecos(runner, model)
     long = 0
     space.surfaces.each do |surface|
       surface.subSurfaces.each do |sub_surface|
-        long += getPerimeter(subs_urface) if sub_surface.subSurfaceType.include?('Window')
+        long += getPerimeter(sub_surface) if sub_surface.subSurfaceType.include?('Window')
       end
     end
     salida << [space.name.to_s, long]
