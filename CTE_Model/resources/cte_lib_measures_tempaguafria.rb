@@ -33,28 +33,27 @@ CTE_HORARIOSAGUA = 'CTE_ACS_Temperatura_agua_fria'.freeze
 # Introduce perfiles mensuales de la temperatura de agua de red en funcion de la provincia y corregida con la altitud
 # TODO: Detectar caso en el que no está definida la demanda de ACS (no hay circuito) para evitar el fallo (¿Localizar WaterEquipment?).
 def cte_tempaguafria(model, runner, user_arguments)
-
   runner.registerInfo('CTE: fijando temperatura de agua de red')
 
   localidades_de_referencia = {
-    'A3': ['Cadiz', 0],
-    'A4': ['Almeria', 0],
-    'B3': ['Valencia', 8],
-    'B4': ['Sevilla', 9],
-    'C1': ['Bilbao_Bilbo', 214],
-    'C2': ['Barcelona', 1],
-    'C3': ['Granada', 754],
-    'C4': ['Toledo', 445],
-    'D1': ['Vitoria_Gasteiz', 512],
-    'D2': ['Zamora', 617],
-    'D3': ['Madrid', 589],
-    'E1': ['Burgos', 861]
+    'A3' => ['Cadiz', 0],
+    'A4' => ['Almeria', 0],
+    'B3' => ['Valencia', 8],
+    'B4' => ['Sevilla', 9],
+    'C1' => ['Bilbao_Bilbo', 214],
+    'C2' => ['Barcelona', 1],
+    'C3' => ['Granada', 754],
+    'C4' => ['Toledo', 445],
+    'D1' => ['Vitoria_Gasteiz', 512],
+    'D2' => ['Zamora', 617],
+    'D3' => ['Madrid', 589],
+    'E1' => ['Burgos', 861]
   }
 
   # Lee los valores de las provincias
   temps_agua_file = File.dirname(__FILE__) + '/temperaturas_agua_fria.csv'
   temps_agua_red = {}
-  File.read(temps_agua_file).each_line do |line;csv_line, prov, temps, altref|
+  File.read(temps_agua_file).each_line do |line|
     begin
       next if line.start_with?('#')
 
