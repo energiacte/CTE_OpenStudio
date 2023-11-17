@@ -45,9 +45,9 @@ def cte_addvars(model, runner, user_arguments)
     ["Cooling:DistrictCooling", "Hourly", "*"],
   ]
 
-  existing_meters = Hash[meters.map{ |meter| [meter.name, meter] }.compact]
+  existing_meters = Hash[meters.map { |meter| [meter.name, meter] }.compact]
 
-  new_meters.each do | meterName, reporting_frequency, key |
+  new_meters.each do |meterName, reporting_frequency, key|
     if existing_meters.has_key?(meterName)
       runner.registerInfo("Meter #{meterName} already in meters")
       meter = existing_meters[meterName]
@@ -59,7 +59,7 @@ def cte_addvars(model, runner, user_arguments)
       meter = OpenStudio::Model::OutputMeter.new(model)
       meter.setName(meterName)
       meter.setReportingFrequency(reporting_frequency)
-      runner.registerInfo("Adding output meter #{meterName} with reporting frequency #{ reporting_frequency } for key #{key}.")
+      runner.registerInfo("Adding output meter #{meterName} with reporting frequency #{reporting_frequency} for key #{key}.")
     end
   end
 
@@ -86,20 +86,27 @@ def cte_addvars(model, runner, user_arguments)
     ["Zone Ideal Loads Economizer Active Time", "Daily", "*"],
     ["Zone Ideal Loads Heat Recovery Active Time", "Daily", "*"],
     ["Zone Ideal Loads Economizer Active Time", "Hourly", "*"],
-    ["Zone Ideal Loads Heat Recovery Active Time", "Hourly", "*"],    
     ["Zone Combined Outdoor Air Changes per Hour", "Hourly", "*"],
+    ["Zone Ideal Loads Heat Recovery Active Time", "Hourly", "*"],
     ["Zone Combined Outdoor Air Changes per Hour", "Daily", "*"],
     ["Zone Ventilation Air Change Rate", "monthly", "*"],
-    ["Zone Mechanical Ventilation Air Changes per Hour", "hourly", "*"]    
+    ["Zone Mechanical Ventilation Air Changes per Hour", "hourly", "*"],
+    ["Zone Infiltration Current Density Volume Flow Rate", "Monthly", "*"],
+    ["Zone Infiltration Total Heat Loss Energy", "Monthly", "*"],
+    ["Zone Infiltration Total Heat Gain Energy", "Monthly", "*"],
+    ["Zone Infiltration Air Change Rate", "Monthly", "*"],
+    ["Zone Combined Outdoor Air Total Heat Loss Energy", "Monthly", "*"],
+    ["Zone Combined Outdoor Air Total Heat Loss Energy", "Hourly", "*"],
+    ["Zone Combined Outdoor Air Total Heat Gain Energy", "Monthly", "*"],
+    ["Zone Combined Outdoor Air Total Heat Gain Energy", "Hourly", "*"],
   ]
 
-  new_oputput_variables.each do | variable_name, reporting_frequency, key |
+  new_oputput_variables.each do |variable_name, reporting_frequency, key|
     outputVariable = OpenStudio::Model::OutputVariable.new(variable_name, model)
     outputVariable.setReportingFrequency(reporting_frequency)
     outputVariable.setKeyValue(key)
     runner.registerInfo("Adding output variable #{variable_name} with reporting frequency #{reporting_frequency} for key #{key}.")
   end
-
 
   # Get final condition ================================================
 
