@@ -29,6 +29,7 @@ require_relative '../measure.rb'
 require 'fileutils'
 require 'json'
 
+# https://s3.amazonaws.com/openstudio-sdk-documentation/cpp/OpenStudio-3.6.1-doc/measure/html/classopenstudio_1_1measure_1_1_o_s_argument.html
 def get_attrb(result, nombre)
   names = result.attributes.map { |e| e.name }
   if names.include?(nombre)
@@ -83,7 +84,8 @@ class CTE_Model_Test < MiniTest::Test
     # ela_total = attributes['attributes']['cte_ela_total_espacios']
 
     ela_total = get_attrb(result, 'cte_ela_total_espacios')
-    # puts "ELA_TOTAL: #{ attributes['attributes']['cte_ela_total_espacios'] }"
+    # https://s3.amazonaws.com/openstudio-sdk-documentation/cpp/OpenStudio-3.6.1-doc/measure/html/classopenstudio_1_1measure_1_1_o_s_argument.html
+    # result.attributes.find {|e| e.name == 'cte_ela_total_espacios'}.valueAsDouble
     assert_in_delta(6185.0, ela_total, 0.1)
 
     # save the model to test output directory
