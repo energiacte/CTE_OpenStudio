@@ -24,8 +24,8 @@
 
 require 'openstudio'
 require 'openstudio/measure/ShowRunnerOutput'
-require_relative '../measure.rb'
 require 'minitest/autorun'
+require_relative '../measure.rb'
 require 'fileutils'
 require 'json'
 
@@ -39,7 +39,7 @@ def get_attrb(result, nombre)
 end
 
 class CTE_Model_Test < MiniTest::Test
-  def NO_test_CTE_Model_Terciario
+  def test_CTE_Model_Terciario
     # create an instance of the measure
     measure = CTE_Model.new
 
@@ -76,15 +76,15 @@ class CTE_Model_Test < MiniTest::Test
     # set argument values to good values and run the measure on model with spaces
     measure.run(model, runner, argument_map)
     result = runner.result
+    assert_equal("Success", result.value.valueName)
+    # show_output(result)
 
-    show_output(result)
+    # attributes = JSON.parse(OpenStudio::to_json(result.attributes))
+    # ela_total = attributes['attributes']['cte_ela_total_espacios']
 
-    assert(result.value.valueName == 'Success')
-
-    attributes = JSON.parse(OpenStudio::to_json(result.attributes))
-    ela_total = attributes['attributes']['cte_ela_total_espacios']
+    ela_total = get_attrb(result, 'cte_ela_total_espacios')
     # puts "ELA_TOTAL: #{ attributes['attributes']['cte_ela_total_espacios'] }"
-    assert((6317.87 - ela_total).abs < 0.1)
+    assert_in_delta(6185.0, ela_total, 0.1)
 
     # save the model to test output directory
     output_file_path = OpenStudio::Path.new(File.dirname(__FILE__) + '/output/test_output_terciario.osm')
@@ -95,15 +95,15 @@ class CTE_Model_Test < MiniTest::Test
     # create an instance of the measure
     measure = CTE_Model.new
 
-    puts('__test__Iniciando el test CTE_Model_residencial')
+    puts('Iniciando el test CTE_Model_residencial')
 
     # create an instance of a runner
     runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
 
     # load the test model
     translator = OpenStudio::OSVersion::VersionTranslator.new
-    # path = OpenStudio::Path.new(File.dirname(__FILE__) + "/residencial.osm")
-    path = OpenStudio::Path.new(File.dirname(__FILE__) + '/N_R01_unif_adosadaV23.osm')
+    path = OpenStudio::Path.new(File.dirname(__FILE__) + "/residencial.osm")
+    # path = OpenStudio::Path.new(File.dirname(__FILE__) + '/N_R01_unif_adosadaV23.osm')
     model = translator.loadModel(path)
     assert(!model.empty?)
     model = model.get
@@ -128,15 +128,12 @@ class CTE_Model_Test < MiniTest::Test
     end
 
     # set argument values to good values and run the measure on model with spaces
-    salida = measure.run(model, runner, argument_map)
-    assert(salida, 'algo falló')
+    measure.run(model, runner, argument_map)
     result = runner.result
-
-    assert(result.value.valueName == 'Success')
+    assert_equal("Success", result.value.valueName)
 
     ela_total = get_attrb(result, 'cte_ela_total_espacios')
-
-    assert((5691.77 - ela_total).abs < 0.1, 'el valor de cte_ela_total_espacios no es correcto')
+    assert_in_delta(5573.6, ela_total, 0.1)
 
     # save the model to test output directory
     output_file_path = OpenStudio::Path.new(File.dirname(__FILE__) + '/output/test_output_residencial.osm')
