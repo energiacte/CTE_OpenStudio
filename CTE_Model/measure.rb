@@ -29,7 +29,6 @@ require_relative "resources/cte_lib_measures_tempaguafria"
 require_relative "resources/cte_lib_measures_ventilacion"
 require_relative "resources/cte_lib_measures_infiltracion"
 require_relative "resources/cte_lib_measures_puentestermicos"
-require_relative "resources/cte_lib_measures_fijaclima"
 require_relative "resources/cte_lib_measures_cambia_u_opacos"
 require_relative "resources/cte_lib_measures_cambia_u_huecos"
 
@@ -80,21 +79,6 @@ class CTE_Model < OpenStudio::Measure::ModelMeasure
     tipo.setDisplayName("Edificio nuevo o existente")
     tipo.setDefaultValue("Nuevo")
     args << tipo
-
-    zonas_climaticas_chs = OpenStudio::StringVector.new
-    ["Manual", "A3_peninsula", "A4_peninsula", "B3_peninsula", "B4_peninsula",
-      "C1_peninsula", "C2_peninsula", "C3_peninsula", "C4_peninsula",
-      "D1_peninsula", "D2_peninsula", "D3_peninsula", "E1_peninsula",
-      "alpha1_canarias", "alpha2_canarias", "alpha3_canarias", "alpha4_canarias",
-      "A1_canarias", "A2_canarias", "A3_canarias", "A4_canarias",
-      "B1_canarias", "B2_canarias", "B3_canarias", "B4_canarias",
-      "C1_canarias", "C2_canarias", "C3_canarias",
-      "D1_canarias", "D2_canarias", "D3_canarias", "E1_canarias"].each { |zclima| zonas_climaticas_chs << zclima }
-    zona_climatica = OpenStudio::Measure::OSArgument.makeChoiceArgument("CTE_Zona_climatica", zonas_climaticas_chs, true)
-    zona_climatica.setDisplayName("Zona Climática")
-    zona_climatica.setDescription("Selecciona manual si quieres que la zona climática se tome del fichero climático asociado")
-    zona_climatica.setDefaultValue("Manual")
-    args << zona_climatica
 
     provincias_chs = OpenStudio::StringVector.new
 
@@ -225,9 +209,6 @@ class CTE_Model < OpenStudio::Measure::ModelMeasure
     # runner.registerInfo('Llamada a la actualización de huecos')
     # result = cte_cambia_u_huecos(model, runner, user_arguments)
     # return result unless result == true
-
-    result = cte_fijaclima(model, runner, user_arguments) # gestiona el archivo de clima
-    return result unless result == true
 
     result = cte_addvars(model, runner, user_arguments) # Nuevas variables y meters
     return result unless result == true
