@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
-#
-# Copyright (c) 2016 Ministerio de Fomento
+# Copyright (c) 2016-2023 Ministerio de Fomento
 #                    Instituto de Ciencias de la Construcción Eduardo Torroja (IETcc-CSIC)
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,11 +21,9 @@
 #
 # Author(s): Rafael Villar Burke <pachi@ietcc.csic.es>,
 #            Daniel Jiménez González <dani@ietcc.csic.es>
-#            Marta Sorribes Gil <msorribes@ietcc.csic.es>
 
 HVEN_RES ||= "CTER24B_HVEN"
 HVEN_RESNOC ||= "CTER24B_HVNOC"
-
 
 # Ventilacion Residencial CTE:
 # 1 - Redefine el horario de ventilación con caudal de diseño y ventilación nocturna en verano, CTER24B_HVEN (disponible en plantilla)
@@ -42,14 +38,14 @@ def cte_ventresidencial(model, runner, user_arguments)
   # ------------------------------------------------------------------------------------------------------------------------------------
   # 1 - Redefine el horario de ventilación con caudal de diseño y ventilación nocturna en verano, CTER24B_HVEN (disponible en plantilla)
   # ------------------------------------------------------------------------------------------------------------------------------------
-  design_flow_rate = runner.getDoubleArgumentValue('CTE_Design_flow_rate', user_arguments)
-  heat_recovery = runner.getDoubleArgumentValue('CTE_Heat_recovery', user_arguments)
-  fan_sfp = runner.getDoubleArgumentValue('CTE_Fan_sfp', user_arguments)
-  fan_ntot = runner.getDoubleArgumentValue('CTE_Fan_ntot', user_arguments)
-  usoEdificio = runner.getStringArgumentValue('CTE_Uso_edificio', user_arguments)
+  design_flow_rate = runner.getDoubleArgumentValue("CTE_Design_flow_rate", user_arguments)
+  heat_recovery = runner.getDoubleArgumentValue("CTE_Heat_recovery", user_arguments)
+  fan_sfp = runner.getDoubleArgumentValue("CTE_Fan_sfp", user_arguments)
+  fan_ntot = runner.getDoubleArgumentValue("CTE_Fan_ntot", user_arguments)
+  usoEdificio = runner.getStringArgumentValue("CTE_Uso_edificio", user_arguments)
 
-  #XXX: en terciario los recuperadores deben definirse en los sistemas
-  if usoEdificio != 'Residencial'
+  # XXX: en terciario los recuperadores deben definirse en los sistemas
+  if usoEdificio != "Residencial"
     heat_recovery = 0.0
   end
 
@@ -75,14 +71,14 @@ def cte_ventresidencial(model, runner, user_arguments)
 
   scheduleRulesets = model.getScheduleRulesets
   scheduleRuleRES = scheduleRulesets.detect { |sch| sch.name.get == HVEN_RES }
-  if not scheduleRuleRES.nil?
+  if !scheduleRuleRES.nil?
     scheduleRuleRES.remove
-    runner.registerInfo("* Localizado y eliminado del modelo el horario '#{ HVEN_RES }' de la plantilla")
+    runner.registerInfo("* Localizado y eliminado del modelo el horario '#{HVEN_RES}' de la plantilla")
   end
   scheduleRuleNOC = scheduleRulesets.detect { |sch| sch.name.get == HVEN_RESNOC }
-  if not scheduleRuleNOC.nil?
+  if !scheduleRuleNOC.nil?
     scheduleRuleNOC.remove
-    runner.registerInfo("* Localizado y elimindado del modelo el horario '#{ HVEN_RESNOC }' de la plantilla")
+    runner.registerInfo("* Localizado y elimindado del modelo el horario '#{HVEN_RESNOC}' de la plantilla")
   end
 
   def aplica_horario_a_semana(scheduleRule)
@@ -95,23 +91,23 @@ def cte_ventresidencial(model, runner, user_arguments)
     scheduleRule.setApplySunday(true)
   end
 
-  runner.registerInfo("* Creando horario '#{ HVEN_RES }'")
+  runner.registerInfo("* Creando horario '#{HVEN_RES}'")
   # Reglas para ventilación de diseño
   scheduleRuleRES = OpenStudio::Model::ScheduleRuleset.new(model)
   scheduleRuleRES.setName(HVEN_RES)
   diaDisenoHVEN = OpenStudio::Model::ScheduleDay.new(model)
   diaDisenoHVEN.setName("Dia_tipo_ventilacion_diseNo")
-  time_24h =  OpenStudio::Time.new(0, 24, 0, 0)
+  time_24h = OpenStudio::Time.new(0, 24, 0, 0)
   diaDisenoHVEN.addValue(time_24h, 1.0)
   disenoHVENRule = OpenStudio::Model::ScheduleRule.new(scheduleRuleRES, diaDisenoHVEN)  # aquí añade la regla al horario
   disenoHVENRule.setName("Regla_de_ventilacion_de_diseNo")
   startDate = OpenStudio::Date.new(OpenStudio::MonthOfYear.new(1), 1)
-  endDate = OpenStudio::Date.new(OpenStudio::MonthOfYear.new(12) , 31 )
+  endDate = OpenStudio::Date.new(OpenStudio::MonthOfYear.new(12), 31)
   disenoHVENRule.setStartDate(startDate)
   disenoHVENRule.setEndDate(endDate)
   aplica_horario_a_semana(disenoHVENRule)
 
-  runner.registerInfo("* Creando horario '#{ HVEN_RESNOC }'")
+  runner.registerInfo("* Creando horario '#{HVEN_RESNOC}'")
   # Reglas para ventilación de diseño
   scheduleRuleNOC = OpenStudio::Model::ScheduleRuleset.new(model)
   scheduleRuleNOC.setName(HVEN_RESNOC)
@@ -124,11 +120,11 @@ def cte_ventresidencial(model, runner, user_arguments)
   diaInvierno1Rule.setStartDate(OpenStudio::Date.new(OpenStudio::MonthOfYear.new(1), 1))
   diaInvierno1Rule.setEndDate(OpenStudio::Date.new(OpenStudio::MonthOfYear.new(5), 31))
   aplica_horario_a_semana(diaInvierno1Rule)
-  #diaVerano
+  # diaVerano
   diaVerano = OpenStudio::Model::ScheduleDay.new(model)
   diaVerano.setName("Dia_ventilacion_nocturna_verano")
-  time_8h =  OpenStudio::Time.new(0, 8, 0, 0)
-  time_24h =  OpenStudio::Time.new(0, 24, 0, 0)
+  time_8h = OpenStudio::Time.new(0, 8, 0, 0)
+  time_24h = OpenStudio::Time.new(0, 24, 0, 0)
   diaVerano.addValue(time_8h, 1.0) # 0 - 8h -> 1.0
   diaVerano.addValue(time_24h, 0.0) # 8h - 24h -> 0.0
   veranoRule = OpenStudio::Model::ScheduleRule.new(scheduleRuleNOC, diaVerano)
@@ -136,7 +132,7 @@ def cte_ventresidencial(model, runner, user_arguments)
   veranoRule.setStartDate(OpenStudio::Date.new(OpenStudio::MonthOfYear.new(6), 1))
   veranoRule.setEndDate(OpenStudio::Date.new(OpenStudio::MonthOfYear.new(9), 30))
   aplica_horario_a_semana(veranoRule)
-  #diaInv2
+  # diaInv2
   diaInvierno2 = OpenStudio::Model::ScheduleDay.new(model)
   diaInvierno2.setName("Dia_tipo2_ventilacion_nocturna_invierno")
   diaInvierno2.addValue(OpenStudio::Time.new(0, 24, 0, 0), 0) # 0 -24h -> 0.0
@@ -153,13 +149,13 @@ def cte_ventresidencial(model, runner, user_arguments)
 
   runner.registerInfo("[2/2] Incorporando objetos ZoneVentilation:DesignFlowRate a espacios habitables")
   zones = model.getThermalZones
-  runner.registerInfo("* Localizada(s) #{ zones.count } zona(s) térmica(s)")
+  runner.registerInfo("* Localizada(s) #{zones.count} zona(s) térmica(s)")
   zoneVentilationCounter = 0
   spaceCounter = 0
-  zones.each do | zone |
+  zones.each do |zone|
     zoneName = zone.name.get
     zoneIsIdeal = zone.useIdealAirLoads ? true : false
-    spaces = zone.spaces()
+    spaces = zone.spaces
     spaceCounter += spaces.count
     # XXX: Solamente usamos el primer espacio de la zona? suponemos que solo hay uno? Si hubiese más se duplicarían definiciones
     spaces.each do |space|
@@ -168,20 +164,20 @@ def cte_ventresidencial(model, runner, user_arguments)
       spaceTypeName = spaceType.name.get
       # Las zonas con Ideal Air Loads incorporan un objeto ZoneVentilation:DesignFlowRate si la
       # plantilla define para ese tipo de espacio un objeto 'Design Specification Outdoor Air'
-      if zoneIsIdeal and not spaceType.isDesignSpecificationOutdoorAirDefaulted
-          runner.registerWarning("- El espacio '#{ spaceName }' de la zona '#{ zoneName }' tiene sistemas ideales y un Objeto OutdoorAir en el tipo '#{ spaceTypeName }")
-          next
+      if zoneIsIdeal and !spaceType.isDesignSpecificationOutdoorAirDefaulted
+        runner.registerWarning("- El espacio '#{spaceName}' de la zona '#{zoneName}' tiene sistemas ideales y un Objeto OutdoorAir en el tipo '#{spaceTypeName}")
+        next
       end
       # espacios habitables
-      if spaceTypeName.start_with?('CTE_HR') or spaceTypeName.start_with?('CTE_AR')
+      if spaceTypeName.start_with?("CTE_HR", "CTE_AR")
         zoneVentilationCounter += 2
         zone_ventilation_noc = OpenStudio::Model::ZoneVentilationDesignFlowRate.new(model)
         zone_ventilation_noc.setName("HVNOC_#{spaceName}_Zone Ventilation Design Flow Rate NOCTURNO")
         zone_ventilation_noc.addToThermalZone(zone)
-        zone_ventilation_noc.setVentilationType('Natural')
-        if OpenStudio::VersionString.new(OpenStudio.openStudioVersion) < OpenStudio::VersionString.new('3.5.0')
+        zone_ventilation_noc.setVentilationType("Natural")
+        if OpenStudio::VersionString.new(OpenStudio.openStudioVersion) < OpenStudio::VersionString.new("3.5.0")
           # Design Flow Rate Calculation Method is automatically set in 3.5.0+
-          zone_ventilation_noc.setDesignFlowRateCalculationMethod('AirChanges/Hour')
+          zone_ventilation_noc.setDesignFlowRateCalculationMethod("AirChanges/Hour")
         end
         # Infiltration = (I_design)(F_schedule)[A + B|T_zone-T_out|+C(windspeed)+D(windspeed2)]
         # I_design es el design volume flow rate
@@ -193,15 +189,14 @@ def cte_ventresidencial(model, runner, user_arguments)
         zone_ventilation_noc.setVelocitySquaredTermCoefficient(0)
         zone_ventilation_noc.setMinimumIndoorTemperature(-100)
         zone_ventilation_noc.setDeltaTemperature(-100)
-        
 
         zone_ventilation = OpenStudio::Model::ZoneVentilationDesignFlowRate.new(model)
         zone_ventilation.setName("HVEN_#{spaceName}_Zone Ventilation Design Flow Rate NORMAL")
         zone_ventilation.addToThermalZone(zone)
         zone_ventilation.setVentilationType("Exhaust")
-        if OpenStudio::VersionString.new(OpenStudio.openStudioVersion) < OpenStudio::VersionString.new('3.5.0')
+        if OpenStudio::VersionString.new(OpenStudio.openStudioVersion) < OpenStudio::VersionString.new("3.5.0")
           # Design Flow Rate Calculation Method is automatically set in 3.5.0+
-          zone_ventilation.setDesignFlowRateCalculationMethod('AirChanges/Hour')
+          zone_ventilation.setDesignFlowRateCalculationMethod("AirChanges/Hour")
         end
         zone_ventilation.setAirChangesperHour(q_ven_reduced)
         zone_ventilation.setConstantTermCoefficient(1)
@@ -216,13 +211,11 @@ def cte_ventresidencial(model, runner, user_arguments)
       end
     end
   end
-  runner.registerInfo("* Localizado(s) #{ spaceCounter } espacio(s)")
-  runner.registerInfo("* Creado(s) #{ zoneVentilationCounter } objeto(s) ZoneVentilation:DesignFlowRate. ")
+  runner.registerInfo("* Localizado(s) #{spaceCounter} espacio(s)")
+  runner.registerInfo("* Creado(s) #{zoneVentilationCounter} objeto(s) ZoneVentilation:DesignFlowRate. ")
   runner.registerInfo("CTE: Finalizada definición de condiciones de ventilación de espacios habitables en edificios residenciales.")
-  return true # OS necesita saber que todo acabó bien
-
+  true # OS necesita saber que todo acabó bien
 end # end run
-
 
 # Ventilacion Terciario CTE:
 # 1 - Incorpora objetos ZoneVentilation:DesignFlowRate a zonas habitables
@@ -230,13 +223,13 @@ end # end run
 def cte_ventterciario(model, runner, user_arguments)
   runner.registerInfo("CTE: Definición de condiciones de ventilación de espacios habitables en edificios terciarios.")
 
-  design_flow_rate = runner.getDoubleArgumentValue('CTE_Design_flow_rate', user_arguments)
-  heat_recovery = runner.getDoubleArgumentValue('CTE_Heat_recovery', user_arguments)
-  fan_sfp = runner.getDoubleArgumentValue('CTE_Fan_sfp', user_arguments)
-  fan_ntot = runner.getDoubleArgumentValue('CTE_Fan_ntot', user_arguments)
-  #usoEdificio = runner.getStringArgumentValue('CTE_Uso_edificio', user_arguments)
+  design_flow_rate = runner.getDoubleArgumentValue("CTE_Design_flow_rate", user_arguments)
+  heat_recovery = runner.getDoubleArgumentValue("CTE_Heat_recovery", user_arguments)
+  fan_sfp = runner.getDoubleArgumentValue("CTE_Fan_sfp", user_arguments)
+  fan_ntot = runner.getDoubleArgumentValue("CTE_Fan_ntot", user_arguments)
+  # usoEdificio = runner.getStringArgumentValue('CTE_Uso_edificio', user_arguments)
 
-  #XXX: en terciario los recuperadores deben definirse en los sistemas
+  # XXX: en terciario los recuperadores deben definirse en los sistemas
   # if usoEdificio != 'Residencial'
   #   heat_recovery = 0.0
   # end
@@ -259,13 +252,13 @@ def cte_ventterciario(model, runner, user_arguments)
 
   runner.registerInfo("[1/1] Incorporando objetos ZoneVentilation:DesignFlowRate a espacios habitables en terciario")
   zones = model.getThermalZones
-  runner.registerInfo("* Localizada(s) #{ zones.count } zona(s) térmica(s)")
+  runner.registerInfo("* Localizada(s) #{zones.count} zona(s) térmica(s)")
   zoneVentilationCounter = 0
   spaceCounter = 0
-  zones.each do | zone |
+  zones.each do |zone|
     zoneName = zone.name.get
     zoneIsIdeal = zone.useIdealAirLoads ? true : false
-    spaces = zone.spaces()
+    spaces = zone.spaces
     spaceCounter += spaces.count
     # XXX: Solamente usamos el primer espacio de la zona? suponemos que solo hay uno? Si hubiese más se duplicarían definiciones
     spaces.each do |space|
@@ -274,16 +267,16 @@ def cte_ventterciario(model, runner, user_arguments)
       spaceTypeName = spaceType.name.get
       # Las zonas con Ideal Air Loads incorporan un objeto ZoneVentilation:DesignFlowRate si la
       # plantilla define para ese tipo de espacio un objeto 'Design Specification Outdoor Air'
-      if zoneIsIdeal and not spaceType.isDesignSpecificationOutdoorAirDefaulted
-          runner.registerWarning("- El espacio '#{ spaceName }' de la zona '#{ zoneName }' tiene sistemas ideales y un Objeto OutdoorAir en el tipo '#{ spaceTypeName }")
-          next
+      if zoneIsIdeal and !spaceType.isDesignSpecificationOutdoorAirDefaulted
+        runner.registerWarning("- El espacio '#{spaceName}' de la zona '#{zoneName}' tiene sistemas ideales y un Objeto OutdoorAir en el tipo '#{spaceTypeName}")
+        next
       end
       # Creamos objetos ZoneVentilation para los espacios habitables
       # XXX: Antiguamente también teníamos tipos CTE_HR* y CTE_AR*
-      if spaceTypeName.start_with?('CTE_AR', 'CTE_AT')
+      if spaceTypeName.start_with?("CTE_AR", "CTE_AT")
         zoneVentilationCounter += 1
 
-        #schedtype = OpenStudio::Model::DefaultScheduleType.new('InfiltrationSchedule')
+        # schedtype = OpenStudio::Model::DefaultScheduleType.new('InfiltrationSchedule')
         schedtype = "InfiltrationSchedule".to_DefaultScheduleType
         scheduleINF = space.getDefaultSchedule(schedtype).get
 
@@ -305,9 +298,8 @@ def cte_ventterciario(model, runner, user_arguments)
       end
     end
   end
-  runner.registerInfo("* Localizado(s) #{ spaceCounter } espacio(s)")
-  runner.registerInfo("* Creado(s) #{ zoneVentilationCounter } objeto(s) ZoneVentilation:DesignFlowRate. ")
+  runner.registerInfo("* Localizado(s) #{spaceCounter} espacio(s)")
+  runner.registerInfo("* Creado(s) #{zoneVentilationCounter} objeto(s) ZoneVentilation:DesignFlowRate. ")
   runner.registerInfo("CTE: Finalizada definición de condiciones de ventilación de espacios habitables en edificios terciarios.")
-  return true # OS necesita saber que todo acabó bien
-
+  true # OS necesita saber que todo acabó bien
 end # end run

@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
-#
-# Copyright (c) 2016 Ministerio de Fomento
+# Copyright (c) 2016-2023 Ministerio de Fomento
 #                    Instituto de Ciencias de la Construcción Eduardo Torroja (IETcc-CSIC)
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,11 +21,9 @@
 #
 # Author(s): Rafael Villar Burke <pachi@ietcc.csic.es>,
 #            Daniel Jiménez González <dani@ietcc.csic.es>
-#            Marta Sorribes Gil <msorribes@ietcc.csic.es>
 
 # Inyecta variables y meters para uso con el CTE
 def cte_addvars(model, runner, user_arguments)
-
   # Get initial conditions ==========================================
   meters = model.getOutputMeters
   output_variables = model.getOutputVariables
@@ -36,13 +32,13 @@ def cte_addvars(model, runner, user_arguments)
   # Add CTE meters ==================================================
 
   new_meters = [
-    #["Propane:Facility", "RunPeriod"], # this meter exists in the exampleModel
+    # ["Propane:Facility", "RunPeriod"], # this meter exists in the exampleModel
     ["DistrictHeating:Facility", "RunPeriod"],
     ["DistrictCooling:Facility", "RunPeriod"],
     ["Fans:Electricity", "Monthly", "*"],
     ["InteriorLights:Electricity", "Monthly", "*"],
     ["Heating:DistrictHeating", "Hourly", "*"],
-    ["Cooling:DistrictCooling", "Hourly", "*"],
+    ["Cooling:DistrictCooling", "Hourly", "*"]
   ]
 
   existing_meters = Hash[meters.map { |meter| [meter.name, meter] }.compact]
@@ -51,7 +47,7 @@ def cte_addvars(model, runner, user_arguments)
     if existing_meters.has_key?(meterName)
       runner.registerInfo("Meter #{meterName} already in meters")
       meter = existing_meters[meterName]
-      if not meter.reportingFrequency == reporting_frequency
+      if meter.reportingFrequency != reporting_frequency
         meter.setReportingFrequency(reporting_frequency)
         runner.registerInfo("Changing meter #{meterName} reporting frequency to #{reporting_frequency}.")
       end
@@ -98,7 +94,7 @@ def cte_addvars(model, runner, user_arguments)
     ["Zone Combined Outdoor Air Total Heat Loss Energy", "Monthly", "*"],
     ["Zone Combined Outdoor Air Total Heat Loss Energy", "Hourly", "*"],
     ["Zone Combined Outdoor Air Total Heat Gain Energy", "Monthly", "*"],
-    ["Zone Combined Outdoor Air Total Heat Gain Energy", "Hourly", "*"],
+    ["Zone Combined Outdoor Air Total Heat Gain Energy", "Hourly", "*"]
   ]
 
   new_oputput_variables.each do |variable_name, reporting_frequency, key|
@@ -114,5 +110,5 @@ def cte_addvars(model, runner, user_arguments)
   output_variables = model.getOutputVariables
   runner.registerInfo("CTE_ADDVARS: The model finished with #{meters.size} meter objects and #{output_variables.size} output variables.")
 
-  return true
+  true
 end

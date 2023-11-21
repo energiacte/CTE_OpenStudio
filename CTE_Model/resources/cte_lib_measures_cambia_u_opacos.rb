@@ -1,3 +1,27 @@
+# Copyright (c) 2016-2023 Ministerio de Fomento
+#                    Instituto de Ciencias de la Construcción Eduardo Torroja (IETcc-CSIC)
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+#
+# Author(s): Rafael Villar Burke <pachi@ietcc.csic.es>,
+#            Daniel Jiménez González <dani@ietcc.csic.es>
+
 def cte_cambia_u_opacos(model, runner, user_arguments)
   runner.registerInfo("CTE: Cambiando la U de opacos")
 
@@ -25,7 +49,7 @@ def cte_cambia_u_opacos(model, runner, user_arguments)
   ext_wall_transsmitance = []
   model.getSurfaces.each do |surface|
     # Excluimos las superficies de PTs
-    if (surface.name.to_s.upcase.include?("PT_") || surface.name.to_s.upcase.include?("_PT"))
+    if surface.name.to_s.upcase.include?("PT_") || surface.name.to_s.upcase.include?("_PT")
       next
     end
 
@@ -61,17 +85,17 @@ def cte_cambia_u_opacos(model, runner, user_arguments)
   # array and counter for new constructions that are made, used for reporting final condition
   final_constructions_array = []
   exterior_surface_constructions.each do |exterior_surface_construction|
-    # puts("___(Construccion, U) ->  (#{exterior_surface_construction.name},#{exterior_surface_construction.thermalConductance.to_f})___")    
-    runner.registerInfo("nombre de la construcción #{exterior_surface_construction.name}")    
+    # puts("___(Construccion, U) ->  (#{exterior_surface_construction.name},#{exterior_surface_construction.thermalConductance.to_f})___")
+    runner.registerInfo("nombre de la construcción #{exterior_surface_construction.name}")
     construction_layers = exterior_surface_construction.layers
     max_thermal_resistance_material = ""
     max_thermal_resistance_material_index = ""
     materials_in_construction = construction_layers.map.with_index do |layer, i|
-      { "name" => layer.name.to_s,
-        "index" => i,
-        "nomass" => !layer.to_MasslessOpaqueMaterial.empty?,
-        "r_value" => layer.to_OpaqueMaterial.get.thermalResistance,
-        "mat" => layer }
+      {"name" => layer.name.to_s,
+       "index" => i,
+       "nomass" => !layer.to_MasslessOpaqueMaterial.empty?,
+       "r_value" => layer.to_OpaqueMaterial.get.thermalResistance,
+       "mat" => layer}
     end
 
     no_mass_materials = materials_in_construction.select { |mat| mat["nomass"] == true }
@@ -160,7 +184,7 @@ def cte_cambia_u_opacos(model, runner, user_arguments)
           final_thickness = new_material_matt.get.setThickness(target_thickness)
         end
         new_material_massless = new_material.to_MasslessOpaqueMaterial
-        if !new_material_massless.empty?          
+        if !new_material_massless.empty?
           final_thermal_resistance = new_material_massless.get.setThermalResistance(resistencia_capa)
         end
         new_material_airgap = new_material.to_AirGap
@@ -256,9 +280,9 @@ def cte_cambia_u_opacos(model, runner, user_arguments)
 
   # # activa este comentario para verficar que se produce el cambio
   # exterior_surfaces.each do |exterior_surface_construction|
-  #   puts("___(Construccion, U) ->  (#{exterior_surface_construction.name},#{exterior_surface_construction.thermalConductance.to_f})___")    
+  #   puts("___(Construccion, U) ->  (#{exterior_surface_construction.name},#{exterior_surface_construction.thermalConductance.to_f})___")
   # end
 
   runner.registerFinalCondition("The existing insulation for exterior walls was set.")
-  return true
-end #end the measure
+  true
+end # end the measure

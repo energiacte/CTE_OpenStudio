@@ -1,3 +1,27 @@
+# Copyright (c) 2016-2023 Ministerio de Fomento
+#                    Instituto de Ciencias de la Construcción Eduardo Torroja (IETcc-CSIC)
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+#
+# Author(s): Rafael Villar Burke <pachi@ietcc.csic.es>,
+#            Daniel Jiménez González <dani@ietcc.csic.es>
+
 def cte_cambia_u_huecos(model, runner, user_arguments)
   runner.registerInfo("CTE: Cambiando la U de huecos")
 
@@ -36,8 +60,8 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
           end
 
           # puts("__subsurface Type #{subsur.subSurfaceType()} -> #{subsur.construction.get.name}, #{subsur.uFactor()}")
-          if !tipos_cubiertos.include?(subsur.subSurfaceType().to_s)
-            puts("Tipo de hueco no cubierto por esta medida #{subsur.subSurfaceType().to_s}")
+          if !tipos_cubiertos.include?(subsur.subSurfaceType.to_s)
+            puts("Tipo de hueco no cubierto por esta medida #{subsur.subSurfaceType}")
           end
         end
       end
@@ -70,11 +94,11 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
     max_thermal_resistance_material_index = ""
     # siempre tiene una única capa, pero mantengo el código de la otra medida
     materials_in_construction = construction_layers.map.with_index do |layer, i|
-      { "name" => layer.name.to_s,
-        "index" => i,
-        "nomass" => !layer.to_MasslessOpaqueMaterial.empty?,
-        "r_value" => layer.to_SimpleGlazing.get.uFactor,
-        "mat" => layer }
+      {"name" => layer.name.to_s,
+       "index" => i,
+       "nomass" => !layer.to_MasslessOpaqueMaterial.empty?,
+       "r_value" => layer.to_SimpleGlazing.get.uFactor,
+       "mat" => layer}
     end
 
     if materials_in_construction.length == 1
@@ -83,7 +107,7 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
 
     max_thermal_resistance_material = max_mat_hash["mat"] # objeto OS
     max_thermal_resistance_material_index = max_mat_hash["index"] # indice de la capa
-    max_thermal_resistance = max_thermal_resistance_material.to_SimpleGlazing.get.uFactor()
+    max_thermal_resistance = max_thermal_resistance_material.to_SimpleGlazing.get.uFactor
 
     # ! 04 modifica la composición
     final_construction = window_construction.clone(model)
@@ -223,18 +247,16 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
   window_frameanddivider_names = []
 
   windows.each do |window|
-    begin
-      frame = window.windowPropertyFrameAndDivider.get
-      frame_name = frame.name
-      # puts("__frame_name__ #{frame_name}")
-      if !window_frameanddivider_names.include?(frame.name.to_s)
-        window_frameanddividers << frame
-        window_frameanddivider_names << frame.name.to_s
-      end
-      tiene_marco = true
-    rescue
-      tiene_marco = false
+    frame = window.windowPropertyFrameAndDivider.get
+    frame_name = frame.name
+    # puts("__frame_name__ #{frame_name}")
+    if !window_frameanddivider_names.include?(frame.name.to_s)
+      window_frameanddividers << frame
+      window_frameanddivider_names << frame.name.to_s
     end
+    tiene_marco = true
+  rescue
+    tiene_marco = false
   end
 
   window_frameanddividers.each do |frame|
@@ -252,8 +274,8 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
         surface.subSurfaces.each do |subsur|
           windows << subsur # también las puertas y esas cosas
           # puts("__subsurface Type #{subsur.subSurfaceType()} -> #{subsur.construction.get.name}, #{subsur.uFactor()}")
-          if !tipos_cubiertos.include?(subsur.subSurfaceType().to_s)
-            puts("Tipo de hueco no cubierto por esta medida #{subsur.subSurfaceType().to_s}")
+          if !tipos_cubiertos.include?(subsur.subSurfaceType.to_s)
+            puts("Tipo de hueco no cubierto por esta medida #{subsur.subSurfaceType}")
           end
         end
       end
@@ -261,5 +283,5 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
   end
 
   runner.registerFinalCondition("Modificadas las transmitancias de los huecos.")
-  return true
-end #end the measure
+  true
+end
