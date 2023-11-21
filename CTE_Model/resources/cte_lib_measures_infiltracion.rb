@@ -114,24 +114,18 @@ def cte_infiltracion(model, runner, user_arguments) # copiado del residencial
     # TODO: filtrar superficies NoMass, que son superficies auxiliares
     space.surfaces.each do |surface|
       if surface.outsideBoundaryCondition == "Outdoors" && surface.windExposure == "WindExposed"
-        surf_area = surface.netArea
-        area_opacos += surf_area
-        # runner.registerInfo("- '#{ surface.name }', #{ surface.surfaceType }, #{ surf_area.round(2) }")
+        area_opacos += surface.netArea
         surface.subSurfaces.each do |subsur|
-          sub_surf_area = subsur.grossArea
-          # runner.registerInfo("- '#{subsur.name}', #{ subsur.subSurfaceType }, #{ sub_surf_area.round(2) }")
           if ["FixedWindow", "OperableWindow", "SkyLight"].include?(subsur.subSurfaceType)
-            area_ventanas += sub_surf_area
+            area_ventanas += subsur.grossArea
           elsif ["Door", "GlassDoor", "OverheadDoor"].include?(subsur.subSurfaceType)
-            area_puertas += sub_surf_area
+            area_puertas += subsur.grossArea
           else
             runner.registerWarning("Subsuperficie '#{subsur.name}' con tipo desconocido '#{subsur.subSurfaceType}' en superficie '#{surface.name}' del espacio '#{space.name}'")
           end
         end
       end
     end
-
-    # runner.registerInfo("Infiltraciones: '#{ space.name }' / '#{ horario_infiltracion.name.get }' - ELA [m2]: opacos: #{ area_opacos.round(2) }, huecos #{ area_ventanas.round(2) }, puertas #{ area_puertas.round(2) }\n")
 
     uso_edificio = runner.getStringArgumentValue("CTE_Uso_edificio",
       user_arguments)
