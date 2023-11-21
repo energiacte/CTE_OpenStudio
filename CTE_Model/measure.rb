@@ -66,16 +66,16 @@ class CTE_Model < OpenStudio::Measure::ModelMeasure
     usoedificio_chs = OpenStudio::StringVector.new
     usoedificio_chs << "Residencial"
     usoedificio_chs << "Terciario"
-    usoEdificio = OpenStudio::Measure::OSArgument.makeChoiceArgument("CTE_Uso_edificio", usoedificio_chs, true)
-    usoEdificio.setDisplayName("Uso del edificio")
-    # ~ usoEdificio.setDefaultValue('Residencial')
-    usoEdificio.setDefaultValue("Terciario")
-    args << usoEdificio
+    uso_edificio = OpenStudio::Measure::OSArgument.makeChoiceArgument("CTE_Uso_edificio", usoedificio_chs, true)
+    uso_edificio.setDisplayName("Uso del edificio")
+    # ~ uso_edificio.setDefaultValue('Residencial')
+    uso_edificio.setDefaultValue("Terciario")
+    args << uso_edificio
 
-    tipoEdificio = OpenStudio::StringVector.new
-    tipoEdificio << "Nuevo"
-    tipoEdificio << "Existente"
-    tipo = OpenStudio::Measure::OSArgument.makeChoiceArgument("CTE_Tipo_edificio", tipoEdificio, true)
+    tipo_edificio = OpenStudio::StringVector.new
+    tipo_edificio << "Nuevo"
+    tipo_edificio << "Existente"
+    tipo = OpenStudio::Measure::OSArgument.makeChoiceArgument("CTE_Tipo_edificio", tipo_edificio, true)
     tipo.setDisplayName("Edificio nuevo o existente")
     tipo.setDefaultValue("Nuevo")
     args << tipo
@@ -126,59 +126,59 @@ class CTE_Model < OpenStudio::Measure::ModelMeasure
     fan_ntot.setDefaultValue(0.5)
     args << fan_ntot
 
-    claseVentana = OpenStudio::StringVector.new
-    claseVentana << "Clase 1"
-    claseVentana << "Clase 2"
-    claseVentana << "Clase 3"
-    claseVentana << "Clase 4"
-    permeabilidad = OpenStudio::Measure::OSArgument.makeChoiceArgument("CTE_Permeabilidad_ventanas", claseVentana, true)
+    clase_ventana = OpenStudio::StringVector.new
+    clase_ventana << "Clase 1"
+    clase_ventana << "Clase 2"
+    clase_ventana << "Clase 3"
+    clase_ventana << "Clase 4"
+    permeabilidad = OpenStudio::Measure::OSArgument.makeChoiceArgument("CTE_Permeabilidad_ventanas", clase_ventana, true)
     permeabilidad.setDisplayName("Permeabilidad de la carpintería.")
     permeabilidad.setDefaultValue("Clase 1")
     args << permeabilidad
 
-    factorSombrasMoviles = OpenStudio::Measure::OSArgument.makeDoubleArgument("CTE_F_sombras_moviles", true)
-    factorSombrasMoviles.setDisplayName("Factor de sombras móviles")
-    factorSombrasMoviles.setDefaultValue(0.3)
-    args << factorSombrasMoviles
+    factor_sombras_moviles = OpenStudio::Measure::OSArgument.makeDoubleArgument("CTE_F_sombras_moviles", true)
+    factor_sombras_moviles.setDisplayName("Factor de sombras móviles")
+    factor_sombras_moviles.setDefaultValue(0.3)
+    args << factor_sombras_moviles
 
-    psiForjadoCubierta = OpenStudio::Measure::OSArgument.makeDoubleArgument("CTE_Psi_forjado_cubierta", true)
-    psiForjadoCubierta.setDisplayName("TTL forjado con cubierta")
-    psiForjadoCubierta.setUnits("W/mK")
-    psiForjadoCubierta.setDefaultValue(0.24)
-    args << psiForjadoCubierta
+    psi_forjado_cubierta = OpenStudio::Measure::OSArgument.makeDoubleArgument("CTE_Psi_forjado_cubierta", true)
+    psi_forjado_cubierta.setDisplayName("TTL forjado con cubierta")
+    psi_forjado_cubierta.setUnits("W/mK")
+    psi_forjado_cubierta.setDefaultValue(0.24)
+    args << psi_forjado_cubierta
 
-    psiFrenteForjado = OpenStudio::Measure::OSArgument.makeDoubleArgument("CTE_Psi_frente_forjado", true)
-    psiFrenteForjado.setDisplayName("TTL frente forjado")
-    psiFrenteForjado.setUnits("W/mK")
-    psiFrenteForjado.setDefaultValue(0.1)
-    args << psiFrenteForjado
+    psi_frente_forjado = OpenStudio::Measure::OSArgument.makeDoubleArgument("CTE_Psi_frente_forjado", true)
+    psi_frente_forjado.setDisplayName("TTL frente forjado")
+    psi_frente_forjado.setUnits("W/mK")
+    psi_frente_forjado.setDefaultValue(0.1)
+    args << psi_frente_forjado
 
-    psiSoleraTerreno = OpenStudio::Measure::OSArgument.makeDoubleArgument("CTE_Psi_solera_terreno", true)
-    psiSoleraTerreno.setDisplayName("TTL forjado con solera")
-    psiSoleraTerreno.setUnits("W/mK")
-    psiSoleraTerreno.setDefaultValue(0.28)
-    args << psiSoleraTerreno
+    psi_solera_terreno = OpenStudio::Measure::OSArgument.makeDoubleArgument("CTE_Psi_solera_terreno", true)
+    psi_solera_terreno.setDisplayName("TTL forjado con solera")
+    psi_solera_terreno.setUnits("W/mK")
+    psi_solera_terreno.setDefaultValue(0.28)
+    args << psi_solera_terreno
 
-    psiForjadoExterior = OpenStudio::Measure::OSArgument.makeDoubleArgument("CTE_Psi_forjado_exterior", true)
-    psiForjadoExterior.setDisplayName("TTL forjado con suelo exterior")
-    psiForjadoExterior.setDefaultValue(0.23)
-    args << psiForjadoExterior
+    psi_forjado_exterior = OpenStudio::Measure::OSArgument.makeDoubleArgument("CTE_Psi_forjado_exterior", true)
+    psi_forjado_exterior.setDisplayName("TTL forjado con suelo exterior")
+    psi_forjado_exterior.setDefaultValue(0.23)
+    args << psi_forjado_exterior
 
-    psiContornoHuecos = OpenStudio::Measure::OSArgument.makeDoubleArgument("CTE_Psi_contorno_huecos", true)
-    psiContornoHuecos.setDisplayName("TTL contorno de huecos")
-    psiContornoHuecos.setUnits("W/mK")
-    psiContornoHuecos.setDefaultValue(0.05)
-    args << psiContornoHuecos
+    psi_contorno_huecos = OpenStudio::Measure::OSArgument.makeDoubleArgument("CTE_Psi_contorno_huecos", true)
+    psi_contorno_huecos.setDisplayName("TTL contorno de huecos")
+    psi_contorno_huecos.setUnits("W/mK")
+    psi_contorno_huecos.setDefaultValue(0.05)
+    args << psi_contorno_huecos
 
-    coefStack = OpenStudio::Measure::OSArgument.makeDoubleArgument("CTE_Coef_stack", true)
-    coefStack.setDisplayName("Coeficiente de Stack")
-    coefStack.setDefaultValue(0.00029)
-    args << coefStack
+    coef_stack = OpenStudio::Measure::OSArgument.makeDoubleArgument("CTE_Coef_stack", true)
+    coef_stack.setDisplayName("Coeficiente de Stack")
+    coef_stack.setDefaultValue(0.00029)
+    args << coef_stack
 
-    coefWind = OpenStudio::Measure::OSArgument.makeDoubleArgument("CTE_Coef_wind", true)
-    coefWind.setDisplayName("Coeficiente de Viento")
-    coefWind.setDefaultValue(0.000231)
-    args << coefWind
+    coef_wind = OpenStudio::Measure::OSArgument.makeDoubleArgument("CTE_Coef_wind", true)
+    coef_wind.setDisplayName("Coeficiente de Viento")
+    coef_wind.setDefaultValue(0.000231)
+    args << coef_wind
 
     args
   end
@@ -217,17 +217,14 @@ class CTE_Model < OpenStudio::Measure::ModelMeasure
     result = cte_tempaguafria(model, runner, user_arguments) # temperatura de agua de red
     return result unless result == true
 
-    usoEdificio = runner.getStringArgumentValue("CTE_Uso_edificio",
+    uso_edificio = runner.getStringArgumentValue("CTE_Uso_edificio",
       user_arguments)
 
     # Modelo de ventilación
-    if usoEdificio == "Residencial"
-      result = cte_ventresidencial(model, runner, user_arguments)
-      return result unless result == true
-    else
-      result = cte_ventterciario(model, runner, user_arguments)
-      return result unless result == true
-    end
+    result = (uso_edificio == "Residencial") ?
+      cte_ventresidencial(model, runner, user_arguments) :
+      cte_ventterciario(model, runner, user_arguments)
+    return result unless result == true
 
     result = cte_infiltracion(model, runner, user_arguments)
     return result unless result == true
