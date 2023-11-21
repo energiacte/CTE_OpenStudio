@@ -35,6 +35,10 @@
 # DUDA: Esta última superficie:
 # - ¿tiene sentido añadirla o es redundante con la ventilación?
 
+# Coeficientes para el cálculo de infiltraciones
+CTE_COEF_STACK = 0.00029
+CTE_COEF_WIND = 0.000231
+
 TO4PA ||= 0.11571248 # pow(4/100., 0.67), de 100 a 4 pascales
 C_OP ||= {"Nuevo" => 16 * TO4PA,
           "Existente" => 29 * TO4PA}
@@ -91,8 +95,6 @@ def cte_infiltracion(model, runner, user_arguments) # copiado del residencial
 
   tipoEdificio = runner.getStringArgumentValue("CTE_Tipo_edificio", user_arguments)
   claseVentana = runner.getStringArgumentValue("CTE_Permeabilidad_ventanas", user_arguments)
-  coefStack = runner.getDoubleArgumentValue("CTE_Coef_stack", user_arguments)
-  coefWind = runner.getDoubleArgumentValue("CTE_Coef_wind", user_arguments)
 
   runner.registerValue("CTE Tipo de Edificio (Nuevo/Existente)", tipoEdificio)
   runner.registerValue("CTE Clase de permeabilidad de Ventanas", claseVentana)
@@ -159,8 +161,8 @@ def cte_infiltracion(model, runner, user_arguments) # copiado del residencial
     # E inserta los nuevos
     ela = OpenStudio::Model::SpaceInfiltrationEffectiveLeakageArea.new(model)
     ela.setSpace(space)
-    ela.setStackCoefficient(coefStack)
-    ela.setWindCoefficient(coefWind)
+    ela.setStackCoefficient(CTE_COEF_STACK)
+    ela.setWindCoefficient(CTE_COEF_WIND)
     ela.setSchedule(horarioInfiltracion)
     ela.setEffectiveAirLeakageArea(areaEquivalente)
     ela.setName("CTE_ELA_#{space.name}")

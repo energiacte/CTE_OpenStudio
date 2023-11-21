@@ -170,16 +170,6 @@ class CTE_Model < OpenStudio::Measure::ModelMeasure
     psi_contorno_huecos.setDefaultValue(0.05)
     args << psi_contorno_huecos
 
-    coef_stack = OpenStudio::Measure::OSArgument.makeDoubleArgument("CTE_Coef_stack", true)
-    coef_stack.setDisplayName("Coeficiente de Stack")
-    coef_stack.setDefaultValue(0.00029)
-    args << coef_stack
-
-    coef_wind = OpenStudio::Measure::OSArgument.makeDoubleArgument("CTE_Coef_wind", true)
-    coef_wind.setDisplayName("Coeficiente de Viento")
-    coef_wind.setDefaultValue(0.000231)
-    args << coef_wind
-
     args
   end
 

@@ -410,22 +410,6 @@
       <model_dependent>false</model_dependent>
       <default_value>0.05</default_value>
     </argument>
-    <argument>
-      <name>CTE_Coef_stack</name>
-      <display_name>Coeficiente de Stack</display_name>
-      <type>Double</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0.00029</default_value>
-    </argument>
-    <argument>
-      <name>CTE_Coef_wind</name>
-      <display_name>Coeficiente de Viento</display_name>
-      <type>Double</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0.000231</default_value>
-    </argument>
   </arguments>
   <outputs />
   <provenances />
