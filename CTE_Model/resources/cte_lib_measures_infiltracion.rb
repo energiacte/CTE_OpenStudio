@@ -23,17 +23,17 @@
 #            Daniel Jiménez González <dani@ietcc.csic.es>
 #
 # Horarios de infiltración:
-# - espacios no habitables y en habitables no acondicionados: permanente
+# - espacios no habitables o sin equipos de acondicionamiento: permanente
 # - espacios habitables acondicionados: horario específico
 #
 # Nivel de infiltraciones usando el modelo ELA (Effective Leakage Area):
 # - fugas por opacos + fugas por huecos + (residencial) fugas por aireadores
 #
-# En residencial se considera una infiltración adicional por los aireadores,
+# En residencial se considera una infiltración adicional por los aireadores (50% infiltrando),
 # y consideramos que la podemos aproximar por ventanas en posición de microventilación.
 #
 # DUDA: Esta última superficie:
-# - ¿tiene sentido añadirla o es redundante con la ventilación?
+# - ¿tiene sentido añadirla o es redundante con la ventilación? En terciario no la añadimos
 
 # Coeficientes para el cálculo de infiltraciones - Modelo Sherman-Grimsrud
 # https://bigladdersoftware.com/epx/docs/8-0/engineering-reference/page-048.html
@@ -142,7 +142,8 @@ def cte_infiltracion(model, runner, user_arguments) # copiado del residencial
                              C_HU[clase_ventana] * area_ventanas +
                              C_PU * area_puertas +
                              # microventilación al 50% de apertura
-                             0.50 * c_ven * area_ventanas / (4.0**0.5))
+                             0.50 * c_ven * area_ventanas / (4.0**0.5)
+                          )
 
     area_equivalente = 1.0758287 * 0.50 * q_total # area ELA en cm2 con el 50% del área expuesta
     runner.registerValue("CTE ELA ('#{space.name}')", area_equivalente.round(2), "cm2 a 4Pa")
