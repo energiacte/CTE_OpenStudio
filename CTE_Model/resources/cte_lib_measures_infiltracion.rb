@@ -129,23 +129,38 @@ def cte_infiltracion(model, runner, user_arguments) # copiado del residencial
 
     uso_edificio = runner.getStringArgumentValue("CTE_Uso_edificio",
       user_arguments)
-    # Superficie bocas admisión, según modelo simplificado en residencial
-    c_ven = if clase_ventana != "Clase 1" && uso_edificio == "Residencial"
-      # Superficie igual a lo que falta para microventilación
-      C_HU["Clase 1"] - C_HU[clase_ventana]
+    # En residencial, suponemos que la microventilación (n=0.5 rendija turbulenta)
+    # daría el caudal de los aireadores necesarios, suponiendo que estos equivalen a un
+    # 50% de huecos expuestosa barlovento (con infiltración)
+    #
+    # Sabemos que eso es:
+    #   Q = C·A·delta_p^n
+    #   Q [m³/h] = (C_clase_1 - C_clase_real_huecos) · (0.50 · area_ventanas) · 4^0.5
+    #            = C_air · (0.50 · area_ventanas) · 4^0.5
+    #            = C_air · A_air · 4^0.5
+    #
+    #   C_air · A_air = Q / 4^0.5
+    ca_air = if clase_ventana != "Clase 1" && uso_edificio == "Residencial"
+      (C_HU["Clase 1"] - C_HU[clase_ventana]) * (0.5 * area_ventanas) / (4.0**0.5)
     else
       0.0
     end
 
     # q_total en m3/h a 4 Pa
-    q_total = 4.0**0.67 * (C_OP[tipo_edificio] * area_opacos +
-                             C_HU[clase_ventana] * area_ventanas +
-                             C_PU * area_puertas +
-                             # microventilación al 50% de apertura
-                             0.50 * c_ven * area_ventanas / (4.0**0.5)
-                          )
+    # q_tot = sum(C·A·delta_p^n) para opacos, huecos, puertas y aireadores
+    q_total = (C_OP[tipo_edificio] * area_opacos +
+                  C_HU[clase_ventana] * area_ventanas +
+                  C_PU * area_puertas +
+                  ca_air
+              ) * 4.0**0.67
 
-    area_equivalente = 1.0758287 * 0.50 * q_total # area ELA en cm2 con el 50% del área expuesta
+    # ¿Por qué el 50% expuesto y no el 100%?
+    # 50% de ELA [cm²] = 0.50 · 10000 · Q_tot / 3600 · (dens_air / 2 * P_ref)^0.5 / C_d
+    # Sherman-Grimsrud -> P_ref = 4Pa ; C_d = 1.0
+    # Condiciones estándar al nivel del mar -> dens_air = 1.225 kg/m³
+    # area_equivalente = 0.50 · 3913 / 3600 · q_total
+    # ELA [cm2] con el 50% del área expuesta
+    area_equivalente = 0.50 * 3913 / 3600 * q_total
     runner.registerValue("CTE ELA ('#{space.name}')", area_equivalente.round(2), "cm2 a 4Pa")
 
     # Elimina todos los objetos ELA que pueda haber

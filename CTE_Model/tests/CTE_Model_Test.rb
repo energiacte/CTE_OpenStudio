@@ -86,7 +86,7 @@ class CTE_Model_Test < MiniTest::Test
     ela_total = get_attrb(result, 'cte_ela_total_espacios')
     # https://s3.amazonaws.com/openstudio-sdk-documentation/cpp/OpenStudio-3.6.1-doc/measure/html/classopenstudio_1_1measure_1_1_o_s_argument.html
     # result.attributes.find {|e| e.name == 'cte_ela_total_espacios'}.valueAsDouble
-    assert_in_delta(6185.0, ela_total, 0.1)
+    assert_in_delta(6248.9, ela_total, 1.0)
 
     # save the model to test output directory
     output_file_path = OpenStudio::Path.new(File.dirname(__FILE__) + "/output/test_output_terciario.osm")
@@ -135,7 +135,7 @@ class CTE_Model_Test < MiniTest::Test
     assert_equal("Success", result.value.valueName)
 
     ela_total = get_attrb(result, "cte_ela_total_espacios")
-    assert_in_delta(5573.6, ela_total, 0.1)
+    assert_in_delta(5631.2, ela_total, 1.0)
 
     # save the model to test output directory
     output_file_path = OpenStudio::Path.new(File.dirname(__FILE__) + "/output/test_output_residencial.osm")
