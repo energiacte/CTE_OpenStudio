@@ -79,28 +79,6 @@ class CTE_Model < OpenStudio::Measure::ModelMeasure
     tipo.setDefaultValue("Nuevo")
     args << tipo
 
-    provincias_chs = OpenStudio::StringVector.new
-
-    ["Automatico", "A_Coruna", "Albacete", "Alicante_Alacant", "Almeria", "Avila", "Badajoz", "Barcelona", "Bilbao_Bilbo",
-      "Burgos", "Caceres", "Cadiz", "Castellon_Castello", "Ceuta", "Ciudad_Real", "Cordoba", "Cuenca",
-      "Girona", "Granada", "Guadalajara", "Huelva", "Huesca", "Jaen", "Las_Palmas_de_Gran_Canaria", "Leon",
-      "Lleida", "Logrono", "Lugo", "Madrid", "Malaga", "Melilla", "Murcia", "Ourense", "Oviedo", "Palencia",
-      "Palma_de_Mallorca", "Pamplona_Iruna", "Pontevedra", "Salamanca", "San_Sebastian", "Santa_Cruz_de_Tenerife",
-      "Santander", "Segovia", "Sevilla", "Soria", "Tarragona", "Teruel", "Toledo", "Valencia", "Valladolid",
-      "Vitoria_Gasteiz", "Zamora", "Zaragoza"].each { |prov| provincias_chs << prov }
-
-    provincia = OpenStudio::Measure::OSArgument.makeChoiceArgument("CTE_Provincia", provincias_chs, true)
-    provincia.setDisplayName("Provincia")
-    provincia.setDefaultValue("Automatico")
-
-    args << provincia
-
-    altitud = OpenStudio::Measure::OSArgument.makeDoubleArgument("CTE_Altitud", true)
-    altitud.setDisplayName("Altitud del emplazamiento")
-    altitud.setUnits("metros")
-    altitud.setDefaultValue(650)
-    args << altitud
-
     clase_ventana = OpenStudio::StringVector.new
     clase_ventana << "Clase 1"
     clase_ventana << "Clase 2"

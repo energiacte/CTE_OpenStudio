@@ -27,27 +27,31 @@ require "fileutils"
 
 CTE_HORARIOSAGUA = "CTE_ACS_Temperatura_agua_fria".freeze
 
-# Introduce perfiles mensuales de la temperatura de agua de red en funcion de la provincia y corregida con la altitud
-# TODO: Detectar caso en el que no está definida la demanda de ACS (no hay circuito) para evitar el fallo (¿Localizar WaterEquipment?).
-def cte_tempaguafria(model, runner, user_arguments)
-  runner.registerInfo("CTE: fijando temperatura de agua de red")
+CAPITAL_Y_ALT_REF_FOR_CLIMATEZONE = {
+  "A3" => ["Cadiz", 0],
+  "A4" => ["Almeria", 0],
+  "B3" => ["Valencia", 8],
+  "B4" => ["Sevilla", 9],
+  "C1" => ["Bilbao_Bilbo", 214],
+  "C2" => ["Barcelona", 1],
+  "C3" => ["Granada", 754],
+  "C4" => ["Toledo", 445],
+  "D1" => ["Vitoria_Gasteiz", 512],
+  "D2" => ["Zamora", 617],
+  "D3" => ["Madrid", 589],
+  "E1" => ["Burgos", 861]
+}
 
-  localidades_de_referencia = {
-    "A3" => ["Cadiz", 0],
-    "A4" => ["Almeria", 0],
-    "B3" => ["Valencia", 8],
-    "B4" => ["Sevilla", 9],
-    "C1" => ["Bilbao_Bilbo", 214],
-    "C2" => ["Barcelona", 1],
-    "C3" => ["Granada", 754],
-    "C4" => ["Toledo", 445],
-    "D1" => ["Vitoria_Gasteiz", 512],
-    "D2" => ["Zamora", 617],
-    "D3" => ["Madrid", 589],
-    "E1" => ["Burgos", 861]
-  }
-
-  # Lee los valores de las provincias
+# Mapping de temperaturas de altitud y Tªs de agua fría de referencia por capital de provincia
+# TODO: Pasar a código y eliminar achivo
+# ["A_Coruna", "Albacete", "Alicante_Alacant", "Almeria", "Avila", "Badajoz", "Barcelona", "Bilbao_Bilbo",
+# "Burgos", "Caceres", "Cadiz", "Castellon_Castello", "Ceuta", "Ciudad_Real", "Cordoba", "Cuenca",
+# "Girona", "Granada", "Guadalajara", "Huelva", "Huesca", "Jaen", "Las_Palmas_de_Gran_Canaria", "Leon",
+# "Lleida", "Logrono", "Lugo", "Madrid", "Malaga", "Melilla", "Murcia", "Ourense", "Oviedo", "Palencia",
+# "Palma_de_Mallorca", "Pamplona_Iruna", "Pontevedra", "Salamanca", "San_Sebastian", "Santa_Cruz_de_Tenerife",
+# "Santander", "Segovia", "Sevilla", "Soria", "Tarragona", "Teruel", "Toledo", "Valencia", "Valladolid",
+# "Vitoria_Gasteiz", "Zamora", "Zaragoza"]
+def cte_temps_map(runner)
   temps_agua_file = File.dirname(__FILE__) + "/temperaturas_agua_fria.csv"
   temps_agua_red = {}
   File.read(temps_agua_file).each_line do |line|
@@ -63,45 +67,54 @@ def cte_tempaguafria(model, runner, user_arguments)
     return false
   end
 
-  # Variables
-  provincia = runner.getStringArgumentValue("CTE_Provincia", user_arguments)
-  if provincia != "Automatico"
-    altitud_emplazamiento = runner.getDoubleArgumentValue("CTE_Altitud", user_arguments)
-    if altitud_emplazamiento > 4000
-      runner.registerError("Altitud excesiva del emplazamiento: #{altitud_emplazamiento}")
-      return false
-    end
-  elsif provincia == "Automatico"
-    site = model.getSite
-    weather_file = site.name.get
-    if weather_file.include?("canarias")
-      provincia = "Las_Palmas_de_Gran_Canaria"
-      altitud_emplazamiento = 114.0
-    else
-      zonaclimatica = weather_file[0, 2]
-      provincia, altitud_emplazamiento = localidades_de_referencia[zonaclimatica]
-    end
+  temps_agua_red
+end
+
+# Obtén la capital de provincia y altitud del clima dado
+# TODO: Lo ideal sería leer la provincia y la altitud del archivo de climas
+def get_site_prov_alt(weather_file)
+  if weather_file.include?("canarias")
+    capital_prov = "Las_Palmas_de_Gran_Canaria"
+    altitud_emplazamiento = 114.0
   else
-    runner.registerError("Error al seleccionar la provincia #{provincia}")
-    return false
+    zonaclimatica = weather_file[0, 2]
+    capital_prov, altitud_emplazamiento = CAPITAL_Y_ALT_REF_FOR_CLIMATEZONE[zonaclimatica]
   end
 
-  if temps_agua_red.key?(provincia)
-    altitud_capital, temps_agua_red = temps_agua_red[provincia]
-    runner.registerInfo("Altitud de la provincia: #{altitud_capital}")
+  return capital_prov, altitud_emplazamiento
+end
+
+# Obtén diferencia de altitud con la capital y
+# temperatura de agua de red de la capital para el clima dado
+def get_water_temps(runner, weather_file)
+  capital_prov, altitud_emplazamiento = get_site_prov_alt(weather_file)
+
+  temps_agua_red = cte_temps_map(runner)
+  if temps_agua_red.key?(capital_prov)
+    altitud_capital, temps_agua_red = temps_agua_red[capital_prov]
+    runner.registerValue("Capital de referencia AF", capital_prov)
+    runner.registerInfo("Altitud de la capital de provincia: #{altitud_capital}")
     runner.registerInfo("Temperatura de agua de red: #{temps_agua_red}")
   else
-    runner.registerError("Provincia '#{provincia}' sin datos de temperatura de agua de red")
+    runner.registerError("Capital de provincia '#{capital_prov}' sin datos de temperatura de agua de red")
     return false
   end
 
-  runner.registerValue("CTE_Provincia_AF", provincia)
   diff_altitud = altitud_emplazamiento - altitud_capital
-
   factores_correccion_mensual = [0.0066 * diff_altitud] * 3 + [0.0033 * diff_altitud] * 6 + [0.0066 * diff_altitud] * 3
-  temps_agua_red_corregidas = temps_agua_red.zip(factores_correccion_mensual).map { |x, y| x - y }
-  runner.registerValue("CTE Temperaturas de agua de red", "[" + temps_agua_red_corregidas.join(",") + "]")
 
+  temps_agua_red.zip(factores_correccion_mensual).map { |x, y| x - y }
+end
+
+# Introduce perfiles mensuales de la temperatura de agua de red en funcion de la provincia y corregida con la altitud
+# TODO: Detectar caso en el que no está definida la demanda de ACS (no hay circuito) para evitar el fallo (¿Localizar WaterEquipment?).
+def cte_tempaguafria(model, runner, user_arguments)
+  weather_file = model.getSite.name.get
+  water_temps = get_water_temps(runner, weather_file)
+
+  runner.registerValue("CTE Temperaturas de agua de red", "[" + water_temps.join(",") + "]")
+
+  # TODO: refactorizar con un find
   conjunto_reglas = nil
   model.getScheduleRulesets.each do |schedule_ruleset|
     if schedule_ruleset.name.get == CTE_HORARIOSAGUA
@@ -122,7 +135,7 @@ def cte_tempaguafria(model, runner, user_arguments)
 
       day_sch.setName("dia_" + rule_name)
       day_sch.removeValue(hora)
-      day_sch.addValue(hora, temps_agua_red_corregidas[meses.index(rule_name)].to_f)
+      day_sch.addValue(hora, water_temps[meses.index(rule_name)].to_f)
     end
   end
 
