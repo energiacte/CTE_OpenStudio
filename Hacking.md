@@ -1,5 +1,7 @@
 # Depuración y formateo Ruby en contenedor de OpenStudio con VSCode
 
+## Uso de docker
+
 - Instalar docker y docker-compose
 - Instalar extensión VSCode "Docker"
 - Instalar extensión VSCode "Remote explorer"
@@ -24,7 +26,33 @@
 
 - Activar contenedor con "Compose up" pulsando con botón derecho sobre el archivo anterior
 - Abrir una ventana nueva con una sesión remota en el contenedor en ejecución desde la pestaña de "Remote explorer"
-- Instalar en esa sesión la extensión del depurador de Ruby "VSCode rdbg Ruby Debugger"
+
+## Ruby fuera de la máquina remota docker
+
+- Instala `rbenv` para usar otras versiones de Ruby:
+    - `sudo apt install git curl libssl-dev libreadline-dev zlib1g-dev autoconf bison build-essential libyaml-dev libreadline-dev libncurses5-dev libffi-dev libgdbm-dev`
+    - `curl -fsSL https://github.com/rbenv/rbenv-installer/raw/HEAD/bin/rbenv-installer | bash`
+    - `echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc`
+    - `echo 'eval "$(rbenv init -)"' >> ~/.bashrc`
+    - Activa con `source ~/.bashrc`
+        - Aparecerá una función larga al escribir `type rbenv`
+- Instala una versión de Ruby más reciente con ruby-build:
+    - Ver qué versiones están disponibles con: `rbenv install -l`
+    - Instala `rbenv install 3.2.2`
+    - Establece como global esa versión: `rbenv global 3.2.2`
+    - Comprobamos con `ruby -v`
+- Configura la instalación de gemas para que no generen documentación:
+    - `echo "gem: --no-document" > ~\.gemrc`
+- Instala bundler: `gem install bundler`
+- Consultar dónde se instalan las gemas ahora: `gem env home`
+
+## Ruby dentro del contenedor
+
+- Abrir en la sesión remota una consola (Remote explorer > Adjuntar en nueva ventana)
+- Instalar la gema del depurador y de formateo:
+    - `gem install debug`
+    - `gem install standard`
+- Instalar la extensión del depurador de Ruby "VSCode rdbg Ruby Debugger"
 - Generar una configuración para lanzar sesión de depuración en `.vscode/launch.json`:
 
     ```json
@@ -51,16 +79,17 @@
     }
     ```
 
-- Abrir en la sesión remota una consola e instalar el depurador `gem install debug`
-- Instala "Ruby LSP"
-- ¡Ya se puede depurar en la consola del contenedor!
-  - Marca un punto de parada en el editor
-  - Lanza una ejecución de depuración del script en "Ejecución y depuración"
-- Instala "Standard Ruby" (puede ser necesario reiniciar VSCode al final)
-  - `gem install standard`
+- Instala "Standard Ruby"
   
     ```json
         "[ruby]": {
             "editor.defaultFormatter": "testdouble.vscode-standard-ruby"
         },
     ```
+
+- Instala extensión "Ruby LSP"
+- Reinicia ventana: Ctrl+May+P > Desarrollador: Recargar ventana
+- ¡Ya se puede depurar en la consola del contenedor!
+  - Marca un punto de ruptura en el lateral editor
+  - Lanza una ejecución de depuración del script en "Ejecución y depuración"
+    - una vez que está seleccionado el lanzador por defecto se puede usar F5
