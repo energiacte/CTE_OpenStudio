@@ -297,15 +297,6 @@
       <default_value>650</default_value>
     </argument>
     <argument>
-      <name>CTE_Design_flow_rate</name>
-      <display_name>Caudal de diseno de ventilacion del edificio (residencial)</display_name>
-      <type>Double</type>
-      <units>ren/h</units>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0.63</default_value>
-    </argument>
-    <argument>
       <name>CTE_Heat_recovery</name>
       <display_name>Eficiencia del recuperador de calor</display_name>
       <type>Double</type>

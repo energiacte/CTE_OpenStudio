@@ -26,7 +26,6 @@ require "json"
 
 require_relative "resources/cte_lib_measures_addvars"
 require_relative "resources/cte_lib_measures_tempaguafria"
-require_relative "resources/cte_lib_measures_ventilacion"
 require_relative "resources/cte_lib_measures_infiltracion"
 require_relative "resources/cte_lib_measures_puentestermicos"
 require_relative "resources/cte_lib_measures_cambia_u_opacos"
@@ -101,12 +100,6 @@ class CTE_Model < OpenStudio::Measure::ModelMeasure
     altitud.setUnits("metros")
     altitud.setDefaultValue(650)
     args << altitud
-
-    design_flow_rate = OpenStudio::Measure::OSArgument.makeDoubleArgument("CTE_Design_flow_rate", true)
-    design_flow_rate.setDisplayName("Caudal de diseno de ventilacion del edificio (residencial)")
-    design_flow_rate.setUnits("ren/h")
-    design_flow_rate.setDefaultValue(0.63)
-    args << design_flow_rate
 
     heat_recovery = OpenStudio::Measure::OSArgument.makeDoubleArgument("CTE_Heat_recovery", true)
     heat_recovery.setDisplayName("Eficiencia del recuperador de calor")
@@ -205,15 +198,6 @@ class CTE_Model < OpenStudio::Measure::ModelMeasure
 
     # TODO: comprobar si hay equipo de ACS
     result = cte_tempaguafria(model, runner, user_arguments) # temperatura de agua de red
-    return result unless result == true
-
-    uso_edificio = runner.getStringArgumentValue("CTE_Uso_edificio",
-      user_arguments)
-
-    # Modelo de ventilación
-    result = (uso_edificio == "Residencial") ?
-      cte_ventresidencial(model, runner, user_arguments) :
-      cte_ventterciario(model, runner, user_arguments)
     return result unless result == true
 
     result = cte_infiltracion(model, runner, user_arguments)
