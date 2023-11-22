@@ -43,8 +43,8 @@
   - Comprobamos con `ruby -v`
 - Configura la instalación de gemas para que no generen documentación:
   - `echo "gem: --no-document" > ~\.gemrc`
-- Instala bundler: `gem install bundler`
 - Consultar dónde se instalan las gemas ahora: `gem env home`
+- Instala las mismas gemas y extensiones que dentro del contenedor, que se explican a continuación.
 
 ## Ruby dentro del contenedor
 
@@ -52,6 +52,7 @@
 - Instalar la gema del depurador y de formateo:
   - `echo "gem: --no-document" > ~\.gemrc`
   - `gem install bundler`
+  - `gem install ruby-lsp`
   - `gem install debug`
   - `gem install standard`
 - Instalar la extensión del depurador de Ruby "VSCode rdbg Ruby Debugger"
