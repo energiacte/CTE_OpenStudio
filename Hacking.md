@@ -11,17 +11,17 @@
   # https://code.visualstudio.com/docs/containers/docker-compose
   services:
     dev:
-        container_name: os361_dev
-        image: nrel/openstudio:3.6.1
-        stdin_open: true # docker run -i
-        tty: true # docker run -t
-        volumes:
+      container_name: os361_dev
+      image: nrel/openstudio:3.6.1
+      stdin_open: true # docker run -i
+      tty: true # docker run -t
+      volumes:
         - ./results:/var/simdata/openstudio/results
         - ./resources:/var/simdata/openstudio/resources
         - ./resources/test/models:/var/simdata/openstudio/resources/models
         - ../eplusctekit/climas:/var/simdata/openstudio/resources/climates
         - ../CTE_OpenStudio:/var/simdata/openstudio/resources/measures
-        command: bash
+      command: bash
   ```
 
 - Activar contenedor con "Compose up" pulsando con botón derecho sobre el archivo anterior
@@ -81,12 +81,23 @@
   }
   ```
 
-- Instala "Standard Ruby"
+- Instala "Standard Ruby" (> Preferencias: Abrir configuración de usuario (JSON))
 
   ```json
-      "[ruby]": {
-          "editor.defaultFormatter": "testdouble.vscode-standard-ruby"
-      },
+    "[ruby]": {
+        "editor.defaultFormatter": "testdouble.vscode-standard-ruby",
+        "editor.formatOnSave": true,
+        "editor.formatOnType": true,
+        "editor.tabSize": 2,
+        "editor.insertSpaces": true,
+        "files.trimTrailingWhitespace": true,
+        "files.insertFinalNewline": true,
+        "files.trimFinalNewlines": true,
+        "editor.rulers": [
+        120
+        ],
+        "editor.semanticHighlighting.enabled": true
+    },
   ```
 
 - Instala extensión "Ruby LSP"
