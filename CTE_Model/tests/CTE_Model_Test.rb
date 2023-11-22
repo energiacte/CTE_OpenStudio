@@ -162,9 +162,6 @@ class CTE_Model_Test < MiniTest::Test
     # If the argument has a default that you want to use, you don't need it in the hash
     args_hash = {}
     args_hash["CTE_Uso_edificio"] = "Residencial"
-    args_hash["CTE_Fan_ntot"] = 0.5
-    args_hash["CTE_Fan_sfp"] = 2.5
-    args_hash["CTE_Heat_recovery"] = 0.5
     # using defaults values from measure.rb for other arguments
 
     # populate argument with specified hash value if specified

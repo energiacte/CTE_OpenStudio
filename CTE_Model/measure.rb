@@ -101,24 +101,6 @@ class CTE_Model < OpenStudio::Measure::ModelMeasure
     altitud.setDefaultValue(650)
     args << altitud
 
-    heat_recovery = OpenStudio::Measure::OSArgument.makeDoubleArgument("CTE_Heat_recovery", true)
-    heat_recovery.setDisplayName("Eficiencia del recuperador de calor")
-    heat_recovery.setUnits("adimensional")
-    heat_recovery.setDefaultValue(0.0)
-    args << heat_recovery
-
-    fan_sfp = OpenStudio::Measure::OSArgument.makeDoubleArgument("CTE_Fan_sfp", true)
-    fan_sfp.setDisplayName("Consumo específico global de ventiladores (SFP)")
-    fan_sfp.setUnits("kPa")
-    fan_sfp.setDefaultValue(2.5)
-    args << fan_sfp
-
-    fan_ntot = OpenStudio::Measure::OSArgument.makeDoubleArgument("CTE_Fan_ntot", true)
-    fan_ntot.setDisplayName("Eficiencia total de ventiladores (n_tot)")
-    fan_ntot.setUnits("adimensional")
-    fan_ntot.setDefaultValue(0.5)
-    args << fan_ntot
-
     clase_ventana = OpenStudio::StringVector.new
     clase_ventana << "Clase 1"
     clase_ventana << "Clase 2"

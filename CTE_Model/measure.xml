@@ -297,33 +297,6 @@
       <default_value>650</default_value>
     </argument>
     <argument>
-      <name>CTE_Heat_recovery</name>
-      <display_name>Eficiencia del recuperador de calor</display_name>
-      <type>Double</type>
-      <units>adimensional</units>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0</default_value>
-    </argument>
-    <argument>
-      <name>CTE_Fan_sfp</name>
-      <display_name>Consumo específico global de ventiladores (SFP)</display_name>
-      <type>Double</type>
-      <units>kPa</units>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>2.5</default_value>
-    </argument>
-    <argument>
-      <name>CTE_Fan_ntot</name>
-      <display_name>Eficiencia total de ventiladores (n_tot)</display_name>
-      <type>Double</type>
-      <units>adimensional</units>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0.5</default_value>
-    </argument>
-    <argument>
       <name>CTE_Permeabilidad_ventanas</name>
       <display_name>Permeabilidad de la carpintería.</display_name>
       <type>Choice</type>
