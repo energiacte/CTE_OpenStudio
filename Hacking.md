@@ -50,6 +50,8 @@
 
 - Abrir en la sesión remota una consola (Remote explorer > Adjuntar en nueva ventana)
 - Instalar la gema del depurador y de formateo:
+  - `echo "gem: --no-document" > ~\.gemrc`
+  - `gem install bundler`
   - `gem install debug`
   - `gem install standard`
 - Instalar la extensión del depurador de Ruby "VSCode rdbg Ruby Debugger"
