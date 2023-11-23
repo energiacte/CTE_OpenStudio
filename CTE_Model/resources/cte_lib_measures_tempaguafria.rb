@@ -64,7 +64,7 @@ def cte_temps_map(runner)
     temps_agua_red[prov] = [altref, temps]
   rescue
     runner.registerError("Error al leer archivo #{temps_agua_file} en línea #{line}")
-    return false
+    return nil
   end
 
   temps_agua_red
@@ -90,21 +90,23 @@ def get_water_temps(runner, weather_file)
   capital_prov, altitud_emplazamiento = get_site_prov_alt(weather_file)
 
   temps_agua_red = cte_temps_map(runner)
-  if temps_agua_red.key?(capital_prov)
-    altitud_capital, temps_agua_red = temps_agua_red[capital_prov]
-    runner.registerValue("Capital de referencia AF", capital_prov)
-    runner.registerInfo("Altitud de la capital de provincia: #{altitud_capital}")
-    runner.registerInfo("Temperatura de agua de red: #{temps_agua_red}")
-  else
+  if temps_agua_red.nil? || !temps_agua_red.key?(capital_prov)
     runner.registerError("Capital de provincia '#{capital_prov}' sin datos de temperatura de agua de red")
     return false
   end
+  altitud_capital, temps_agua_red = temps_agua_red[capital_prov]
+
+  runner.registerValue("Capital de referencia AF", capital_prov)
+  runner.registerInfo("Altitud de la capital de provincia: #{altitud_capital}")
+  runner.registerInfo("Temperatura de agua de red: #{temps_agua_red}")
 
   diff_altitud = altitud_emplazamiento - altitud_capital
   factores_correccion_mensual = [0.0066 * diff_altitud] * 3 + [0.0033 * diff_altitud] * 6 + [0.0066 * diff_altitud] * 3
 
   temps_agua_red.zip(factores_correccion_mensual).map { |x, y| x - y }
 end
+
+MESES = %w[enero febrero marzo abril mayo junio julio agosto septiembre octubre noviembre diciembre]
 
 # Introduce perfiles mensuales de la temperatura de agua de red en funcion de la provincia y corregida con la altitud
 # TODO: Detectar caso en el que no está definida la demanda de ACS (no hay circuito) para evitar el fallo (¿Localizar WaterEquipment?).
@@ -114,29 +116,22 @@ def cte_tempaguafria(model, runner, user_arguments)
 
   runner.registerValue("CTE Temperaturas de agua de red", "[" + water_temps.join(",") + "]")
 
-  # TODO: refactorizar con un find
-  conjunto_reglas = nil
-  model.getScheduleRulesets.each do |schedule_ruleset|
-    if schedule_ruleset.name.get == CTE_HORARIOSAGUA
-      conjunto_reglas = schedule_ruleset
-      break
-    end
+  conjunto_reglas = model.getScheduleRulesets.find { |schedule_ruleset| schedule_ruleset.name.get == CTE_HORARIOSAGUA }
+
+  if conjunto_reglas.nil?
+    runner.registerWarning("No se ha localizado el conjunto de horarios de temperatura de agua fría de red '#{CTE_HORARIOSAGUA}'. ¿Ha definido una instalación de ACS?")
+    return false
   end
 
-  if nil == conjunto_reglas
-    runner.registerWarning("No se ha localizado el conjunto de reglas '#{CTE_HORARIOSAGUA}' que definen la temperatura del agua fría de red. ¿Ha definido una instalación de ACS?")
-  else
-    meses = %w[enero febrero marzo abril mayo junio julio agosto septiembre octubre noviembre diciembre]
-    runner.registerInfo("Localizado el conjunto de reglas '#{CTE_HORARIOSAGUA}'")
-    conjunto_reglas.scheduleRules.each do |rule|
-      day_sch = rule.daySchedule
-      hora = day_sch.times[0]
-      rule_name = rule.name.get
+  runner.registerInfo("Localizado el conjunto de reglas '#{CTE_HORARIOSAGUA}'")
+  conjunto_reglas.scheduleRules.each do |rule|
+    day_sch = rule.daySchedule
+    hora = day_sch.times[0]
+    rule_name = rule.name.get
 
-      day_sch.setName("dia_" + rule_name)
-      day_sch.removeValue(hora)
-      day_sch.addValue(hora, water_temps[meses.index(rule_name)].to_f)
-    end
+    day_sch.setName("dia_" + rule_name)
+    day_sch.removeValue(hora)
+    day_sch.addValue(hora, water_temps[MESES.index(rule_name)].to_f)
   end
 
   true
