@@ -5,7 +5,7 @@
 - Instalar docker y docker-compose
 - Instalar extensión VSCode "Docker"
 - Instalar extensión VSCode "Remote explorer"
-- Crear archivo docker-compose.yaml:
+- Crear archivo docker-compose.yaml (si está en git se creará al sincronizar):
 
   ```yaml
   # https://code.visualstudio.com/docs/containers/docker-compose
@@ -24,7 +24,7 @@
       command: bash
   ```
 
-- Activar contenedor con "Compose up" pulsando con botón derecho sobre el archivo anterior
+- Activar contenedor con "Compose up" pulsando con botón derecho sobre el archivo anterior en el árbol de ficheros de VSC
 - Abrir una ventana nueva con una sesión remota en el contenedor en ejecución desde la pestaña de "Remote explorer"
 
 ## Ruby fuera de la máquina remota docker
@@ -51,8 +51,8 @@
 - Abrir en la sesión remota una consola (Remote explorer > Adjuntar en nueva ventana)
 - Instalar la gema del depurador y de formateo:
   - `echo "gem: --no-document" > ~\.gemrc`
-  - `gem install bundler`
-  - `gem install ruby-lsp`
+  - `gem install bundler`  
+  - `gem install ruby-lsp` (no he podido instalarla por que prism necesita una versión de Ruby superior)
   - `gem install debug`
   - `gem install standard`
 - Instalar la extensión del depurador de Ruby "VSCode rdbg Ruby Debugger"
