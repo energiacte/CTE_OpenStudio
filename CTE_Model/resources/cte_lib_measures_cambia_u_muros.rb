@@ -1,26 +1,4 @@
-def cte_cambia_u_muros(model, runner, user_arguments)
-  # tenemos que testear:
-  # 1.- que la medida se aplica pero no queremos cambiar la U
-  # 2.- cómo añade una capa aislante o cámara de aire si ya existe una
-  # 3.- cómo aborta si no hay capa aislante o cámara de aire
-  # 4.- cómo reacciona a que los elementos esté definidos en distintos niveles y de distintas maneras
-  runner.registerInfo("CTE: Cambiando la U de muros")
-
-  u_muros = runner.getDoubleArgumentValue("CTE_U_muros", user_arguments)
-
-  if u_muros.to_f < 0.001
-    runner.registerFinalCondition("No se cambia la transmitancia de los muros (U=0)")
-    return true
-  end
-
-  u_opacos = u_muros
-  # puts("__ Se ha seleccionado un valor de U_muros de #{u_muros} -> R=#{1 / u_muros}.")
-
-  # !  __02__ crea un array de muros exteriores y busca un rango de construcciones en el rango de transmitancias.
-  # create an array of exterior walls and find range of starting construction R-value (not just insulation layer)
-  # el objeto OS:Surface tiene: handle, name, type, construction name(vacio), space name, condiciones exteriores, vertices
-  #                           si la construcción está toma la establecida por defecto
-
+def filtra_superficies(model, condicion, tipo)
   exterior_surfaces = []
   exterior_surface_constructions = []
   exterior_surface_construction_names = []
@@ -29,7 +7,7 @@ def cte_cambia_u_muros(model, runner, user_arguments)
     if (surface.name.to_s.upcase.include?("PT_") || surface.name.to_s.upcase.include?("_PT"))
       next
     end
-    if (surface.outsideBoundaryCondition == "Outdoors") && (surface.surfaceType == "Wall")
+    if (surface.outsideBoundaryCondition == condicion) && (surface.surfaceType == tipo)
       # el objeto OS:Construction tiene: Handle, name, surface rendering name y varias layers
       exterior_surfaces << surface
       ext_wall_const = surface.construction.get # algunas surfaces no tienen construcción.
@@ -44,19 +22,15 @@ def cte_cambia_u_muros(model, runner, user_arguments)
       # ext_wall_transsmitance << ext_wall_const.thermalConductance.to_f
     end
   end
-
   if exterior_surfaces.empty?
     runner.registerAsNotApplicable("El modelo no tiene superficies exteriores.")
     return true
   end
 
-  # !  __03__ recorre todas las construcciones y materiales usados en los muros exterios, los edita y los clona
+  [exterior_surfaces, exterior_surface_constructions, exterior_surface_construction_names]
+end
 
-  # La casuística para decidir como se procede a cambiar la transmitancia del muro es:
-  # 1.- si hay una capa de material sin masa (aislamiento o cámara de aire) se modifica su r lo necesario
-  # 2.- si NO hay una capa de material sin masa se lanza un error y se interrumpe la ejecución.
-
-  # construye los hashes para hacer un seguimiento y evitar duplicados
+def construye_hashes(model, runner, exterior_surface_constructions, u_muros)
   constructions_hash_old_new = {}
   constructions_hash_new_old = {} # used to get netArea of new construction and then cost objects of construction it replaced
   materials_hash = {}
@@ -156,7 +130,7 @@ def cte_cambia_u_muros(model, runner, user_arguments)
         new_material_matt = new_material.to_Material
         if !new_material_matt.empty?
           starting_thickness = new_material_matt.get.thickness
-          target_thickness = starting_thickness / u_opacos / thermal_resistance_values.max
+          target_thickness = starting_thickness / u_muros / thermal_resistance_values.max
           final_thickness = new_material_matt.get.setThickness(target_thickness)
         end
         new_material_massless = new_material.to_MasslessOpaqueMaterial
@@ -170,6 +144,40 @@ def cte_cambia_u_muros(model, runner, user_arguments)
       end
     end
   end
+  [constructions_hash_old_new,  constructions_hash_new_old, materials_hash, final_constructions_array]
+end
+
+def cte_cambia_u_muros(model, runner, user_arguments)
+  # tenemos que testear:
+  # 1.- que la medida se aplica pero no queremos cambiar la U
+  # 2.- cómo añade una capa aislante o cámara de aire si ya existe una
+  # 3.- cómo aborta si no hay capa aislante o cámara de aire
+  # 4.- cómo reacciona a que los elementos esté definidos en distintos niveles y de distintas maneras
+  runner.registerInfo("CTE: Cambiando la U de muros")
+
+  u_muros = runner.getDoubleArgumentValue("CTE_U_muros", user_arguments)
+
+  if u_muros.to_f < 0.001
+    runner.registerFinalCondition("No se cambia la transmitancia de los muros (U=0)")
+    return true
+  end
+
+  # puts("__ Se ha seleccionado un valor de U_muros de #{u_muros} -> R=#{1 / u_muros}.")
+
+  # !  __02__ crea un array de muros exteriores y busca un rango de construcciones en el rango de transmitancias.
+  # create an array of exterior walls and find range of starting construction R-value (not just insulation layer)
+  # el objeto OS:Surface tiene: handle, name, type, construction name(vacio), space name, condiciones exteriores, vertices
+  #                           si la construcción está toma la establecida por defecto
+  exterior_surfaces, exterior_surface_constructions, _exterior_surface_construction_names = filtra_superficies(model, "Outdoors", "Wall")
+
+  # !  __03__ recorre todas las construcciones y materiales usados en los muros exterios, los edita y los clona
+
+  # La casuística para decidir como se procede a cambiar la transmitancia del muro es:
+  # 1.- si hay una capa de material sin masa (aislamiento o cámara de aire) se modifica su r lo necesario
+  # 2.- si NO hay una capa de material sin masa se lanza un error y se interrumpe la ejecución.
+
+  # construye los hashes para hacer un seguimiento y evitar duplicados
+  constructions_hash_old_new, constructions_hash_new_old, materials_hash, final_constructions_array = construye_hashes(model, runner, exterior_surface_constructions, u_muros)
 
   # loop through construction sets used in the model
   default_construction_sets = model.getDefaultConstructionSets
@@ -261,4 +269,4 @@ def cte_cambia_u_muros(model, runner, user_arguments)
 
   runner.registerFinalCondition("The existing insulation for exterior walls was set.")
   return true
-end #end the measure
+end # end the measure
