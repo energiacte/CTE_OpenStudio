@@ -45,12 +45,11 @@ class CTE_CambiaUs_Test < MiniTest::Test
     cubiertas_interiores = ["bd6b3149-d34c-4ced-a718-7d9a506ca243", "d4a8d4b2-b59e-4e86-abe1-ba5a8fdc2431", "0355e260-8d73-4cd4-8b9c-f88882af2cad"]
     # suelos_exteriores = []
     suelos_interiores = ["8c1e94b2-14cf-4a4c-9d46-907327050022", "50ded79a-3226-4fd9-98e9-e90968987d40", "57a5012c-8fa7-45a4-bd4e-05d1f80a1313"]
-    suelos_terrenos = ["ed02d7a6-7c4b-47a9-a072-0e7bf732a4d6", "1d1a27e5-c230-435a-ac39-f4210b362a6d", "134cfe13-6464-4e3f-8235-bc25a284eceb"]
+    suelos_terrenos = ["21f60244-fb64-4abe-abc3-464182337e27", "1d1a27e5-c230-435a-ac39-f4210b362a6d", "134cfe13-6464-4e3f-8235-bc25a284eceb"]
     ventanas = ["aedb937b-e035-4caf-8bd8-6d38aca58017", "bd75cc94-d2f4-4c61-89a0-ff79c0c406ba", "2f2adaad-60e6-4344-9d47-ee4787772d5c", "6852333b-05ee-4c91-a799-b7c1a0686274"]
     puertas = ["089b1b05-c16f-46c8-acf6-461e97125a7f"]
     elementos = {"muros_exteriores" => muros_exteriores, "cubiertas_exteriores" => cubiertas_exteriores, "cubiertas_interiores" => cubiertas_interiores,
                  "suelos_interiores" => suelos_interiores, "suelos_terrenos" => suelos_terrenos, "ventanas" => ventanas, "puertas" => puertas}
-
     return elementos
   end
 
@@ -61,7 +60,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
     suelos_terrenos = ["21f60244-fb64-4abe-abc3-464182337e27"]
     suelos_exteriores = ["31d16c6a-d398-49b1-bf40-b530d205037c", "f663dd7c-e24c-4fed-a937-61993c1095ba", "3ebf1a50-0485-485c-a1b2-bfa12c2026d7"]
     ventanas = ["9971a391-9f3d-4035-b8c5-b6d182b46e33", "adb347c4-df6e-45a6-96fd-d8ac1969e1d3", "208eb93c-b12d-4ff8-ba6e-cd92428cd463", "2a1c0c1e-2aa8-459e-b57b-a217407912ad"]
-    puertas = ["ce8352bc-f6a2-4fae-b36b-b57e2a1e235d", "1c40df56-8bb6-4450-bb4a-8e14fc6cf1c5"]
+    # puertas = ["ce8352bc-f6a2-4fae-b36b-b57e2a1e235d", "1c40df56-8bb6-4450-bb4a-8e14fc6cf1c5"]
     elementos = {"muros_exteriores" => muros_exteriores, "muros_terrenos" => muros_terrenos, "cubiertas_exteriores" => cubiertas_exteriores,
                  "suelos_terrenos" => suelos_terrenos, "suelos_exteriores" => suelos_exteriores, "ventanas" => ventanas}
   end
@@ -82,25 +81,30 @@ class CTE_CambiaUs_Test < MiniTest::Test
 
   def get_surface(model, uuid)
     handle = OpenStudio.toUUID(uuid)
-    objeto = model.getModelObject(handle)
-    begin
-      surface = objeto.get.to_Surface
-      surface = surface.get
-      construction = surface.construction.get
-      u = construction.thermalConductance().to_f
-    rescue
-      surface = objeto.get.to_SubSurface
-      surface = surface.get
-      construction = surface.construction.get
-      u = construction.uFactor().to_f
+    objeto = model.getModelObject(handle).get
+
+    if objeto.iddObject().name == "OS:Surface"
+      elem = objeto.to_Surface.get
+    elsif objeto.iddObject().name == "OS:SubSurface"
+      elem = objeto.to_SubSurface.get
+    else
+      puts("Error, #{objeto.iddObject().name}, uuid:#{uuid}")
     end
 
-    return surface, construction, u
+    construction = elem.construction.get
+
+    u = if objeto.iddObject().name == "OS:Surface"
+      construction.thermalConductance().to_f
+    else
+      construction.uFactor().to_f
+    end
+
+    return elem, construction, u
   end
 
   def get_transmitance(model, uuid)
     _surface, _construction, u = get_surface(model, uuid)
-    return u
+    u
   end
 
   def carga_elementos(model, elementos_para_test)
@@ -111,14 +115,15 @@ class CTE_CambiaUs_Test < MiniTest::Test
         elementos[uuid] = {"tipo" => tipo, "u_inicial" => u_inicial}
       end
     end
-    return elementos
+    elementos
   end
 
   def test_CTE_CambiaUs_no_cambia
     # create an instance of the measure
     measure = CTE_CambiaUs.new
 
-    runner, model = get_runner_model("/residencial.osm", measure)
+    # runner, model = get_runner_model("/residencial.osm", measure)
+    runner, model = get_runner_model("/test_N_R01_unif_adosada.osm", measure)
     arguments = measure.arguments(model)
     argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(arguments)
 
@@ -139,7 +144,8 @@ class CTE_CambiaUs_Test < MiniTest::Test
       argument_map[arg.name] = temp_arg_var
     end
 
-    elementos_para_test = carga_elementos_residencial_osm
+    # elementos_para_test = carga_elementos_residencial_osm
+    elementos_para_test = carga_elementos_R_N01_V23
     elementos = carga_elementos(model, elementos_para_test)
 
     salida = measure.run(model, runner, argument_map)
@@ -162,11 +168,6 @@ class CTE_CambiaUs_Test < MiniTest::Test
     # create an instance of a runner and load the test model
     runner, model = get_runner_model("/test_N_R01_unif_adosada.osm", measure)
 
-    assert(!model.empty?)
-    # model = model.get
-
-    # get arguments
-    # puts("tomando los argumentos")
     arguments = measure.arguments(model)
     argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(arguments)
 
@@ -187,46 +188,17 @@ class CTE_CambiaUs_Test < MiniTest::Test
       argument_map[arg.name] = temp_arg_var
     end
 
-    handle = OpenStudio.toUUID("cc187100-92a7-410b-bf38-3f6712910b74")
-    objeto = model.getModelObject(handle)
-    surface = objeto.get.to_Surface
-    surface = surface.get
-    construction = surface.construction.get
-    u_inicial = construction.thermalConductance().to_f
-
-    # puts("|||Valores iniciales")
-    # puts("|||cerramiento, #{surface.name}")
-    # puts("|||construccion, #{construction.name}")
-    # puts("|||U inicial del muro #{u_inicial}")
-
-    muro = model.getModelObject(handle)
-    # puts("ejecutando la medida")
+    uuid = "be553ff8-1374-4869-8bcf-30ffb53290f9"
+    # u_inicial = get_transmitance(model, uuid)
     salida = measure.run(model, runner, argument_map)
     assert(salida, "algo falló")
 
-    handle = OpenStudio.toUUID("cc187100-92a7-410b-bf38-3f6712910b74")
-    objeto = model.getModelObject(handle)
-    surface = objeto.get.to_Surface
-    surface = surface.get
-    construction = surface.construction.get
-    u_final = construction.thermalConductance().to_f
-
-    # puts("U inicial y final #{u_inicial}, #{u_final}")
-    # puts("|||Valores finales")
-    # puts("|||cerramiento, #{surface.name}")
-    # puts("|||construccion, #{construction.name}")
-    # puts("|||U final del muro #{u_final}")
-    # puts("___________ fin del test ________\n")
+    u_final = get_transmitance(model, uuid)
 
     assert_in_delta(args_hash["CTE_U_muros"], u_final, 0.001)
   end
 
   def test_CTE_CambiaUs_cambia_cubierta
-
-    # puts("------------------------------------------")
-    # puts("\n____TEST:: CTE_CambiaUs_cambia_cubierta")
-
-    # create an instance of the measure
     measure = CTE_CambiaUs.new
 
     # create an instance of a runner
@@ -234,7 +206,6 @@ class CTE_CambiaUs_Test < MiniTest::Test
 
     # load the test model
     runner, model = get_runner_model("/test_N_R01_unif_adosada.osm", measure)
-    assert(!model.empty?)
 
     arguments = measure.arguments(model)
     argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(arguments)
@@ -256,57 +227,20 @@ class CTE_CambiaUs_Test < MiniTest::Test
       argument_map[arg.name] = temp_arg_var
     end
 
-    handle = OpenStudio.toUUID("c4875e32-9291-48b3-bfe0-94bad05eb0d5")
-    objeto = model.getModelObject(handle)
-    surface = objeto.get.to_Surface
-    surface = surface.get
-    construction = surface.construction.get
-    u_inicial = construction.thermalConductance().to_f
-
-    # puts("|||Valores iniciales")
-    # puts("|||cerramiento, #{surface.name}")
-    # puts("|||construccion, #{construction.name}")
-    # puts("|||U inicial de la cubierta #{u_inicial}")
-
-    muro = model.getModelObject(handle)
-    # puts("ejecutando la medida")
     salida = measure.run(model, runner, argument_map)
     assert(salida, "algo falló")
 
-    handle = OpenStudio.toUUID("c4875e32-9291-48b3-bfe0-94bad05eb0d5")
+    handle = OpenStudio.toUUID("c0205929-9427-40b4-883e-34d52c6309cc")
     objeto = model.getModelObject(handle)
     surface = objeto.get.to_Surface
     surface = surface.get
     construction = surface.construction.get
 
     u_final = construction.thermalConductance().to_f
-
-    # puts("La construcciones es #{construction.name.to_s}, con una transmitancia de #{construction.thermalConductance().to_f}")
-    # puts("|||Valores finales")
-    # puts("|||cerramiento, #{surface.name}")
-    # puts("|||construccion, #{construction.name}")
-    # puts("|||U final de la cubierta #{u_final}")
-
-    # puts("U inicial y final #{u_inicial}, #{u_final}")
-
-    # puts("__________ fin del test ________\n")
-
     assert_in_delta(args_hash["CTE_U_cubiertas"], u_final, 0.001)
-
-    # handle = OpenStudio.toUUID("cc187100-92a7-410b-bf38-3f6712910b74")
-    # objeto = model.getModelObject(handle)
-    # surface = objeto.get.to_Surface
-    # surface = surface.get
-    # construction = surface.construction.get
-    # u_final = construction.thermalConductance().to_f
-    # puts("U del muro final, #{u_final}")
-
   end
 
   def test_CTE_CambiaUs_cambia_suelos_residencial
-
-    # puts("\n____TEST:: CTE_CambiaUs_cambia_suelos")
-
     # create an instance of the measure
     measure = CTE_CambiaUs.new
 
@@ -333,54 +267,24 @@ class CTE_CambiaUs_Test < MiniTest::Test
       argument_map[arg.name] = temp_arg_var
     end
 
-    handle = OpenStudio.toUUID("ed02d7a6-7c4b-47a9-a072-0e7bf732a4d6")
-    objeto = model.getModelObject(handle)
-    surface = objeto.get.to_Surface
-    surface = surface.get
-    construction = surface.construction.get
-    u_inicial = construction.thermalConductance().to_f
-
-    # puts("|||Valores iniciales")
-    # puts("|||cerramiento, #{surface.name}")
-    # puts("|||construccion, #{construction.name}")
-    # puts("|||U inicial del suelo terreno #{u_inicial}")
-
-    muro = model.getModelObject(handle)
-    # puts("ejecutando la medida")
     salida = measure.run(model, runner, argument_map)
     assert(salida, "algo falló")
 
-    handle = OpenStudio.toUUID("ed02d7a6-7c4b-47a9-a072-0e7bf732a4d6")
+    handle = OpenStudio.toUUID("21f60244-fb64-4abe-abc3-464182337e27")
     objeto = model.getModelObject(handle)
     surface = objeto.get.to_Surface
     surface = surface.get
     construction = surface.construction.get
     u_final = construction.thermalConductance().to_f
-
-    # puts("La construcciones es #{construction.name.to_s}, con una transmitancia de #{construction.thermalConductance().to_f}")
-
-    # puts("|||Valores finales")
-    # puts("|||cerramiento, #{surface.name}")
-    # puts("|||construccion, #{construction.name}")
-    # puts("|||U final del suelo terreno #{u_final}")
-
-    # puts("U inicial y final #{u_inicial}, #{u_final}")
-
-    # puts("__________ fin del test ________\n")
-
-    # se le añade la capa de suelo args_hash["CTE_U_suelos"]
     assert_in_delta(u_terreno, u_final, 0.001)
   end
 
-  def test_CTE_CambiaUs_cambia_suelos_N_R01_unif_adosadaV23
-
-    # puts("\n____TEST:: CTE_CambiaUs_cambia_suelos")
-
+  def test_CTE_CambiaUs_cambia_suelos
     # create an instance of the measure
     measure = CTE_CambiaUs.new
 
-    runner, model = get_runner_model("/N_R01_unif_adosadaV23.osm", measure)
     # runner, model = get_runner_model("/residencial.osm", measure)
+    runner, model = get_runner_model("/N_R01_unif_adosadaV23.osm", measure)
     arguments = measure.arguments(model)
     argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(arguments)
 
@@ -392,7 +296,6 @@ class CTE_CambiaUs_Test < MiniTest::Test
     args_hash["CTE_U_suelos"] = 0.37
     u_terreno = 1 / (1 / args_hash["CTE_U_suelos"] - 0.5)
     u_exterior = args_hash["CTE_U_suelos"]
-    # using defaults values from measure.rb for other arguments
 
     # populate argument with specified hash value if specified
     arguments.each do |arg|
@@ -403,56 +306,17 @@ class CTE_CambiaUs_Test < MiniTest::Test
       argument_map[arg.name] = temp_arg_var
     end
 
-    surface, construction, u = get_surface(model, "24252951-3545-42e5-a381-db75ffc3c395")
-    u_inicial_terreno = u
-
-    # puts("" "
-    #   |||Valores iniciales terreno
-    #   |||cerramiento, #{surface.name}
-    #   |||U inicial del suelo terreno #{u_inicial_terreno}
-    #   " "")
-
-    surface, construction, u_inicial_exterior = get_surface(model, "24252951-3545-42e5-a381-db75ffc3c395")
-
-    # puts("" "
-    #   |||Valores iniciales exterior
-    #   |||cerramiento, #{surface.name}
-    #   |||U inicial del suelo exterior #{u_inicial_exterior}
-    #   " "")
-
     salida = measure.run(model, runner, argument_map)
     assert(salida, "algo falló")
 
-    surface, construction, u_final_terreno = get_surface(model, "21f60244-fb64-4abe-abc3-464182337e27")
+    _surface, _construction, u_final_terreno = get_surface(model, "21f60244-fb64-4abe-abc3-464182337e27")
+    _surface, _construction, u_final_exterior = get_surface(model, "24252951-3545-42e5-a381-db75ffc3c395")
 
-    # puts("" "
-    #   |||Valores finales
-    #   |||cerramiento, #{surface.name}
-    #   |||U inicial del suelo terreno #{u_final_terreno}
-    #   " "")
-
-    surface, construction, u_final_exterior = get_surface(model, "24252951-3545-42e5-a381-db75ffc3c395")
-
-    # puts("" "
-    #   |||Valores finales exterior
-    #   |||cerramiento, #{surface.name}
-    #   |||U inicial del suelo exterior #{u_final_exterior}
-    #   " "")
-
-    # puts("U inicial y final terreno #{u_inicial_terreno}, #{u_final_terreno}")
-    # puts("U inicial y final exterior #{u_inicial_exterior}, #{u_final_exterior}")
-    # puts("__________ fin del test ________\n")
-
-    # se le añade la capa de suelo args_hash["CTE_U_suelos"]
     assert_in_delta(u_terreno, u_final_terreno, 0.001)
     assert_in_delta(u_exterior, u_final_exterior, 0.001)
   end
 
   def _test_CTE_CambiaUs_cambia_huecos
-    # puts("\n------------------------------------------")
-    # puts("____TEST:: CTE_CambiaUs_cambia_huecos_____")
-
-    # create an instance of the measure
     measure = CTE_CambiaUs.new
 
     runner, model = get_runner_model("/N_R01_unif_adosadaV23.osm", measure)
@@ -478,45 +342,21 @@ class CTE_CambiaUs_Test < MiniTest::Test
       argument_map[arg.name] = temp_arg_var
     end
 
-    uuid = "9971a391-9f3d-4035-b8c5-b6d182b46e33"
-    handle = OpenStudio.toUUID(uuid)
-    objeto = model.getModelObject(handle)
-    # puts(objeto)
-    surface = objeto.get.to_SubSurface
-    surface = surface.get
-    construction = surface.construction.get
-    u = construction.uFactor().to_f
-
     salida = measure.run(model, runner, argument_map)
     assert(salida, "algo falló")
 
     uuid = "9971a391-9f3d-4035-b8c5-b6d182b46e33"
-    handle = OpenStudio.toUUID(uuid)
-    objeto = model.getModelObject(handle)
-    surface = objeto.get.to_SubSurface
-    surface = surface.get
-    construction = surface.construction.get
-    u = construction.uFactor().to_f
-
-    surface, construction, u_final = get_surface(model, "9971a391-9f3d-4035-b8c5-b6d182b46e33")
-
-    # puts("U inicial y final #{u_inicial}, #{u_final}")
-    # se le añade la capa de suelo args_hash["CTE_U_suelos"]
+    _surface, _construction, u_final = get_surface(model, uuid)
     assert_in_delta(u_huecos, u_final, 0.001)
-
-    # puts("__________ fin del test ________\n")
-
   end
 
   def test_CTE_CambiaUs_extenso
-    # puts("\n____TEST:: CTE_CambiaUs_cambia_suelos")
-
     # create an instance of the measure
     measure = CTE_CambiaUs.new
 
+    # runner, model = get_runner_model("/residencial.osm", measure)
     # runner, model = get_runner_model("/N_R01_unif_adosadaV23.osm", measure)
     runner, model = get_runner_model("/test_N_R01_unif_adosada.osm", measure)
-    # runner, model = get_runner_model("/residencial.osm", measure)
     arguments = measure.arguments(model)
     argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(arguments)
 
@@ -530,8 +370,8 @@ class CTE_CambiaUs_Test < MiniTest::Test
     u_suelos_terreno = 1 / (1 / u_suelos - 0.5)
     u_huecos = 0.62
 
-    transmitancias = { "muros_exteriores" => u_muros, "muros_terrenos" => u_muros_terreno, "cubiertas_exteriores" => u_cubiertas,
-                       "suelos_terrenos" => u_suelos_terreno, "suelos_exteriores" => u_suelos, "ventanas" => u_huecos }
+    transmitancias = {"muros_exteriores" => u_muros, "muros_terrenos" => u_muros_terreno, "cubiertas_exteriores" => u_cubiertas,
+                      "suelos_terrenos" => u_suelos_terreno, "suelos_exteriores" => u_suelos, "ventanas" => u_huecos}
     # puertas
 
     args_hash = {}
@@ -549,36 +389,19 @@ class CTE_CambiaUs_Test < MiniTest::Test
       argument_map[arg.name] = temp_arg_var
     end
 
-    elementos_para_test = carga_elementos_R_N01_V23()
+    elementos_para_test = carga_elementos_R_N01_V23
     elementos = carga_elementos(model, elementos_para_test)
-
-    # elementos.each do |uuid, atrib| # aquí están todos
-    #   puts("#{atrib['tipo']}, uuid #{uuid}")
-    # end
 
     salida = measure.run(model, runner, argument_map)
     assert(salida, "algo falló")
-
-    # elementos.each do |uuid, atrib| # aquí están todos
-    #     puts("#{atrib['tipo']}, uuid #{uuid}")
-    #   end
 
     elementos.each do |uuid, atributos|
       u_final = get_transmitance(model, uuid)
       atributos["u_final"] = u_final
     end
 
-    # elementos.each do |uuid, atrib|
-    #   puts("#{atrib["u_final"]},  #{transmitancias[atrib["tipo"]]}")
-    #   delta = atrib["u_final"] - transmitancias[atrib["tipo"]]
-    #   if delta.abs > 0.01
-    #     puts(" __ no cumple para #{atrib["tipo"]}, #{atrib["u_final"]}, #{transmitancias[atrib["tipo"]]}, #{uuid}")
-    #   end
-    # end
     elementos.each do |uuid, atrib|
       assert_in_delta(atrib["u_final"], transmitancias[atrib["tipo"]], 0.01, message = "#{uuid}")
     end
-
-    # puts("__________ fin del test ________\n")
   end
 end
