@@ -104,8 +104,8 @@ class CTE_Model_Test < MiniTest::Test
 
     # load the test model
     translator = OpenStudio::OSVersion::VersionTranslator.new
-    path = OpenStudio::Path.new(File.dirname(__FILE__) + "/residencial.osm")
-    # path = OpenStudio::Path.new(File.dirname(__FILE__) + '/N_R01_unif_adosadaV23.osm')
+    # path = OpenStudio::Path.new(File.dirname(__FILE__) + "/residencial.osm")
+    path = OpenStudio::Path.new(File.dirname(__FILE__) + "/test_N_R01_unif_adosada.osm")
     model = translator.loadModel(path)
     assert(!model.empty?)
     model = model.get
@@ -135,10 +135,12 @@ class CTE_Model_Test < MiniTest::Test
     assert_equal("Success", result.value.valueName)
 
     ela_total = get_attrb(result, "cte_ela_total_espacios")
-    assert_in_delta(5631.2, ela_total, 1.0)
+    # assert_in_delta(5631.2, ela_total, 1.0)
+    assert_in_delta(1024.14, ela_total, 1.0)
 
     # save the model to test output directory
-    output_file_path = OpenStudio::Path.new(File.dirname(__FILE__) + "/output/test_output_residencial.osm")
+    # output_file_path = OpenStudio::Path.new(File.dirname(__FILE__) + "/output/test_output_residencial.osm")
+    output_file_path = OpenStudio::Path.new(File.dirname(__FILE__) + "/output/test_output_N_R01_unif_adosada.osm")
     model.save(output_file_path, true)
   end
 

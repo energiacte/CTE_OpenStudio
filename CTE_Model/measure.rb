@@ -28,8 +28,14 @@ require_relative "resources/cte_lib_measures_addvars"
 require_relative "resources/cte_lib_measures_tempaguafria"
 require_relative "resources/cte_lib_measures_infiltracion"
 require_relative "resources/cte_lib_measures_puentestermicos"
-require_relative "resources/cte_lib_measures_cambia_u_opacos"
+# require_relative "resources/cte_lib_measures_cambia_u_opacos"
 require_relative "resources/cte_lib_measures_cambia_u_huecos"
+
+require_relative "resources/cte_lib_measures_cambia_u_muros"
+require_relative "resources/cte_lib_measures_cambia_u_muros_terreno"
+require_relative "resources/cte_lib_measures_cambia_u_cubiertas"
+require_relative "resources/cte_lib_measures_cambia_u_suelos_terreno"
+require_relative "resources/cte_lib_measures_cambia_u_suelos_exterior"
 
 # Medida de OpenStudio (ModelUserScript) que modifica el modelo para su uso con el CTE
 # Para su correcto funcionamiento esta medida debe emplearse con una plantilla adecuada.
@@ -50,11 +56,41 @@ class CTE_Model < OpenStudio::Measure::ModelMeasure
   def arguments(model)
     args = OpenStudio::Measure::OSArgumentVector.new
 
-    u_opacos = OpenStudio::Measure::OSArgument.makeDoubleArgument("CTE_U_opacos", true)
-    u_opacos.setDisplayName("U de opacos")
-    u_opacos.setUnits("W/m2·K")
-    u_opacos.setDefaultValue(10)
-    args << u_opacos
+    u_muros = OpenStudio::Measure::OSArgument::makeDoubleArgument("CTE_U_muros", true)
+    u_muros.setDisplayName("U de muros")
+    u_muros.setUnits("W/m2·K")
+    u_muros.setDefaultValue(0)
+    args << u_muros
+
+    u_cubiertas = OpenStudio::Measure::OSArgument::makeDoubleArgument("CTE_U_cubiertas", true)
+    u_cubiertas.setDisplayName("U de cubiertas")
+    u_cubiertas.setUnits("W/m2·K")
+    u_cubiertas.setDefaultValue(0)
+    args << u_cubiertas
+
+    u_suelos = OpenStudio::Measure::OSArgument::makeDoubleArgument("CTE_U_suelos", true)
+    u_suelos.setDisplayName("U de suelos")
+    u_suelos.setUnits("W/m2·K")
+    u_suelos.setDefaultValue(0)
+    args << u_suelos
+
+    u_muros = OpenStudio::Measure::OSArgument::makeDoubleArgument("CTE_U_muros", true)
+    u_muros.setDisplayName("U de muros")
+    u_muros.setUnits("W/m2·K")
+    u_muros.setDefaultValue(0)
+    args << u_muros
+
+    u_cubiertas = OpenStudio::Measure::OSArgument::makeDoubleArgument("CTE_U_cubiertas", true)
+    u_cubiertas.setDisplayName("U de cubiertas")
+    u_cubiertas.setUnits("W/m2·K")
+    u_cubiertas.setDefaultValue(0)
+    args << u_cubiertas
+
+    u_suelos = OpenStudio::Measure::OSArgument::makeDoubleArgument("CTE_U_suelos", true)
+    u_suelos.setDisplayName("U de suelos")
+    u_suelos.setUnits("W/m2·K")
+    u_suelos.setDefaultValue(0)
+    args << u_suelos
 
     u_huecos = OpenStudio::Measure::OSArgument.makeDoubleArgument("CTE_U_huecos", true)
     u_huecos.setDisplayName("U de huecos")
@@ -143,15 +179,29 @@ class CTE_Model < OpenStudio::Measure::ModelMeasure
     end
     model.building.get.setComment(argumentos.to_json)
 
-    # puts('cambia las transmitancias de los opacos')
-    # runner.registerInfo('Llamada a la actualización de opacos')
-    # result = cte_cambia_u_opacos(model, runner, user_arguments)
-    # return result unless result == true
+    runner.registerInfo("Llamada a la actualización de muros")
+    result = cte_cambia_u_muros(model, runner, user_arguments)
+    return result unless result == true
 
-    # puts('cambia las transmitancias de los huecos')
-    # runner.registerInfo('Llamada a la actualización de huecos')
-    # result = cte_cambia_u_huecos(model, runner, user_arguments)
-    # return result unless result == true
+    runner.registerInfo("Llamada a la actualización de muros enterrados")
+    result = cte_cambia_u_muros_terreno(model, runner, user_arguments)
+    return result unless result == true
+
+    runner.registerInfo("Llamada a la actualización de cubiertas")
+    result = cte_cambia_u_cubiertas(model, runner, user_arguments)
+    return result unless result == true
+
+    runner.registerInfo("Llamada a la actualización de los suelos en contacto con el terreno")
+    result = cte_cambia_u_suelos_terreno(model, runner, user_arguments)
+    return result unless result == true
+
+    runner.registerInfo("Llamada a la actualización de los suelos en contacto con el aire")
+    result = cte_cambia_u_suelos_exteriores(model, runner, user_arguments)
+    return result unless result == true
+
+    runner.registerInfo("Llamada a la actualización de los huecos")
+    result = cte_cambia_u_huecos(model, runner, user_arguments)
+    return result unless result == true
 
     result = cte_addvars(model, runner, user_arguments) # Nuevas variables y meters
     return result unless result == true
