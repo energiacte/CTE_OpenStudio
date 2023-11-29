@@ -30,6 +30,7 @@ def cte_addvars(model, runner, user_arguments)
   runner.registerInfo("CTE_ADDVARS: The model started with #{meters.size} meter objects, and #{output_variables.size} output variables.")
 
   # Add CTE meters ==================================================
+  # Consultar en archivo **eplusout.mdd** los report meters disponibles
 
   new_meters = [
     # ["Propane:Facility", "RunPeriod"], # this meter exists in the exampleModel
@@ -60,6 +61,7 @@ def cte_addvars(model, runner, user_arguments)
   end
 
   # Add CTE output variables =========================================
+  # Consultar en archivo **eplusout.rdd** variables disponibles
 
   new_oputput_variables = [
     # Monthly variables
@@ -72,29 +74,35 @@ def cte_addvars(model, runner, user_arguments)
     ["Zone Total Internal Total Heating Energy", "Monthly", "*"],
     ["Zone Ideal Loads Zone Total Heating Energy", "Monthly", "*"],
     ["Zone Ideal Loads Zone Total Cooling Energy", "Monthly", "*"],
-    ["Zone Combined Outdoor Air Sensible Heat Loss Energy", "Monthly", "*"],
-    ["Zone Combined Outdoor Air Sensible Heat Loss Energy", "Daily", "*"],
-    ["Zone Combined Outdoor Air Sensible Heat Gain Energy", "Monthly", "*"],
-    ["Zone Combined Outdoor Air Changes per Hour", "Monthly", "*"],
-    ["Zone Combined Outdoor Air Fan Electric Energy", "Monthly", "*"],
-    ["Zone Ideal Loads Economizer Active Time", "Monthly", "*"],
-    ["Zone Ideal Loads Heat Recovery Active Time", "Monthly", "*"],
-    ["Zone Ideal Loads Economizer Active Time", "Daily", "*"],
-    ["Zone Ideal Loads Heat Recovery Active Time", "Daily", "*"],
-    ["Zone Ideal Loads Economizer Active Time", "Hourly", "*"],
-    ["Zone Combined Outdoor Air Changes per Hour", "Hourly", "*"],
     ["Zone Ideal Loads Heat Recovery Active Time", "Hourly", "*"],
-    ["Zone Combined Outdoor Air Changes per Hour", "Daily", "*"],
-    ["Zone Ventilation Air Change Rate", "monthly", "*"],
+    ["Zone Ideal Loads Heat Recovery Active Time", "Daily", "*"],
+    ["Zone Ideal Loads Heat Recovery Active Time", "Monthly", "*"],
+    ["Zone Ideal Loads Economizer Active Time", "Hourly", "*"],
+    ["Zone Ideal Loads Economizer Active Time", "Daily", "*"],
+    ["Zone Ideal Loads Economizer Active Time", "Monthly", "*"],
+    ["Zone Ideal Loads Supply Air Standard Density Volume Flow Rate", "hourly", "*"],
+    ["Zone Ideal Loads Outdoor Air Standard Density Volume Flow Rate", "hourly", "*"],
+    ["Zone Mechanical Ventilation Current Density Volume", "hourly", "*"],
     ["Zone Mechanical Ventilation Air Changes per Hour", "hourly", "*"],
     ["Zone Infiltration Current Density Volume Flow Rate", "Monthly", "*"],
     ["Zone Infiltration Total Heat Loss Energy", "Monthly", "*"],
     ["Zone Infiltration Total Heat Gain Energy", "Monthly", "*"],
     ["Zone Infiltration Air Change Rate", "Monthly", "*"],
-    ["Zone Combined Outdoor Air Total Heat Loss Energy", "Monthly", "*"],
+    ["Zone Combined Outdoor Air Sensible Heat Loss Energy", "Daily", "*"],
+    ["Zone Combined Outdoor Air Sensible Heat Loss Energy", "Monthly", "*"],
+    ["Zone Combined Outdoor Air Sensible Heat Gain Energy", "Monthly", "*"],
     ["Zone Combined Outdoor Air Total Heat Loss Energy", "Hourly", "*"],
+    ["Zone Combined Outdoor Air Total Heat Loss Energy", "Monthly", "*"],
+    ["Zone Combined Outdoor Air Total Heat Gain Energy", "Hourly", "*"],
     ["Zone Combined Outdoor Air Total Heat Gain Energy", "Monthly", "*"],
-    ["Zone Combined Outdoor Air Total Heat Gain Energy", "Hourly", "*"]
+    ["Zone Combined Outdoor Air Changes per Hour", "Hourly", "*"],
+    ["Zone Combined Outdoor Air Changes per Hour", "Daily", "*"],
+    ["Zone Combined Outdoor Air Changes per Hour", "Monthly", "*"],
+    ["Zone Combined Outdoor Air Fan Electric Energy", "Monthly", "*"],
+    # Esta variable no aparece en el rdd ya que se desactiva
+    # al introducir el objeto ZoneAirBalance:OutdoorAir en CTE_Workspace
+    # Ver https://bigladdersoftware.com/epx/docs/8-7/input-output-reference/group-airflow.html#outputs-1-002
+    ["Zone Ventilation Air Change Rate", "Monthly", "*"]
   ]
 
   new_oputput_variables.each do |variable_name, reporting_frequency, key|
