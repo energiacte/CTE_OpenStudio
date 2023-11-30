@@ -1,6 +1,6 @@
 def filtra_superficies(model, condicion:, tipo:)
-  # !  __02__ crea un array de muros exteriores y busca un rango de construcciones en el rango de transmitancias.
-  # create an array of exterior walls and find range of starting construction R-value (not just insulation layer)
+  # !  __02__ crea un array de muros segun la condicion(exteriores o terreno) y busca un rango de construcciones en el rango de transmitancias.
+  # create an array of  walls and find range of starting construction R-value (not just insulation layer)
   # el objeto OS:Surface tiene: handle, name, type, construction name(vacio), space name, condiciones exteriores, vertices
   #                           si la construcción está toma la establecida por defecto
   exterior_surfaces = []
@@ -21,13 +21,12 @@ def filtra_superficies(model, condicion:, tipo:)
         exterior_surface_constructions << ext_wall_const.to_Construction.get
       end
       exterior_surface_construction_names << ext_wall_const.name.to_s
-      # puts("--- transmitancia muro: #{ext_wall_const.thermalConductance.to_f}")
-      # ext_wall_resistance << 1 / ext_wall_const.thermalConductance.to_f esto no sé para que vale
-      # ext_wall_transsmitance << ext_wall_const.thermalConductance.to_f
+      # puts("  __nombre #{surface.name.to_s}, construccion#{ext_wall_const.name.to_s}, U= #{ext_wall_const.thermalConductance.to_f}")
     end
   end
+
   if exterior_surfaces.empty?
-    runner.registerAsNotApplicable("El modelo no tiene superficies exteriores.")
+    runner.registerAsNotApplicable("El modelo no tiene superficies #{tipo} #{condicion}")
     return true
   end
 
@@ -36,16 +35,17 @@ end
 
 def construye_hashes(model, runner, exterior_surface_constructions, u_muros, resistencia_tierra)
   # !  __03__ recorre todas las construcciones y materiales usados en los muros exterios, los edita y los clona
-
   # La casuística para decidir como se procede a cambiar la transmitancia del muro es:
   # 1.- si hay una capa de material sin masa (aislamiento o cámara de aire) se modifica su r lo necesario
   # 2.- si NO hay una capa de material sin masa se lanza un error y se interrumpe la ejecución.
   # construye los hashes para hacer un seguimiento y evitar duplicados
+  # used to get netArea of new construction and then cost objects of construction it replaced
   constructions_hash_old_new = {}
   constructions_hash_new_old = {} # used to get netArea of new construction and then cost objects of construction it replaced
   materials_hash = {}
   # array and counter for new constructions that are made, used for reporting final condition
   final_constructions_array = []
+
   exterior_surface_constructions.each do |exterior_surface_construction|
     # puts("___(Construccion, U) ->  (#{exterior_surface_construction.name},#{exterior_surface_construction.thermalConductance.to_f})___")
     # runner.registerInfo("nombre de la construcción #{exterior_surface_construction.name}")
@@ -54,11 +54,11 @@ def construye_hashes(model, runner, exterior_surface_constructions, u_muros, res
     max_thermal_resistance_material_index = ""
     # crea un array con los datos de las capas y su orden en la construcción
     materials_in_construction = construction_layers.map.with_index do |layer, i|
-      { "name" => layer.name.to_s,
-        "index" => i,
-        "nomass" => !layer.to_MasslessOpaqueMaterial.empty?,
-        "r_value" => layer.to_OpaqueMaterial.get.thermalResistance,
-        "mat" => layer }
+      {"name" => layer.name.to_s,
+       "index" => i,
+       "nomass" => !layer.to_MasslessOpaqueMaterial.empty?,
+       "r_value" => layer.to_OpaqueMaterial.get.thermalResistance,
+       "mat" => layer}
     end
 
     no_mass_materials = materials_in_construction.select { |mat| mat["nomass"] == true }
@@ -151,27 +151,41 @@ def construye_hashes(model, runner, exterior_surface_constructions, u_muros, res
       end
     end
   end
-  [constructions_hash_old_new,  constructions_hash_new_old, materials_hash, final_constructions_array]
+  [constructions_hash_old_new, constructions_hash_new_old, materials_hash, final_constructions_array]
 end
 
-def loop_through_construction_sets(model, runner, constructions_hash_old_new)
+def loop_through_construction_sets(model, runner, constructions_hash_old_new, condicion:, tipo:)
   default_construction_sets = model.getDefaultConstructionSets
   default_construction_sets.each do |default_construction_set|
     if default_construction_set.directUseCount > 0
-      default_surface_const_set = default_construction_set.defaultExteriorSurfaceConstructions
+      if condicion == "Ground"
+        default_surface_const_set = default_construction_set.defaultGroundContactSurfaceConstructions
+      elsif condicion == "Outdoors"
+        default_surface_const_set = default_construction_set.defaultExteriorSurfaceConstructions
+      else
+        puts("XX--->>> error, condicion no reconocida #{condicion}")
+      end
+
       if !default_surface_const_set.empty?
         _starting_construction = default_surface_const_set.get.wallConstruction
 
         # creating new default construction set
         new_default_construction_set = default_construction_set.clone(model)
         new_default_construction_set = new_default_construction_set.to_DefaultConstructionSet.get
-        new_default_construction_set.setName("#{default_construction_set.name} adj ext wall insulation")
+        new_default_construction_set.setName("#{default_construction_set.name} adj #{condicion} wall insulation")
 
         # create new surface set and link to construction set
         new_default_surface_const_set = default_surface_const_set.get.clone(model)
         new_default_surface_const_set = new_default_surface_const_set.to_DefaultSurfaceConstructions.get
-        new_default_surface_const_set.setName("#{default_surface_const_set.get.name} adj ext wall insulation")
-        new_default_construction_set.setDefaultExteriorSurfaceConstructions(new_default_surface_const_set)
+        new_default_surface_const_set.setName("#{default_surface_const_set.get.name} adj #{condicion} wall insulation")
+
+        if condicion == "Ground"
+          new_default_construction_set.setDefaultGroundContactSurfaceConstructions(new_default_surface_const_set)
+        elsif condicion == "Outdoors"
+          new_default_construction_set.setDefaultExteriorSurfaceConstructions(new_default_surface_const_set)
+        else
+          puts("XX--->>> error, condicion no reconocida #{condicion}")
+        end
 
         # use the hash to find the proper construction and link to new_default_surface_const_set
         target_const = new_default_surface_const_set.wallConstruction
@@ -186,7 +200,7 @@ def loop_through_construction_sets(model, runner, constructions_hash_old_new)
             end
           end
           if found_const_flag == false # this should never happen but is just an extra test in case something goes wrong with the measure code
-            runner.registerWarning("Measure couldn't find the construction named '#{target_const}' in the exterior surface hash.")
+            runner.registerWarning("Measure couldn't find the construction named '#{target_const}' in the #{condicion} surface hash.")
           end
         end
 
@@ -223,7 +237,6 @@ end
 def link_cloned_edited_constructions(exterior_surfaces, constructions_hash_old_new)
   exterior_surfaces.each do |exterior_surface|
     if !exterior_surface.isConstructionDefaulted && !exterior_surface.construction.empty?
-
       # use the hash to find the proper construction and link to surface
       target_const = exterior_surface.construction
       if !target_const.empty?
@@ -240,6 +253,12 @@ def link_cloned_edited_constructions(exterior_surfaces, constructions_hash_old_n
 end
 
 def cte_cambia_u_muros(model, runner, user_arguments)
+  # tenemos que testear:
+  # 1.- que la medida se aplica pero no queremos cambiar la U
+  # 2.- cómo añade una capa aislante o cámara de aire si ya existe una
+  # 3.- cómo aborta si no hay capa aislante o cámara de aire
+  # 4.- cómo reacciona a que los elementos esté definidos en distintos niveles y de distintas maneras
+
   runner.registerInfo("CTE: Cambiando la U de muros")
   u_muros = runner.getDoubleArgumentValue("CTE_U_muros", user_arguments)
   if u_muros.to_f < 0.001
@@ -247,13 +266,11 @@ def cte_cambia_u_muros(model, runner, user_arguments)
     return true
   end
 
+  # Muros exteriores:
   exterior_surfaces, exterior_surface_constructions, _exterior_surface_construction_names = filtra_superficies(model, condicion: "Outdoors", tipo: "Wall")
-
   constructions_hash_old_new, _constructions_hash_new_old, _materials_hash, _final_constructions_array = construye_hashes(model, runner, exterior_surface_constructions, u_muros, 0)
-
   # loop through construction sets used in the model
-  loop_through_construction_sets(model, runner, constructions_hash_old_new)
-
+  loop_through_construction_sets(model, runner, constructions_hash_old_new, condicion: "Outdoors", tipo: "Wall")
   # link cloned and edited constructions for surfaces with hard assigned constructions
   link_cloned_edited_constructions(exterior_surfaces, constructions_hash_old_new)
 
@@ -263,15 +280,18 @@ def cte_cambia_u_muros(model, runner, user_arguments)
   # end
   runner.registerFinalCondition("The existing insulation for exterior walls was set.")
 
-  # exterior_surfaces, exterior_surface_constructions, _exterior_surface_construction_names = filtra_superficies(model, condicion: "Ground", tipo: "Wall")
+  # Muros enterrados
+  exterior_surfaces, exterior_surface_constructions, _exterior_surface_construction_names = filtra_superficies(model, condicion: "Ground", tipo: "Wall")
+  constructions_hash_old_new, _constructions_hash_new_old, _materials_hash, _final_constructions_array = construye_hashes(model, runner, exterior_surface_constructions, u_muros, 0.5)
+  loop_through_construction_sets(model, runner, constructions_hash_old_new, condicion: "Ground", tipo: "Wall")
+  # link cloned and edited constructions for surfaces with hard assigned constructions
+  link_cloned_edited_constructions(exterior_surfaces, constructions_hash_old_new)
 
-  # constructions_hash_old_new, _constructions_hash_new_old, _materials_hash, _final_constructions_array = construye_hashes(model, runner, exterior_surface_constructions, u_muros, 0.5)
-
-  # # loop through construction sets used in the model
-  # loop_through_construction_sets(model, runner, constructions_hash_old_new)
-
-  # # link cloned and edited constructions for surfaces with hard assigned constructions
-  # link_cloned_edited_constructions(exterior_surfaces, constructions_hash_old_new)
+  # # activa este comentario para verficar que se produce el cambio
+  # exterior_surfaces.each do |exterior_surface_construction|
+  #   puts("___(Construccion, U) ->  (#{exterior_surface_construction.name},#{exterior_surface_construction.thermalConductance.to_f})___")
+  # end
+  runner.registerFinalCondition("The existing insulation for ground walls was set.")
 
   return true
 end # end the measure

@@ -32,7 +32,7 @@ require_relative "resources/cte_lib_measures_puentestermicos"
 require_relative "resources/cte_lib_measures_cambia_u_huecos"
 
 require_relative "resources/cte_lib_measures_cambia_u_muros"
-require_relative "resources/cte_lib_measures_cambia_u_muros_terreno"
+# require_relative "resources/cte_lib_measures_cambia_u_muros_terreno"
 require_relative "resources/cte_lib_measures_cambia_u_cubiertas"
 require_relative "resources/cte_lib_measures_cambia_u_suelos_terreno"
 require_relative "resources/cte_lib_measures_cambia_u_suelos_exterior"
@@ -55,24 +55,6 @@ class CTE_Model < OpenStudio::Measure::ModelMeasure
 
   def arguments(model)
     args = OpenStudio::Measure::OSArgumentVector.new
-
-    u_muros = OpenStudio::Measure::OSArgument::makeDoubleArgument("CTE_U_muros", true)
-    u_muros.setDisplayName("U de muros")
-    u_muros.setUnits("W/m2·K")
-    u_muros.setDefaultValue(0)
-    args << u_muros
-
-    u_cubiertas = OpenStudio::Measure::OSArgument::makeDoubleArgument("CTE_U_cubiertas", true)
-    u_cubiertas.setDisplayName("U de cubiertas")
-    u_cubiertas.setUnits("W/m2·K")
-    u_cubiertas.setDefaultValue(0)
-    args << u_cubiertas
-
-    u_suelos = OpenStudio::Measure::OSArgument::makeDoubleArgument("CTE_U_suelos", true)
-    u_suelos.setDisplayName("U de suelos")
-    u_suelos.setUnits("W/m2·K")
-    u_suelos.setDefaultValue(0)
-    args << u_suelos
 
     u_muros = OpenStudio::Measure::OSArgument::makeDoubleArgument("CTE_U_muros", true)
     u_muros.setDisplayName("U de muros")
@@ -183,9 +165,9 @@ class CTE_Model < OpenStudio::Measure::ModelMeasure
     result = cte_cambia_u_muros(model, runner, user_arguments)
     return result unless result == true
 
-    runner.registerInfo("Llamada a la actualización de muros enterrados")
-    result = cte_cambia_u_muros_terreno(model, runner, user_arguments)
-    return result unless result == true
+    # runner.registerInfo("Llamada a la actualización de muros enterrados")
+    # result = cte_cambia_u_muros_terreno(model, runner, user_arguments)
+    # return result unless result == true
 
     runner.registerInfo("Llamada a la actualización de cubiertas")
     result = cte_cambia_u_cubiertas(model, runner, user_arguments)
