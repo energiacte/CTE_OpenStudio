@@ -33,13 +33,14 @@ def filtra_superficies(model, condicion:, tipo:)
   [exterior_surfaces, exterior_surface_constructions, exterior_surface_construction_names]
 end
 
-def construye_hashes(model, runner, exterior_surface_constructions, u_muros, resistencia_tierra)
+def construye_hashes(model, runner, exterior_surface_constructions, u_deseada, resistencia_tierra)
   # !  __03__ recorre todas las construcciones y materiales usados en los muros exterios, los edita y los clona
   # La casuística para decidir como se procede a cambiar la transmitancia del muro es:
   # 1.- si hay una capa de material sin masa (aislamiento o cámara de aire) se modifica su r lo necesario
   # 2.- si NO hay una capa de material sin masa se lanza un error y se interrumpe la ejecución.
   # construye los hashes para hacer un seguimiento y evitar duplicados
   # used to get netArea of new construction and then cost objects of construction it replaced
+
   constructions_hash_old_new = {}
   constructions_hash_new_old = {} # used to get netArea of new construction and then cost objects of construction it replaced
   materials_hash = {}
@@ -100,7 +101,7 @@ def construye_hashes(model, runner, exterior_surface_constructions, u_muros, res
     end
 
     # La resistencia de 0.5 corresponde a una capa de material "terreno" de conductividad (lambda) 2 W/mk de 1 m de profundidad
-    resistencia_capa = 1 / u_muros - resistencia_termica_sin_aislante - resistencia_tierra # siempre que sea positiva, claro, resistencia_tierra = 0.5 para muro terremo
+    resistencia_capa = 1 / u_deseada - resistencia_termica_sin_aislante - resistencia_tierra # siempre que sea positiva, claro, resistencia_tierra = 0.5 para muro terremo
 
     max_thermal_resistance_material = max_mat_hash["mat"] # objeto OS
     max_thermal_resistance_material_index = max_mat_hash["index"] # indice de la capa
@@ -109,7 +110,7 @@ def construye_hashes(model, runner, exterior_surface_constructions, u_muros, res
 
     if resistencia_capa <= 0
       # puts("#{exterior_surface_construction.name} sin aislante tiene una resistencia superior a la que se pide")
-      runner.registerInfo("La U que se pide para los opacos mayor que la que tienen las capas sin contar el aislamiento. No se modifica")
+      runner.registerInfo("La U que se pide para los #{condicion} #{tipo} es mayor que la que tienen las capas sin contar el aislamiento. No se modifica")
     else
       # clone the construction
       final_construction = exterior_surface_construction.clone(model)
@@ -146,7 +147,7 @@ def construye_hashes(model, runner, exterior_surface_constructions, u_muros, res
         new_material_matt = new_material.to_Material
         if !new_material_matt.empty?
           starting_thickness = new_material_matt.get.thickness
-          target_thickness = starting_thickness / u_muros / thermal_resistance_values.max
+          target_thickness = starting_thickness / u_deseada / thermal_resistance_values.max
           _final_thickness = new_material_matt.get.setThickness(target_thickness)
         end
         new_material_massless = new_material.to_MasslessOpaqueMaterial

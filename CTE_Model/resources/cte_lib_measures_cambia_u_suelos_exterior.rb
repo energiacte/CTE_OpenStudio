@@ -1,130 +1,3 @@
-def construye_hashes_suelos(model, runner, exterior_surface_constructions, u_suelos, resistencia_tierra)
-  # construye los hashes para hacer un seguimiento y evitar duplicados
-  # used to get netArea of new construction and then cost objects of construction it replaced
-  constructions_hash_old_new = {}
-  constructions_hash_new_old = {} # used to get netArea of new construction and then cost objects of construction it replaced
-  materials_hash = {}
-  # array and counter for new constructions that are made, used for reporting final condition
-  final_constructions_array = []
-
-  # loop through all constructions and materials used on ground floors, edit and clone
-  "" "
-  La casuística para decidir como se procede a cambiar la transmitancia de suelo terreno es:
-  1.- si hay una capa de material sin masa (aislamiento o cámara de aire) se modifica su r lo necesario
-  2.- si NO hay una capa de material sin masa se lanza un error y se interrumpe la ejecución.
-  " ""
-
-  #! 03_ recorre las construcciones para editar su contenido
-  exterior_surface_constructions.each do |exterior_surface_construction|
-    # puts("___(Construccion, U) ->  (#{exterior_surface_construction.name},#{exterior_surface_construction.thermalConductance.to_f})___")
-    # runner.registerInfo("nombre de la construcción #{exterior_surface_construction.name}")
-    construction_layers = exterior_surface_construction.layers
-    max_thermal_resistance_material = ""
-    max_thermal_resistance_material_index = ""
-    # crea un array con los datos de las capas y su orden en la construcción
-    materials_in_construction = construction_layers.map.with_index do |layer, i|
-      { "name" => layer.name.to_s,
-        "index" => i,
-        "nomass" => !layer.to_MasslessOpaqueMaterial.empty?,
-        "r_value" => layer.to_OpaqueMaterial.get.thermalResistance,
-        "mat" => layer }
-    end
-
-    no_mass_materials = materials_in_construction.select { |mat| mat["nomass"] == true }
-    _mass_materials = materials_in_construction.select { |mat| mat["nomass"] == false }
-
-    # Si hay algún material en no_mass_material -> hay una cámara de aire o capa aislante
-    if !no_mass_materials.empty?
-      # puts("hay materias aislantes o cámara de aire: sin masa")
-      thermal_resistance_values = no_mass_materials.map { |mat| mat["r_value"] } # crea un nuevo array con los valores R mapeando el de materiales
-      max_mat_hash = no_mass_materials.select { |mat| mat["r_value"] >= thermal_resistance_values.max }[0] # se queda con el que tiene más resistencia
-    else
-      # puts("La composición del cerramiento no tiene una capa susceptible de modificar su resistencia -> #{exterior_surface_construction.name}")
-      runner.registerError("La composición del cerramiento no tiene una capa susceptible de modificar su resistencia (#{exterior_surface_construction.name}")
-      return false
-    end
-    # puts("__ se ha tomado como material aislante -->  #{max_mat_hash["name"]}__")
-
-    # ! 04 calcula la resistencia del muro sin la capa aislante
-    materiales = exterior_surface_construction.layers
-    resistencia_termica_sin_aislante = 0.0
-    resistencia_termica_total = 0.0
-
-    materiales.each_with_index do |material, indice|
-      resistencia_termica_material = material.to_OpaqueMaterial.get.thermalResistance.to_f
-      resistencia_termica_total += resistencia_termica_material
-      if indice == max_mat_hash["index"]
-        # evita sumar la resistencia de la capa aislante
-      else
-        resistencia_termica_sin_aislante += resistencia_termica_material
-      end
-    end
-
-    # La resistencia de 0.5 corresponde a una capa de material "terreno" de conductividad (lambda) 2 W/mk de 1 m de profundidad
-    resistencia_capa = 1 / u_suelos - resistencia_termica_sin_aislante - resistencia_tierra  # siempre que sea positiva, claro, resistencia_tierra = 0.5 para muro terremo
-
-    # ! 05 crea la construcción final y la añade al final_constructions_array
-
-    max_thermal_resistance_material = max_mat_hash["mat"] # objeto OS
-    max_thermal_resistance_material_index = max_mat_hash["index"] # indice de la capa
-    _max_thermal_resistance = max_thermal_resistance_material.to_OpaqueMaterial.get.thermalResistance
-    # puts("max_thermal_resistance -> #{max_thermal_resistance}__")
-
-    if resistencia_capa <= 0
-      # puts("#{exterior_surface_construction.name} sin aislante tiene una resistencia superior a la que se pide")
-      runner.registerInfo("La U que se pide para los suelos es mayor que la que tienen las capas sin contar el aislamiento. No se modifica")
-    else
-      # clone the construction
-      final_construction = exterior_surface_construction.clone(model)
-      final_construction = final_construction.to_Construction.get
-      final_construction.setName("#{exterior_surface_construction.name} con aislamiento corregido")
-      final_constructions_array << final_construction
-      constructions_hash_old_new[exterior_surface_construction.name.to_s] = final_construction
-      constructions_hash_new_old[final_construction] = exterior_surface_construction # push the object to hash key vs. name
-
-      # find already cloned insulation material and link to construction
-      target_material = max_thermal_resistance_material
-      found_material = false
-      materials_hash.each do |orig, new|
-        if target_material.name.to_s == orig
-          new_material = new
-          materials_hash[max_thermal_resistance_material.name.to_s] = new_material
-          final_construction.eraseLayer(max_thermal_resistance_material_index)
-          final_construction.insertLayer(max_thermal_resistance_material_index, new_material)
-          found_material = true
-        end
-      end
-
-      # clone and edit insulation material and link to construction
-      if found_material == false
-        new_material = max_thermal_resistance_material.clone(model)
-        new_material = new_material.to_OpaqueMaterial.get
-        new_material.setName("#{max_thermal_resistance_material.name}_R-value #{resistencia_capa}")
-        materials_hash[max_thermal_resistance_material.name.to_s] = new_material
-        final_construction.eraseLayer(max_thermal_resistance_material_index)
-        final_construction.insertLayer(max_thermal_resistance_material_index, new_material)
-        runner.registerInfo("For construction'#{final_construction.name}', material'#{new_material.name}' was altered.")
-
-        # edit insulation material
-        new_material_matt = new_material.to_Material
-        if !new_material_matt.empty?
-          starting_thickness = new_material_matt.get.thickness
-          target_thickness = starting_thickness / u_suelos / thermal_resistance_values.max
-          _final_thickness = new_material_matt.get.setThickness(target_thickness)
-        end
-        new_material_massless = new_material.to_MasslessOpaqueMaterial
-        if !new_material_massless.empty?
-          _final_thermal_resistance = new_material_massless.get.setThermalResistance(resistencia_capa)
-        end
-        new_material_airgap = new_material.to_AirGap
-        if !new_material_airgap.empty?
-          _final_thermal_resistance = new_material_airgap.get.setThermalResistance(resistencia_capa)
-        end
-     end
-    end
-  end
-  [constructions_hash_old_new, constructions_hash_new_old, materials_hash, final_constructions_array]
-end
 
 def loop_through_construction_sets_suelos(model, runner, constructions_hash_old_new, condicion:, tipo:)
   # loop through construction sets used in the model
@@ -245,7 +118,7 @@ def cte_cambia_u_suelos_exteriores(model, runner, user_arguments)
 
   # Suelos exteriores:
   exterior_surfaces, exterior_surface_constructions, _exterior_surface_construction_names = filtra_superficies(model, condicion: "Outdoors", tipo: "Floor")
-  constructions_hash_old_new, _constructions_hash_new_old, _materials_hash, _final_constructions_array = construye_hashes_suelos(model, runner, exterior_surface_constructions, u_suelos, 0)
+  constructions_hash_old_new, _constructions_hash_new_old, _materials_hash, _final_constructions_array = construye_hashes(model, runner, exterior_surface_constructions, u_suelos, 0)
   # loop through construction sets used in the model
   loop_through_construction_sets_suelos(model, runner, constructions_hash_old_new, condicion: "Outdoors", tipo: "Floor")
   # link cloned and edited constructions for surfaces with hard assigned constructions
@@ -258,7 +131,7 @@ def cte_cambia_u_suelos_exteriores(model, runner, user_arguments)
 
   # Suelos enterrados:
   exterior_surfaces, exterior_surface_constructions, _exterior_surface_construction_names = filtra_superficies(model, condicion: "Ground", tipo: "Floor")
-  constructions_hash_old_new, _constructions_hash_new_old, _materials_hash, _final_constructions_array = construye_hashes_suelos(model, runner, exterior_surface_constructions, u_suelos, 0.5)
+  constructions_hash_old_new, _constructions_hash_new_old, _materials_hash, _final_constructions_array = construye_hashes(model, runner, exterior_surface_constructions, u_suelos, 0.5)
   # loop through construction sets used in the model
   loop_through_construction_sets_suelos(model, runner, constructions_hash_old_new, condicion: "Ground", tipo: "Floor")
   # link cloned and edited constructions for surfaces with hard assigned constructions
