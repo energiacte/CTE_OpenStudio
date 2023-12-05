@@ -46,6 +46,14 @@ def construye_hashes(model, runner, exterior_surface_constructions, u_muros, res
   # array and counter for new constructions that are made, used for reporting final condition
   final_constructions_array = []
 
+  # loop through all constructions and materials used on ground floors, edit and clone
+  "" "
+  La casuística para decidir como se procede a cambiar la transmitancia de suelo terreno es:
+  1.- si hay una capa de material sin masa (aislamiento o cámara de aire) se modifica su r lo necesario
+  2.- si NO hay una capa de material sin masa se lanza un error y se interrumpe la ejecución.
+  " ""
+
+  #! 03_ recorre las construcciones para editar su contenido
   exterior_surface_constructions.each do |exterior_surface_construction|
     # puts("___(Construccion, U) ->  (#{exterior_surface_construction.name},#{exterior_surface_construction.thermalConductance.to_f})___")
     # runner.registerInfo("nombre de la construcción #{exterior_surface_construction.name}")
@@ -91,6 +99,7 @@ def construye_hashes(model, runner, exterior_surface_constructions, u_muros, res
       end
     end
 
+    # La resistencia de 0.5 corresponde a una capa de material "terreno" de conductividad (lambda) 2 W/mk de 1 m de profundidad
     resistencia_capa = 1 / u_muros - resistencia_termica_sin_aislante - resistencia_tierra # siempre que sea positiva, claro, resistencia_tierra = 0.5 para muro terremo
 
     max_thermal_resistance_material = max_mat_hash["mat"] # objeto OS
