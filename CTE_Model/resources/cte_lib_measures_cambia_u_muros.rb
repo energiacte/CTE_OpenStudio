@@ -8,7 +8,7 @@ def filtra_superficies(model, condicion:, tipo:)
   exterior_surface_construction_names = []
   model.getSurfaces.each do |surface|
     # Excluimos las superficies de PTs
-    if (surface.name.to_s.upcase.include?("PT_") || surface.name.to_s.upcase.include?("_PT"))
+    if surface.name.to_s.upcase.include?("PT_") || surface.name.to_s.upcase.include?("_PT")
       next
     end
     if (surface.outsideBoundaryCondition == condicion) && (surface.surfaceType == tipo)
@@ -48,13 +48,8 @@ def construye_hashes(model, runner, exterior_surface_constructions, u_deseada, r
   final_constructions_array = []
 
   # loop through all constructions and materials used on ground floors, edit and clone
-  "" "
-  La casuística para decidir como se procede a cambiar la transmitancia de suelo terreno es:
-  1.- si hay una capa de material sin masa (aislamiento o cámara de aire) se modifica su r lo necesario
-  2.- si NO hay una capa de material sin masa se lanza un error y se interrumpe la ejecución.
-  " ""
 
-  #! 03_ recorre las construcciones para editar su contenido
+  # ! 03_ recorre las construcciones para editar su contenido
   exterior_surface_constructions.each do |exterior_surface_construction|
     # puts("___(Construccion, U) ->  (#{exterior_surface_construction.name},#{exterior_surface_construction.thermalConductance.to_f})___")
     # runner.registerInfo("nombre de la construcción #{exterior_surface_construction.name}")
@@ -177,17 +172,17 @@ def loop_through_construction_sets(model, runner, constructions_hash_old_new, co
       end
 
       if !default_surface_const_set.empty?
-        _starting_construction = default_surface_const_set.get.wallConstruction
+        # _starting_construction = default_surface_const_set.get.wallConstruction
 
         # creating new default construction set
         new_default_construction_set = default_construction_set.clone(model)
         new_default_construction_set = new_default_construction_set.to_DefaultConstructionSet.get
-        new_default_construction_set.setName("#{default_construction_set.name} adj #{condicion} wall insulation")
+        new_default_construction_set.setName("#{default_construction_set.name} adj #{condicion} #{tipo} insulation")
 
         # create new surface set and link to construction set
         new_default_surface_const_set = default_surface_const_set.get.clone(model)
         new_default_surface_const_set = new_default_surface_const_set.to_DefaultSurfaceConstructions.get
-        new_default_surface_const_set.setName("#{default_surface_const_set.get.name} adj #{condicion} wall insulation")
+        new_default_surface_const_set.setName("#{default_surface_const_set.get.name} adj #{condicion} #{tipo} insulation")
 
         if condicion == "Ground"
           new_default_construction_set.setDefaultGroundContactSurfaceConstructions(new_default_surface_const_set)
@@ -198,14 +193,27 @@ def loop_through_construction_sets(model, runner, constructions_hash_old_new, co
         end
 
         # use the hash to find the proper construction and link to new_default_surface_const_set
-        target_const = new_default_surface_const_set.wallConstruction
+        if tipo == "Wall"
+          target_const = new_default_surface_const_set.wallConstruction
+        elsif tipo == "Floor"
+          target_const = new_default_surface_const_set.floorConstruction
+        else
+          puts("No he reconocido este tipo de cerramiento #{tipo}")
+        end
         if !target_const.empty?
           target_const = target_const.get.name.to_s
           found_const_flag = false
           constructions_hash_old_new.each do |orig, new|
             if target_const == orig
               final_construction = new
-              new_default_surface_const_set.setWallConstruction(final_construction)
+              if tipo == "Wall"
+                new_default_surface_const_set.setWallConstruction(final_construction)
+              elsif tipo == "Floor"
+                new_default_surface_const_set.setFloorConstruction(final_construction)
+              else
+                puts("No he reconocido este tipo de cerramiento #{tipo}")
+              end
+
               found_const_flag = true
             end
           end
@@ -303,5 +311,5 @@ def cte_cambia_u_muros(model, runner, user_arguments)
   # end
   runner.registerFinalCondition("The existing insulation for ground walls was set.")
 
-  return true
+  true
 end # end the measure
