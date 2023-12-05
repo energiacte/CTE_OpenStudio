@@ -156,24 +156,8 @@ class CTE_Model < OpenStudio::Measure::ModelMeasure
     model.building.get.setComment(argumentos.to_json)
 
     runner.registerInfo("Llamada a la actualización de muros")
-    result = cte_cambia_u_muros(model, runner, user_arguments)
+    result = cte_cambia_u_opacos(model, runner, user_arguments)
     return result unless result == true
-
-    # runner.registerInfo("Llamada a la actualización de muros enterrados")
-    # result = cte_cambia_u_muros_terreno(model, runner, user_arguments)
-    # return result unless result == true
-
-    # runner.registerInfo("Llamada a la actualización de cubiertas")
-    # result = cte_cambia_u_cubiertas(model, runner, user_arguments)
-    # return result unless result == true
-
-    # runner.registerInfo("Llamada a la actualización de los suelos en contacto con el terreno")
-    # result = cte_cambia_u_suelos_terreno(model, runner, user_arguments)
-    # return result unless result == true
-
-    # runner.registerInfo("Llamada a la actualización de los suelos en contacto con el aire")
-    # result = cte_cambia_u_suelos(model, runner, user_arguments)
-    # return result unless result == true
 
     runner.registerInfo("Llamada a la actualización de los huecos")
     result = cte_cambia_u_huecos(model, runner, user_arguments)
