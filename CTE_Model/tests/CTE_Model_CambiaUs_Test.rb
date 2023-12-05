@@ -195,7 +195,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
 
     u_final = get_transmitance(model, uuid)
 
-    assert_in_delta(args_hash["CTE_U_muros"], u_final, 0.001)
+    assert_in_delta(args_hash["CTE_U_muros"], u_final, 0.001, "En uuid = #{uuid}")
   end
 
   def test_CTE_CambiaUs_cambia_cubierta
@@ -403,7 +403,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
     end
 
     elementos.each do |uuid, atrib|
-      assert_in_delta(atrib["u_final"], transmitancias[atrib["tipo"]], 0.01, message = "#{uuid}")
+      assert_in_delta(atrib["u_final"], transmitancias[atrib["tipo"]], 0.01, "uuid -> #{uuid}")
     end
   end
 end
