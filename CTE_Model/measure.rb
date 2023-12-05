@@ -173,9 +173,9 @@ class CTE_Model < OpenStudio::Measure::ModelMeasure
     result = cte_cambia_u_cubiertas(model, runner, user_arguments)
     return result unless result == true
 
-    runner.registerInfo("Llamada a la actualización de los suelos en contacto con el terreno")
-    result = cte_cambia_u_suelos_terreno(model, runner, user_arguments)
-    return result unless result == true
+    # runner.registerInfo("Llamada a la actualización de los suelos en contacto con el terreno")
+    # result = cte_cambia_u_suelos_terreno(model, runner, user_arguments)
+    # return result unless result == true
 
     runner.registerInfo("Llamada a la actualización de los suelos en contacto con el aire")
     result = cte_cambia_u_suelos_exteriores(model, runner, user_arguments)
