@@ -1,37 +1,3 @@
-def filtra_superficies_suelos(model, condicion:, tipo:)
-  # !  __02__ crea un array de suelos terreno y busca un rango de construcciones en el rango de transmitancias.
-  # create an array of ground floors and find range of starting construction R-value (not just insulation layer)
-  # el objeto OS:Surface tiene: handle, name, type, construction name(vacio), space name, condiciones exteriores, vertices
-  #                           si la construcción está toma la establecida por defecto
-  exterior_surfaces = []
-  exterior_surface_constructions = []
-  exterior_surface_construction_names = []
-  model.getSurfaces.each do |surface|
-    # Excluimos las superficies de PTs
-    if (surface.name.to_s.upcase.include?("PT_") || surface.name.to_s.upcase.include?("_PT"))
-      next
-    end
-    if (surface.outsideBoundaryCondition == condicion) && (surface.surfaceType == tipo)
-      # el objeto OS:Construction tiene: Handle, name, surface rendering name y varias layers
-      exterior_surfaces << surface
-      ext_outdoor_floor_const = surface.construction.get # algunas surfaces no tienen construcción.
-
-      # añade la construcción únicamente si no lo ha hecho antes
-      if !exterior_surface_construction_names.include?(ext_outdoor_floor_const.name.to_s)
-        exterior_surface_constructions << ext_outdoor_floor_const.to_Construction.get
-      end
-      exterior_surface_construction_names << ext_outdoor_floor_const.name.to_s
-    end
-  end
-
-  if exterior_surfaces.empty?
-    runner.registerAsNotApplicable("El modelo no tiene superficies #{tipo} #{condicion}")
-    return true
-  end
-
-  [exterior_surfaces, exterior_surface_constructions, exterior_surface_construction_names]
-end
-
 def construye_hashes_suelos(model, runner, exterior_surface_constructions, u_suelos, resistencia_tierra)
   # construye los hashes para hacer un seguimiento y evitar duplicados
   # used to get netArea of new construction and then cost objects of construction it replaced
@@ -278,7 +244,7 @@ def cte_cambia_u_suelos_exteriores(model, runner, user_arguments)
   end
 
   # Suelos exteriores:
-  exterior_surfaces, exterior_surface_constructions, _exterior_surface_construction_names = filtra_superficies_suelos(model, condicion: "Outdoors", tipo: "Floor")
+  exterior_surfaces, exterior_surface_constructions, _exterior_surface_construction_names = filtra_superficies(model, condicion: "Outdoors", tipo: "Floor")
   constructions_hash_old_new, _constructions_hash_new_old, _materials_hash, _final_constructions_array = construye_hashes_suelos(model, runner, exterior_surface_constructions, u_suelos, 0)
   # loop through construction sets used in the model
   loop_through_construction_sets_suelos(model, runner, constructions_hash_old_new, condicion: "Outdoors", tipo: "Floor")
@@ -291,7 +257,7 @@ def cte_cambia_u_suelos_exteriores(model, runner, user_arguments)
   # end
 
   # Suelos enterrados:
-  exterior_surfaces, exterior_surface_constructions, _exterior_surface_construction_names = filtra_superficies_suelos(model, condicion: "Ground", tipo: "Floor")
+  exterior_surfaces, exterior_surface_constructions, _exterior_surface_construction_names = filtra_superficies(model, condicion: "Ground", tipo: "Floor")
   constructions_hash_old_new, _constructions_hash_new_old, _materials_hash, _final_constructions_array = construye_hashes_suelos(model, runner, exterior_surface_constructions, u_suelos, 0.5)
   # loop through construction sets used in the model
   loop_through_construction_sets_suelos(model, runner, constructions_hash_old_new, condicion: "Ground", tipo: "Floor")

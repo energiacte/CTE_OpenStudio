@@ -1,6 +1,6 @@
 def filtra_superficies(model, condicion:, tipo:)
-  # !  __02__ crea un array de muros segun la condicion(exteriores o terreno) y busca un rango de construcciones en el rango de transmitancias.
-  # create an array of  walls and find range of starting construction R-value (not just insulation layer)
+  # !  __02__ crea un array de elementos segun la condicion y busca un rango de construcciones en el rango de transmitancias.
+  # create an array of  objects and find range of starting construction R-value (not just insulation layer)
   # el objeto OS:Surface tiene: handle, name, type, construction name(vacio), space name, condiciones exteriores, vertices
   #                           si la construcción está toma la establecida por defecto
   exterior_surfaces = []
@@ -14,14 +14,14 @@ def filtra_superficies(model, condicion:, tipo:)
     if (surface.outsideBoundaryCondition == condicion) && (surface.surfaceType == tipo)
       # el objeto OS:Construction tiene: Handle, name, surface rendering name y varias layers
       exterior_surfaces << surface
-      ext_wall_const = surface.construction.get # algunas surfaces no tienen construcción.
+      construccion = surface.construction.get # algunas surfaces no tienen construcción.
 
       # añade la construcción únicamente si no lo ha hecho antes
-      if !exterior_surface_construction_names.include?(ext_wall_const.name.to_s)
-        exterior_surface_constructions << ext_wall_const.to_Construction.get
+      if !exterior_surface_construction_names.include?(construccion.name.to_s)
+        exterior_surface_constructions << construccion.to_Construction.get
       end
-      exterior_surface_construction_names << ext_wall_const.name.to_s
-      # puts("  __nombre #{surface.name.to_s}, construccion#{ext_wall_const.name.to_s}, U= #{ext_wall_const.thermalConductance.to_f}")
+      exterior_surface_construction_names << construccion.name.to_s
+      # puts("  __nombre #{surface.name.to_s}, construccion#{construccion.name.to_s}, U= #{construccion.thermalConductance.to_f}")
     end
   end
 
