@@ -1,55 +1,31 @@
-def cte_cambia_u_cubiertas(model, runner, user_arguments)
-  # tenemos que testear:
-  # 1.- que la medida se aplica pero no queremos cambiar la U
-  # 2.- cómo añade una capa aislante o cámara de aire si ya existe una
-  # 3.- cómo aborta si no hay capa aislante o cámara de aire
-  # 4.- cómo reacciona a que los elementos esté definidos en distintos niveles y de distintas maneras
-  runner.registerInfo("CTE: Cambiando la U de cubiertas")
+# def filtra_superficies(model, condicion:, tipo:)
+# exterior_surfaces = []
+# exterior_surface_constructions = []
+# exterior_surface_construction_names = []
+# model.getSurfaces.each do |surface|
+#   # Excluimos las superficies de PTs
+#   if (surface.name.to_s.upcase.include?("PT_") || surface.name.to_s.upcase.include?("_PT"))
+#     next
+#   end
+#   if (surface.outsideBoundaryCondition == "Outdoors") && (surface.surfaceType == "RoofCeiling")
+#     exterior_surfaces << surface
 
-  u_cubiertas = runner.getDoubleArgumentValue("CTE_U_cubiertas", user_arguments)
+#     ext_roof_const = surface.construction.get # algunas surfaces no tienen construcción.
+#     if !exterior_surface_construction_names.include?(ext_roof_const.name.to_s)
+#       exterior_surface_constructions << ext_roof_const.to_Construction.get
+#     end
+#     exterior_surface_construction_names << ext_roof_const.name.to_s
+#     # puts("--- transmitancia cubiertas: #{ext_roof_const.thermalConductance.to_f}")
+#   end
+# end
+# if exterior_surfaces.empty?
+#   runner.registerAsNotApplicable("El modelo no tiene superficies exteriores.")
+#   return true
+# end
+#   [exterior_surfaces, exterior_surface_constructions, exterior_surface_construction_names]
+# end
 
-  if u_cubiertas.to_f < 0.001
-    runner.registerFinalCondition("No se cambia la transmitancia de las cubiertas (U=0)")
-    return true
-  end
-
-  # puts("__ Se ha seleccionado un valor de U_cubiertas de #{u_cubiertas} -> R=#{1 / u_cubiertas}.")
-
-  # !  __02__ crea un array de cubiertas y busca un rango de construcciones en el rango de transmitancias.
-  # create an array of exterior roofs and find range of starting construction R-value (not just insulation layer)
-  # el objeto OS:Surface tiene: handle, name, type, construction name(vacio), space name, condiciones exteriores, vertices
-  #                           si la construcción está toma la establecida por defecto
-
-  exterior_surfaces = []
-  exterior_surface_constructions = []
-  exterior_surface_construction_names = []
-  model.getSurfaces.each do |surface|
-    # Excluimos las superficies de PTs
-    if (surface.name.to_s.upcase.include?("PT_") || surface.name.to_s.upcase.include?("_PT"))
-      next
-    end
-    if (surface.outsideBoundaryCondition == "Outdoors") && (surface.surfaceType == "RoofCeiling")
-      exterior_surfaces << surface
-
-      ext_roof_const = surface.construction.get # algunas surfaces no tienen construcción.
-      if !exterior_surface_construction_names.include?(ext_roof_const.name.to_s)
-        exterior_surface_constructions << ext_roof_const.to_Construction.get
-      end
-      exterior_surface_construction_names << ext_roof_const.name.to_s
-      # puts("--- transmitancia cubiertas: #{ext_roof_const.thermalConductance.to_f}")
-    end
-  end
-
-  if exterior_surfaces.empty?
-    runner.registerAsNotApplicable("El modelo no tiene superficies exteriores.")
-    return true
-  end
-
-  # !  __03__ recorre todas las construcciones y materiales usados en los muros exterios, los edita y los clona
-  # La casuística para decidir como se procede a cambiar la transmitancia de cubierta es:
-  # 1.- si hay una capa de material sin masa (aislamiento o cámara de aire) se modifica su r lo necesario
-  # 2.- si NO hay una capa de material sin masa se lanza un error y se interrumpe la ejecución.
-
+def construye_hashes_cubiertas(model, runner, exterior_surface_constructions, u_cubiertas, resistencia_tierra)
   # construye los hashes para hacer un seguimiento y evitar duplicados
   constructions_hash_old_new = {}
   constructions_hash_new_old = {} # used to get netArea of new construction and then cost objects of construction it replaced
@@ -64,17 +40,17 @@ def cte_cambia_u_cubiertas(model, runner, user_arguments)
     max_thermal_resistance_material_index = ""
     # crea un array con los datos de las capas y su orden en la construcción
     materials_in_construction = construction_layers.map.with_index do |layer, i|
-      { "name" => layer.name.to_s,
-        "index" => i,
-        "nomass" => !layer.to_MasslessOpaqueMaterial.empty?,
-        "r_value" => layer.to_OpaqueMaterial.get.thermalResistance,
-        "mat" => layer }
+      {"name" => layer.name.to_s,
+       "index" => i,
+       "nomass" => !layer.to_MasslessOpaqueMaterial.empty?,
+       "r_value" => layer.to_OpaqueMaterial.get.thermalResistance,
+       "mat" => layer}
     end
 
     no_mass_materials = materials_in_construction.select { |mat| mat["nomass"] == true }
     mass_materials = materials_in_construction.select { |mat| mat["nomass"] == false }
 
-    if !no_mass_materials.empty? #Entra si hay algún material en no_mass_material -> hay una cámara de aire o capa aislante
+    if !no_mass_materials.empty? # Entra si hay algún material en no_mass_material -> hay una cámara de aire o capa aislante
       # puts("hay materias aislantes o cámara de aire: sin masa")
       thermal_resistance_values = no_mass_materials.map { |mat| mat["r_value"] } # crea un nuevo array con los valores R mapeando el de materiales
       max_mat_hash = no_mass_materials.select { |mat| mat["r_value"] >= thermal_resistance_values.max }[0] # se queda con el que tiene más resistencia
@@ -121,7 +97,7 @@ def cte_cambia_u_cubiertas(model, runner, user_arguments)
       # clone the construction
       final_construction = exterior_surface_construction.clone(model)
       final_construction = final_construction.to_Construction.get
-      final_construction.setName("#{exterior_surface_construction.name} con aislamiento corregido")      
+      final_construction.setName("#{exterior_surface_construction.name} con aislamiento corregido")
       final_constructions_array << final_construction
       constructions_hash_old_new[exterior_surface_construction.name.to_s] = final_construction
       constructions_hash_new_old[final_construction] = exterior_surface_construction # push the object to hash key vs. name
@@ -175,8 +151,10 @@ def cte_cambia_u_cubiertas(model, runner, user_arguments)
       end
     end
   end
+  [constructions_hash_old_new, constructions_hash_new_old, materials_hash, final_constructions_array]
+end
 
-  # loop through construction sets used in the model
+def loop_through_construction_sets_cubierta(model, runner, constructions_hash_old_new, condicion:, tipo:)
   default_construction_sets = model.getDefaultConstructionSets
   default_construction_sets.each do |default_construction_set|
     if default_construction_set.directUseCount > 0
@@ -241,6 +219,31 @@ def cte_cambia_u_cubiertas(model, runner, user_arguments)
       end
     end
   end
+end
+
+def cte_cambia_u_cubiertas(model, runner, user_arguments)
+  # tenemos que testear:
+  # 1.- que la medida se aplica pero no queremos cambiar la U
+  # 2.- cómo añade una capa aislante o cámara de aire si ya existe una
+  # 3.- cómo aborta si no hay capa aislante o cámara de aire
+  # 4.- cómo reacciona a que los elementos esté definidos en distintos niveles y de distintas maneras
+  runner.registerInfo("CTE: Cambiando la U de cubiertas")
+
+  u_cubiertas = runner.getDoubleArgumentValue("CTE_U_cubiertas", user_arguments)
+
+  if u_cubiertas.to_f < 0.001
+    runner.registerFinalCondition("No se cambia la transmitancia de las cubiertas (U=0)")
+    return true
+  end
+
+  exterior_surfaces, exterior_surface_constructions, _exterior_surface_construction_names = \
+    filtra_superficies(model, condicion: "Outdoors", tipo: "RoofCeiling")
+  constructions_hash_old_new, _constructions_hash_new_old, _materials_hash, _final_constructions_array = \
+    construye_hashes_cubiertas(model, runner, exterior_surface_constructions, u_cubiertas, 0)
+
+  loop_through_construction_sets_cubierta(
+    model, runner, constructions_hash_old_new, condicion: "Outdoors", tipo: "RoofCeiling"
+  )
 
   # link cloned and edited constructions for surfaces with hard assigned constructions
   exterior_surfaces.each do |exterior_surface|
@@ -266,5 +269,5 @@ def cte_cambia_u_cubiertas(model, runner, user_arguments)
   # end
 
   runner.registerFinalCondition("The existing insulation for exterior roof ceiling was set.")
-  return true
+  true
 end
