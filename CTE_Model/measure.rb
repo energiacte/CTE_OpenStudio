@@ -35,7 +35,7 @@ require_relative "resources/cte_lib_measures_cambia_u_muros"
 # require_relative "resources/cte_lib_measures_cambia_u_muros_terreno"
 require_relative "resources/cte_lib_measures_cambia_u_cubiertas"
 # require_relative "resources/cte_lib_measures_cambia_u_suelos_terreno"
-require_relative "resources/cte_lib_measures_cambia_u_suelos"
+# require_relative "resources/cte_lib_measures_cambia_u_suelos"
 
 # Medida de OpenStudio (ModelUserScript) que modifica el modelo para su uso con el CTE
 # Para su correcto funcionamiento esta medida debe emplearse con una plantilla adecuada.
@@ -177,9 +177,9 @@ class CTE_Model < OpenStudio::Measure::ModelMeasure
     # result = cte_cambia_u_suelos_terreno(model, runner, user_arguments)
     # return result unless result == true
 
-    runner.registerInfo("Llamada a la actualización de los suelos en contacto con el aire")
-    result = cte_cambia_u_suelos(model, runner, user_arguments)
-    return result unless result == true
+    # runner.registerInfo("Llamada a la actualización de los suelos en contacto con el aire")
+    # result = cte_cambia_u_suelos(model, runner, user_arguments)
+    # return result unless result == true
 
     runner.registerInfo("Llamada a la actualización de los huecos")
     result = cte_cambia_u_huecos(model, runner, user_arguments)

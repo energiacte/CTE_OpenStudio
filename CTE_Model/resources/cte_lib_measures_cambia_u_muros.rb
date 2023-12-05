@@ -279,37 +279,45 @@ def cte_cambia_u_muros(model, runner, user_arguments)
 
   runner.registerInfo("CTE: Cambiando la U de muros")
   u_muros = runner.getDoubleArgumentValue("CTE_U_muros", user_arguments)
-  if u_muros.to_f < 0.001
+  if u_muros.to_f > 0.001
+    # Muros exteriores:
+    exterior_surfaces, exterior_surface_constructions, _exterior_surface_construction_names = filtra_superficies(model, condicion: "Outdoors", tipo: "Wall")
+    constructions_hash_old_new, _constructions_hash_new_old, _materials_hash, _final_constructions_array = construye_hashes(model, runner, exterior_surface_constructions, u_muros, 0)
+    loop_through_construction_sets(model, runner, constructions_hash_old_new, condicion: "Outdoors", tipo: "Wall")
+    link_cloned_edited_constructions(exterior_surfaces, constructions_hash_old_new)
+    runner.registerFinalCondition("The existing insulation for exterior walls was set.")
+
+    # Muros enterrados
+    exterior_surfaces, exterior_surface_constructions, _exterior_surface_construction_names = filtra_superficies(model, condicion: "Ground", tipo: "Wall")
+    constructions_hash_old_new, _constructions_hash_new_old, _materials_hash, _final_constructions_array = construye_hashes(model, runner, exterior_surface_constructions, u_muros, 0.5)
+    loop_through_construction_sets(model, runner, constructions_hash_old_new, condicion: "Ground", tipo: "Wall")
+    link_cloned_edited_constructions(exterior_surfaces, constructions_hash_old_new)
+    runner.registerFinalCondition("The existing insulation for ground walls was set.")
+
+  else
     runner.registerFinalCondition("No se cambia la transmitancia de los muros (U=0)")
-    return true
   end
 
-  # Muros exteriores:
-  exterior_surfaces, exterior_surface_constructions, _exterior_surface_construction_names = filtra_superficies(model, condicion: "Outdoors", tipo: "Wall")
-  constructions_hash_old_new, _constructions_hash_new_old, _materials_hash, _final_constructions_array = construye_hashes(model, runner, exterior_surface_constructions, u_muros, 0)
-  # loop through construction sets used in the model
-  loop_through_construction_sets(model, runner, constructions_hash_old_new, condicion: "Outdoors", tipo: "Wall")
-  # link cloned and edited constructions for surfaces with hard assigned constructions
-  link_cloned_edited_constructions(exterior_surfaces, constructions_hash_old_new)
+  runner.registerInfo("CTE: Cambiando la U los suelos exteriores")
+  u_suelos = runner.getDoubleArgumentValue("CTE_U_suelos", user_arguments)
+  if u_suelos.to_f > 0.001
+    # Suelos exteriores:
+    exterior_surfaces, exterior_surface_constructions, _exterior_surface_construction_names = filtra_superficies(model, condicion: "Outdoors", tipo: "Floor")
+    constructions_hash_old_new, _constructions_hash_new_old, _materials_hash, _final_constructions_array = construye_hashes(model, runner, exterior_surface_constructions, u_suelos, 0)
+    loop_through_construction_sets(model, runner, constructions_hash_old_new, condicion: "Outdoors", tipo: "Floor")
+    link_cloned_edited_constructions(exterior_surfaces, constructions_hash_old_new)
+    runner.registerFinalCondition("The existing insulation for exterior floors was set.")
 
-  # # activa este comentario para verficar que se produce el cambio
-  # exterior_surfaces.each do |exterior_surface_construction|
-  #   puts("___(Construccion, U) ->  (#{exterior_surface_construction.name},#{exterior_surface_construction.thermalConductance.to_f})___")
-  # end
-  runner.registerFinalCondition("The existing insulation for exterior walls was set.")
+    # Suelos enterrados:
+    exterior_surfaces, exterior_surface_constructions, _exterior_surface_construction_names = filtra_superficies(model, condicion: "Ground", tipo: "Floor")
+    constructions_hash_old_new, _constructions_hash_new_old, _materials_hash, _final_constructions_array = construye_hashes(model, runner, exterior_surface_constructions, u_suelos, 0.5)
+    loop_through_construction_sets(model, runner, constructions_hash_old_new, condicion: "Ground", tipo: "Floor")
+    link_cloned_edited_constructions(exterior_surfaces, constructions_hash_old_new)
+    runner.registerFinalCondition("The existing insulation for ground floors was set.")
 
-  # Muros enterrados
-  exterior_surfaces, exterior_surface_constructions, _exterior_surface_construction_names = filtra_superficies(model, condicion: "Ground", tipo: "Wall")
-  constructions_hash_old_new, _constructions_hash_new_old, _materials_hash, _final_constructions_array = construye_hashes(model, runner, exterior_surface_constructions, u_muros, 0.5)
-  loop_through_construction_sets(model, runner, constructions_hash_old_new, condicion: "Ground", tipo: "Wall")
-  # link cloned and edited constructions for surfaces with hard assigned constructions
-  link_cloned_edited_constructions(exterior_surfaces, constructions_hash_old_new)
-
-  # # activa este comentario para verficar que se produce el cambio
-  # exterior_surfaces.each do |exterior_surface_construction|
-  #   puts("___(Construccion, U) ->  (#{exterior_surface_construction.name},#{exterior_surface_construction.thermalConductance.to_f})___")
-  # end
-  runner.registerFinalCondition("The existing insulation for ground walls was set.")
+  else
+    runner.registerFinalCondition("No se cambia la transmitancia de los suelos (U=0)")
+  end
 
   true
 end # end the measure
