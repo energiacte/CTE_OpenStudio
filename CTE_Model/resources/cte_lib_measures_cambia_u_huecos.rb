@@ -48,21 +48,21 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
   spaces = model.getSpaces
   spaces.each do |space|
     space.surfaces.each do |surface|
-      if surface.outsideBoundaryCondition == "Outdoors" and surface.windExposure == "WindExposed"
-        surface.subSurfaces.each do |subsur|
-          windows << subsur # también las puertas y esas cosas
+      next unless surface.outsideBoundaryCondition == "Outdoors" && surface.windExposure == "WindExposed"
 
-          window_construction = subsur.construction.get
-          # añade la construcción únicamente si no lo ha hecho antes
-          if !window_construction_names.include?(window_construction.name.to_s)
-            window_constructions << window_construction.to_Construction.get
-            window_construction_names << window_construction.name.to_s
-          end
+      surface.subSurfaces.each do |subsur|
+        windows << subsur # también las puertas y esas cosas
 
-          # puts("__subsurface Type #{subsur.subSurfaceType()} -> #{subsur.construction.get.name}, #{subsur.uFactor()}")
-          if !tipos_cubiertos.include?(subsur.subSurfaceType.to_s)
-            puts("Tipo de hueco no cubierto por esta medida #{subsur.subSurfaceType}")
-          end
+        window_construction = subsur.construction.get
+        # añade la construcción únicamente si no lo ha hecho antes
+        unless window_construction_names.include?(window_construction.name.to_s)
+          window_constructions << window_construction.to_Construction.get
+          window_construction_names << window_construction.name.to_s
+        end
+
+        # puts("__subsurface Type #{subsur.subSurfaceType()} -> #{subsur.construction.get.name}, #{subsur.uFactor()}")
+        unless tipos_cubiertos.include?(subsur.subSurfaceType.to_s)
+          puts("Tipo de hueco no cubierto por esta medida #{subsur.subSurfaceType}")
         end
       end
     end
@@ -78,12 +78,9 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
   # construye los hashes para hacer un seguimiento y evitar duplicados
   constructions_hash_old_new = {}
   constructions_hash_new_old = {} # used to get netArea of new construction and then cost objects of construction it replaced
-  frame_hash_old_new = {}
-  frame_hash_new_old = {}
   materials_hash = {}
   # array and counter for new constructions that are made, used for reporting final condition
   final_constructions_array = []
-  final_frame_array = []
 
   # loop through all constructions and materials used on exterior walls, edit and clone
   # window_constructions.each { |construccion| puts(construccion.name) } #construccion =elemento
@@ -107,7 +104,7 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
 
     max_thermal_resistance_material = max_mat_hash["mat"] # objeto OS
     max_thermal_resistance_material_index = max_mat_hash["index"] # indice de la capa
-    max_thermal_resistance = max_thermal_resistance_material.to_SimpleGlazing.get.uFactor
+    # max_thermal_resistance = max_thermal_resistance_material.to_SimpleGlazing.get.uFactor
 
     # ! 04 modifica la composición
     final_construction = window_construction.clone(model)
@@ -131,112 +128,111 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
     found_material = false
 
     materials_hash.each do |orig, new|
-      if target_material.name.to_s == orig
-        new_material = new
-        materials_hash[max_thermal_resistance_material.name.to_s] = new_material
-        final_construction.eraseLayer(max_thermal_resistance_material_index)
-        final_construction.insertLayer(max_thermal_resistance_material_index, new_material)
-        found_material = true
-      end
-    end
+      next unless target_material.name.to_s == orig
 
-    # clone and edit insulation material and link to construction
-    if found_material == false
-      new_material = max_thermal_resistance_material.clone(model)
-      new_material = new_material.to_SimpleGlazing.get
-      new_material.setName("#{max_thermal_resistance_material.name}_U-value #{u_huecos}")
+      new_material = new
       materials_hash[max_thermal_resistance_material.name.to_s] = new_material
       final_construction.eraseLayer(max_thermal_resistance_material_index)
       final_construction.insertLayer(max_thermal_resistance_material_index, new_material)
-      runner.registerInfo("For construction'#{final_construction.name}', material'#{new_material.name}' was altered.")
-
-      # edit insulation material
-      new_material_matt = new_material
-      new_material_matt.setUFactor(u_huecos)
+      found_material = true
     end
+
+    next unless found_material == false
+
+    # create new material if not yet created
+    # clone and edit insulation material and link to construction
+    new_material = max_thermal_resistance_material.clone(model)
+    new_material = new_material.to_SimpleGlazing.get
+    new_material.setName("#{max_thermal_resistance_material.name}_U-value #{u_huecos}")
+    materials_hash[max_thermal_resistance_material.name.to_s] = new_material
+    final_construction.eraseLayer(max_thermal_resistance_material_index)
+    final_construction.insertLayer(max_thermal_resistance_material_index, new_material)
+    runner.registerInfo("For construction'#{final_construction.name}', material'#{new_material.name}' was altered.")
+
+    # edit insulation material
+    new_material_matt = new_material
+    new_material_matt.setUFactor(u_huecos)
   end
 
   # loop through construction sets used in the model
   default_construction_sets = model.getDefaultConstructionSets
   default_construction_sets.each do |default_construction_set|
-    if default_construction_set.directUseCount > 0
-      default_subsurface_const_set = default_construction_set.defaultExteriorSubSurfaceConstructions
-      if !default_subsurface_const_set.empty?
-        starting_construction = default_subsurface_const_set.get.fixedWindowConstruction
+    next if default_construction_set.directUseCount.zero?
 
-        # creating new default construction set
-        new_default_construction_set = default_construction_set.clone(model)
-        new_default_construction_set = new_default_construction_set.to_DefaultConstructionSet.get
-        new_default_construction_set.setName("#{default_construction_set.name} adj u_huecos")
-        # puts("__ new_default_construction_set__ #{new_default_construction_set}")
+    default_subsurface_const_set = default_construction_set.defaultExteriorSubSurfaceConstructions
+    next if default_subsurface_const_set.empty?
 
-        # create new surface set and link to construction set
-        new_default_subsurface_const_set = default_subsurface_const_set.get.clone(model)
-        new_default_subsurface_const_set = new_default_subsurface_const_set.to_DefaultSubSurfaceConstructions.get
-        new_default_subsurface_const_set.setName("#{default_subsurface_const_set.get.name}  u_huecos adj")
-        new_default_construction_set.setDefaultExteriorSubSurfaceConstructions(new_default_subsurface_const_set)
-        # puts("__ new_default_construction_set__ #{new_default_construction_set}")
+    # creating new default construction set
+    new_default_construction_set = default_construction_set.clone(model)
+    new_default_construction_set = new_default_construction_set.to_DefaultConstructionSet.get
+    new_default_construction_set.setName("#{default_construction_set.name} adj u_huecos")
+    # puts("__ new_default_construction_set__ #{new_default_construction_set}")
 
-        # use the hash to find the proper construction and link to new_default_subsurface_const_set
-        target_const = new_default_subsurface_const_set.fixedWindowConstruction
-        if !target_const.empty?
-          target_const = target_const.get.name.to_s
-          found_const_flag = false
-          constructions_hash_old_new.each do |orig, new|
-            if target_const == orig
-              final_construction = new
-              new_default_subsurface_const_set.setFixedWindowConstruction(final_construction)
-              found_const_flag = true
-            end
-          end
-          if found_const_flag == false # this should never happen but is just an extra test in case something goes wrong with the measure code
-            runner.registerWarning("Measure couldn't find the construction named '#{target_const}' in the windows construction hash.")
-          end
-        end
+    # create new surface set and link to construction set
+    new_default_subsurface_const_set = default_subsurface_const_set.get.clone(model)
+    new_default_subsurface_const_set = new_default_subsurface_const_set.to_DefaultSubSurfaceConstructions.get
+    new_default_subsurface_const_set.setName("#{default_subsurface_const_set.get.name}  u_huecos adj")
+    new_default_construction_set.setDefaultExteriorSubSurfaceConstructions(new_default_subsurface_const_set)
+    # puts("__ new_default_construction_set__ #{new_default_construction_set}")
 
-        # swap all uses of the old construction set for the new
-        construction_set_sources = default_construction_set.sources
-        construction_set_sources.each do |construction_set_source|
-          building_source = construction_set_source.to_Building
-          # if statement for each type of object than can use a DefaultConstructionSet
-          if !building_source.empty?
-            building_source = building_source.get
-            building_source.setDefaultConstructionSet(new_default_construction_set)
-          end
-          building_story_source = construction_set_source.to_BuildingStory
-          if !building_story_source.empty?
-            building_story_source = building_story_source.get
-            building_story_source.setDefaultConstructionSet(new_default_construction_set)
-          end
-          space_type_source = construction_set_source.to_SpaceType
-          if !space_type_source.empty?
-            space_type_source = space_type_source.get
-            space_type_source.setDefaultConstructionSet(new_default_construction_set)
-          end
-          space_source = construction_set_source.to_Space
-          if !space_source.empty?
-            space_source = space_source.get
-            space_source.setDefaultConstructionSet(new_default_construction_set)
-          end
-        end
+    # use the hash to find the proper construction and link to new_default_subsurface_const_set
+    target_const = new_default_subsurface_const_set.fixedWindowConstruction
+    unless target_const.empty?
+      target_const = target_const.get.name.to_s
+      found_const_flag = false
+      constructions_hash_old_new.each do |orig, new|
+        next unless target_const == orig
+
+        final_construction = new
+        new_default_subsurface_const_set.setFixedWindowConstruction(final_construction)
+        found_const_flag = true
+      end
+      # this should never happen but is just an extra test in case something goes wrong with the measure code
+      if found_const_flag == false
+        runner.registerWarning("Measure couldn't find the construction named '#{target_const}' in the windows construction hash.")
+      end
+    end
+
+    # swap all uses of the old construction set for the new
+    construction_set_sources = default_construction_set.sources
+    construction_set_sources.each do |construction_set_source|
+      building_source = construction_set_source.to_Building
+      # if statement for each type of object than can use a DefaultConstructionSet
+      unless building_source.empty?
+        building_source = building_source.get
+        building_source.setDefaultConstructionSet(new_default_construction_set)
+      end
+      building_story_source = construction_set_source.to_BuildingStory
+      unless building_story_source.empty?
+        building_story_source = building_story_source.get
+        building_story_source.setDefaultConstructionSet(new_default_construction_set)
+      end
+      space_type_source = construction_set_source.to_SpaceType
+      unless space_type_source.empty?
+        space_type_source = space_type_source.get
+        space_type_source.setDefaultConstructionSet(new_default_construction_set)
+      end
+      space_source = construction_set_source.to_Space
+      unless space_source.empty?
+        space_source = space_source.get
+        space_source.setDefaultConstructionSet(new_default_construction_set)
       end
     end
   end
 
   # link cloned and edited constructions for surfaces with hard assigned constructions
   windows.each do |window|
-    if !window.isConstructionDefaulted && !window.construction.empty?
+    next if window.isConstructionDefaulted || window.construction.empty?
 
-      # use the hash to find the proper construction and link to surface
-      target_const = window.construction
-      if !target_const.empty?
-        target_const = target_const.get.name.to_s
-        constructions_hash_old_new.each do |orig, new|
-          if target_const == orig
-            final_construction = new
-            window.setConstruction(final_construction)
-          end
-        end
+    # use the hash to find the proper construction and link to surface
+    target_const = window.construction
+    next if target_const.empty?
+
+    target_const = target_const.get.name.to_s
+    constructions_hash_old_new.each do |orig, new|
+      if target_const == orig
+        final_construction = new
+        window.setConstruction(final_construction)
       end
     end
   end
@@ -248,37 +244,34 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
 
   windows.each do |window|
     frame = window.windowPropertyFrameAndDivider.get
-    frame_name = frame.name
-    # puts("__frame_name__ #{frame_name}")
-    if !window_frameanddivider_names.include?(frame.name.to_s)
+    unless window_frameanddivider_names.include?(frame.name.to_s)
       window_frameanddividers << frame
       window_frameanddivider_names << frame.name.to_s
     end
-    tiene_marco = true
   rescue
-    tiene_marco = false
+    runner.registerWarning("No se ha podido obtener el FrameAndDivider del hueco '#{window.name}'.")
   end
 
   window_frameanddividers.each do |frame|
     # transmitancia = frame.frameConductance()
     # puts("transmitancia #{transmitancia}")
     frame.setFrameConductance(u_huecos)
-    name = frame.name.to_s
     frame.setName("Frame forzado a #{u_huecos}")
   end
 
   spaces = model.getSpaces
   spaces.each do |space|
     space.surfaces.each do |surface|
-      if surface.outsideBoundaryCondition == "Outdoors" and surface.windExposure == "WindExposed"
-        surface.subSurfaces.each do |subsur|
-          windows << subsur # también las puertas y esas cosas
-          # puts("__subsurface Type #{subsur.subSurfaceType()} -> #{subsur.construction.get.name}, #{subsur.uFactor()}")
-          if !tipos_cubiertos.include?(subsur.subSurfaceType.to_s)
-            puts("Tipo de hueco no cubierto por esta medida #{subsur.subSurfaceType}")
-          end
+      next unless surface.outsideBoundaryCondition == "Outdoors" && surface.windExposure == "WindExposed"
+
+      surface.subSurfaces.each do |subsur|
+        windows << subsur # también las puertas y esas cosas
+        # puts("__subsurface Type #{subsur.subSurfaceType()} -> #{subsur.construction.get.name}, #{subsur.uFactor()}")
+        unless tipos_cubiertos.include?(subsur.subSurfaceType.to_s)
+          puts("Tipo de hueco no cubierto por esta medida #{subsur.subSurfaceType}")
         end
       end
+
     end
   end
 
