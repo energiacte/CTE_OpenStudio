@@ -268,10 +268,9 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
         windows << subsur # también las puertas y esas cosas
         # puts("__subsurface Type #{subsur.subSurfaceType()} -> #{subsur.construction.get.name}, #{subsur.uFactor()}")
         unless tipos_cubiertos.include?(subsur.subSurfaceType.to_s)
-          puts("Tipo de hueco no cubierto por esta medida #{subsur.subSurfaceType}")
+          runner.registerWarning("Hueco #{subsur.name.get} con tipo no cubierto por esta medida #{subsur.subSurfaceType}")
         end
       end
-
     end
   end
 
