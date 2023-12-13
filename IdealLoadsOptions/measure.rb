@@ -350,6 +350,10 @@ class IdealLoadsOptions < OpenStudio::Ruleset::WorkspaceUserScript
 
     num_set = 0
     ideal_loads_objects.each do |ideal_loads_object|
+      #TODO aplicar la limitación de renovaciones hora si así se indica en la medida.
+      # obj = ideal_loads_object
+      # z = workspace.getObjectsByName(obj.getString(0).to_s)
+      # volumen = z[0].getString(8).get
 
       if version == "OSv1" #OS v1 ZoneHVAC:IdealLoadsAirSystem
         ideal_loads_object.setString(1,availability_schedule)
