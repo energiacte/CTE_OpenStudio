@@ -30,6 +30,7 @@ require_relative "resources/cte_lib_measures_infiltracion"
 require_relative "resources/cte_lib_measures_puentestermicos"
 require_relative "resources/cte_lib_measures_cambia_u_huecos"
 require_relative "resources/cte_lib_measures_cambia_u_opacos"
+require_relative "resources/cte_lib_measures_volumen_espacios"
 
 # Medida de OpenStudio (ModelUserScript) que modifica el modelo para su uso con el CTE
 # Para su correcto funcionamiento esta medida debe emplearse con una plantilla adecuada.
@@ -154,6 +155,10 @@ class CTE_Model < OpenStudio::Measure::ModelMeasure
       argumentos[name] = argument.printValue
     end
     model.building.get.setComment(argumentos.to_json)
+
+    runner.registerInfo("Llamada a la función que escribe el volumen de los espacios")
+    result = cte_volumen_espacios(model, runner)
+    return result unless result == true
 
     runner.registerInfo("Llamada a la actualización de muros")
     result = cte_cambia_u_opacos(model, runner, user_arguments)
