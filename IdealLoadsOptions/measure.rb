@@ -429,25 +429,24 @@ class IdealLoadsOptions < OpenStudio::Ruleset::WorkspaceUserScript
 
       if heating_limit_type == "LimitFlowACH"
         # obj = ideal_loads_object
-        zone_name = ideal_loads_object.getStrin(0).to_s
+        zone_name = ideal_loads_object.getString(0).to_s
         zone = workspace.getObjectsByName(zone_name)
-        volumen = zone[0].getString(8).get
-        flow_m3_s = ach_limit_flow_rate * volumen / 3600
-        ideal_loads_object.setString(8,LimitFlowRate)
-        # campo 8  -> Maximum Heating Air Flow Rate {m3/s}
-        pass
+        volumen = zone[0].getString(8).get.to_f
+        flow_m3_s = ach_limit_flow_rate.to_f * volumen / 3600
+        ideal_loads_object.setString(7,'LimitFlowRate')
+        ideal_loads_object.setString(8,flow_m3_s.to_s)
       end
 
       if cooling_limit_type == "LimitFlowACH"
         # obj = ideal_loads_object
-        zone_name = ideal_loads_object.getStrin(0).to_s
+        zone_name = ideal_loads_object.getString(0).to_s
         zone = workspace.getObjectsByName(zone_name)
-        volumen = zone[0].getString(8).get
-        flow_m3_s = ach_limit_flow_rate * volumen / 3600
-        ideal_loads_object.setString(11,LimitFlowRate)
-        # campo 11 -> Maximum Cooling Air Flow Rate {m3/s}
-        pass
+        volumen = zone[0].getString(8).get.to_f
+        flow_m3_s = ach_limit_flow_rate.to_f * volumen / 3600
+        ideal_loads_object.setString(10,'LimitFlowRate')
+        ideal_loads_object.setString(11,flow_m3_s.to_s)
       end
+
 
       #set remaining fields
       if version == "OSv1" #OS v1 ZoneHVAC:IdealLoadsAirSystem
