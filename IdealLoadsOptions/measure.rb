@@ -45,7 +45,7 @@ class IdealLoadsOptions < OpenStudio::Ruleset::WorkspaceUserScript
       end
     end
     return filtered_schedules
-  end  
+  end
 
   # check to see if we have an exact match for this object already
   def check_for_object(runner, workspace, idf_object, idd_object_type)
@@ -85,7 +85,7 @@ class IdealLoadsOptions < OpenStudio::Ruleset::WorkspaceUserScript
 
     return false
   end
-  
+
   # examines object and determines whether or not to add it to the workspace
   def add_object(runner, workspace, idf_object)
     num_added = 0
@@ -132,7 +132,7 @@ class IdealLoadsOptions < OpenStudio::Ruleset::WorkspaceUserScript
           workspace.addObject(idf_object)
           num_added += 1
         elsif merge_output_table_summary_reports(summary_reports[0], idf_object)
-          runner.registerInfo("Merged idf object #{idf_object.to_s.strip}")     
+          runner.registerInfo("Merged idf object #{idf_object.to_s.strip}")
         else
           runner.registerInfo("Workspace already includes #{idf_object.to_s.strip}")
         end
@@ -161,7 +161,7 @@ class IdealLoadsOptions < OpenStudio::Ruleset::WorkspaceUserScript
       if getScheduleLimitType(workspace,sch) == "availability"
         sch_choices << sch.getString(0).to_s
       end
-    end    
+    end
     sch_years.each do |sch|
       if getScheduleLimitType(workspace,sch) == "availability"
         sch_choices << sch.getString(0).to_s
@@ -194,6 +194,7 @@ class IdealLoadsOptions < OpenStudio::Ruleset::WorkspaceUserScript
     choices << "LimitFlowRate"
     choices << "LimitCapacity"
     choices << "LimitFlowRateAndCapacity"
+    choices << "LimitFlowACH"
     heating_limit_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("heating_limit_type", choices, true)
     heating_limit_type.setDisplayName("Heating Limit Type:")
     heating_limit_type.setDefaultValue("NoLimit")
@@ -205,10 +206,17 @@ class IdealLoadsOptions < OpenStudio::Ruleset::WorkspaceUserScript
     choices << "LimitFlowRate"
     choices << "LimitCapacity"
     choices << "LimitFlowRateAndCapacity"
+    choices << "LimitFlowACH"
     cooling_limit_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("cooling_limit_type", choices, true)
     cooling_limit_type.setDisplayName("Cooling Limit Type:")
     cooling_limit_type.setDefaultValue("NoLimit")
     args << cooling_limit_type
+
+    #argument for ACH limit flow rate
+    ach_limit_flow_rate = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("ach_limit_flow_rate", true)
+    ach_limit_flow_rate.setDisplayName("ACH limit flow rate")
+    ach_limit_flow_rate.setDefaultValue(0.6)
+    args << ach_limit_flow_rate
 
     #argument for Dehumidification Control Type
     choices = OpenStudio::StringVector.new
@@ -301,7 +309,7 @@ class IdealLoadsOptions < OpenStudio::Ruleset::WorkspaceUserScript
   def run(workspace, runner, user_arguments)
     super(workspace, runner, user_arguments)
 
-    # use the built-in error checking 
+    # use the built-in error checking
     if not runner.validateUserArguments(arguments(workspace), user_arguments)
       return false
     end
@@ -316,6 +324,7 @@ class IdealLoadsOptions < OpenStudio::Ruleset::WorkspaceUserScript
     cooling_availability_schedule = runner.getStringArgumentValue("cooling_availability_schedule",user_arguments)
     heating_limit_type = runner.getStringArgumentValue("heating_limit_type",user_arguments)
     cooling_limit_type = runner.getStringArgumentValue("cooling_limit_type",user_arguments)
+    ach_limit_flow_rate = runner.getStringArgumentValue("ach_limit_flow_rate", user_arguments)
     dehumid_type = runner.getStringArgumentValue("dehumid_type",user_arguments)
     cooling_sensible_heat_ratio = runner.getDoubleArgumentValue("cooling_sensible_heat_ratio",user_arguments)
     humid_type = runner.getStringArgumentValue("humid_type",user_arguments)
@@ -336,7 +345,7 @@ class IdealLoadsOptions < OpenStudio::Ruleset::WorkspaceUserScript
 
     if ideal_loads_objects.empty?
       runner.registerError("The model has no ideal air loads objects; cannot apply measure.  Make sure at least one zone has ideal air loads enabled.")
-    else  
+    else
       runner.registerInitialCondition("The model has #{ideal_loads_objects.size} ideal air loads objects.")
     end
 
@@ -350,10 +359,6 @@ class IdealLoadsOptions < OpenStudio::Ruleset::WorkspaceUserScript
 
     num_set = 0
     ideal_loads_objects.each do |ideal_loads_object|
-      #TODO aplicar la limitación de renovaciones hora si así se indica en la medida.
-      # obj = ideal_loads_object
-      # z = workspace.getObjectsByName(obj.getString(0).to_s)
-      # volumen = z[0].getString(8).get
 
       if version == "OSv1" #OS v1 ZoneHVAC:IdealLoadsAirSystem
         ideal_loads_object.setString(1,availability_schedule)
@@ -383,7 +388,7 @@ class IdealLoadsOptions < OpenStudio::Ruleset::WorkspaceUserScript
         if version == "OSv1" #OS v1 ZoneHVAC:IdealLoadsAirSystem
           zone_supply_node_name = ideal_loads_object.getString(2)
           zone_name = ""
-          equipment_connection_objects.each do |obj|    
+          equipment_connection_objects.each do |obj|
             if obj.getString(2).to_s == zone_supply_node_name.to_s
               zone_name = obj.getString(0).to_s
               break;
@@ -414,12 +419,34 @@ class IdealLoadsOptions < OpenStudio::Ruleset::WorkspaceUserScript
           return false
         else
           if version == "OSv1" #OS v1 ZoneHVAC:IdealLoadsAirSystem
-            ideal_loads_object.setString(19,design_spec_oa_name)          
+            ideal_loads_object.setString(19,design_spec_oa_name)
           else #OS v2 HVACTemplate:Zone:IdealLoadsAirSystem
             ideal_loads_object.setString(20,"DetailedSpecification")
 				    ideal_loads_object.setString(24,design_spec_oa_name)
           end
         end
+      end
+
+      if heating_limit_type == "LimitFlowACH"
+        # obj = ideal_loads_object
+        zone_name = ideal_loads_object.getStrin(0).to_s
+        zone = workspace.getObjectsByName(zone_name)
+        volumen = zone[0].getString(8).get
+        flow_m3_s = ach_limit_flow_rate * volumen / 3600
+        ideal_loads_object.setString(8,LimitFlowRate)
+        # campo 8  -> Maximum Heating Air Flow Rate {m3/s}
+        pass
+      end
+
+      if cooling_limit_type == "LimitFlowACH"
+        # obj = ideal_loads_object
+        zone_name = ideal_loads_object.getStrin(0).to_s
+        zone = workspace.getObjectsByName(zone_name)
+        volumen = zone[0].getString(8).get
+        flow_m3_s = ach_limit_flow_rate * volumen / 3600
+        ideal_loads_object.setString(11,LimitFlowRate)
+        # campo 11 -> Maximum Cooling Air Flow Rate {m3/s}
+        pass
       end
 
       #set remaining fields
@@ -462,32 +489,32 @@ class IdealLoadsOptions < OpenStudio::Ruleset::WorkspaceUserScript
       end
 
       meters_added = 0
-      outputs_added = 0      
-      ideal_air_loads_system_variables.each do |variable|        
+      outputs_added = 0
+      ideal_air_loads_system_variables.each do |variable|
         #create meter definition for variable
-        meter_definition = "Meter:Custom," + "Sum #{variable}" + "," + "Generic"        
+        meter_definition = "Meter:Custom," + "Sum #{variable}" + "," + "Generic"
         ideal_loads_names.each do |name|
           meter_definition = meter_definition + "," + name + "," + variable
         end
         meter_definition = meter_definition + ";"
 
-        #add meter:custom to idf        
+        #add meter:custom to idf
         idf_object = OpenStudio::IdfObject::load(meter_definition)
-        idf_object = idf_object.get    
+        idf_object = idf_object.get
         meters_added += add_object(runner, workspace, idf_object)
 
         #add output meter
         output_meter_definition = "Output:Meter," + "Sum #{variable}" + "," + "hourly" + ";"
         idf_object = OpenStudio::IdfObject::load(output_meter_definition)
-        idf_object = idf_object.get    
-        outputs_added += add_object(runner, workspace, idf_object)        
+        idf_object = idf_object.get
+        outputs_added += add_object(runner, workspace, idf_object)
       end
 
       runner.registerInfo("Added #{meters_added} meter:custom and #{outputs_added} output:meter objects.")
     end
 
     if version == "OSv1" #OS v1 ZoneHVAC:IdealLoadsAirSystem
-      runner.registerFinalCondition("Set availability schedules to #{availability_schedule} for #{num_set} ZoneHVAC:IdealLoadsAirSystem objects.")    
+      runner.registerFinalCondition("Set availability schedules to #{availability_schedule} for #{num_set} ZoneHVAC:IdealLoadsAirSystem objects.")
     else #OS v2 HVACTemplate:Zone:IdealLoadsAirSystem
       runner.registerFinalCondition("Set availability schedules to #{availability_schedule} for #{num_set} HVACTemplate:Zone:IdealLoadsAirSystem objects.")
     end

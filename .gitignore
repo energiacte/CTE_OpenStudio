@@ -8,3 +8,6 @@ CTE_EPBDcalc/measure.xml
 CTE_Workspace/measure.xml
 CTE_CambiaUs/measure.xml
 **/tests/out/
+IdealLoadsOptions/measure.xml
+CTE_Model/measure.xml
+CTE_Workspace/measure.xml
