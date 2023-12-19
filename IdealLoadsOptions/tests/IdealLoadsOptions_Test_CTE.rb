@@ -22,6 +22,7 @@ class IdealLoadsOptions_Test < MiniTest::Unit::TestCase
     model = translator.loadModel(path)
     assert((not model.empty?))
     model = model.get
+    runner.setLastOpenStudioModel(model)
 
     # forward translate OSM file to IDF file
     ft = OpenStudio::EnergyPlus::ForwardTranslator.new

@@ -309,6 +309,23 @@ class IdealLoadsOptions < OpenStudio::Ruleset::WorkspaceUserScript
   def run(workspace, runner, user_arguments)
     super(workspace, runner, user_arguments)
 
+    # get the last model
+    model = runner.lastOpenStudioModel
+    if model.empty?
+      runner.registerError("Cannot find the last model.")
+      return false
+    end
+    model = model.get
+
+    zonesVolume = {}
+    model.getThermalZones.each do |zone|
+      volume = 0
+      zone.spaces.each do |space|
+        volume += space.volume
+      end
+      zonesVolume[zone.name.get.to_s] = volume
+    end   
+
     # use the built-in error checking
     if not runner.validateUserArguments(arguments(workspace), user_arguments)
       return false
@@ -359,6 +376,8 @@ class IdealLoadsOptions < OpenStudio::Ruleset::WorkspaceUserScript
 
     num_set = 0
     ideal_loads_objects.each do |ideal_loads_object|
+
+      #zones = model.get
 
       if version == "OSv1" #OS v1 ZoneHVAC:IdealLoadsAirSystem
         ideal_loads_object.setString(1,availability_schedule)
