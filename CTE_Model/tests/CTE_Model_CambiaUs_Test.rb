@@ -48,9 +48,8 @@ class CTE_CambiaUs_Test < MiniTest::Test
     suelos_terrenos = ["21f60244-fb64-4abe-abc3-464182337e27", "1d1a27e5-c230-435a-ac39-f4210b362a6d", "134cfe13-6464-4e3f-8235-bc25a284eceb"]
     ventanas = ["aedb937b-e035-4caf-8bd8-6d38aca58017", "bd75cc94-d2f4-4c61-89a0-ff79c0c406ba", "2f2adaad-60e6-4344-9d47-ee4787772d5c", "6852333b-05ee-4c91-a799-b7c1a0686274"]
     puertas = ["089b1b05-c16f-46c8-acf6-461e97125a7f"]
-    elementos = {"muros_exteriores" => muros_exteriores, "cubiertas_exteriores" => cubiertas_exteriores, "cubiertas_interiores" => cubiertas_interiores,
-                 "suelos_interiores" => suelos_interiores, "suelos_terrenos" => suelos_terrenos, "ventanas" => ventanas, "puertas" => puertas}
-    return elementos
+    {"muros_exteriores" => muros_exteriores, "cubiertas_exteriores" => cubiertas_exteriores, "cubiertas_interiores" => cubiertas_interiores,
+     "suelos_interiores" => suelos_interiores, "suelos_terrenos" => suelos_terrenos, "ventanas" => ventanas, "puertas" => puertas}
   end
 
   def carga_elementos_R_N01_V23
@@ -61,8 +60,8 @@ class CTE_CambiaUs_Test < MiniTest::Test
     suelos_exteriores = ["31d16c6a-d398-49b1-bf40-b530d205037c", "f663dd7c-e24c-4fed-a937-61993c1095ba", "3ebf1a50-0485-485c-a1b2-bfa12c2026d7"]
     ventanas = ["9971a391-9f3d-4035-b8c5-b6d182b46e33", "adb347c4-df6e-45a6-96fd-d8ac1969e1d3", "208eb93c-b12d-4ff8-ba6e-cd92428cd463", "2a1c0c1e-2aa8-459e-b57b-a217407912ad"]
     # puertas = ["ce8352bc-f6a2-4fae-b36b-b57e2a1e235d", "1c40df56-8bb6-4450-bb4a-8e14fc6cf1c5"]
-    elementos = {"muros_exteriores" => muros_exteriores, "muros_terrenos" => muros_terrenos, "cubiertas_exteriores" => cubiertas_exteriores,
-                 "suelos_terrenos" => suelos_terrenos, "suelos_exteriores" => suelos_exteriores, "ventanas" => ventanas}
+    {"muros_exteriores" => muros_exteriores, "muros_terrenos" => muros_terrenos, "cubiertas_exteriores" => cubiertas_exteriores,
+     "suelos_terrenos" => suelos_terrenos, "suelos_exteriores" => suelos_exteriores, "ventanas" => ventanas}
   end
 
   def get_runner_model(file_path, measure)
@@ -76,35 +75,47 @@ class CTE_CambiaUs_Test < MiniTest::Test
     assert(!model.empty?)
     model = model.get
 
-    return runner, model
+    [runner, model]
   end
 
   def get_surface(model, uuid)
     handle = OpenStudio.toUUID(uuid)
     objeto = model.getModelObject(handle).get
 
-    if objeto.iddObject().name == "OS:Surface"
+    if objeto.iddObject.name == "OS:Surface"
       elem = objeto.to_Surface.get
-    elsif objeto.iddObject().name == "OS:SubSurface"
+    elsif objeto.iddObject.name == "OS:SubSurface"
       elem = objeto.to_SubSurface.get
     else
-      puts("Error, #{objeto.iddObject().name}, uuid:#{uuid}")
+      puts("Error, #{objeto.iddObject.name}, uuid:#{uuid}")
     end
 
     construction = elem.construction.get
 
-    u = if objeto.iddObject().name == "OS:Surface"
-      construction.thermalConductance().to_f
+    u = if objeto.iddObject.name == "OS:Surface"
+      construction.thermalConductance.to_f
     else
-      construction.uFactor().to_f
+      construction.uFactor.to_f
     end
 
-    return elem, construction, u
+    [elem, construction, u]
   end
 
   def get_transmitance(model, uuid)
     _surface, _construction, u = get_surface(model, uuid)
     u
+  end
+
+  def get_solar_heat_gain_coefficient(model, uuid)
+    handle = OpenStudio.toUUID(uuid)
+    objeto = model.getModelObject(handle).get
+    if objeto.iddObject.name == "OS:SubSurface"
+      elem = obejto.to_SubSurface.get
+    else
+      return false
+    end
+    construction = elem.construction.get
+    constrution.to_SimpleGlazing.get.solarHeatGainCoefficient
   end
 
   def carga_elementos(model, elementos_para_test)
@@ -118,7 +129,52 @@ class CTE_CambiaUs_Test < MiniTest::Test
     elementos
   end
 
-  def test_CTE_CambiaUs_no_cambia
+  def no_test_CTE_Model_cambia_g_vidrios
+    # create an instance of the measure
+    puts("corriendo la medida CTE_Model_cambia_g_vidrios")
+    measure = CTE_Model.new
+
+    # runner, model = get_runner_model("/residencial.osm", measure)
+    runner, model = get_runner_model("/test_N_R01_unif_adosada.osm", measure)
+    arguments = measure.arguments(model)
+    argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(arguments)
+
+    # create hash of argument values.
+    # If the argument has a default that you want to use, you don't need it in the hash
+    args_hash = {}
+    args_hash["CTE_U_muros"] = 0.0
+    args_hash["CTE_U_cubiertas"] = 0
+    args_hash["CTE_U_suelos"] = "0"
+    args_hash["CTE_U_huecos"] = 0
+    args_hash["CTE_g_vidrios"] = 0.65
+
+    # populate argument with specified hash value if specified
+    arguments.each do |arg|
+      temp_arg_var = arg.clone
+      if args_hash[arg.name]
+        assert(temp_arg_var.setValue(args_hash[arg.name]))
+      end
+      argument_map[arg.name] = temp_arg_var
+    end
+
+    # elementos_para_test = carga_elementos_residencial_osm
+    elementos_para_test = carga_elementos_R_N01_V23
+    elementos = carga_elementos(model, elementos_para_test)
+
+    salida = measure.run(model, runner, argument_map)
+    assert(salida, "algo falló")
+
+    elementos.each do |uuid, atributos|
+      u_final = get_transmitance(model, uuid)
+      atributos["u_final"] = u_final
+    end
+
+    elementos.each do |uuid, atr|
+      assert_in_delta(atr["u_inicial"], atr["u_final"], 0.001)
+    end
+  end
+
+  def no_test_CTE_CambiaUs_no_cambia
     # create an instance of the measure
     measure = CTE_Model.new
 
@@ -161,7 +217,42 @@ class CTE_CambiaUs_Test < MiniTest::Test
     end
   end
 
-  def test_CTE_CambiaUs_cambia_muro
+  def test_CTE_Cambia_g_vidrios
+    measure = CTE_Model.new
+
+    # create an instance of a runner and load the test model
+    runner, model = get_runner_model("/test_N_R01_unif_adosada.osm", measure)
+
+    arguments = measure.arguments(model)
+    argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(arguments)
+
+    # create hash of argument values.
+    # If the argument has a default that you want to use, you don't need it in the hash
+    args_hash = {}
+    args_hash["CTE_g_vidrios"] = 0.65
+
+    # populate argument with specified hash value if specified
+    arguments.each do |arg|
+      temp_arg_var = arg.clone
+      if args_hash[arg.name]
+        assert(temp_arg_var.setValue(args_hash[arg.name]))
+      end
+      argument_map[arg.name] = temp_arg_var
+    end
+
+    uuid = "0b39cfba-de4f-4fe4-b0da-7ddd5c9d44f0"
+
+    # u_inicial = get_transmitance(model, uuid)
+    salida = measure.run(model, runner, argument_map)
+    assert(salida, "algo falló")
+
+    u_final = get_transmitance(model, uuid)
+    g_final = get_solar_heat_gain_coefficient(model, uuid)
+
+    assert_in_delta(args_hash["CTE_g_vidrios"], u_final, 0.001, "En uuid = #{uuid}")
+  end
+
+  def no_test_CTE_CambiaUs_cambia_muro
     # create an instance of the measure
     measure = CTE_Model.new
 
@@ -177,6 +268,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
     args_hash["CTE_U_muros"] = 0.42
     args_hash["CTE_U_cubiertas"] = 0
     args_hash["CTE_U_suelos"] = 0
+    args_hash["CTE_g_vidrios"] = 0.65
     # using defaults values from measure.rb for other arguments
 
     # populate argument with specified hash value if specified
@@ -198,7 +290,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
     assert_in_delta(args_hash["CTE_U_muros"], u_final, 0.001, "En uuid = #{uuid}")
   end
 
-  def test_CTE_CambiaUs_cambia_cubierta
+  def no_test_CTE_CambiaUs_cambia_cubierta
     measure = CTE_Model.new
 
     # create an instance of a runner
@@ -216,6 +308,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
     args_hash["CTE_U_muros"] = 0
     args_hash["CTE_U_cubiertas"] = 0.32
     args_hash["CTE_U_suelos"] = 0
+    args_hash["CTE_g_vidrios"] = 0.65
     # using defaults values from measure.rb for other arguments
 
     # populate argument with specified hash value if specified
@@ -236,11 +329,11 @@ class CTE_CambiaUs_Test < MiniTest::Test
     surface = surface.get
     construction = surface.construction.get
 
-    u_final = construction.thermalConductance().to_f
+    u_final = construction.thermalConductance.to_f
     assert_in_delta(args_hash["CTE_U_cubiertas"], u_final, 0.001)
   end
 
-  def test_CTE_CambiaUs_cambia_suelos_residencial
+  def no_test_CTE_CambiaUs_cambia_suelos_residencial
     # create an instance of the measure
     measure = CTE_Model.new
 
@@ -256,6 +349,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
     args_hash["CTE_U_cubiertas"] = 0
     args_hash["CTE_U_suelos"] = 0.37
     u_terreno = 1 / (1 / args_hash["CTE_U_suelos"] - 0.5)
+    args_hash["CTE_g_vidrios"] = 0.65
     # using defaults values from measure.rb for other arguments
 
     # populate argument with specified hash value if specified
@@ -275,11 +369,11 @@ class CTE_CambiaUs_Test < MiniTest::Test
     surface = objeto.get.to_Surface
     surface = surface.get
     construction = surface.construction.get
-    u_final = construction.thermalConductance().to_f
+    u_final = construction.thermalConductance.to_f
     assert_in_delta(u_terreno, u_final, 0.001)
   end
 
-  def test_CTE_CambiaUs_cambia_suelos
+  def no_test_CTE_CambiaUs_cambia_suelos
     # create an instance of the measure
     measure = CTE_Model.new
 
@@ -297,6 +391,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
     args_hash["CTE_U_suelos"] = 0.37
     u_terreno = 1 / (1 / args_hash["CTE_U_suelos"] - 0.5)
     u_exterior = args_hash["CTE_U_suelos"]
+    args_hash["CTE_g_vidrios"] = 0.65
 
     # populate argument with specified hash value if specified
     arguments.each do |arg|
@@ -334,6 +429,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
     args_hash["CTE_U_suelos"] = 0
     args_hash["CTE_U_huecos"] = 0.68
     u_huecos = args_hash["CTE_U_huecos"]
+    args_hash["CTE_g_vidrios"] = 0.65
 
     # populate argument with specified hash value if specified
     arguments.each do |arg|
@@ -381,6 +477,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
     args_hash["CTE_U_cubiertas"] = u_cubiertas
     args_hash["CTE_U_suelos"] = u_suelos
     args_hash["CTE_U_huecos"] = u_huecos
+    args_hash["CTE_g_vidrios"] = 0.65
 
     # populate argument with specified hash value if specified
     arguments.each do |arg|

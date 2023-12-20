@@ -31,6 +31,7 @@ require_relative "resources/cte_lib_measures_puentestermicos"
 require_relative "resources/cte_lib_measures_cambia_u_huecos"
 require_relative "resources/cte_lib_measures_cambia_u_opacos"
 require_relative "resources/cte_lib_measures_volumen_espacios"
+require_relative "resources/cte_lib_measures_cambia_g_vidrios"
 
 # Medida de OpenStudio (ModelUserScript) que modifica el modelo para su uso con el CTE
 # Para su correcto funcionamiento esta medida debe emplearse con una plantilla adecuada.
@@ -51,19 +52,19 @@ class CTE_Model < OpenStudio::Measure::ModelMeasure
   def arguments(model)
     args = OpenStudio::Measure::OSArgumentVector.new
 
-    u_muros = OpenStudio::Measure::OSArgument::makeDoubleArgument("CTE_U_muros", true)
+    u_muros = OpenStudio::Measure::OSArgument.makeDoubleArgument("CTE_U_muros", true)
     u_muros.setDisplayName("U de muros")
     u_muros.setUnits("W/m2·K")
     u_muros.setDefaultValue(0)
     args << u_muros
 
-    u_cubiertas = OpenStudio::Measure::OSArgument::makeDoubleArgument("CTE_U_cubiertas", true)
+    u_cubiertas = OpenStudio::Measure::OSArgument.makeDoubleArgument("CTE_U_cubiertas", true)
     u_cubiertas.setDisplayName("U de cubiertas")
     u_cubiertas.setUnits("W/m2·K")
     u_cubiertas.setDefaultValue(0)
     args << u_cubiertas
 
-    u_suelos = OpenStudio::Measure::OSArgument::makeDoubleArgument("CTE_U_suelos", true)
+    u_suelos = OpenStudio::Measure::OSArgument.makeDoubleArgument("CTE_U_suelos", true)
     u_suelos.setDisplayName("U de suelos")
     u_suelos.setUnits("W/m2·K")
     u_suelos.setDefaultValue(0)
@@ -72,8 +73,14 @@ class CTE_Model < OpenStudio::Measure::ModelMeasure
     u_huecos = OpenStudio::Measure::OSArgument.makeDoubleArgument("CTE_U_huecos", true)
     u_huecos.setDisplayName("U de huecos")
     u_huecos.setUnits("W/m2·K")
-    u_huecos.setDefaultValue(10)
+    u_huecos.setDefaultValue(0)
     args << u_huecos
+
+    g_vidrios = OpenStudio::Measure::OSArgument.makeDoubleArgument("CTE_g_vidrios", true)
+    g_vidrios.setDisplayName("g_gl de vidrios")
+    g_vidrios.setUnits("-")
+    g_vidrios.setDefaultValue(0.0)
+    args << g_vidrios
 
     usoedificio_chs = OpenStudio::StringVector.new
     usoedificio_chs << "Residencial"
@@ -155,6 +162,10 @@ class CTE_Model < OpenStudio::Measure::ModelMeasure
       argumentos[name] = argument.printValue
     end
     model.building.get.setComment(argumentos.to_json)
+
+    runner.registerInfo("Llamada a la función que escribe el volumen de los espacios")
+    result = cte_cambia_g_vidrios(model, runner, user_arguments)
+    return result unless result == true
 
     runner.registerInfo("Llamada a la función que escribe el volumen de los espacios")
     result = cte_volumen_espacios(model, runner)
