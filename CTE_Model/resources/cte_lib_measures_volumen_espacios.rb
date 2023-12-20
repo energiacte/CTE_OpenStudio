@@ -33,4 +33,5 @@ def cte_volumen_espacios(model, runner)
     end
     zone.setVolume(volume)
   end
+  true
 end
