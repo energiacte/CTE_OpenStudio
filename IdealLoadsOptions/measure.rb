@@ -317,14 +317,14 @@ class IdealLoadsOptions < OpenStudio::Ruleset::WorkspaceUserScript
     end
     model = model.get
 
-    zonesVolume = {}
+    zones_volume = {}
     model.getThermalZones.each do |zone|
       volume = 0
       zone.spaces.each do |space|
         volume += space.volume
       end
-      zonesVolume[zone.name.get.to_s] = volume
-    end   
+      zones_volume[zone.name.get.to_s] = volume
+    end
 
     # use the built-in error checking
     if not runner.validateUserArguments(arguments(workspace), user_arguments)
@@ -447,20 +447,20 @@ class IdealLoadsOptions < OpenStudio::Ruleset::WorkspaceUserScript
       end
 
       if heating_limit_type == "LimitFlowACH"
-        # obj = ideal_loads_object
         zone_name = ideal_loads_object.getString(0).to_s
-        zone = workspace.getObjectsByName(zone_name)
-        volumen = zone[0].getString(8).get.to_f
+        # zone = workspace.getObjectsByName(zone_name)
+        # volumen = zone[0].getString(8).get.to_f
+        volumen = zones_volume[zone_name]
         flow_m3_s = ach_limit_flow_rate.to_f * volumen / 3600
         ideal_loads_object.setString(7,'LimitFlowRate')
         ideal_loads_object.setString(8,flow_m3_s.to_s)
       end
 
       if cooling_limit_type == "LimitFlowACH"
-        # obj = ideal_loads_object
         zone_name = ideal_loads_object.getString(0).to_s
-        zone = workspace.getObjectsByName(zone_name)
-        volumen = zone[0].getString(8).get.to_f
+        # zone = workspace.getObjectsByName(zone_name)
+        # volumen = zone[0].getString(8).get.to_f
+        volumen = zones_volume[zone_name]
         flow_m3_s = ach_limit_flow_rate.to_f * volumen / 3600
         ideal_loads_object.setString(10,'LimitFlowRate')
         ideal_loads_object.setString(11,flow_m3_s.to_s)
