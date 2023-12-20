@@ -42,7 +42,7 @@
   - Establece como global esa versión: `rbenv global 3.2.2`
   - Comprobamos con `ruby -v`
 - Configura la instalación de gemas para que no generen documentación:
-  - `echo "gem: --no-document" > ~\.gemrc`
+  - `echo "gem: --no-document" > ~/.gemrc`
 - Consultar dónde se instalan las gemas ahora: `gem env home`
 - Instala las mismas gemas y extensiones que dentro del contenedor, que se explican a continuación.
 
@@ -50,7 +50,7 @@
 
 - Abrir en la sesión remota una consola (Remote explorer > Adjuntar en nueva ventana)
 - Instalar la gema del depurador y de formateo:
-  - `echo "gem: --no-document" > ~\.gemrc`
+  - `echo "gem: --no-document" > ~/.gemrc`
   - `gem install bundler`  
   - `gem install ruby-lsp` (no he podido instalarla por que prism necesita una versión de Ruby superior)
   - `gem install debug`
