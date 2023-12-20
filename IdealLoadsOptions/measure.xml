@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <measure>
-  <schema_version>3.0</schema_version>
+  <schema_version>3.1</schema_version>
   <name>ideal_loads_options</name>
   <uid>ae756607-68ba-4615-87df-a0870beede98</uid>
-  <version_id>879de42f-afa5-45cb-bb2f-9743f5114e1a</version_id>
-  <version_modified>20230907T081447Z</version_modified>
+  <version_id>42620cd7-ec20-4c8b-90d0-3675ef626d44</version_id>
+  <version_modified>2023-12-20T11:20:39Z</version_modified>
   <xml_checksum>DAE0171F</xml_checksum>
   <class_name>IdealLoadsOptions</class_name>
   <display_name>Ideal Loads Options</display_name>
@@ -56,6 +56,10 @@
           <value>LimitFlowRateAndCapacity</value>
           <display_name>LimitFlowRateAndCapacity</display_name>
         </choice>
+        <choice>
+          <value>LimitFlowACH</value>
+          <display_name>LimitFlowACH</display_name>
+        </choice>
       </choices>
     </argument>
     <argument>
@@ -82,7 +86,19 @@
           <value>LimitFlowRateAndCapacity</value>
           <display_name>LimitFlowRateAndCapacity</display_name>
         </choice>
+        <choice>
+          <value>LimitFlowACH</value>
+          <display_name>LimitFlowACH</display_name>
+        </choice>
       </choices>
+    </argument>
+    <argument>
+      <name>ach_limit_flow_rate</name>
+      <display_name>ACH limit flow rate</display_name>
+      <type>Double</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>4</default_value>
     </argument>
     <argument>
       <name>dehumid_type</name>
@@ -364,6 +380,41 @@
   </attributes>
   <files>
     <file>
+      <filename>LICENSE.md</filename>
+      <filetype>md</filetype>
+      <usage_type>license</usage_type>
+      <checksum>E7161B14</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.2</identifier>
+        <min_compatible>1.4.2</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>8C8E5A5E</checksum>
+    </file>
+    <file>
+      <filename>IdealLoadsOptions_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>472DBB99</checksum>
+    </file>
+    <file>
+      <filename>IdealLoadsOptions_Test_CTE.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>BA143D3A</checksum>
+    </file>
+    <file>
+      <filename>test_NR01_con_volumen.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>185A4503</checksum>
+    </file>
+    <file>
       <filename>test_v2.4_office_ideal.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -382,33 +433,10 @@
       <checksum>95B6B6A5</checksum>
     </file>
     <file>
-      <filename>IdealLoadsOptions_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>472DBB99</checksum>
-    </file>
-    <file>
       <filename>test_v2.4_office_no_ideal.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>EC832037</checksum>
-    </file>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.2</identifier>
-        <min_compatible>1.4.2</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>34693061</checksum>
-    </file>
-    <file>
-      <filename>LICENSE.md</filename>
-      <filetype>md</filetype>
-      <usage_type>license</usage_type>
-      <checksum>E7161B14</checksum>
     </file>
   </files>
 </measure>

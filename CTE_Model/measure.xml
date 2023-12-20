@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <measure>
-  <schema_version>3.0</schema_version>
+  <schema_version>3.1</schema_version>
   <name>cte_model</name>
   <uid>1f30359f-b316-49d1-b799-73b16ff79478</uid>
-  <version_id>2801cee0-f105-4be2-b032-6369259790f4</version_id>
-  <version_modified>20230823T093926Z</version_modified>
+  <version_id>ddb15126-40a7-4c2d-a5d9-df78c71a094d</version_id>
+  <version_modified>2023-12-20T11:20:37Z</version_modified>
   <xml_checksum>7C017197</xml_checksum>
   <class_name>CTE_Model</class_name>
   <display_name>CTE Model</display_name>
@@ -12,13 +12,31 @@
   <modeler_description>Introduce variables de salida y aplica medidas para cálculo CTE.</modeler_description>
   <arguments>
     <argument>
-      <name>CTE_U_opacos</name>
-      <display_name>U de opacos</display_name>
+      <name>CTE_U_muros</name>
+      <display_name>U de muros</display_name>
       <type>Double</type>
       <units>W/m2·K</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>10</default_value>
+      <default_value>0</default_value>
+    </argument>
+    <argument>
+      <name>CTE_U_cubiertas</name>
+      <display_name>U de cubiertas</display_name>
+      <type>Double</type>
+      <units>W/m2·K</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0</default_value>
+    </argument>
+    <argument>
+      <name>CTE_U_suelos</name>
+      <display_name>U de suelos</display_name>
+      <type>Double</type>
+      <units>W/m2·K</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0</default_value>
     </argument>
     <argument>
       <name>CTE_U_huecos</name>
@@ -173,10 +191,93 @@
   </attributes>
   <files>
     <file>
-      <filename>temperaturas_agua_fria.csv</filename>
-      <filetype>csv</filetype>
+      <filename>README.md</filename>
+      <filetype>md</filetype>
+      <usage_type>readme</usage_type>
+      <checksum>CC3230E6</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.0.0</identifier>
+        <min_compatible>1.0.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>824678CC</checksum>
+    </file>
+    <file>
+      <filename>LICENSE-LGPL-2.1.txt</filename>
+      <filetype>txt</filetype>
       <usage_type>resource</usage_type>
-      <checksum>C90703A0</checksum>
+      <checksum>5622583E</checksum>
+    </file>
+    <file>
+      <filename>cte_lib_measures_addvars.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>EACF2801</checksum>
+    </file>
+    <file>
+      <filename>cte_lib_measures_cambia_u_huecos.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>A5AB8281</checksum>
+    </file>
+    <file>
+      <filename>cte_lib_measures_cambia_u_opacos.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>401683EB</checksum>
+    </file>
+    <file>
+      <filename>cte_lib_measures_infiltracion.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>165D9375</checksum>
+    </file>
+    <file>
+      <filename>cte_lib_measures_puentestermicos.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>16823BEA</checksum>
+    </file>
+    <file>
+      <filename>cte_lib_measures_tempaguafria.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>FEF0777A</checksum>
+    </file>
+    <file>
+      <filename>cte_lib_measures_volumen_espacios.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>33DF6264</checksum>
+    </file>
+    <file>
+      <filename>epw.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>030055B7</checksum>
+    </file>
+    <file>
+      <filename>CTE_Model_CambiaUs_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>5E6631FD</checksum>
+    </file>
+    <file>
+      <filename>CTE_Model_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>71B61097</checksum>
+    </file>
+    <file>
+      <filename>CTE_Model_Test_volumen.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>CFD5144F</checksum>
     </file>
     <file>
       <filename>residencial.osm</filename>
@@ -191,93 +292,10 @@
       <checksum>73186073</checksum>
     </file>
     <file>
-      <filename>cte_lib_measures_addvars.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>C4625456</checksum>
-    </file>
-    <file>
-      <filename>cte_lib_measures_tempaguafria.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>04F92A2F</checksum>
-    </file>
-    <file>
-      <filename>cte_lib_measures_infiltracion.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>6FA52D5B</checksum>
-    </file>
-    <file>
-      <filename>cte_lib_measures_puentestermicos.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>3F2D9071</checksum>
-    </file>
-    <file>
-      <filename>epw.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>32A9564D</checksum>
-    </file>
-    <file>
-      <filename>LICENSE-LGPL-2.1.txt</filename>
-      <filetype>txt</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>5622583E</checksum>
-    </file>
-    <file>
-      <filename>cte_lib_measures_fijaclima.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>2B84F0BD</checksum>
-    </file>
-    <file>
-      <filename>cte_lib_measures_ventilacion.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>49078A65</checksum>
-    </file>
-    <file>
-      <filename>CTE_Model_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>E6E1FD74</checksum>
-    </file>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.0.0</identifier>
-        <min_compatible>1.0.0</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>5B9CFB4D</checksum>
-    </file>
-    <file>
-      <filename>cte_lib_measures_cambia_u_opacos.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B98C85A2</checksum>
-    </file>
-    <file>
-      <filename>N_R01_unif_adosadaV23.osm</filename>
+      <filename>test_N_R01_unif_adosada.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>04371D2A</checksum>
-    </file>
-    <file>
-      <filename>cte_lib_measures_cambia_u_huecos.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>6BD4C46C</checksum>
-    </file>
-    <file>
-      <filename>README.md</filename>
-      <filetype>md</filetype>
-      <usage_type>readme</usage_type>
-      <checksum>47F76D0B</checksum>
+      <checksum>F57F257D</checksum>
     </file>
   </files>
 </measure>
