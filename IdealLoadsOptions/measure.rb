@@ -215,7 +215,7 @@ class IdealLoadsOptions < OpenStudio::Ruleset::WorkspaceUserScript
     #argument for ACH limit flow rate
     ach_limit_flow_rate = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("ach_limit_flow_rate", true)
     ach_limit_flow_rate.setDisplayName("ACH limit flow rate")
-    ach_limit_flow_rate.setDefaultValue(0.6)
+    ach_limit_flow_rate.setDefaultValue(4)
     args << ach_limit_flow_rate
 
     #argument for Dehumidification Control Type
