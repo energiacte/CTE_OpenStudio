@@ -129,6 +129,15 @@ class CTE_CambiaUs_Test < MiniTest::Test
     elementos
   end
 
+  def carga_elementos_ventanas(model, listas_ventanas)
+    elementos = {}
+    listas_ventanas.each do |uuid|
+      g_inicial = get_solar_heat_gain_coefficient(model, uuid)
+      elementos[uuid] = {"tipo" => "ventanas", "g_inicial" => g_inicial}
+    end
+    elementos
+  end
+
   def test_CTE_Model_cambia_g_vidrios
     # create an instance of the measure
     puts("corriendo la medida CTE_Model_cambia_g_vidrios")
@@ -139,13 +148,8 @@ class CTE_CambiaUs_Test < MiniTest::Test
     arguments = measure.arguments(model)
     argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(arguments)
 
-    # create hash of argument values.
-    # If the argument has a default that you want to use, you don't need it in the hash
+    # create hash of argument values. If the argument has a default that you want to use, you don't need it in the hash
     args_hash = {}
-    args_hash["CTE_U_muros"] = 0.0
-    args_hash["CTE_U_cubiertas"] = 0
-    args_hash["CTE_U_suelos"] = "0"
-    args_hash["CTE_U_huecos"] = 0
     args_hash["CTE_g_vidrios"] = 0.65
 
     # populate argument with specified hash value if specified
@@ -157,20 +161,22 @@ class CTE_CambiaUs_Test < MiniTest::Test
       argument_map[arg.name] = temp_arg_var
     end
 
-    # elementos_para_test = carga_elementos_residencial_osm
-    elementos_para_test = carga_elementos_R_N01_V23
-    elementos = carga_elementos(model, elementos_para_test)
-
+    # ejecuta la medida que cambia los valores de g_vidrio
     salida = measure.run(model, runner, argument_map)
     assert(salida, "algo falló")
 
-    elementos.each do |uuid, atributos|
-      u_final = get_transmitance(model, uuid)
-      atributos["u_final"] = u_final
+    # elementos_para_test = carga_elementos_residencial_osm
+    elementos_para_test = carga_elementos_R_N01_V23
+    # selecciona las ventanas
+    ventanas_test = elementos_para_test["ventanas"]
+    ventanas = carga_elementos_ventanas(model, ventanas_test)
+    ventanas.each do |uuid, atributos|
+      g_final = get_solar_heat_gain_coefficient(model, uuid)
+      atributos["g_final"] = g_final
     end
 
-    elementos.each do |uuid, atr|
-      assert_in_delta(atr["u_inicial"], atr["u_final"], 0.001)
+    ventanas.each do |uuid, atr|
+      assert_in_delta(args_hash["CTE_g_vidrios"], atr["g_final"], 0.001)
     end
   end
 
@@ -248,9 +254,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
 
     # u_final = get_transmitance(model, uuid)
     g_final = get_solar_heat_gain_coefficient(model, uuid)
-
     assert_in_delta(args_hash["CTE_g_vidrios"], g_final, 0.001, "En uuid = #{uuid}")
-    pass
   end
 
   def test_CTE_CambiaUs_cambia_muro
