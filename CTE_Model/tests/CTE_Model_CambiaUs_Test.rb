@@ -110,12 +110,12 @@ class CTE_CambiaUs_Test < MiniTest::Test
     handle = OpenStudio.toUUID(uuid)
     objeto = model.getModelObject(handle).get
     if objeto.iddObject.name == "OS:SubSurface"
-      elem = obejto.to_SubSurface.get
+      elem = objeto.to_SubSurface.get
     else
       return false
     end
-    construction = elem.construction.get
-    constrution.to_SimpleGlazing.get.solarHeatGainCoefficient
+    construction = elem.construction.get.to_Construction.get
+    construction.layers[0].to_SimpleGlazing.get.solarHeatGainCoefficient
   end
 
   def carga_elementos(model, elementos_para_test)
@@ -129,7 +129,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
     elementos
   end
 
-  def no_test_CTE_Model_cambia_g_vidrios
+  def test_CTE_Model_cambia_g_vidrios
     # create an instance of the measure
     puts("corriendo la medida CTE_Model_cambia_g_vidrios")
     measure = CTE_Model.new
@@ -174,7 +174,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
     end
   end
 
-  def no_test_CTE_CambiaUs_no_cambia
+  def test_CTE_CambiaUs_no_cambia
     # create an instance of the measure
     measure = CTE_Model.new
 
@@ -246,13 +246,14 @@ class CTE_CambiaUs_Test < MiniTest::Test
     salida = measure.run(model, runner, argument_map)
     assert(salida, "algo falló")
 
-    u_final = get_transmitance(model, uuid)
+    # u_final = get_transmitance(model, uuid)
     g_final = get_solar_heat_gain_coefficient(model, uuid)
 
-    assert_in_delta(args_hash["CTE_g_vidrios"], u_final, 0.001, "En uuid = #{uuid}")
+    assert_in_delta(args_hash["CTE_g_vidrios"], g_final, 0.001, "En uuid = #{uuid}")
+    pass
   end
 
-  def no_test_CTE_CambiaUs_cambia_muro
+  def test_CTE_CambiaUs_cambia_muro
     # create an instance of the measure
     measure = CTE_Model.new
 
@@ -290,7 +291,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
     assert_in_delta(args_hash["CTE_U_muros"], u_final, 0.001, "En uuid = #{uuid}")
   end
 
-  def no_test_CTE_CambiaUs_cambia_cubierta
+  def test_CTE_CambiaUs_cambia_cubierta
     measure = CTE_Model.new
 
     # create an instance of a runner
@@ -333,7 +334,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
     assert_in_delta(args_hash["CTE_U_cubiertas"], u_final, 0.001)
   end
 
-  def no_test_CTE_CambiaUs_cambia_suelos_residencial
+  def test_CTE_CambiaUs_cambia_suelos_residencial
     # create an instance of the measure
     measure = CTE_Model.new
 
@@ -373,7 +374,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
     assert_in_delta(u_terreno, u_final, 0.001)
   end
 
-  def no_test_CTE_CambiaUs_cambia_suelos
+  def test_CTE_CambiaUs_cambia_suelos
     # create an instance of the measure
     measure = CTE_Model.new
 
