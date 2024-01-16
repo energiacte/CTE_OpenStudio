@@ -76,7 +76,7 @@ class CTE_Model < OpenStudio::Measure::ModelMeasure
     u_huecos.setDefaultValue(0)
     args << u_huecos
 
-    g_vidrios = OpenStudio::Measure::OSArgument.makeDoubleArgument("CTE_g_vidrios", true)
+    g_vidrios = OpenStudio::Measure::OSArgument.makeDoubleArgument("CTE_g_gl", true)
     g_vidrios.setDisplayName("g_gl de vidrios")
     g_vidrios.setUnits("-")
     g_vidrios.setDefaultValue(0.0)

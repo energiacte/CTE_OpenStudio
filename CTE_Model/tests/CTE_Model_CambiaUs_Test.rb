@@ -150,7 +150,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
 
     # create hash of argument values. If the argument has a default that you want to use, you don't need it in the hash
     args_hash = {}
-    args_hash["CTE_g_vidrios"] = 0.65
+    args_hash["CTE_g_gl"] = 0.65
 
     # populate argument with specified hash value if specified
     arguments.each do |arg|
@@ -176,7 +176,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
     end
 
     ventanas.each do |uuid, atr|
-      assert_in_delta(args_hash["CTE_g_vidrios"], atr["g_final"], 0.001)
+      assert_in_delta(args_hash["CTE_g_gl"], atr["g_final"], 0.001)
     end
   end
 
@@ -235,7 +235,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
     # create hash of argument values.
     # If the argument has a default that you want to use, you don't need it in the hash
     args_hash = {}
-    args_hash["CTE_g_vidrios"] = 0.65
+    args_hash["CTE_g_gl"] = 0.65
 
     # populate argument with specified hash value if specified
     arguments.each do |arg|
@@ -254,7 +254,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
 
     # u_final = get_transmitance(model, uuid)
     g_final = get_solar_heat_gain_coefficient(model, uuid)
-    assert_in_delta(args_hash["CTE_g_vidrios"], g_final, 0.001, "En uuid = #{uuid}")
+    assert_in_delta(args_hash["CTE_g_gl"], g_final, 0.001, "En uuid = #{uuid}")
   end
 
   def test_CTE_CambiaUs_cambia_muro
@@ -273,7 +273,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
     args_hash["CTE_U_muros"] = 0.42
     args_hash["CTE_U_cubiertas"] = 0
     args_hash["CTE_U_suelos"] = 0
-    args_hash["CTE_g_vidrios"] = 0.65
+    args_hash["CTE_g_gl"] = 0.65
     # using defaults values from measure.rb for other arguments
 
     # populate argument with specified hash value if specified
@@ -313,7 +313,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
     args_hash["CTE_U_muros"] = 0
     args_hash["CTE_U_cubiertas"] = 0.32
     args_hash["CTE_U_suelos"] = 0
-    args_hash["CTE_g_vidrios"] = 0.65
+    args_hash["CTE_g_gl"] = 0.65
     # using defaults values from measure.rb for other arguments
 
     # populate argument with specified hash value if specified
@@ -354,7 +354,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
     args_hash["CTE_U_cubiertas"] = 0
     args_hash["CTE_U_suelos"] = 0.37
     u_terreno = 1 / (1 / args_hash["CTE_U_suelos"] - 0.5)
-    args_hash["CTE_g_vidrios"] = 0.65
+    args_hash["CTE_g_gl"] = 0.65
     # using defaults values from measure.rb for other arguments
 
     # populate argument with specified hash value if specified
@@ -396,7 +396,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
     args_hash["CTE_U_suelos"] = 0.37
     u_terreno = 1 / (1 / args_hash["CTE_U_suelos"] - 0.5)
     u_exterior = args_hash["CTE_U_suelos"]
-    args_hash["CTE_g_vidrios"] = 0.65
+    args_hash["CTE_g_gl"] = 0.65
 
     # populate argument with specified hash value if specified
     arguments.each do |arg|
@@ -434,7 +434,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
     args_hash["CTE_U_suelos"] = 0
     args_hash["CTE_U_huecos"] = 0.68
     u_huecos = args_hash["CTE_U_huecos"]
-    args_hash["CTE_g_vidrios"] = 0.65
+    args_hash["CTE_g_gl"] = 0.65
 
     # populate argument with specified hash value if specified
     arguments.each do |arg|
@@ -482,7 +482,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
     args_hash["CTE_U_cubiertas"] = u_cubiertas
     args_hash["CTE_U_suelos"] = u_suelos
     args_hash["CTE_U_huecos"] = u_huecos
-    args_hash["CTE_g_vidrios"] = 0.65
+    args_hash["CTE_g_gl"] = 0.65
 
     # populate argument with specified hash value if specified
     arguments.each do |arg|

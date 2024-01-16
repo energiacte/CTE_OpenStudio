@@ -26,7 +26,7 @@ def cte_cambia_g_vidrios(model, runner, user_arguments)
   runner.registerInfo("CTE: Cambiando la U de huecos")
 
   # toma el valor de la medida
-  g_vidrios = runner.getDoubleArgumentValue("CTE_g_vidrios", user_arguments)
+  g_vidrios = runner.getDoubleArgumentValue("CTE_g_gl", user_arguments)
 
   if g_vidrios < 0.001
     runner.registerFinalCondition("No se cambia el coeficiente de transmisión térmica global del vidrio (g_gl=0)")
