@@ -33,7 +33,7 @@ def filtra_superficies(model, condicion:, tipo:)
   [exterior_surfaces, exterior_surface_constructions, exterior_surface_construction_names]
 end
 
-def construye_hashes(model, runner, exterior_surface_constructions, u_deseada, resistencia_tierra)
+def construye_hashes(model, runner, exterior_surface_constructions, u_deseada, resistencia_tierra) # condicion y tipo para  lanzar el error
   # !  __03__ recorre todas las construcciones y materiales usados en los muros exterios, los edita y los clona
   # La casuística para decidir como se procede a cambiar la transmitancia del muro es:
   # 1.- si hay una capa de material sin masa (aislamiento o cámara de aire) se modifica su r lo necesario
@@ -103,7 +103,7 @@ def construye_hashes(model, runner, exterior_surface_constructions, u_deseada, r
 
     if resistencia_capa <= 0
       # puts("#{exterior_surface_construction.name} sin aislante tiene una resistencia superior a la que se pide")
-      runner.registerInfo("La U que se pide para los #{condicion} #{tipo} es mayor que la que tienen las capas sin contar el aislamiento. No se modifica")
+      runner.registerInfo("La U que se pide para los #{exterior_surface_construction.name} (especificar tipo) es mayor que la que tienen las capas sin contar el aislamiento. No se modifica")
     else
       # clone the construction
       final_construction = exterior_surface_construction.clone(model)
