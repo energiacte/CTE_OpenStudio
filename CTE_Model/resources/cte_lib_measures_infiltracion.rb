@@ -49,13 +49,7 @@ CTE_COEF_WIND = 0.000231 # Valor para dos plantas y entorno urbano
 
 # Coeficientes de caudal a 4 Pa
 TO4PA = 0.11571248 # pow(4/100., 0.67), de 100 a 4 Pa
-C_OP = {"Nuevo" => 16 * TO4PA,
-        "Existente" => 29 * TO4PA}
-C_PU = 60 * TO4PA # Permeabilidad puertas a 4Pa
-C_HU = {"Clase 1" => 50 * TO4PA,
-        "Clase 2" => 27 * TO4PA,
-        "Clase 3" => 9 * TO4PA,
-        "Clase 4" => 3 * TO4PA}
+C_WINDOWS_CLASS1 = 50 * TO4PA
 
 def cte_horario_de_infiltracion(runner, space, horario_always_on)
   # XXX: La detección de si el espacio es habitable o no depende de que los no habitables
@@ -86,27 +80,22 @@ end
 # y parámetros del documento de condic. técnicas
 def cte_infiltracion(model, runner, user_arguments) # copiado del residencial
   # busca el horario para hacer always_on
-  horario_always_on = model.getScheduleRulesets
-    .find { |h| h.name.get == "CTER24B_HINF" } || false
+  horario_always_on = model.getScheduleRulesets.find { |h| h.name.get == "CTER24B_HINF" } || false
 
-  # hay que tomar el horario del espacio -> zona -> tipo de zona
+  c_opaques = runner.getDoubleArgumentValue("CTE_C_opacos_m3hm2", user_arguments) * TO4PA
+  c_windows = runner.getDoubleArgumentValue("CTE_C_huecos_m3hm2", user_arguments) * TO4PA
+  c_doors = runner.getDoubleArgumentValue("CTE_C_puertas_m3hm2", user_arguments) * TO4PA
 
-  tipo_edificio = runner.getStringArgumentValue("CTE_Tipo_edificio", user_arguments)
-  clase_ventana = runner.getStringArgumentValue("CTE_Permeabilidad_ventanas", user_arguments)
-
-  runner.registerValue("CTE Tipo de Edificio (Nuevo/Existente)", tipo_edificio)
-  runner.registerValue("CTE Clase de permeabilidad de Ventanas", clase_ventana)
-
-  spaces = model.getSpaces
-  runner.registerValue("CTE Coeficientes de fugas de opacos a 4Pa", C_OP[tipo_edificio].round(4))
-  runner.registerValue("CTE Coeficientes de fugas de puertas a 4Pa", C_PU.round(4))
-  runner.registerValue("CTE Coeficientes de fugas de huecos a 4Pa", C_HU[clase_ventana].round(4))
+  runner.registerValue("CTE Coeficientes de fugas de opacos a 4Pa, C_op", c_opaques.round(4))
+  runner.registerValue("CTE Coeficientes de fugas de huecos a 4Pa, C_w", c_windows.round(4))
+  runner.registerValue("CTE Coeficientes de fugas de puertas a 4Pa, C_w", c_doors.round(4))
 
   runner.registerInfo("** Superficies para ELA **")
+
   # XXX: pensar como interactúa con los espacios distintos a los acondicionados
   # ELA_total para comprobaciones
   ela_total = 0.0
-  spaces.each do |space|
+  model.getSpaces.each do |space|
     horario_infiltracion = cte_horario_de_infiltracion(runner, space, horario_always_on)
     area_opacos = 0
     area_ventanas = 0
@@ -127,8 +116,7 @@ def cte_infiltracion(model, runner, user_arguments) # copiado del residencial
       end
     end
 
-    uso_edificio = runner.getStringArgumentValue("CTE_Uso_edificio",
-      user_arguments)
+    uso_edificio = runner.getStringArgumentValue("CTE_Uso_edificio", user_arguments)
     # En residencial, suponemos que la microventilación (n=0.5 rendija turbulenta)
     # daría el caudal de los aireadores necesarios, suponiendo que estos equivalen a un
     # 50% de huecos expuestosa barlovento (con infiltración)
@@ -140,19 +128,15 @@ def cte_infiltracion(model, runner, user_arguments) # copiado del residencial
     #            = C_air · A_air · 4^0.5
     #
     #   C_air · A_air = Q / 4^0.5
-    ca_air = if clase_ventana != "Clase 1" && uso_edificio == "Residencial"
-      (C_HU["Clase 1"] - C_HU[clase_ventana]) * (0.5 * area_ventanas) / (4.0**0.5)
+    ca_air = if uso_edificio == "Residencial"
+      (C_WINDOWS_CLASS1 - c_windows) * (0.5 * area_ventanas) / (4.0**0.5)
     else
       0.0
     end
 
     # q_total en m3/h a 4 Pa
     # q_tot = sum(C·A·delta_p^n) para opacos, huecos, puertas y aireadores
-    q_total = (C_OP[tipo_edificio] * area_opacos +
-                  C_HU[clase_ventana] * area_ventanas +
-                  C_PU * area_puertas +
-                  ca_air
-              ) * 4.0**0.67
+    q_total = (c_opaques * area_opacos + c_windows * area_ventanas + c_doors * area_puertas + ca_air) * 4.0**0.67
 
     # ¿Por qué el 50% expuesto y no el 100%?
     # 50% de ELA [cm²] = 0.50 · 10000 · Q_tot / 3600 · (dens_air / 2 * P_ref)^0.5 / C_d

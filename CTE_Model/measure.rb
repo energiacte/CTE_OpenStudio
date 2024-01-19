@@ -52,6 +52,19 @@ class CTE_Model < OpenStudio::Measure::ModelMeasure
   def arguments(model)
     args = OpenStudio::Measure::OSArgumentVector.new
 
+    # Uso
+
+    usoedificio_chs = OpenStudio::StringVector.new
+    usoedificio_chs << "Residencial"
+    usoedificio_chs << "Terciario"
+    uso_edificio = OpenStudio::Measure::OSArgument.makeChoiceArgument("CTE_Uso_edificio", usoedificio_chs, true)
+    uso_edificio.setDisplayName("Uso del edificio")
+    # ~ uso_edificio.setDefaultValue('Residencial')
+    uso_edificio.setDefaultValue("Terciario")
+    args << uso_edificio
+
+    # Opacos
+
     u_muros = OpenStudio::Measure::OSArgument.makeDoubleArgument("CTE_U_muros", true)
     u_muros.setDisplayName("U de muros")
     u_muros.setUnits("W/m2·K")
@@ -70,6 +83,14 @@ class CTE_Model < OpenStudio::Measure::ModelMeasure
     u_suelos.setDefaultValue(0)
     args << u_suelos
 
+    c_opacos = OpenStudio::Measure::OSArgument.makeDoubleArgument("CTE_C_opacos_m3hm2", true)
+    c_opacos.setDisplayName("C_o de opacos")
+    c_opacos.setUnits("m3/h·m2")
+    c_opacos.setDefaultValue(16)
+    args << c_opacos
+
+    # Huecos
+
     u_huecos = OpenStudio::Measure::OSArgument.makeDoubleArgument("CTE_U_huecos", true)
     u_huecos.setDisplayName("U de huecos")
     u_huecos.setUnits("W/m2·K")
@@ -82,37 +103,24 @@ class CTE_Model < OpenStudio::Measure::ModelMeasure
     g_vidrios.setDefaultValue(0.0)
     args << g_vidrios
 
-    usoedificio_chs = OpenStudio::StringVector.new
-    usoedificio_chs << "Residencial"
-    usoedificio_chs << "Terciario"
-    uso_edificio = OpenStudio::Measure::OSArgument.makeChoiceArgument("CTE_Uso_edificio", usoedificio_chs, true)
-    uso_edificio.setDisplayName("Uso del edificio")
-    # ~ uso_edificio.setDefaultValue('Residencial')
-    uso_edificio.setDefaultValue("Terciario")
-    args << uso_edificio
+    c_huecos = OpenStudio::Measure::OSArgument.makeDoubleArgument("CTE_C_huecos_m3hm2", true)
+    c_huecos.setDisplayName("C_h de huecos")
+    c_huecos.setUnits("m3/h·m2")
+    c_huecos.setDefaultValue(27)
+    args << c_huecos
 
-    tipo_edificio = OpenStudio::StringVector.new
-    tipo_edificio << "Nuevo"
-    tipo_edificio << "Existente"
-    tipo = OpenStudio::Measure::OSArgument.makeChoiceArgument("CTE_Tipo_edificio", tipo_edificio, true)
-    tipo.setDisplayName("Edificio nuevo o existente")
-    tipo.setDefaultValue("Nuevo")
-    args << tipo
-
-    clase_ventana = OpenStudio::StringVector.new
-    clase_ventana << "Clase 1"
-    clase_ventana << "Clase 2"
-    clase_ventana << "Clase 3"
-    clase_ventana << "Clase 4"
-    permeabilidad = OpenStudio::Measure::OSArgument.makeChoiceArgument("CTE_Permeabilidad_ventanas", clase_ventana, true)
-    permeabilidad.setDisplayName("Permeabilidad de la carpintería.")
-    permeabilidad.setDefaultValue("Clase 1")
-    args << permeabilidad
+    c_puertas = OpenStudio::Measure::OSArgument.makeDoubleArgument("CTE_C_puertas_m3hm2", true)
+    c_puertas.setDisplayName("C_d de puertas")
+    c_puertas.setUnits("m3/h·m2")
+    c_puertas.setDefaultValue(60)
+    args << c_puertas
 
     factor_sombras_moviles = OpenStudio::Measure::OSArgument.makeDoubleArgument("CTE_F_sombras_moviles", true)
     factor_sombras_moviles.setDisplayName("Factor de sombras móviles")
     factor_sombras_moviles.setDefaultValue(0.3)
     args << factor_sombras_moviles
+
+    # Puentes térmicos
 
     psi_forjado_cubierta = OpenStudio::Measure::OSArgument.makeDoubleArgument("CTE_Psi_forjado_cubierta", true)
     psi_forjado_cubierta.setDisplayName("TTL forjado con cubierta")
