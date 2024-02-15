@@ -1,15 +1,15 @@
 <?xml version="1.0"?>
 <measure>
-  <schema_version>3.0</schema_version>  
+  <schema_version>3.1</schema_version>
   <name>cte_workspace</name>
   <uid>a4172009-822d-40f3-8c80-725f59797c02</uid>
-  <version_id>7b1fa331-5d72-4999-8133-ebba2ccbf750</version_id>
-  <version_modified>20230419T110708Z</version_modified>
+  <version_id>fa410545-9054-472d-b4be-c6dffa587a89</version_id>
+  <version_modified>2023-12-20T11:20:38Z</version_modified>
   <xml_checksum>31E4D2D4</xml_checksum>
   <class_name>CTE_Workspace</class_name>
   <display_name>Aplica las medidas al Workspace</display_name>
-  <description>Asegura que los objetos ZoneVentilation:DesignFlowRate usan el horario CTER24B_HVEN y a�ade objetos ZoneAirBalance:OutdoorAir.</description>
-  <modeler_description>Recorre objetos ZoneVentilation:DesignFlowRate y comprueba horario. A�ade a todos los objetos Zone un objeto ZoneAirBalance:OutdoorAir.</modeler_description>
+  <description>Modificaciones del IDF para calculo CTE DB-HE.</description>
+  <modeler_description>Fija temperaturas del terreno, balance de aire exterior y horario de verano.</modeler_description>
   <arguments />
   <outputs />
   <provenances />
@@ -90,28 +90,21 @@
   </attributes>
   <files>
     <file>
-      <filename>cubitoygarajenhideal.idf</filename>
-      <filetype>idf</filetype>
-      <usage_type>test</usage_type>
-      <checksum>A24A3E00</checksum>
-    </file>
-    <file>
-      <filename>7_plurif_BLOQUE_4_ALTURAS.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>E0E7D57E</checksum>
-    </file>
-    <file>
-      <filename>temp_suelo_resumen.csv</filename>
-      <filetype>csv</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>9248C3C2</checksum>
-    </file>
-    <file>
-      <filename>CTE_Workspace_Test.rb</filename>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.0.6</identifier>
+        <min_compatible>1.0.6</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
       <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>20973965</checksum>
+      <usage_type>script</usage_type>
+      <checksum>5B1D2422</checksum>
+    </file>
+    <file>
+      <filename>cte_lib_measures_groundtemperature.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>2CEC8C69</checksum>
     </file>
     <file>
       <filename>cte_lib_measures_horarioestacional.rb</filename>
@@ -126,21 +119,28 @@
       <checksum>84D20F22</checksum>
     </file>
     <file>
-      <filename>cte_lib_measures_groundtemperature.rb</filename>
-      <filetype>rb</filetype>
+      <filename>temp_suelo_resumen.csv</filename>
+      <filetype>csv</filetype>
       <usage_type>resource</usage_type>
-      <checksum>8B77CD6E</checksum>
+      <checksum>9248C3C2</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.0.6</identifier>
-        <min_compatible>1.0.6</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
+      <filename>7_plurif_BLOQUE_4_ALTURAS.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E0E7D57E</checksum>
+    </file>
+    <file>
+      <filename>CTE_Workspace_Test.rb</filename>
       <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>C883CFBF</checksum>
+      <usage_type>test</usage_type>
+      <checksum>20973965</checksum>
+    </file>
+    <file>
+      <filename>cubitoygarajenhideal.idf</filename>
+      <filetype>idf</filetype>
+      <usage_type>test</usage_type>
+      <checksum>A24A3E00</checksum>
     </file>
   </files>
 </measure>

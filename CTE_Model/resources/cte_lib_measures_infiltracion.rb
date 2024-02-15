@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
-#
-# Copyright (c) 2016 Ministerio de Fomento
+# Copyright (c) 2016-2023 Ministerio de Fomento
 #                    Instituto de Ciencias de la Construcción Eduardo Torroja (IETcc-CSIC)
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,143 +21,147 @@
 #
 # Author(s): Rafael Villar Burke <pachi@ietcc.csic.es>,
 #            Daniel Jiménez González <dani@ietcc.csic.es>
-#            Marta Sorribes Gil <msorribes@ietcc.csic.es>
+#
+# Horarios de infiltración:
+# - espacios no habitables o sin equipos de acondicionamiento: permanente
+# - espacios habitables acondicionados: horario específico
+#
+# Nivel de infiltraciones usando el modelo ELA (Effective Leakage Area):
+# - fugas por opacos + fugas por huecos + (residencial) fugas por aireadores
+#
+# En residencial se considera una infiltración adicional por los aireadores (50% infiltrando),
+# y consideramos que la podemos aproximar por ventanas en posición de microventilación.
+#
+# DUDA: Esta última superficie:
+# - ¿tiene sentido añadirla o es redundante con la ventilación? En terciario no la añadimos
 
-TO4PA ||= 0.11571248 # pow(4/100., 0.67), de 100 a 4 pascales
-C_OP ||= { 'Nuevo'     => 16 * TO4PA,
-           'Existente' => 29 * TO4PA }
-C_PU ||= 60 * TO4PA # Permeabilidad puertas a 4Pa
-C_HU ||= { 'Clase 1' => 50 * TO4PA,
-           'Clase 2' => 27 * TO4PA,
-           'Clase 3' => 9 * TO4PA,
-           'Clase 4' => 3 * TO4PA }
+# Coeficientes para el cálculo de infiltraciones - Modelo Sherman-Grimsrud
+# https://bigladdersoftware.com/epx/docs/8-0/engineering-reference/page-048.html
+# Método ASHRAE Q = F_sched ·ELA / 1000 · sqrt(COEF_STACK · delta_T + COEF_WIND · v²)
+# - ELA, Area (cm²) para 4 Pa de diferencia de presión
+# - COEF_STACK - (L/s)²/(cm⁴·K)
+# - COEF_WIND - (L/s)²/(cm⁴·(m/s)²)
+# - delta_T (entre interior y exterior) - K
+# - v - velocidad media aire m/s
+# Coefs: https://bigladdersoftware.com/epx/docs/8-0/input-output-reference/page-018.html#zoneinfiltrationeffectiveleakagearea
+CTE_COEF_STACK = 0.00029 # Valor para dos plantas de altura
+CTE_COEF_WIND = 0.000231 # Valor para dos plantas y entorno urbano
+
+# Coeficientes de caudal a 4 Pa
+TO4PA = 0.11571248 # pow(4/100., 0.67), de 100 a 4 Pa
+C_WINDOWS_CLASS1 = 50 * TO4PA
 
 def cte_horario_de_infiltracion(runner, space, horario_always_on)
-    # spaceName = space.name.get
-    spaceType = space.spaceType.get.name.get
-    habitable = !spaceType.start_with?('CTE_N')
+  # XXX: La detección de si el espacio es habitable o no depende de que los no habitables
+  # tengan su space_type empezando por CTE_N
+  no_habitable = space.spaceType.get.name.get.start_with?("CTE_N")
 
-    if habitable
-      # Habitable
-      thermalZone = space.thermalZone.get
-      idealLoads = thermalZone.useIdealAirLoads
-      if !idealLoads
-        listaDeEquipos = thermalZone.zoneConditioningEquipmentListName
-        if listaDeEquipos.empty?
-          # Habitable no acondicionado
-          horarioInfiltracion = horario_always_on
-        else
-          # Equipos reales + habitable acondicionado
-          horarios =  space.defaultScheduleSet.empty?  ?
-                      space.spaceType.get.defaultScheduleSet.get :
-                      space.defaultScheduleSet.get
-          horarioInfiltracion = horarios.infiltrationSchedule.get
-        end
-      else
-        # Equipos ideales + habitable acondicionado
-        horarios =  space.defaultScheduleSet.empty?  ?
-                    space.spaceType.get.defaultScheduleSet.get :
-                    space.defaultScheduleSet.get
-        horarioInfiltracion = horarios.infiltrationSchedule.get
-      end
-    else
-      # No habitable
-      horarios = space.defaultScheduleSet.get
-      horarioInfiltracion = horario_always_on
-    end
-    return horarioInfiltracion
+  # Sin equipos = no ideales y lista vacía de equipos
+  no_equipment = (
+    !space.thermalZone.get.useIdealAirLoads &&
+     space.thermalZone.get.zoneConditioningEquipmentListName.empty?
+  )
+
+  if no_habitable || no_equipment
+    # No habitable o sin equipos
+    horario_infiltracion = horario_always_on
+  else
+    # Con equipos + habitable acondicionado
+    horarios = space.defaultScheduleSet.empty? ?
+      space.spaceType.get.defaultScheduleSet.get :
+      space.defaultScheduleSet.get
+    horario_infiltracion = horarios.infiltrationSchedule.get
+  end
+
+  horario_infiltracion
 end
 
-
-#Se modelan las infiltraciones usando el método ELA y las permeabilidades
+# Se modelan las infiltraciones usando el método ELA y las permeabilidades
 # y parámetros del documento de condic. técnicas
-def cte_infiltracion(model, runner, user_arguments) #copiado del residencial
-
+def cte_infiltracion(model, runner, user_arguments) # copiado del residencial
   # busca el horario para hacer always_on
-  horario_always_on = model.getScheduleRulesets
-                      .find { |h| h.name.get == 'CTER24B_HINF' } || false
+  horario_always_on = model.getScheduleRulesets.find { |h| h.name.get == "CTER24B_HINF" } || false
 
-  #hay que tomar el horario del espacio -> zona -> tipo de zona
+  c_opaques = runner.getDoubleArgumentValue("CTE_C_opacos_m3hm2", user_arguments) * TO4PA
+  c_windows = runner.getDoubleArgumentValue("CTE_C_huecos_m3hm2", user_arguments) * TO4PA
+  c_doors = runner.getDoubleArgumentValue("CTE_C_puertas_m3hm2", user_arguments) * TO4PA
 
-  tipoEdificio = runner.getStringArgumentValue('CTE_Tipo_edificio', user_arguments)
-  claseVentana = runner.getStringArgumentValue('CTE_Permeabilidad_ventanas', user_arguments)
-  coefStack = runner.getDoubleArgumentValue('CTE_Coef_stack', user_arguments)
-  coefWind = runner.getDoubleArgumentValue('CTE_Coef_wind', user_arguments)
-
-  runner.registerValue("CTE Tipo de Edificio (Nuevo/Existente)", tipoEdificio)
-  runner.registerValue("CTE Clase de permeabilidad de Ventanas", claseVentana)
-
-  spaces = model.getSpaces
-  runner.registerValue("CTE Coeficientes de fugas de opacos a 4Pa", C_OP[tipoEdificio].round(4))
-  runner.registerValue("CTE Coeficientes de fugas de puertas a 4Pa", C_PU.round(4))
-  runner.registerValue("CTE Coeficientes de fugas de huecos a 4Pa", C_HU[claseVentana].round(4))
+  runner.registerValue("CTE Coeficientes de fugas de opacos a 4Pa, C_op", c_opaques.round(4))
+  runner.registerValue("CTE Coeficientes de fugas de huecos a 4Pa, C_w", c_windows.round(4))
+  runner.registerValue("CTE Coeficientes de fugas de puertas a 4Pa, C_w", c_doors.round(4))
 
   runner.registerInfo("** Superficies para ELA **")
+
   # XXX: pensar como interactúa con los espacios distintos a los acondicionados
   # ELA_total para comprobaciones
   ela_total = 0.0
-  spaces.each do |space|
-    horarioInfiltracion = cte_horario_de_infiltracion(runner, space, horario_always_on)
-    areaOpacos = 0
-    areaVentanas = 0
-    areaPuertas = 0
+  model.getSpaces.each do |space|
+    horario_infiltracion = cte_horario_de_infiltracion(runner, space, horario_always_on)
+    area_opacos = 0
+    area_ventanas = 0
+    area_puertas = 0
     # TODO: filtrar superficies NoMass, que son superficies auxiliares
     space.surfaces.each do |surface|
-      if surface.outsideBoundaryCondition == 'Outdoors' and surface.windExposure == 'WindExposed'
-        surfArea = surface.netArea
-        areaOpacos += surfArea
-        # runner.registerInfo("- '#{ surface.name }', #{ surface.surfaceType }, #{ surfArea.round(2) }")
+      if surface.outsideBoundaryCondition == "Outdoors" && surface.windExposure == "WindExposed"
+        area_opacos += surface.netArea
         surface.subSurfaces.each do |subsur|
-          subSurfArea = subsur.grossArea
-          # runner.registerInfo("- '#{subsur.name}', #{ subsur.subSurfaceType }, #{ subSurfArea.round(2) }")
-          if ['FixedWindow', 'OperableWindow', 'SkyLight'].include?(subsur.subSurfaceType)
-            areaVentanas += subSurfArea
-          elsif ['Door', 'GlassDoor', 'OverheadDoor'].include?(subsur.subSurfaceType)
-            areaPuertas += subSurfArea
+          if ["FixedWindow", "OperableWindow", "SkyLight"].include?(subsur.subSurfaceType)
+            area_ventanas += subsur.grossArea
+          elsif ["Door", "GlassDoor", "OverheadDoor"].include?(subsur.subSurfaceType)
+            area_puertas += subsur.grossArea
           else
-            runner.registerWarning("Subsuperficie '#{ subsur.name }' con tipo desconocido '#{ subsur.subSurfaceType }' en superficie '#{ surface.name }' del espacio '#{ space.name }'")
+            runner.registerWarning("Subsuperficie '#{subsur.name}' con tipo desconocido '#{subsur.subSurfaceType}' en superficie '#{surface.name}' del espacio '#{space.name}'")
           end
         end
       end
     end
 
-    #runner.registerInfo("Infiltraciones: '#{ space.name }' / '#{ horarioInfiltracion.name.get }' - ELA [m2]: opacos: #{ areaOpacos.round(2) }, huecos #{ areaVentanas.round(2) }, puertas #{ areaPuertas.round(2) }\n")
-
-    usoEdificio = runner.getStringArgumentValue('CTE_Uso_edificio',
-                                                user_arguments)
-    # Superficie bocas admisión, según modelo simplificado en residencial
-    if claseVentana != 'Clase 1' and usoEdificio != 'Residencial'
-      # Superficie igual a lo que falta para microventilación
-      c_ven = C_HU['Clase 1'] - C_HU[claseVentana]
+    uso_edificio = runner.getStringArgumentValue("CTE_Uso_edificio", user_arguments)
+    # En residencial, suponemos que la microventilación (n=0.5 rendija turbulenta)
+    # daría el caudal de los aireadores necesarios, suponiendo que estos equivalen a un
+    # 50% de huecos expuestosa barlovento (con infiltración)
+    #
+    # Sabemos que eso es:
+    #   Q = C·A·delta_p^n
+    #   Q [m³/h] = (C_clase_1 - C_clase_real_huecos) · (0.50 · area_ventanas) · 4^0.5
+    #            = C_air · (0.50 · area_ventanas) · 4^0.5
+    #            = C_air · A_air · 4^0.5
+    #
+    #   C_air · A_air = Q / 4^0.5
+    ca_air = if uso_edificio == "Residencial"
+      (C_WINDOWS_CLASS1 - c_windows) * (0.5 * area_ventanas) / (4.0**0.5)
     else
-      c_ven = 0.0
+      0.0
     end
 
     # q_total en m3/h a 4 Pa
-    q_total = 4.0 ** 0.67 * (C_OP[tipoEdificio] * areaOpacos +
-                             C_HU[claseVentana] * areaVentanas +
-                             C_PU * areaPuertas +
-                             # microventilación al 50% de apertura
-                             0.50 * c_ven * areaVentanas / (4.0 ** 0.5))
+    # q_tot = sum(C·A·delta_p^n) para opacos, huecos, puertas y aireadores
+    q_total = (c_opaques * area_opacos + c_windows * area_ventanas + c_doors * area_puertas + ca_air) * 4.0**0.67
 
-    areaEquivalente = 1.0758287 * 0.50 * q_total # area ELA en cm2 con el 50% del área expuesta
-    runner.registerValue("CTE ELA ('#{ space.name }')", areaEquivalente.round(2), "cm2 a 4Pa")
+    # ¿Por qué el 50% expuesto y no el 100%?
+    # 50% de ELA [cm²] = 0.50 · 10000 · Q_tot / 3600 · (dens_air / 2 * P_ref)^0.5 / C_d
+    # Sherman-Grimsrud -> P_ref = 4Pa ; C_d = 1.0
+    # Condiciones estándar al nivel del mar -> dens_air = 1.225 kg/m³
+    # area_equivalente = 0.50 · 3913 / 3600 · q_total
+    # ELA [cm2] con el 50% del área expuesta
+    area_equivalente = 0.50 * 3913 / 3600 * q_total
+    runner.registerValue("CTE ELA ('#{space.name}')", area_equivalente.round(2), "cm2 a 4Pa")
 
     # Elimina todos los objetos ELA que pueda haber
-    space.spaceInfiltrationEffectiveLeakageAreas.each{ |ela| ela.remove }
+    space.spaceInfiltrationEffectiveLeakageAreas.each { |ela| ela.remove }
 
     # E inserta los nuevos
     ela = OpenStudio::Model::SpaceInfiltrationEffectiveLeakageArea.new(model)
     ela.setSpace(space)
-    ela.setStackCoefficient(coefStack)
-    ela.setWindCoefficient(coefWind)
-    ela.setSchedule(horarioInfiltracion)
-    ela.setEffectiveAirLeakageArea(areaEquivalente)
-    ela.setName("CTE_ELA_#{ space.name }")
+    ela.setStackCoefficient(CTE_COEF_STACK)
+    ela.setWindCoefficient(CTE_COEF_WIND)
+    ela.setSchedule(horario_infiltracion)
+    ela.setEffectiveAirLeakageArea(area_equivalente)
+    ela.setName("CTE_ELA_#{space.name}")
 
-    ela_total += areaEquivalente
+    ela_total += area_equivalente
   end
   runner.registerValue("cte_ela_total_espacios", ela_total, "cm2 a 4 Pa")
 
-  return true # OS necesita saber que todo acaba bien
+  true # OS necesita saber que todo acaba bien
 end

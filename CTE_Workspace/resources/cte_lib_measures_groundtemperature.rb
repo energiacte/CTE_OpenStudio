@@ -65,7 +65,7 @@ def cte_groundTemperature(runner, workspace, string_objects)
 end
 
 def getTemperaturasSuelo(runner, zonaClimaticaInvierno, zonaClimaticaVerano, canarias)
-  clavecanarias = {'peninsula' => '', 'canarias' => 'c'}
+  clavecanarias = {'peninsula' => '', 'canarias' => 'c', 'ceutamelilla' => 'c', 'balears' => 'c'}
   clavedezona = zonaClimaticaInvierno.downcase + zonaClimaticaVerano + clavecanarias[canarias]
   runner.registerInfo("clave de zona --> #{clavedezona}\n")
 

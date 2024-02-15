@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
-#
-# Copyright (c) 2016 Ministerio de Fomento
+# Copyright (c) 2016-2023 Ministerio de Fomento
 #                    Instituto de Ciencias de la Construcción Eduardo Torroja (IETcc-CSIC)
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,89 +21,102 @@
 #
 # Author(s): Rafael Villar Burke <pachi@ietcc.csic.es>,
 #            Daniel Jiménez González <dani@ietcc.csic.es>
-#            Marta Sorribes Gil <msorribes@ietcc.csic.es>
 
 # Inyecta variables y meters para uso con el CTE
 def cte_addvars(model, runner, user_arguments)
-
   # Get initial conditions ==========================================
   meters = model.getOutputMeters
   output_variables = model.getOutputVariables
   runner.registerInfo("CTE_ADDVARS: The model started with #{meters.size} meter objects, and #{output_variables.size} output variables.")
 
   # Add CTE meters ==================================================
+  # Consultar en archivo **eplusout.mdd** los report meters disponibles
 
   new_meters = [
+    # ["Propane:Facility", "RunPeriod"], # this meter exists in the exampleModel
     ["DistrictHeating:Facility", "RunPeriod"],
     ["DistrictCooling:Facility", "RunPeriod"],
-    #["Propane:Facility", "RunPeriod"] # this meter exists in the exampleModel
+    ["Fans:Electricity", "Monthly", "*"],
+    ["InteriorLights:Electricity", "Monthly", "*"],
+    ["Heating:DistrictHeating", "Hourly", "*"],
+    ["Cooling:DistrictCooling", "Hourly", "*"]
   ]
 
-  existing_meters = Hash[meters.map{ |meter| [meter.name, meter] }.compact]
+  existing_meters = Hash[meters.map { |meter| [meter.name, meter] }.compact]
 
-  new_meters.each do | new_meter |
-    new_meter_name, new_reporting_frequency = new_meter
-    if existing_meters.has_key?(new_meter_name)
-      runner.registerInfo("Meter #{new_meter_name} already in meters")
-      meter = existing_meters[new_meter_name]
-      if not meter.reportingFrequency == new_reporting_frequency
-        meter.setReportingFrequency(new_reporting_frequency)
-        runner.registerInfo("Changing meter #{new_meter_name} reporting frequency to #{new_reporting_frequency}.")
+  new_meters.each do |meterName, reporting_frequency, key|
+    if existing_meters.has_key?(meterName)
+      runner.registerInfo("Meter #{meterName} already in meters")
+      meter = existing_meters[meterName]
+      if meter.reportingFrequency != reporting_frequency
+        meter.setReportingFrequency(reporting_frequency)
+        runner.registerInfo("Changing meter #{meterName} reporting frequency to #{reporting_frequency}.")
       end
     else
       meter = OpenStudio::Model::OutputMeter.new(model)
-      meter.setName(new_meter_name)
-      meter.setReportingFrequency(new_reporting_frequency)
-      runner.registerInfo("Adding meter for #{new_meter_name} reporting #{ new_reporting_frequency }")
+      meter.setName(meterName)
+      meter.setReportingFrequency(reporting_frequency)
+      runner.registerInfo("Adding output meter #{meterName} with reporting frequency #{reporting_frequency} for key #{key}.")
     end
   end
 
   # Add CTE output variables =========================================
+  # Consultar en archivo **eplusout.rdd** variables disponibles
 
   new_oputput_variables = [
     # Monthly variables
-    ["Site Outdoor Air Drybulb Temperature", "monthly", "*"],
-    ["Surface Inside Face Conduction Heat Transfer Energy", "monthly", "*"],
-    ["Surface Window Heat Gain Energy", "monthly", "*"],
-    ["Surface Window Heat Loss Energy", "monthly", "*"],
-    ["Surface Window Transmitted Solar Radiation Energy", "monthly", "*"],
-    ["Zone Lights Electric Energy", "monthly", "*"],
-    ["Zone Total Internal Total Heating Energy", "monthly", "*"],
-    ["Zone Ideal Loads Zone Total Heating Energy", "monthly", "*"],
-    ["Zone Ideal Loads Zone Total Cooling Energy", "monthly", "*"],
-    ["Zone Combined Outdoor Air Sensible Heat Loss Energy", "monthly", "*"],
-    ["Zone Combined Outdoor Air Sensible Heat Gain Energy", "monthly", "*"],
-    ["Zone Combined Outdoor Air Changes per Hour", "monthly", "*"],
-    ["Zone Combined Outdoor Air Fan Electric Energy", "monthly", "*"]
+    ["Site Outdoor Air Drybulb Temperature", "Monthly", "*"],
+    ["Surface Inside Face Conduction Heat Transfer Energy", "Monthly", "*"],
+    ["Surface Window Heat Gain Energy", "Monthly", "*"],
+    ["Surface Window Heat Loss Energy", "Monthly", "*"],
+    ["Surface Window Transmitted Solar Radiation Energy", "Monthly", "*"],
+    ["Zone Lights Electricity Energy", "Monthly", "*"],
+    ["Zone Total Internal Total Heating Energy", "Monthly", "*"],
+    ["Zone Ideal Loads Zone Total Heating Energy", "Monthly", "*"],
+    ["Zone Ideal Loads Zone Total Cooling Energy", "Monthly", "*"],
+    ["Zone Ideal Loads Heat Recovery Active Time", "Hourly", "*"],
+    ["Zone Ideal Loads Heat Recovery Active Time", "Daily", "*"],
+    ["Zone Ideal Loads Heat Recovery Active Time", "Monthly", "*"],
+    ["Zone Ideal Loads Economizer Active Time", "Hourly", "*"],
+    ["Zone Ideal Loads Economizer Active Time", "Daily", "*"],
+    ["Zone Ideal Loads Economizer Active Time", "Monthly", "*"],
+    ["Zone Ideal Loads Supply Air Standard Density Volume Flow Rate", "Hourly", "*"],
+    ["Zone Ideal Loads Outdoor Air Standard Density Volume Flow Rate", "Hourly", "*"],
+    ["Zone Mechanical Ventilation Current Density Volume", "Hourly", "*"],
+    ["Zone Mechanical Ventilation Air Changes per Hour", "Hourly", "*"],
+    ["Zone Infiltration Current Density Volume Flow Rate", "Monthly", "*"],
+    ["Zone Infiltration Total Heat Loss Energy", "Monthly", "*"],
+    ["Zone Infiltration Total Heat Gain Energy", "Monthly", "*"],
+    ["Zone Infiltration Air Change Rate", "Monthly", "*"],
+    ["Zone Combined Outdoor Air Sensible Heat Loss Energy", "Daily", "*"],
+    ["Zone Combined Outdoor Air Sensible Heat Loss Energy", "Monthly", "*"],
+    ["Zone Combined Outdoor Air Sensible Heat Gain Energy", "Monthly", "*"],
+    ["Zone Combined Outdoor Air Total Heat Loss Energy", "Hourly", "*"],
+    ["Zone Combined Outdoor Air Total Heat Loss Energy", "Monthly", "*"],
+    ["Zone Combined Outdoor Air Total Heat Gain Energy", "Hourly", "*"],
+    ["Zone Combined Outdoor Air Total Heat Gain Energy", "Monthly", "*"],
+    ["Zone Combined Outdoor Air Changes per Hour", "Hourly", "*"],
+    ["Zone Combined Outdoor Air Changes per Hour", "Daily", "*"],
+    ["Zone Combined Outdoor Air Changes per Hour", "Monthly", "*"],
+    ["Zone Combined Outdoor Air Fan Electric Energy", "Monthly", "*"],
+    # Esta variable no aparece en el rdd ya que se desactiva
+    # al introducir el objeto ZoneAirBalance:OutdoorAir en CTE_Workspace
+    # Ver https://bigladdersoftware.com/epx/docs/8-7/input-output-reference/group-airflow.html#outputs-1-002
+    ["Zone Ventilation Air Change Rate", "Monthly", "*"]
   ]
 
-  new_oputput_variables.each do | variable_name, reporting_frequency, key |
+  new_oputput_variables.each do |variable_name, reporting_frequency, key|
     outputVariable = OpenStudio::Model::OutputVariable.new(variable_name, model)
     outputVariable.setReportingFrequency(reporting_frequency)
     outputVariable.setKeyValue(key)
     runner.registerInfo("Adding output variable #{variable_name} with reporting frequency #{reporting_frequency} for key #{key}.")
   end
 
-
   # Get final condition ================================================
-
-  new_output_meteres = [
-  ["Fans:Electricity", "monthly", "*"],
-  ["Heating:DistrictHeating", "hourly", "*"],
-  ["Cooling:DistrictCooling", "hourly", "*"],
-  ]
-
-  new_output_meteres.each do | meterName, reporting_frequency, key |
-    outputMeter = OpenStudio::Model::OutputMeter.new(model)
-    #~ outputMeter.setCumulative(true)
-    outputMeter.setName(meterName)
-    outputMeter.setReportingFrequency(reporting_frequency)
-    runner.registerInfo("Adding output meter #{meterName} with reporting frequency #{reporting_frequency} for key #{key}.")
-  end
 
   meters = model.getOutputMeters
   output_variables = model.getOutputVariables
   runner.registerInfo("CTE_ADDVARS: The model finished with #{meters.size} meter objects and #{output_variables.size} output variables.")
 
-  return true
+  true
 end

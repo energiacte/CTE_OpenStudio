@@ -30,21 +30,24 @@ require_relative "resources/cte_lib_reporting"
 
 # Medida de OpenStudio para informes tipo CTE
 # Esta medida se aplica en combinaci??n con una medida de modelo y de workspace para CTE
-class CTE_InformeDBHE < OpenStudio::Ruleset::ReportingUserScript
+class CTE_InformeDBHE < OpenStudio::Measure::ReportingMeasure
   # define the name that a user will see, this method may be deprecated as
   # the display name in PAT comes from the name field in measure.xml
   def name
     return " Informe DBHE"
   end
+  
   # human readable description
   def description
     return "Informe de resultados con informacion relativa al CTE DB-HE."
   end
+  
   # human readable description of modeling approach
   def modeler_description
     return "Datos obtenidos de los resultados de EnergyPlus y del modelo de OpenStudio.
  La estructura del informe usa Bootstrap, y dimple js para las graficas."
   end
+
   def possible_sections
     result = []
     # methods for sections in order that they will appear in report
@@ -61,7 +64,7 @@ class CTE_InformeDBHE < OpenStudio::Ruleset::ReportingUserScript
   end
 
   # define the arguments that the user will input
-  def arguments
+  def arguments(model=nil)
     args = OpenStudio::Ruleset::OSArgumentVector.new
 
     # populate arguments
@@ -119,6 +122,8 @@ class CTE_InformeDBHE < OpenStudio::Ruleset::ReportingUserScript
   # define what happens when the measure is run
   def run(runner, user_arguments)
     super(runner, user_arguments)
+    puts("\nCTE_InformeDBHE measure: Aplicando medida de Report.")
+    runner.registerInitialCondition('Recopilando datos de archivo SQL de EnergyPlus y model OSM.')
 
     # get sql, model, and web assets
     setup = CTELib_Reporting.setup(runner)
@@ -135,9 +140,6 @@ class CTE_InformeDBHE < OpenStudio::Ruleset::ReportingUserScript
     unless args
       return false
     end
-
-    # reporting final condition
-    runner.registerInitialCondition('Recopilando datos de archivo SQL de EnergyPlus y model OSM.')
 
     # generate data for requested sections
     # create a array of sections to loop through in erb file
