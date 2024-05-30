@@ -138,6 +138,10 @@ MESES = %w[enero febrero marzo abril mayo junio julio agosto septiembre octubre 
 # Introduce perfiles mensuales de la temperatura de agua de red en funcion de la provincia y corregida con la altitud
 # TODO: Detectar caso en el que no está definida la demanda de ACS (no hay circuito) para evitar el fallo (¿Localizar WaterEquipment?).
 def cte_tempaguafria(model, runner, user_arguments)
+  # BUG: Esto no es correcto. Hay que obtener el nombre del archivo climático
+  # BUG: https://openstudio-sdk-documentation.s3.amazonaws.com/cpp/OpenStudio-3.8.0-doc/measure/html/classopenstudio_1_1measure_1_1_o_s_runner.html#a5f239054807d9c5d120d6064c5e4b06d
+  # BUG: boost::optional<openstudio::path> openstudio::measure::OSRunner::lastEpwFilePath()
+  # weather_file = runner.getLasEpwFilePath().get
   weather_file = model.getSite.name.get
   water_temps = get_water_temps(runner, weather_file)
 

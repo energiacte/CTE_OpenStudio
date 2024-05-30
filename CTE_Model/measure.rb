@@ -200,6 +200,10 @@ class CTE_Model < OpenStudio::Measure::ModelMeasure
     result = cte_puentestermicos(model, runner, user_arguments)
     return result unless result == true
 
+    # BUG:Esto no es correcto
+    # BUG: https://openstudio-sdk-documentation.s3.amazonaws.com/cpp/OpenStudio-3.8.0-doc/measure/html/classopenstudio_1_1measure_1_1_o_s_runner.html#a5f239054807d9c5d120d6064c5e4b06d
+    # BUG: boost::optional<openstudio::path> openstudio::measure::OSRunner::lastEpwFilePath()
+    # weather_file = runner.getLasEpwFilePath().get
     site = model.getSite
     weather_file = site.name.get
     runner.registerValue("CTE_Weather_file", weather_file)
