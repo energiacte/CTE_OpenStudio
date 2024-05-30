@@ -25,11 +25,6 @@ def filtra_superficies(model, condicion:, tipo:)
     end
   end
 
-  if exterior_surfaces.empty?
-    runner.registerAsNotApplicable("El modelo no tiene superficies #{tipo} #{condicion}")
-    return true
-  end
-
   [exterior_surfaces, exterior_surface_constructions, exterior_surface_construction_names]
 end
 
