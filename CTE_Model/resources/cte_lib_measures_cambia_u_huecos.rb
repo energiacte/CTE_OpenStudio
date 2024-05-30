@@ -69,7 +69,7 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
   end
 
   if windows.empty?
-    runner.registerAsNotApplicable("El modelo no tiene ventanas.")
+    runner.registerWarning("El modelo no tiene ventanas.")
     return true
   end
 
