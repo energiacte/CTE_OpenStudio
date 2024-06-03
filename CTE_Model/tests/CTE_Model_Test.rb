@@ -84,8 +84,12 @@ class CTE_Model_Test < MiniTest::Unit::TestCase
     # set argument values to good values and run the measure on model with spaces
     measure.run(model, runner, argument_map)
     result = runner.result
-    assert_equal("Success", result.value.valueName)
+
+    # Muestra resultados
     # show_output(result)
+
+    # Asserts de condiciones
+    assert_equal("Success", result.value.valueName)
 
     # attributes = JSON.parse(OpenStudio::to_json(result.attributes))
     # ela_total = attributes['attributes']['cte_ela_total_espacios']
