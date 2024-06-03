@@ -145,6 +145,13 @@ class CTE_Model_Test < MiniTest::Unit::TestCase
     result = runner.result
     assert_equal("Success", result.value.valueName)
 
+    if runner.lastEpwFilePath.is_initialized
+      wf = runner.lastEpwFilePath.get.to_s
+    elsif model.getWeatherFile.path.is_initialized
+      wf = model.getWeatherFile.path.get.to_s
+    end
+    assert_equal("D3_peninsula.epw", wf)
+
     ela_total = get_attrb(result, "cte_ela_total_espacios")
     # assert_in_delta(5631.2, ela_total, 1.0)
     assert_in_delta(1024.14, ela_total, 1.0)
