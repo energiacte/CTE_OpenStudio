@@ -49,6 +49,8 @@ class CTE_Model_Test < MiniTest::Unit::TestCase
     # create an instance of the measure
     measure = CTE_Model.new
 
+    puts("Iniciando el test CTE_Model_Terciario")
+
     # create an instance of a runner
     runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
 
