@@ -39,7 +39,12 @@ def get_attrb(result, nombre)
   end
 end
 
-class CTE_Model_Test < MiniTest::Test
+class CTE_Model_Test < MiniTest::Unit::TestCase
+  # def setup
+  # end
+
+  # def teardown
+  # end
   def test_CTE_Model_Terciario
     # create an instance of the measure
     measure = CTE_Model.new
