@@ -68,6 +68,7 @@ class CTE_Model_Test < MiniTest::Unit::TestCase
     # create hash of argument values.
     # If the argument has a default that you want to use, you don't need it in the hash
     args_hash = {}
+    args_hash["CTE_C_huecos_m3hm2"] = 50
     # args_hash["provincia"] = "Madrid"
     # args_hash["altitud"] = 650.0
     # using defaults values from measure.rb for other arguments
@@ -129,6 +130,7 @@ class CTE_Model_Test < MiniTest::Unit::TestCase
     # If the argument has a default that you want to use, you don't need it in the hash
     args_hash = {}
     args_hash["CTE_Uso_edificio"] = "Residencial"
+    args_hash["CTE_C_huecos_m3hm2"] = 50
     # using defaults values from measure.rb for other arguments
 
     # populate argument with specified hash value if specified
