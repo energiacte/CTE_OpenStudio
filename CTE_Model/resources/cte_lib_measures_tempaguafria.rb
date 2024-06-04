@@ -139,19 +139,27 @@ MESES = %w[enero febrero marzo abril mayo junio julio agosto septiembre octubre 
 # TODO: Detectar caso en el que no está definida la demanda de ACS (no hay circuito) para evitar el fallo (¿Localizar WaterEquipment?).
 def cte_tempaguafria(model, runner, user_arguments)
   # Obtenemos el nombre del archivo climático del runner o del modelo
-  # TODO: Es posible que el archivo de climas venga en algún caso con su path completo? Por ahora no hemos tenido ese caso
   if runner.lastEpwFilePath.is_initialized
-    weather_file = runner.lastEpwFilePath.get.to_s
+    weather_s = runner.lastEpwFilePath.get.to_s
+    runner.registerValue("Clima obtenido del runner: ", weather_s)
   elsif model.getWeatherFile.path.is_initialized
-    weather_file = model.getWeatherFile.path.get.to_s
+    weather_s = model.getWeatherFile.path.get.to_s
+    runner.registerValue("Clima obtenido del modelo (WeatherFile):", weather_s)
+  elsif model.getSite.name.is_initialized
+    weather_s = model.getSite.name.get.to_s
+    runner.registerValue("Clima obtenido del Site:", weather_s)
+  else
+    runner.registerError("No se ha localizado el clima")
+    return false
   end
+  # En algunos casos tenemos un path como: weather_s = file:file/D3_peninsula.epw
+  _name, _match, weather_file = weather_s.rpartition("/")
+  weather_file = weather_file.gsub(".epw", "")
 
   water_temps = get_water_temps(runner, weather_file)
-
   runner.registerValue("CTE Temperaturas de agua de red", "[" + water_temps.join(",") + "]")
 
   conjunto_reglas = model.getScheduleRulesets.find { |schedule_ruleset| schedule_ruleset.name.get == CTE_HORARIOSAGUA }
-
   if conjunto_reglas.nil?
     runner.registerWarning("No se ha localizado el conjunto de horarios de temperatura de agua fría de red '#{CTE_HORARIOSAGUA}'. ¿Ha definido una instalación de ACS?")
     return false
