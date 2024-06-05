@@ -22,36 +22,32 @@
 # Author(s): Rafael Villar Burke <pachi@ietcc.csic.es>,
 #            Daniel Jiménez González <dani@ietcc.csic.es>
 
+# Buscar aquí como son los wrappers de OS a objeto Ruby:
+# https://openstudio-sdk-documentation.s3.amazonaws.com/cpp/OpenStudio-3.5.1-doc/model/html/annotated.html
+
 def cte_cambia_u_huecos(model, runner, user_arguments)
   runner.registerInfo("CTE: Cambiando la U de huecos")
 
   # toma el valor de la medida
   u_huecos = runner.getDoubleArgumentValue("CTE_U_huecos", user_arguments)
 
-  if u_huecos == 0
-    # puts("  No se cambia el valor de huecos (U = 0) __")
+  # Con valor cero no se cambia la U
+  if u_huecos < 0.001
     runner.registerFinalCondition("No se cambia la transmitancia de los huecos (U=0)")
     return true
   end
 
-  # puts("__Se ha seleccionado un valor de U_huecos de #{u_huecos} -> R=#{1 / u_huecos}.")
-
-  # ! __01__ si queremos poner valores de seguridad irían aquí
-
-  # ! __02__ recorre las superficies para detectar la ventanas
-
-  # https://openstudio-sdk-documentation.s3.amazonaws.com/cpp/OpenStudio-3.5.1-doc/model/html/classopenstudio_1_1model_1_1_sub_surface.html
+  # Identifica huecos, construcciones y nombres de construcciones al exterior
   windows = []
   window_constructions = []
   window_construction_names = []
-  tipos_cubiertos = ["FixedWindow", "Door"]
-  spaces = model.getSpaces
-  spaces.each do |space|
+  model.getSpaces.each do |space|
     space.surfaces.each do |surface|
       next unless surface.outsideBoundaryCondition == "Outdoors" && surface.windExposure == "WindExposed"
 
       surface.subSurfaces.each do |subsur|
-        windows << subsur # también las puertas y esas cosas
+        # añade a lista de huecos
+        windows << subsur
 
         window_construction = subsur.construction.get
         # añade la construcción únicamente si no lo ha hecho antes
@@ -60,9 +56,9 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
           window_construction_names << window_construction.name.to_s
         end
 
-        # puts("__subsurface Type #{subsur.subSurfaceType()} -> #{subsur.construction.get.name}, #{subsur.uFactor()}")
-        unless tipos_cubiertos.include?(subsur.subSurfaceType.to_s)
-          puts("Tipo de hueco no cubierto por esta medida #{subsur.subSurfaceType}")
+        # Informamos de tipos no manejados por la medida
+        unless ["FixedWindow", "Door"].include?(subsur.subSurfaceType.to_s)
+          runner.registerWarning("Hueco #{subsur.name.get} con tipo no cubierto por esta medida #{subsur.subSurfaceType}")
         end
       end
     end
@@ -73,85 +69,53 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
     return true
   end
 
-  # ! __03__recorre las construcciones y materiales, los clona y los modifica
-
-  # construye los hashes para hacer un seguimiento y evitar duplicados
+  # mapa entre antigua construccion y nueva
   constructions_hash_old_new = {}
-  constructions_hash_new_old = {} # used to get netArea of new construction and then cost objects of construction it replaced
-  materials_hash = {}
-  # array and counter for new constructions that are made, used for reporting final condition
+  # lista de nuevas construcciones (para condición final)
   final_constructions_array = []
 
-  # loop through all constructions and materials used on exterior walls, edit and clone
-  # window_constructions.each { |construccion| puts(construccion.name) } #construccion =elemento
+  # Recorre construcciones y materiales usados, edita y clona
   window_constructions.each do |window_construction|
-    # runner.registerInfo("nombre de la construcción #{window_construction.name}")
-    construction_layers = window_construction.layers
-    max_thermal_resistance_material = ""
-    max_thermal_resistance_material_index = ""
-    # siempre tiene una única capa, pero mantengo el código de la otra medida
-    materials_in_construction = construction_layers.map.with_index do |layer, i|
-      {"name" => layer.name.to_s,
-       "index" => i,
-       "nomass" => !layer.to_MasslessOpaqueMaterial.empty?,
-       "r_value" => layer.to_SimpleGlazing.get.uFactor,
-       "mat" => layer}
+    # Localizamos la capa aislante.
+    # En estos huecos solo hay una única capa (¿?) pero usamos código de muros
+    materials_in_construction = window_construction.layers.map.with_index do |layer, i|
+      {
+        "name" => layer.name.to_s,
+        "index" => i,
+        "nomass" => !layer.to_MasslessOpaqueMaterial.empty?,
+        "u_value" => layer.to_SimpleGlazing.get.uFactor,
+        "mat" => layer
+      }
     end
 
     if materials_in_construction.length == 1
       max_mat_hash = materials_in_construction[0]
+    else
+      runner.registerError("Más de una capa en la construcción de hueco #{window_construction.name}")
+      return false
     end
 
     max_thermal_resistance_material = max_mat_hash["mat"] # objeto OS
     max_thermal_resistance_material_index = max_mat_hash["index"] # indice de la capa
-    # max_thermal_resistance = max_thermal_resistance_material.to_SimpleGlazing.get.uFactor
+
+    # clona material, cambia nombre y u
+    new_material = max_thermal_resistance_material.clone(model)
+    new_material = new_material.to_SimpleGlazing.get
+    new_material.setName("#{max_thermal_resistance_material.name}_U-value #{u_huecos}")
+    new_material.setUFactor(u_huecos)
 
     # ! 04 modifica la composición
     final_construction = window_construction.clone(model)
     final_construction = final_construction.to_Construction.get
     final_construction.setName("#{window_construction.name} U huecos mod.")
-    final_constructions_array << final_construction
-    constructions_hash_old_new[window_construction.name.to_s] = final_construction
-    constructions_hash_new_old[final_construction] = window_construction # push the object to hash key vs. name
-
-    # puts("__final construction", final_construction)
-    # puts("__layer__", final_construction.layers[0])
-    # # buscar aquí como son los wrappers de OS a objeto Ruby:
-    # # https://openstudio-sdk-documentation.s3.amazonaws.com/cpp/OpenStudio-3.5.1-doc/model/html/annotated.html
-    # simpleGlazing = final_construction.layers[0].to_SimpleGlazing.get
-    # puts("__layer__", simpleGlazing.uFactor())
-    # simpleGlazing.setUFactor(u_huecos)
-    # puts("__final construction", final_construction.layers[0])
-
-    # # find already cloned insulation material and link to construction
-    target_material = max_thermal_resistance_material
-    found_material = false
-
-    materials_hash.each do |orig, new|
-      next unless target_material.name.to_s == orig
-
-      new_material = new
-      materials_hash[max_thermal_resistance_material.name.to_s] = new_material
-      final_construction.eraseLayer(max_thermal_resistance_material_index)
-      final_construction.insertLayer(max_thermal_resistance_material_index, new_material)
-      found_material = true
-    end
-
-    next unless found_material == false
-
-    # create new material if not yet created
-    # clone and edit insulation material and link to construction
-    new_material = max_thermal_resistance_material.clone(model)
-    new_material = new_material.to_SimpleGlazing.get
-    new_material.setName("#{max_thermal_resistance_material.name}_U-value #{u_huecos}")
-    materials_hash[max_thermal_resistance_material.name.to_s] = new_material
     final_construction.eraseLayer(max_thermal_resistance_material_index)
     final_construction.insertLayer(max_thermal_resistance_material_index, new_material)
-    runner.registerInfo("For construction'#{final_construction.name}', material'#{new_material.name}' was altered.")
 
-    # edit insulation material
-    new_material_matt = new_material
-    new_material_matt.setUFactor(u_huecos)
+    # Guarda en lista de construcciones y en mapping entre construcción anterior y modificada
+    final_constructions_array << final_construction
+    constructions_hash_old_new[window_construction.name.to_s] = final_construction
+
+    runner.registerInfo("For construction'#{final_construction.name}', material'#{new_material.name}' was altered.")
   end
 
   # loop through construction sets used in the model
@@ -166,30 +130,23 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
     new_default_construction_set = default_construction_set.clone(model)
     new_default_construction_set = new_default_construction_set.to_DefaultConstructionSet.get
     new_default_construction_set.setName("#{default_construction_set.name} adj u_huecos")
-    # puts("__ new_default_construction_set__ #{new_default_construction_set}")
 
     # create new surface set and link to construction set
     new_default_subsurface_const_set = default_subsurface_const_set.get.clone(model)
     new_default_subsurface_const_set = new_default_subsurface_const_set.to_DefaultSubSurfaceConstructions.get
     new_default_subsurface_const_set.setName("#{default_subsurface_const_set.get.name}  u_huecos adj")
     new_default_construction_set.setDefaultExteriorSubSurfaceConstructions(new_default_subsurface_const_set)
-    # puts("__ new_default_construction_set__ #{new_default_construction_set}")
 
     # use the hash to find the proper construction and link to new_default_subsurface_const_set
     target_const = new_default_subsurface_const_set.fixedWindowConstruction
     unless target_const.empty?
-      target_const = target_const.get.name.to_s
-      found_const_flag = false
-      constructions_hash_old_new.each do |orig, new|
-        next unless target_const == orig
+      target_const_name = target_const.get.name.to_s
+      final_construction = constructions_hash_old_new[target_const_name]
 
-        final_construction = new
+      if final_construction
         new_default_subsurface_const_set.setFixedWindowConstruction(final_construction)
-        found_const_flag = true
-      end
-      # this should never happen but is just an extra test in case something goes wrong with the measure code
-      if found_const_flag == false
-        runner.registerWarning("Measure couldn't find the construction named '#{target_const}' in the windows construction hash.")
+      else
+        runner.registerWarning("Measure couldn't find the construction named '#{target_const_name}' in the windows construction hash.")
       end
     end
 
@@ -220,31 +177,24 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
     end
   end
 
-  # link cloned and edited constructions for surfaces with hard assigned constructions
+  # Cambia construcción de huecos a nueva construcción
   windows.each do |window|
     next if window.isConstructionDefaulted || window.construction.empty?
-
-    # use the hash to find the proper construction and link to surface
-    target_const = window.construction
-    next if target_const.empty?
-
-    target_const = target_const.get.name.to_s
-    constructions_hash_old_new.each do |orig, new|
-      if target_const == orig
-        final_construction = new
-        window.setConstruction(final_construction)
-      end
+    final_construction = constructions_hash_old_new[window.construction.get.name.to_s]
+    if final_construction
+      window.setConstruction(final_construction)
     end
   end
 
-  # ! -1 rutina para cambiar los frameanddivider de todas las ventas
-
+  # Cambiamos los frameanddivider de todas las ventanas
   window_frameanddividers = []
   window_frameanddivider_names = []
 
   windows.each do |window|
     frame = window.windowPropertyFrameAndDivider.get
     unless window_frameanddivider_names.include?(frame.name.to_s)
+      frame.setFrameConductance(u_huecos)
+      frame.setName("Frame forzado a #{u_huecos}")
       window_frameanddividers << frame
       window_frameanddivider_names << frame.name.to_s
     end
@@ -252,28 +202,6 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
     runner.registerWarning("No se ha podido obtener el FrameAndDivider del hueco '#{window.name}'.")
   end
 
-  window_frameanddividers.each do |frame|
-    # transmitancia = frame.frameConductance()
-    # puts("transmitancia #{transmitancia}")
-    frame.setFrameConductance(u_huecos)
-    frame.setName("Frame forzado a #{u_huecos}")
-  end
-
-  spaces = model.getSpaces
-  spaces.each do |space|
-    space.surfaces.each do |surface|
-      next unless surface.outsideBoundaryCondition == "Outdoors" && surface.windExposure == "WindExposed"
-
-      surface.subSurfaces.each do |subsur|
-        windows << subsur # también las puertas y esas cosas
-        # puts("__subsurface Type #{subsur.subSurfaceType()} -> #{subsur.construction.get.name}, #{subsur.uFactor()}")
-        unless tipos_cubiertos.include?(subsur.subSurfaceType.to_s)
-          runner.registerWarning("Hueco #{subsur.name.get} con tipo no cubierto por esta medida #{subsur.subSurfaceType}")
-        end
-      end
-    end
-  end
-
-  runner.registerFinalCondition("Modificadas las transmitancias de los huecos.")
+  runner.registerFinalCondition("Modificadas las transmitancias de los huecos #{final_constructions_array.length} construcciones")
   true
 end
