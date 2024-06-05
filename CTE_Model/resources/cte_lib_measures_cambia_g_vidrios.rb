@@ -178,20 +178,12 @@ def cte_cambia_g_vidrios(model, runner, user_arguments)
     end
   end
 
-  # link cloned and edited constructions for surfaces with hard assigned constructions
+  # Cambia construcción de huecos a nueva construcción
   windows.each do |window|
     next if window.isConstructionDefaulted || window.construction.empty?
-
-    # use the hash to find the proper construction and link to surface
-    target_const = window.construction
-    next if target_const.empty?
-
-    target_const = target_const.get.name.to_s
-    constructions_hash_old_new.each do |orig, new|
-      if target_const == orig
-        final_construction = new
-        window.setConstruction(final_construction)
-      end
+    final_construction = constructions_hash_old_new[window.construction.get.name.to_s]
+    if final_construction
+      window.setConstruction(final_construction)
     end
   end
 
