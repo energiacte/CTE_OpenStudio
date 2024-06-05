@@ -57,7 +57,7 @@ def cte_cambia_g_vidrios(model, runner, user_arguments)
         end
 
         # Informamos de tipos no manejados por la medida
-        unless ["FixedWindow", "Door"].include?(subsur.subSurfaceType.to_s)
+        unless ["FixedWindow", "OperableWindow", "Door"].include?(subsur.subSurfaceType.to_s)
           runner.registerWarning("Hueco #{subsur.name.get} con tipo no cubierto por esta medida #{subsur.subSurfaceType}")
         end
       end
