@@ -161,18 +161,13 @@ def cte_cambia_g_vidrios(model, runner, user_arguments)
     # use the hash to find the proper construction and link to new_default_subsurface_const_set
     target_const = new_default_subsurface_const_set.fixedWindowConstruction
     unless target_const.empty?
-      target_const = target_const.get.name.to_s
-      found_const_flag = false
-      constructions_hash_old_new.each do |orig, new|
-        next unless target_const == orig
+      target_const_name = target_const.get.name.to_s
+      final_construction = constructions_hash_old_new[target_const_name]
 
-        final_construction = new
+      if final_construction
         new_default_subsurface_const_set.setFixedWindowConstruction(final_construction)
-        found_const_flag = true
-      end
-      # this should never happen but is just an extra test in case something goes wrong with the measure code
-      if found_const_flag == false
-        runner.registerWarning("Measure couldn't find the construction named '#{target_const}' in the windows construction hash.")
+      else
+        runner.registerWarning("Measure couldn't find the construction named '#{target_const_name}' in the windows construction hash.")
       end
     end
 
