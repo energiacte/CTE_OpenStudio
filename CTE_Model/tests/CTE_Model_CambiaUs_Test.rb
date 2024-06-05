@@ -35,7 +35,7 @@ require "json"
 # cómo aborta si no hay capa aislante o cámara de aire
 # cómo reacciona a que los elementos esté definidos en distintos niveles y de distintas maneras
 #
-class CTE_CambiaUs_Test < MiniTest::Test
+class CTE_CambiaUs_Test < MiniTest::Unit::TestCase
   def carga_elementos_residencial_osm
     # residencial OSM
     muros_exteriores = ["7aeba99e-3d64-4b69-a3b2-a7cf318f91f8", "1415c487-a7ec-493b-b6e2-40cb1770a6d7", "41d017a5-0490-4aa0-81bf-cd5b5e4a86c2", "b82786ae-b6c9-4cc1-ace2-e2c1771d17b2"]
