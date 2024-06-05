@@ -140,7 +140,6 @@ class CTE_CambiaUs_Test < MiniTest::Test
 
   def test_CTE_Model_cambia_g_vidrios
     # create an instance of the measure
-    puts("corriendo la medida CTE_Model_cambia_g_vidrios")
     measure = CTE_Model.new
 
     # runner, model = get_runner_model("/residencial.osm", measure)
