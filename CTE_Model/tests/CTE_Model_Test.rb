@@ -155,7 +155,6 @@ class CTE_Model_Test < MiniTest::Unit::TestCase
     assert_equal("D3_peninsula.epw", wf)
 
     ela_total = get_attrb(result, "cte_ela_total_espacios")
-    # assert_in_delta(5631.2, ela_total, 1.0)
     assert_in_delta(1024.14, ela_total, 1.0)
 
     # save the model to test output directory
