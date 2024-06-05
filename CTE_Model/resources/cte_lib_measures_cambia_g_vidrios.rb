@@ -69,10 +69,9 @@ def cte_cambia_g_vidrios(model, runner, user_arguments)
     return true
   end
 
-  # construye los hashes para hacer un seguimiento y evitar duplicados
+  # mapa entre antigua construccion y nueva
   constructions_hash_old_new = {}
-  materials_hash = {}
-  # array and counter for new constructions that are made, used for reporting final condition
+  # lista de nuevas construcciones (para condición final)
   final_constructions_array = []
 
   # Recorre construcciones y materiales usados, edita y clona
@@ -100,42 +99,23 @@ def cte_cambia_g_vidrios(model, runner, user_arguments)
     max_SHGC_material = max_mat_hash["mat"] # objeto OS
     max_SHGC_material_index = max_mat_hash["index"] # indice de la capa
 
-    # ! 04 modifica la composición
-    final_construction = window_construction.clone(model)
-    final_construction = final_construction.to_Construction.get
-    final_construction.setName("#{window_construction.name} G huecos mod.")
-    final_constructions_array << final_construction
-
-    # mapping entre construcción anterior y modificada
-    constructions_hash_old_new[window_construction.name.to_s] = final_construction
-
-    # # find already cloned insulation material and link to construction
-    target_material = max_SHGC_material
-    found_material = false
-
-    materials_hash.each do |orig, new|
-      next unless target_material.name.to_s == orig
-
-      materials_hash[max_SHGC_material.name.to_s] = new
-      final_construction.eraseLayer(max_SHGC_material_index)
-      final_construction.insertLayer(max_SHGC_material_index, new)
-      found_material = true
-    end
-
-    next unless found_material == false
-
     # clona material, cambia nombre y g
     new_material = max_SHGC_material.clone(model)
     new_material = new_material.to_SimpleGlazing.get
     new_material.setName("#{max_SHGC_material.name}_g-value #{g_vidrios}")
     new_material.setSolarHeatGainCoefficient(g_vidrios)
 
-    # cambia capa de acristalamiento en la construcción (capa de vidrio)
+    # ! 04 modifica la composición
+    final_construction = window_construction.clone(model)
+    final_construction = final_construction.to_Construction.get
+    final_construction.setName("#{window_construction.name} G huecos mod.")
     final_construction.eraseLayer(max_SHGC_material_index)
     final_construction.insertLayer(max_SHGC_material_index, new_material)
 
-    # apunta el nombre anterior al nuevo material
-    materials_hash[max_SHGC_material.name.to_s] = new_material
+    # Guarda en lista de construcciones y en mapping entre construcción anterior y modificada
+    final_constructions_array << final_construction
+    constructions_hash_old_new[window_construction.name.to_s] = final_construction
+
     runner.registerInfo("For construction'#{final_construction.name}', material'#{new_material.name}' was altered.")
   end
 
