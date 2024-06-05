@@ -215,6 +215,6 @@ def cte_cambia_g_vidrios(model, runner, user_arguments)
     end
   end
 
-  runner.registerFinalCondition("Modificadas las transmitancias de los huecos.")
+  runner.registerFinalCondition("Modificadas las transmitancias de los huecos en #{final_constructions_array.length} construcciones")
   true
 end
