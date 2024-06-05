@@ -83,7 +83,7 @@ def cte_cambia_g_vidrios(model, runner, user_arguments)
         "name" => layer.name.to_s,
         "index" => i,
         "nomass" => !layer.to_MasslessOpaqueMaterial.empty?,
-        "g_value" => layer.to_SimpleGlazing.get.solarHeatGainCoefficient, #	u_factor
+        "g_value" => layer.to_SimpleGlazing.get.solarHeatGainCoefficient,
         "mat" => layer
       }
     end
