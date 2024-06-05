@@ -26,7 +26,7 @@
 # https://openstudio-sdk-documentation.s3.amazonaws.com/cpp/OpenStudio-3.5.1-doc/model/html/annotated.html
 
 def cte_cambia_g_vidrios(model, runner, user_arguments)
-  runner.registerInfo("CTE: Cambiando la U de huecos")
+  runner.registerInfo("CTE: Cambiando la g de huecos")
 
   # toma el valor de la medida
   g_vidrios = runner.getDoubleArgumentValue("CTE_g_gl", user_arguments)
