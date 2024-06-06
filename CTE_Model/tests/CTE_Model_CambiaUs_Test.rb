@@ -28,6 +28,7 @@ require_relative "../measure"
 require "minitest/autorun"
 require "fileutils"
 require "json"
+require "pathname"
 
 # tenemos que testear:
 # que la medida se aplica pero no queremos cambiar la U
@@ -35,7 +36,27 @@ require "json"
 # cómo aborta si no hay capa aislante o cámara de aire
 # cómo reacciona a que los elementos esté definidos en distintos niveles y de distintas maneras
 #
-class CTE_CambiaUs_Test < MiniTest::Unit::TestCase
+class CTE_CambiaUs_Test < MiniTest::Test
+  TESTED_CLASS = CTE_Model
+
+  TEST_DIR = Pathname.new(__dir__)
+
+  # Patch to capture if --verbose was passed to minitest so we can call
+  # show_output if so, and not do it otherwise
+  @@verbose = false
+
+  def self.run(reporter, options = {})
+    @@verbose = options.fetch(:verbose, false)
+
+    # Might as well shush some annoying logging message
+    # logger = OpenStudio::Logger.instance.standardOutLogger
+    # logger.setChannelRegex('.*(?<!OSRunner)(?<!WorkflowStepResult)$')
+    # if logger.respond_to?(:useWorkflowGemFormatter)
+    #   OpenStudio::Logger.instance.standardOutLogger.useWorkflowGemFormatter(true)
+    # end
+    super(reporter, options)
+  end
+
   def carga_elementos_residencial_osm
     # residencial OSM
     muros_exteriores = ["7aeba99e-3d64-4b69-a3b2-a7cf318f91f8", "1415c487-a7ec-493b-b6e2-40cb1770a6d7", "41d017a5-0490-4aa0-81bf-cd5b5e4a86c2", "b82786ae-b6c9-4cc1-ace2-e2c1771d17b2"]
@@ -161,8 +182,14 @@ class CTE_CambiaUs_Test < MiniTest::Unit::TestCase
     end
 
     # ejecuta la medida que cambia los valores de g_vidrio
-    salida = measure.run(model, runner, argument_map)
-    assert(salida, "algo falló")
+    measure.run(model, runner, argument_map)
+    result = runner.result
+
+    # Muestra resultados extra si se pasa --verbose
+    show_output(result) if @@verbose
+
+    # Asserts de condiciones
+    assert_equal("Success", result.value.valueName)
 
     # elementos_para_test = carga_elementos_residencial_osm
     elementos_para_test = carga_elementos_R_N01_V23
@@ -209,8 +236,14 @@ class CTE_CambiaUs_Test < MiniTest::Unit::TestCase
     elementos_para_test = carga_elementos_R_N01_V23
     elementos = carga_elementos(model, elementos_para_test)
 
-    salida = measure.run(model, runner, argument_map)
-    assert(salida, "algo falló")
+    measure.run(model, runner, argument_map)
+    result = runner.result
+
+    # Muestra resultados extra si se pasa --verbose
+    show_output(result) if @@verbose
+
+    # Asserts de condiciones
+    assert_equal("Success", result.value.valueName)
 
     elementos.each do |uuid, atributos|
       u_final = get_transmitance(model, uuid)

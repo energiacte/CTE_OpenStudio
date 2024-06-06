@@ -21,6 +21,8 @@
 #
 # Author(s): Rafael Villar Burke <pachi@ietcc.csic.es>,
 #            Daniel Jiménez González <dani@ietcc.csic.es>
+#
+# Usa con ruby CTE_Model_Test.rb --verbose para salida adicional
 
 require "openstudio"
 require "openstudio/measure/ShowRunnerOutput"
@@ -28,6 +30,7 @@ require "minitest/autorun"
 require_relative "../measure"
 require "fileutils"
 require "json"
+require "pathname"
 
 # https://s3.amazonaws.com/openstudio-sdk-documentation/cpp/OpenStudio-3.6.1-doc/measure/html/classopenstudio_1_1measure_1_1_o_s_argument.html
 def get_attrb(result, nombre)
@@ -39,7 +42,27 @@ def get_attrb(result, nombre)
   end
 end
 
-class CTE_Model_Test < MiniTest::Unit::TestCase
+class CTE_Model_Test < MiniTest::Test
+  TESTED_CLASS = CTE_Model
+
+  TEST_DIR = Pathname.new(__dir__)
+
+  # Patch to capture if --verbose was passed to minitest so we can call
+  # show_output if so, and not do it otherwise
+  @@verbose = false
+
+  def self.run(reporter, options = {})
+    @@verbose = options.fetch(:verbose, false)
+
+    # Might as well shush some annoying logging message
+    # logger = OpenStudio::Logger.instance.standardOutLogger
+    # logger.setChannelRegex('.*(?<!OSRunner)(?<!WorkflowStepResult)$')
+    # if logger.respond_to?(:useWorkflowGemFormatter)
+    #   OpenStudio::Logger.instance.standardOutLogger.useWorkflowGemFormatter(true)
+    # end
+    super(reporter, options)
+  end
+
   # def setup
   # end
 
@@ -86,8 +109,8 @@ class CTE_Model_Test < MiniTest::Unit::TestCase
     measure.run(model, runner, argument_map)
     result = runner.result
 
-    # Muestra resultados
-    # show_output(result)
+    # Muestra resultados extra si se pasa --verbose
+    show_output(result) if @@verbose
 
     # Asserts de condiciones
     assert_equal("Success", result.value.valueName)
@@ -145,6 +168,10 @@ class CTE_Model_Test < MiniTest::Unit::TestCase
     # set argument values to good values and run the measure on model with spaces
     measure.run(model, runner, argument_map)
     result = runner.result
+
+    # Muestra resultados extra si se pasa --verbose
+    show_output(result) if @@verbose
+
     assert_equal("Success", result.value.valueName)
 
     if runner.lastEpwFilePath.is_initialized
@@ -197,7 +224,10 @@ class CTE_Model_Test < MiniTest::Unit::TestCase
     # set argument values to good values and run the measure on model with spaces
     measure.run(model, runner, argument_map)
     result = runner.result
-    show_output(result)
+
+    # Muestra resultados extra si se pasa --verbose
+    show_output(result) if @@verbose
+
     assert(result.value.valueName == "Success")
 
     attributes = JSON.parse(OpenStudio.to_json(result.attributes))
