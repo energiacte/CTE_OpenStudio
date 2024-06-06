@@ -105,7 +105,7 @@ def cte_infiltracion(model, runner, user_arguments) # copiado del residencial
       if surface.outsideBoundaryCondition == "Outdoors" && surface.windExposure == "WindExposed"
         area_opacos += surface.netArea
         surface.subSurfaces.each do |subsur|
-          if ["FixedWindow", "OperableWindow", "SkyLight"].include?(subsur.subSurfaceType)
+          if ["FixedWindow", "OperableWindow", "GlassDoor", "SkyLight"].include?(subsur.subSurfaceType)
             area_ventanas += subsur.grossArea
           elsif ["Door", "GlassDoor", "OverheadDoor"].include?(subsur.subSurfaceType)
             area_puertas += subsur.grossArea
