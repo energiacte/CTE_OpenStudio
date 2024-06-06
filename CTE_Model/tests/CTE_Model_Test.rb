@@ -37,6 +37,10 @@ def get_attrb(result, nombre)
   result.attributes.find { |e| e.name == nombre }&.valueAsDouble
 end
 
+def get_attrb_str(result, nombre)
+  result.attributes.find { |e| e.name == nombre }&.valueAsString
+end
+
 class CTE_Model_Test < MiniTest::Test
   TESTED_CLASS = CTE_Model
 
@@ -135,8 +139,6 @@ class CTE_Model_Test < MiniTest::Test
     translator = OpenStudio::OSVersion::VersionTranslator.new
     path = OpenStudio::Path.new(File.dirname(__FILE__) + "/residencial.osm")
     model = translator.loadModel(path).get
-    assert(!model.empty?)
-    model = model.get
 
     # get arguments
     arguments = measure.arguments(model)
@@ -167,28 +169,8 @@ class CTE_Model_Test < MiniTest::Test
 
     assert(result.value.valueName == "Success")
 
-    if runner.lastEpwFilePath.is_initialized
-      weather_s = runner.lastEpwFilePath.get.to_s
-      runner.registerValue("Clima obtenido del runner: ", weather_s)
-    elsif model.getWeatherFile.path.is_initialized
-      weather_s = model.getWeatherFile.path.get.to_s
-      runner.registerValue("Clima obtenido del modelo (WeatherFile):", weather_s)
-    elsif model.getSite.name.is_initialized
-      weather_s = model.getSite.name.get.to_s
-      runner.registerValue("Clima obtenido del Site:", weather_s)
-    else
-      runner.registerError("No se ha localizado el clima")
-      return false
-    end
-
-    # En algunos casos tenemos un path como: weather_s = file:file/D3_peninsula.epw
-    _name, _match, weather_file = weather_s.rpartition("/")
-    weather_file = weather_file.gsub(".epw", "")
-
-    assert_equal("D3_peninsula", weather_file)
-
-    ela_total = get_attrb(result, "cte_ela_total_espacios")
-    assert_in_delta(5624.88, ela_total, 0.1)
+    assert_equal("D3_peninsula", get_attrb_str(result, "cte_weather_file"))
+    assert_in_delta(5624.88, get_attrb(result, "cte_ela_total_espacios"), 0.1)
 
     # save the model to test output directory
     output_file_path = OpenStudio::Path.new(File.dirname(__FILE__) + "/output/test_output_residencial.osm")
