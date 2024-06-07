@@ -180,10 +180,9 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
   # Cambia construcción de huecos a nueva construcción
   windows.each do |window|
     next if window.isConstructionDefaulted || window.construction.empty?
+
     final_construction = constructions_hash_old_new[window.construction.get.name.to_s]
-    if final_construction
-      window.setConstruction(final_construction)
-    end
+    final_construction && window.setConstruction(final_construction)
   end
 
   # Cambiamos los frameanddivider de todas las ventanas
