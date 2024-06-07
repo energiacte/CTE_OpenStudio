@@ -495,8 +495,6 @@ class CTE_CambiaUs_Test < MiniTest::Test
     # create an instance of the measure
     measure = CTE_Model.new
 
-    # runner, model = get_runner_model("/residencial.osm", measure)
-    # runner, model = get_runner_model("/N_R01_unif_adosadaV23.osm", measure)
     runner, model = get_runner_model("/test_N_R01_unif_adosada.osm", measure)
     arguments = measure.arguments(model)
     argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(arguments)
