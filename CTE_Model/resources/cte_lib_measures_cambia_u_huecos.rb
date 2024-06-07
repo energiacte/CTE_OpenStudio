@@ -57,7 +57,9 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
         end
 
         # Informamos de tipos no manejados por la medida
-        unless ["FixedWindow", "OperableWindow", "GlassDoor", "Door"].include?(subsur.subSurfaceType.to_s)
+        # NO CONTEMPLADAS:
+        # TubularDaylightDomeConstruction, TubularDaylightDiffuserConstruction
+        unless ["FixedWindow", "OperableWindow", "GlassDoor", "Door", "OverheadDoor", "Skylight"].include?(subsur.subSurfaceType.to_s)
           runner.registerWarning("Hueco #{subsur.name.get} con tipo no cubierto por esta medida #{subsur.subSurfaceType}")
         end
       end
@@ -119,8 +121,7 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
   end
 
   # loop through construction sets used in the model
-  default_construction_sets = model.getDefaultConstructionSets
-  default_construction_sets.each do |default_construction_set|
+  model.getDefaultConstructionSets.each do |default_construction_set|
     next if default_construction_set.directUseCount.zero?
 
     default_subsurface_const_set = default_construction_set.defaultExteriorSubSurfaceConstructions
@@ -138,21 +139,54 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
     new_default_construction_set.setDefaultExteriorSubSurfaceConstructions(new_default_subsurface_const_set)
 
     # use the hash to find the proper construction and link to new_default_subsurface_const_set
+    # FixedWindow
     target_const = new_default_subsurface_const_set.fixedWindowConstruction
     unless target_const.empty?
       target_const_name = target_const.get.name.to_s
       final_construction = constructions_hash_old_new[target_const_name]
-
-      if final_construction
-        new_default_subsurface_const_set.setFixedWindowConstruction(final_construction)
-      else
-        runner.registerWarning("lib cambia U huecos couldn't find the construction named '#{target_const_name}' in the windows construction hash.")
-      end
+      final_construction && new_default_subsurface_const_set.setFixedWindowConstruction(final_construction)
     end
+    # OperableWindow
+    target_const = new_default_subsurface_const_set.operableWindowConstruction
+    unless target_const.empty?
+      target_const_name = target_const.get.name.to_s
+      final_construction = constructions_hash_old_new[target_const_name]
+      final_construction && new_default_subsurface_const_set.setOperableWindowConstruction(final_construction)
+    end
+    # Door Construction
+    target_const = new_default_subsurface_const_set.doorConstruction
+    unless target_const.empty?
+      target_const_name = target_const.get.name.to_s
+      final_construction = constructions_hash_old_new[target_const_name]
+      final_construction && new_default_subsurface_const_set.setDoorConstruction(final_construction)
+    end
+    # GlassDoor Construction
+    target_const = new_default_subsurface_const_set.glassDoorConstruction
+    unless target_const.empty?
+      target_const_name = target_const.get.name.to_s
+      final_construction = constructions_hash_old_new[target_const_name]
+      final_construction && new_default_subsurface_const_set.setGlassDoorConstruction(final_construction)
+    end
+    # OverheadDoor Construction
+    target_const = new_default_subsurface_const_set.overheadDoorConstruction
+    unless target_const.empty?
+      target_const_name = target_const.get.name.to_s
+      final_construction = constructions_hash_old_new[target_const_name]
+      final_construction && new_default_subsurface_const_set.setOverheadDoorConstruction(final_construction)
+    end
+    # Skylight Construction
+    target_const = new_default_subsurface_const_set.skylightConstruction
+    unless target_const.empty?
+      target_const_name = target_const.get.name.to_s
+      final_construction = constructions_hash_old_new[target_const_name]
+      final_construction && new_default_subsurface_const_set.setSkylightConstruction(final_construction)
+    end
+    # TubularDaylightDomeConstruction
+    # TubularDaylightDiffuserConstruction
+    # NO CONTEMPLADAS
 
     # swap all uses of the old construction set for the new
-    construction_set_sources = default_construction_set.sources
-    construction_set_sources.each do |construction_set_source|
+    default_construction_set.sources.each do |construction_set_source|
       building_source = construction_set_source.to_Building
       # if statement for each type of object than can use a DefaultConstructionSet
       unless building_source.empty?
@@ -190,15 +224,24 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
   window_frameanddivider_names = []
 
   windows.each do |window|
-    frame = window.windowPropertyFrameAndDivider.get
-    unless window_frameanddivider_names.include?(frame.name.to_s)
-      frame.setFrameConductance(u_huecos)
-      frame.setName("Frame forzado a #{u_huecos}")
-      window_frameanddividers << frame
-      window_frameanddivider_names << frame.name.to_s
+    frame = window.windowPropertyFrameAndDivider
+    if !frame.empty?
+      frame = frame.get
+      unless window_frameanddivider_names.include?(frame.name.to_s)
+        frame.setFrameConductance(u_huecos)
+        frame.setName("Frame forzado a #{u_huecos}")
+        window_frameanddividers << frame
+        window_frameanddivider_names << frame.name.to_s
+      end
+    elsif !["Door"].include?(window.subSurfaceType.to_s)
+      fad = OpenStudio::Model::WindowPropertyFrameAndDivider.new(model)
+      fad.setFrameWidth(0.08)
+      fad.setFrameOutsideProjection(0.03)
+      fad.setFrameInsideProjection(0.03)
+      fad.setFrameConductance(u_huecos)
+      fad.setOutsideRevealDepth(0.20)
+      window.setWindowPropertyFrameAndDivider(fad)
     end
-  rescue
-    runner.registerWarning("No se ha podido obtener el FrameAndDivider del hueco '#{window.name}'.")
   end
 
   runner.registerFinalCondition("Modificadas las transmitancias de los huecos #{final_constructions_array.length} construcciones")

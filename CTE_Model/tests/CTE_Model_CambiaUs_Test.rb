@@ -88,15 +88,16 @@ def carga_elementos(model, elementos_para_test)
 end
 
 def find_windows(model)
-  model.getSpaces.map {
-    |s| s.surfaces.map {
-      |ss| ss.subSurfaces.map{
-        |w|
-          if ["FixedWindow", "OperableWindow", "GlassDoor", "Door"].include?(w.subSurfaceType.to_s)
-            w.handle.to_s
-          else
-            continue
-          end
+  model.getSpaces.map { |s|
+    s.surfaces.map { |sf|
+      sf.subSurfaces.map { |w|
+        is_ok_boundary = sf.outsideBoundaryCondition == "Outdoors" && sf.windExposure == "WindExposed"
+        is_ok_type = ["FixedWindow", "OperableWindow", "GlassDoor", "Door", "OverheadDoor", "Skylight"].include?(w.subSurfaceType.to_s)
+        if is_ok_boundary && is_ok_type
+          w.handle.to_s
+        else
+          continue
+        end
       }
     }
   }.flatten
@@ -127,7 +128,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
     "cubiertas_exteriores" => ["c0205929-9427-40b4-883e-34d52c6309cc", "9a0d5785-3883-499a-8c3f-c6a6a7c7ad12", "40464c22-46a4-4704-a5bc-db659410cd09"],
     "suelos_terrenos" => ["21f60244-fb64-4abe-abc3-464182337e27"],
     "suelos_exteriores" => ["31d16c6a-d398-49b1-bf40-b530d205037c", "f663dd7c-e24c-4fed-a937-61993c1095ba", "3ebf1a50-0485-485c-a1b2-bfa12c2026d7"],
-    "ventanas" => ["9971a391-9f3d-4035-b8c5-b6d182b46e33", "adb347c4-df6e-45a6-96fd-d8ac1969e1d3", "208eb93c-b12d-4ff8-ba6e-cd92428cd463", "2a1c0c1e-2aa8-459e-b57b-a217407912ad"]
+    "ventanas" => ["9971a391-9f3d-4035-b8c5-b6d182b46e33", "adb347c4-df6e-45a6-96fd-d8ac1969e1d3", "208eb93c-b12d-4ff8-ba6e-cd92428cd463", "2a1c0c1e-2aa8-459e-b57b-a217407912ad", "ce8352bc-f6a2-4fae-b36b-b57e2a1e235d"]
   }.freeze
 
   # Patch to capture if --verbose was passed to minitest so we can call
@@ -146,7 +147,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
     super(reporter, options)
   end
 
-  def test_cambia_g
+  def test_cambia_huecos
     # create an instance of the measure
     measure = CTE_Model.new
 
@@ -156,6 +157,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
 
     # create hash of argument values. If the argument has a default that you want to use, you don't need it in the hash
     args_hash = {}
+    args_hash["CTE_U_huecos"] = 0.62
     args_hash["CTE_g_gl"] = 0.65
 
     # populate argument with specified hash value if specified
@@ -180,6 +182,8 @@ class CTE_CambiaUs_Test < MiniTest::Test
     find_windows(model).each do |uuid|
       g_final = get_solar_heat_gain_coefficient(model, uuid)
       assert_in_delta(args_hash["CTE_g_gl"], g_final, 0.001, "uuid -> #{uuid}")
+      _surface, _construction, u_final = get_surface(model, uuid)
+      assert_in_delta(args_hash["CTE_U_huecos"], u_final, 0.001, "uuid -> #{uuid}")
     end
   end
 
