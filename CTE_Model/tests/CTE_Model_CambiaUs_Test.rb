@@ -202,7 +202,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
     end
 
     ventanas.each do |uuid, atr|
-      assert_in_delta(args_hash["CTE_g_gl"], atr["g_final"], 0.001)
+      assert_in_delta(args_hash["CTE_g_gl"], atr["g_final"], 0.001, "uuid -> #{uuid}")
     end
   end
 
@@ -251,7 +251,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
     end
 
     elementos.each do |uuid, atr|
-      assert_in_delta(atr["u_inicial"], atr["u_final"], 0.001)
+      assert_in_delta(atr["u_inicial"], atr["u_final"], 0.001, "uuid -> #{uuid}")
     end
   end
 
@@ -286,7 +286,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
 
     # u_final = get_transmitance(model, uuid)
     g_final = get_solar_heat_gain_coefficient(model, uuid)
-    assert_in_delta(args_hash["CTE_g_gl"], g_final, 0.001, "En uuid = #{uuid}")
+    assert_in_delta(args_hash["CTE_g_gl"], g_final, 0.001, "uuid -> #{uuid}")
   end
 
   def test_CTE_CambiaUs_cambia_muro
@@ -324,7 +324,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
 
     u_final = get_transmitance(model, uuid)
 
-    assert_in_delta(args_hash["CTE_U_muros"], u_final, 0.001, "En uuid = #{uuid}")
+    assert_in_delta(args_hash["CTE_U_muros"], u_final, 0.001, "uuid -> #{uuid}")
   end
 
   def test_CTE_CambiaUs_cambia_cubierta
@@ -367,7 +367,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
     construction = surface.construction.get
 
     u_final = construction.thermalConductance.to_f
-    assert_in_delta(args_hash["CTE_U_cubiertas"], u_final, 0.001)
+    assert_in_delta(args_hash["CTE_U_cubiertas"], u_final, 0.001, "uuid -> #{uuid}")
   end
 
   def test_CTE_CambiaUs_cambia_suelos_residencial
@@ -401,13 +401,14 @@ class CTE_CambiaUs_Test < MiniTest::Test
     salida = measure.run(model, runner, argument_map)
     assert(salida, "algo falló")
 
-    handle = OpenStudio.toUUID("21f60244-fb64-4abe-abc3-464182337e27")
+    uuid = "21f60244-fb64-4abe-abc3-464182337e27"
+    handle = OpenStudio.toUUID(uuid)
     objeto = model.getModelObject(handle)
     surface = objeto.get.to_Surface
     surface = surface.get
     construction = surface.construction.get
     u_final = construction.thermalConductance.to_f
-    assert_in_delta(u_terreno, u_final, 0.001)
+    assert_in_delta(u_terreno, u_final, 0.001, "uuid -> #{uuid}")
   end
 
   def test_CTE_CambiaUs_cambia_suelos
@@ -482,7 +483,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
 
     uuid = "9971a391-9f3d-4035-b8c5-b6d182b46e33"
     _surface, _construction, u_final = get_surface(model, uuid)
-    assert_in_delta(u_huecos, u_final, 0.001)
+    assert_in_delta(u_huecos, u_final, 0.001, "uuid -> #{uuid}")
   end
 
   def test_CTE_CambiaUs_extenso
