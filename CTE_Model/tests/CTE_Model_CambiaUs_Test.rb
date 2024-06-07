@@ -281,8 +281,9 @@ class CTE_CambiaUs_Test < MiniTest::Test
     uuid = "0b39cfba-de4f-4fe4-b0da-7ddd5c9d44f0"
 
     # u_inicial = get_transmitance(model, uuid)
-    salida = measure.run(model, runner, argument_map)
-    assert(salida, "algo falló")
+    measure.run(model, runner, argument_map)
+
+    assert_equal("Success", result.value.valueName)
 
     # u_final = get_transmitance(model, uuid)
     g_final = get_solar_heat_gain_coefficient(model, uuid)
@@ -318,9 +319,9 @@ class CTE_CambiaUs_Test < MiniTest::Test
     end
 
     uuid = "be553ff8-1374-4869-8bcf-30ffb53290f9"
-    # u_inicial = get_transmitance(model, uuid)
-    salida = measure.run(model, runner, argument_map)
-    assert(salida, "algo falló")
+    measure.run(model, runner, argument_map)
+
+    assert_equal("Success", result.value.valueName)
 
     u_final = get_transmitance(model, uuid)
 
@@ -357,8 +358,9 @@ class CTE_CambiaUs_Test < MiniTest::Test
       argument_map[arg.name] = temp_arg_var
     end
 
-    salida = measure.run(model, runner, argument_map)
-    assert(salida, "algo falló")
+    measure.run(model, runner, argument_map)
+
+    assert_equal("Success", result.value.valueName)
 
     handle = OpenStudio.toUUID("c0205929-9427-40b4-883e-34d52c6309cc")
     objeto = model.getModelObject(handle)
@@ -398,8 +400,9 @@ class CTE_CambiaUs_Test < MiniTest::Test
       argument_map[arg.name] = temp_arg_var
     end
 
-    salida = measure.run(model, runner, argument_map)
-    assert(salida, "algo falló")
+    measure.run(model, runner, argument_map)
+
+    assert_equal("Success", result.value.valueName)
 
     uuid = "21f60244-fb64-4abe-abc3-464182337e27"
     handle = OpenStudio.toUUID(uuid)
@@ -440,8 +443,9 @@ class CTE_CambiaUs_Test < MiniTest::Test
       argument_map[arg.name] = temp_arg_var
     end
 
-    salida = measure.run(model, runner, argument_map)
-    assert(salida, "algo falló")
+    measure.run(model, runner, argument_map)
+
+    assert_equal("Success", result.value.valueName)
 
     _surface, _construction, u_final_terreno = get_surface(model, "21f60244-fb64-4abe-abc3-464182337e27")
     _surface, _construction, u_final_exterior = get_surface(model, "24252951-3545-42e5-a381-db75ffc3c395")
@@ -478,8 +482,9 @@ class CTE_CambiaUs_Test < MiniTest::Test
       argument_map[arg.name] = temp_arg_var
     end
 
-    salida = measure.run(model, runner, argument_map)
-    assert(salida, "algo falló")
+    measure.run(model, runner, argument_map)
+
+    assert_equal("Success", result.value.valueName)
 
     uuid = "9971a391-9f3d-4035-b8c5-b6d182b46e33"
     _surface, _construction, u_final = get_surface(model, uuid)
@@ -529,8 +534,9 @@ class CTE_CambiaUs_Test < MiniTest::Test
     elementos_para_test = carga_elementos_R_N01_V23
     elementos = carga_elementos(model, elementos_para_test)
 
-    salida = measure.run(model, runner, argument_map)
-    assert(salida, "algo falló")
+    measure.run(model, runner, argument_map)
+
+    assert_equal("Success", result.value.valueName)
 
     elementos.each do |uuid, atributos|
       u_final = get_transmitance(model, uuid)
