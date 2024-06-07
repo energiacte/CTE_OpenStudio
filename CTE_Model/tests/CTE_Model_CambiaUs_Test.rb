@@ -151,14 +151,6 @@ class CTE_CambiaUs_Test < MiniTest::Test
     elementos
   end
 
-  def carga_elementos_ventanas(model, listas_ventanas)
-    elementos = {}
-    listas_ventanas.each do |uuid|
-      g_inicial = get_solar_heat_gain_coefficient(model, uuid)
-      elementos[uuid] = {"tipo" => "ventanas", "g_inicial" => g_inicial}
-    end
-    elementos
-  end
 
   def test_CTE_Model_cambia_g_vidrios
     # create an instance of the measure
@@ -192,18 +184,9 @@ class CTE_CambiaUs_Test < MiniTest::Test
     # Asserts de condiciones
     assert_equal("Success", result.value.valueName)
 
-    # elementos_para_test = carga_elementos_residencial_osm
-    elementos_para_test = carga_elementos_R_N01_V23
-    # selecciona las ventanas
-    ventanas_test = elementos_para_test["ventanas"]
-    ventanas = carga_elementos_ventanas(model, ventanas_test)
-    ventanas.each do |uuid, atributos|
+    carga_elementos_R_N01_V23["ventanas"].each do |uuid|
       g_final = get_solar_heat_gain_coefficient(model, uuid)
-      atributos["g_final"] = g_final
-    end
-
-    ventanas.each do |uuid, atr|
-      assert_in_delta(args_hash["CTE_g_gl"], atr["g_final"], 0.001, "uuid -> #{uuid}")
+      assert_in_delta(args_hash["CTE_g_gl"], g_final, 0.001, "uuid -> #{uuid}")
     end
   end
 
@@ -248,11 +231,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
 
     elementos.each do |uuid, atributos|
       u_final = get_transmitance(model, uuid)
-      atributos["u_final"] = u_final
-    end
-
-    elementos.each do |uuid, atr|
-      assert_in_delta(atr["u_inicial"], atr["u_final"], 0.001, "uuid -> #{uuid}")
+      assert_in_delta(atributos["u_inicial"], u_final, 0.001, "uuid -> #{uuid}")
     end
   end
 
@@ -292,46 +271,8 @@ class CTE_CambiaUs_Test < MiniTest::Test
     assert_in_delta(args_hash["CTE_g_gl"], g_final, 0.001, "uuid -> #{uuid}")
   end
 
-  def test_CTE_CambiaUs_cambia_muro
-    # create an instance of the measure
-    measure = CTE_Model.new
 
-    # create an instance of a runner and load the test model
-    runner, model = get_runner_model("/test_N_R01_unif_adosada.osm", measure)
-
-    arguments = measure.arguments(model)
-    argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(arguments)
-
-    # create hash of argument values.
-    # If the argument has a default that you want to use, you don't need it in the hash
-    args_hash = {}
-    args_hash["CTE_U_muros"] = 0.42
-    args_hash["CTE_U_cubiertas"] = 0
-    args_hash["CTE_U_suelos"] = 0
-    args_hash["CTE_g_gl"] = 0.65
-    # using defaults values from measure.rb for other arguments
-
-    # populate argument with specified hash value if specified
-    arguments.each do |arg|
-      temp_arg_var = arg.clone
-      if args_hash[arg.name]
-        assert(temp_arg_var.setValue(args_hash[arg.name]))
-      end
-      argument_map[arg.name] = temp_arg_var
-    end
-
-    uuid = "be553ff8-1374-4869-8bcf-30ffb53290f9"
-    measure.run(model, runner, argument_map)
-    result = runner.result
-
-    assert_equal("Success", result.value.valueName)
-
-    u_final = get_transmitance(model, uuid)
-
-    assert_in_delta(args_hash["CTE_U_muros"], u_final, 0.001, "uuid -> #{uuid}")
-  end
-
-  def test_CTE_CambiaUs_cambia_cubierta
+  def test_CTE_CambiaUs_cambia_elementos
     measure = CTE_Model.new
 
     # create an instance of a runner
@@ -346,9 +287,10 @@ class CTE_CambiaUs_Test < MiniTest::Test
     # create hash of argument values.
     # If the argument has a default that you want to use, you don't need it in the hash
     args_hash = {}
-    args_hash["CTE_U_muros"] = 0
+    args_hash["CTE_U_muros"] = 0.42
     args_hash["CTE_U_cubiertas"] = 0.32
-    args_hash["CTE_U_suelos"] = 0
+    args_hash["CTE_U_suelos"] = 0.37
+    args_hash["CTE_U_huecos"] = 0.68
     args_hash["CTE_g_gl"] = 0.65
     # using defaults values from measure.rb for other arguments
 
@@ -366,50 +308,23 @@ class CTE_CambiaUs_Test < MiniTest::Test
 
     assert_equal("Success", result.value.valueName)
 
+    # Muros
+    uuid = "be553ff8-1374-4869-8bcf-30ffb53290f9"
+    u_final = get_transmitance(model, uuid)
+    assert_in_delta(args_hash["CTE_U_muros"], u_final, 0.001, "uuid -> #{uuid}")
+
+    # Cubierta
     uuid = "c0205929-9427-40b4-883e-34d52c6309cc"
     handle = OpenStudio.toUUID(uuid)
     objeto = model.getModelObject(handle)
     surface = objeto.get.to_Surface
     surface = surface.get
     construction = surface.construction.get
-
     u_final = construction.thermalConductance.to_f
     assert_in_delta(args_hash["CTE_U_cubiertas"], u_final, 0.001, "uuid -> #{uuid}")
-  end
 
-  def test_CTE_CambiaUs_cambia_suelos_residencial
-    # create an instance of the measure
-    measure = CTE_Model.new
-
-    # runner, model = get_runner_model("/residencial.osm", measure)
-    runner, model = get_runner_model("/test_N_R01_unif_adosada.osm", measure)
-    arguments = measure.arguments(model)
-    argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(arguments)
-
-    # create hash of argument values.
-    # If the argument has a default that you want to use, you don't need it in the hash
-    args_hash = {}
-    args_hash["CTE_U_muros"] = 0
-    args_hash["CTE_U_cubiertas"] = 0
-    args_hash["CTE_U_suelos"] = 0.37
+    # Suelo terreno
     u_terreno = 1 / (1 / args_hash["CTE_U_suelos"] - 0.5)
-    args_hash["CTE_g_gl"] = 0.65
-    # using defaults values from measure.rb for other arguments
-
-    # populate argument with specified hash value if specified
-    arguments.each do |arg|
-      temp_arg_var = arg.clone
-      if args_hash[arg.name]
-        assert(temp_arg_var.setValue(args_hash[arg.name]))
-      end
-      argument_map[arg.name] = temp_arg_var
-    end
-
-    measure.run(model, runner, argument_map)
-    result = runner.result
-
-    assert_equal("Success", result.value.valueName)
-
     uuid = "21f60244-fb64-4abe-abc3-464182337e27"
     handle = OpenStudio.toUUID(uuid)
     objeto = model.getModelObject(handle)
@@ -418,85 +333,22 @@ class CTE_CambiaUs_Test < MiniTest::Test
     construction = surface.construction.get
     u_final = construction.thermalConductance.to_f
     assert_in_delta(u_terreno, u_final, 0.001, "uuid -> #{uuid}")
-  end
 
-  def test_CTE_CambiaUs_cambia_suelos
-    # create an instance of the measure
-    measure = CTE_Model.new
+    uuid = "21f60244-fb64-4abe-abc3-464182337e27"
+    _surface, _construction, u_final_terreno = get_surface(model, uuid)
+    assert_in_delta(u_terreno, u_final_terreno, 0.001, "uuid -> #{uuid}")
 
-    # runner, model = get_runner_model("/residencial.osm", measure)
-    # runner, model = get_runner_model("/N_R01_unif_adosadaV23.osm", measure)
-    runner, model = get_runner_model("/test_N_R01_unif_adosada.osm", measure)
-    arguments = measure.arguments(model)
-    argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(arguments)
+    # Suelo exterior
+    uuid = "24252951-3545-42e5-a381-db75ffc3c395"
+    _surface, _construction, u_final_exterior = get_surface(model, uuid)
+    assert_in_delta(args_hash["CTE_U_suelos"], u_final_exterior, 0.001, "uuid -> #{uuid}")
 
-    # create hash of argument values.
-    # If the argument has a default that you want to use, you don't need it in the hash
-    args_hash = {}
-    args_hash["CTE_U_muros"] = 0
-    args_hash["CTE_U_cubiertas"] = 0
-    args_hash["CTE_U_suelos"] = 0.37
-    u_terreno = 1 / (1 / args_hash["CTE_U_suelos"] - 0.5)
-    u_exterior = args_hash["CTE_U_suelos"]
-    args_hash["CTE_g_gl"] = 0.65
-
-    # populate argument with specified hash value if specified
-    arguments.each do |arg|
-      temp_arg_var = arg.clone
-      if args_hash[arg.name]
-        assert(temp_arg_var.setValue(args_hash[arg.name]))
-      end
-      argument_map[arg.name] = temp_arg_var
-    end
-
-    measure.run(model, runner, argument_map)
-    result = runner.result
-
-    assert_equal("Success", result.value.valueName)
-
-    _surface, _construction, u_final_terreno = get_surface(model, "21f60244-fb64-4abe-abc3-464182337e27")
-    _surface, _construction, u_final_exterior = get_surface(model, "24252951-3545-42e5-a381-db75ffc3c395")
-
-    assert_in_delta(u_terreno, u_final_terreno, 0.001)
-    assert_in_delta(u_exterior, u_final_exterior, 0.001)
-  end
-
-  def _test_CTE_CambiaUs_cambia_huecos
-    measure = CTE_Model.new
-
-    # runner, model = get_runner_model("/N_R01_unif_adosadaV23.osm", measure)
-    runner, model = get_runner_model("/test_N_R01_unif_adosada.osm", measure)
-
-    arguments = measure.arguments(model)
-    argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(arguments)
-
-    # create hash of argument values.
-    # If the argument has a default that you want to use, you don't need it in the hash
-    args_hash = {}
-    args_hash["CTE_U_muros"] = 0
-    args_hash["CTE_U_cubiertas"] = 0
-    args_hash["CTE_U_suelos"] = 0
-    args_hash["CTE_U_huecos"] = 0.68
-    u_huecos = args_hash["CTE_U_huecos"]
-    args_hash["CTE_g_gl"] = 0.65
-
-    # populate argument with specified hash value if specified
-    arguments.each do |arg|
-      temp_arg_var = arg.clone
-      if args_hash[arg.name]
-        assert(temp_arg_var.setValue(args_hash[arg.name]))
-      end
-      argument_map[arg.name] = temp_arg_var
-    end
-
-    measure.run(model, runner, argument_map)
-
-    assert_equal("Success", result.value.valueName)
-
+    # Huecos
     uuid = "9971a391-9f3d-4035-b8c5-b6d182b46e33"
     _surface, _construction, u_final = get_surface(model, uuid)
-    assert_in_delta(u_huecos, u_final, 0.001, "uuid -> #{uuid}")
+    assert_in_delta(args_hash["CTE_U_huecos"], u_final, 0.001, "uuid -> #{uuid}")
   end
+
 
   def test_CTE_CambiaUs_extenso
     # create an instance of the measure
@@ -505,7 +357,6 @@ class CTE_CambiaUs_Test < MiniTest::Test
     runner, model = get_runner_model("/test_N_R01_unif_adosada.osm", measure)
     arguments = measure.arguments(model)
     argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(arguments)
-
 
     u_muros = 0.2
     u_muros_terreno = 1 / (1 / u_muros - 0.5)
