@@ -499,8 +499,6 @@ class CTE_CambiaUs_Test < MiniTest::Test
     arguments = measure.arguments(model)
     argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(arguments)
 
-    # create hash of argument values.
-    # If the argument has a default that you want to use, you don't need it in the hash
 
     u_muros = 0.2
     u_muros_terreno = 1 / (1 / u_muros - 0.5)
@@ -513,6 +511,8 @@ class CTE_CambiaUs_Test < MiniTest::Test
                       "suelos_terrenos" => u_suelos_terreno, "suelos_exteriores" => u_suelos, "ventanas" => u_huecos}
     # puertas
 
+    # create hash of argument values.
+    # If the argument has a default that you want to use, you don't need it in the hash
     args_hash = {}
     args_hash["CTE_U_muros"] = u_muros
     args_hash["CTE_U_cubiertas"] = u_cubiertas
