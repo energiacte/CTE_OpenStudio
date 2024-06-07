@@ -215,7 +215,7 @@ def loop_through_construction_sets(model, runner, constructions_hash_old_new, co
             end
           end
           if found_const_flag == false # this should never happen but is just an extra test in case something goes wrong with the measure code
-            runner.registerWarning("Measure couldn't find the construction named '#{target_const}' in the #{condicion} surface hash.")
+            runner.registerWarning("lib cambia U opacos couldn't find the construction named '#{target_const}' in the #{condicion} surface hash.")
           end
         end
 

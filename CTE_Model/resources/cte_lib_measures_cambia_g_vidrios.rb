@@ -147,7 +147,7 @@ def cte_cambia_g_vidrios(model, runner, user_arguments)
       if final_construction
         new_default_subsurface_const_set.setFixedWindowConstruction(final_construction)
       else
-        runner.registerWarning("Measure couldn't find the construction named '#{target_const_name}' in the windows construction hash.")
+        runner.registerWarning("lib cambia g vidrios couldn't find the construction named '#{target_const_name}' in the windows construction hash.")
       end
     end
 
