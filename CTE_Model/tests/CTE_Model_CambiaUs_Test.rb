@@ -113,11 +113,12 @@ class CTE_CambiaUs_Test < MiniTest::Test
 
     construction = elem.construction.get
 
-    u = if objeto.iddObject.name == "OS:Surface"
-      construction.thermalConductance.to_f
-    else
-      construction.uFactor.to_f
-    end
+    u =
+      if objeto.iddObject.name == "OS:Surface"
+        construction.thermalConductance.to_f
+      else
+        construction.uFactor.to_f
+      end
 
     [elem, construction, u]
   end
