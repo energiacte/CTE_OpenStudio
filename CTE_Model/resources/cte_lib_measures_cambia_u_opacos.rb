@@ -8,9 +8,8 @@ def filtra_superficies(model, condicion:, tipo:)
   exterior_surface_construction_names = []
   model.getSurfaces.each do |surface|
     # Excluimos las superficies de PTs
-    if surface.name.to_s.upcase.include?("PT_") || surface.name.to_s.upcase.include?("_PT")
-      next
-    end
+    next if surface.name.to_s.upcase.include?("PT_") || surface.name.to_s.upcase.include?("_PT")
+
     if (surface.outsideBoundaryCondition == condicion) && (surface.surfaceType == tipo)
       # el objeto OS:Construction tiene: Handle, name, surface rendering name y varias layers
       exterior_surfaces << surface
