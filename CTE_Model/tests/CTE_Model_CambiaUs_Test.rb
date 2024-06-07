@@ -282,6 +282,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
 
     # u_inicial = get_transmitance(model, uuid)
     measure.run(model, runner, argument_map)
+    result = runner.result
 
     assert_equal("Success", result.value.valueName)
 
@@ -320,6 +321,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
 
     uuid = "be553ff8-1374-4869-8bcf-30ffb53290f9"
     measure.run(model, runner, argument_map)
+    result = runner.result
 
     assert_equal("Success", result.value.valueName)
 
@@ -359,10 +361,12 @@ class CTE_CambiaUs_Test < MiniTest::Test
     end
 
     measure.run(model, runner, argument_map)
+    result = runner.result
 
     assert_equal("Success", result.value.valueName)
 
-    handle = OpenStudio.toUUID("c0205929-9427-40b4-883e-34d52c6309cc")
+    uuid = "c0205929-9427-40b4-883e-34d52c6309cc"
+    handle = OpenStudio.toUUID(uuid)
     objeto = model.getModelObject(handle)
     surface = objeto.get.to_Surface
     surface = surface.get
@@ -401,6 +405,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
     end
 
     measure.run(model, runner, argument_map)
+    result = runner.result
 
     assert_equal("Success", result.value.valueName)
 
@@ -444,6 +449,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
     end
 
     measure.run(model, runner, argument_map)
+    result = runner.result
 
     assert_equal("Success", result.value.valueName)
 
@@ -539,6 +545,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
     elementos = carga_elementos(model, elementos_para_test)
 
     measure.run(model, runner, argument_map)
+    result = runner.result
 
     assert_equal("Success", result.value.valueName)
 
