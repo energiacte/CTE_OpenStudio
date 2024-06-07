@@ -507,8 +507,14 @@ class CTE_CambiaUs_Test < MiniTest::Test
     u_suelos_terreno = 1 / (1 / u_suelos - 0.5)
     u_huecos = 0.62
 
-    transmitancias = {"muros_exteriores" => u_muros, "muros_terrenos" => u_muros_terreno, "cubiertas_exteriores" => u_cubiertas,
-                      "suelos_terrenos" => u_suelos_terreno, "suelos_exteriores" => u_suelos, "ventanas" => u_huecos}
+    transmitancias = {
+      "muros_exteriores" => u_muros,
+      "muros_terrenos" => u_muros_terreno,
+      "cubiertas_exteriores" => u_cubiertas,
+      "suelos_terrenos" => u_suelos_terreno,
+      "suelos_exteriores" => u_suelos,
+      "ventanas" => u_huecos
+    }
     # puertas
 
     # create hash of argument values.
