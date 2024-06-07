@@ -123,11 +123,6 @@ class CTE_CambiaUs_Test < MiniTest::Test
     [elem, construction, u]
   end
 
-  def get_transmitance(model, uuid)
-    _surface, _construction, u = get_surface(model, uuid)
-    u
-  end
-
   def get_solar_heat_gain_coefficient(model, uuid)
     handle = OpenStudio.toUUID(uuid)
     objeto = model.getModelObject(handle).get
@@ -144,7 +139,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
     elementos = {}
     elementos_para_test.each do |tipo, lista|
       lista.each do |uuid|
-        u_inicial = get_transmitance(model, uuid)
+        _surface, _construction, u_inicial = get_surface(model, uuid)
         elementos[uuid] = {"tipo" => tipo, "u_inicial" => u_inicial}
       end
     end
@@ -216,9 +211,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
       argument_map[arg.name] = temp_arg_var
     end
 
-    # elementos_para_test = carga_elementos_residencial_osm
-    elementos_para_test = carga_elementos_R_N01_V23
-    elementos = carga_elementos(model, elementos_para_test)
+    elementos = carga_elementos(model, carga_elementos_R_N01_V23)
 
     measure.run(model, runner, argument_map)
     result = runner.result
@@ -230,7 +223,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
     assert_equal("Success", result.value.valueName)
 
     elementos.each do |uuid, atributos|
-      u_final = get_transmitance(model, uuid)
+      _surface, _construction, u_final = get_surface(model, uuid)
       assert_in_delta(atributos["u_inicial"], u_final, 0.001, "uuid -> #{uuid}")
     end
   end
@@ -260,13 +253,11 @@ class CTE_CambiaUs_Test < MiniTest::Test
 
     uuid = "0b39cfba-de4f-4fe4-b0da-7ddd5c9d44f0"
 
-    # u_inicial = get_transmitance(model, uuid)
     measure.run(model, runner, argument_map)
     result = runner.result
 
     assert_equal("Success", result.value.valueName)
 
-    # u_final = get_transmitance(model, uuid)
     g_final = get_solar_heat_gain_coefficient(model, uuid)
     assert_in_delta(args_hash["CTE_g_gl"], g_final, 0.001, "uuid -> #{uuid}")
   end
@@ -310,28 +301,18 @@ class CTE_CambiaUs_Test < MiniTest::Test
 
     # Muros
     uuid = "be553ff8-1374-4869-8bcf-30ffb53290f9"
-    u_final = get_transmitance(model, uuid)
+    _surface, _construction, u_final = get_surface(model, uuid)
     assert_in_delta(args_hash["CTE_U_muros"], u_final, 0.001, "uuid -> #{uuid}")
 
     # Cubierta
     uuid = "c0205929-9427-40b4-883e-34d52c6309cc"
-    handle = OpenStudio.toUUID(uuid)
-    objeto = model.getModelObject(handle)
-    surface = objeto.get.to_Surface
-    surface = surface.get
-    construction = surface.construction.get
-    u_final = construction.thermalConductance.to_f
+    _surface, _construction, u_final = get_surface(model, uuid)
     assert_in_delta(args_hash["CTE_U_cubiertas"], u_final, 0.001, "uuid -> #{uuid}")
 
     # Suelo terreno
     u_terreno = 1 / (1 / args_hash["CTE_U_suelos"] - 0.5)
     uuid = "21f60244-fb64-4abe-abc3-464182337e27"
-    handle = OpenStudio.toUUID(uuid)
-    objeto = model.getModelObject(handle)
-    surface = objeto.get.to_Surface
-    surface = surface.get
-    construction = surface.construction.get
-    u_final = construction.thermalConductance.to_f
+    _surface, _construction, u_final = get_surface(model, uuid)
     assert_in_delta(u_terreno, u_final, 0.001, "uuid -> #{uuid}")
 
     uuid = "21f60244-fb64-4abe-abc3-464182337e27"
@@ -393,8 +374,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
       argument_map[arg.name] = temp_arg_var
     end
 
-    elementos_para_test = carga_elementos_R_N01_V23
-    elementos = carga_elementos(model, elementos_para_test)
+    elementos = carga_elementos(model, carga_elementos_R_N01_V23)
 
     measure.run(model, runner, argument_map)
     result = runner.result
@@ -402,12 +382,8 @@ class CTE_CambiaUs_Test < MiniTest::Test
     assert_equal("Success", result.value.valueName)
 
     elementos.each do |uuid, atributos|
-      u_final = get_transmitance(model, uuid)
-      atributos["u_final"] = u_final
-    end
-
-    elementos.each do |uuid, atrib|
-      assert_in_delta(atrib["u_final"], transmitancias[atrib["tipo"]], 0.01, "uuid -> #{uuid}")
+      _surface, _construction, u_final = get_surface(model, uuid)
+      assert_in_delta(u_final, transmitancias[atributos["tipo"]], 0.01, "uuid -> #{uuid}")
     end
   end
 end
