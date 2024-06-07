@@ -160,12 +160,12 @@ def loop_through_construction_sets(model, runner, constructions_hash_old_new, co
       elsif condicion == "Outdoors"
         default_surface_const_set = default_construction_set.defaultExteriorSurfaceConstructions
       else
+        # "Adiabatic", "Surface", "GroundSlab...", "GroundBasement..."
         puts("XX--->>> error, condicion no reconocida #{condicion}")
       end
 
+      # Construcciones por defecto
       if !default_surface_const_set.empty?
-        # _starting_construction = default_surface_const_set.get.wallConstruction
-
         # creating new default construction set
         new_default_construction_set = default_construction_set.clone(model)
         new_default_construction_set = new_default_construction_set.to_DefaultConstructionSet.get
@@ -181,7 +181,7 @@ def loop_through_construction_sets(model, runner, constructions_hash_old_new, co
         elsif condicion == "Outdoors"
           new_default_construction_set.setDefaultExteriorSurfaceConstructions(new_default_surface_const_set)
         else
-          puts("XX--->>> error, condicion no reconocida #{condicion}")
+          puts("XX--->>> condicion no reconocida #{condicion}")
         end
 
         # use the hash to find the proper construction and link to new_default_surface_const_set
@@ -191,12 +191,12 @@ def loop_through_construction_sets(model, runner, constructions_hash_old_new, co
           target_const = new_default_surface_const_set.floorConstruction
         elsif tipo == "RoofCeiling"
           target_const = new_default_surface_const_set.roofCeilingConstruction
-        else
-          puts("No he reconocido este tipo de cerramiento #{tipo}")
         end
+        # ¿Esto no debería ser imposible ya que todos los elementos posibles tienen valor asignado?
         if !target_const.empty?
           target_const = target_const.get.name.to_s
           found_const_flag = false
+          # Cambiamos la construcción antigua por la nueva
           constructions_hash_old_new.each do |orig, new|
             if target_const == orig
               final_construction = new
@@ -207,14 +207,16 @@ def loop_through_construction_sets(model, runner, constructions_hash_old_new, co
               elsif tipo == "RoofCeiling"
                 new_default_surface_const_set.setRoofCeilingConstruction(final_construction)
               else
-                puts("No he reconocido este tipo de cerramiento #{tipo}")
+                puts("No he reconocido '#{target_const}' en las construcciones con cambios")
               end
-
               found_const_flag = true
             end
           end
-          if found_const_flag == false # this should never happen but is just an extra test in case something goes wrong with the measure code
-            runner.registerWarning("lib cambia U opacos couldn't find the construction named '#{target_const}' in the #{condicion} surface hash.")
+          # this should never happen but is just an extra test in case something goes wrong with the measure code
+          # BUG: Nos sucede a nosotros... ¿qué pasa? RU01_E1
+          # lib cambia U opacos couldn't find the construction named 'CTE_2019_Suelo_D' in the Ground surface hash.
+          if found_const_flag == false
+            runner.registerWarning("lib cambia U opacos couldn't find the construction named '#{target_const}' in the surface hash con condición #{condicion} y tipo #{tipo}.")
           end
         end
 
