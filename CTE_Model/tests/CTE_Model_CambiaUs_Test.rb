@@ -93,13 +93,13 @@ def find_windows(model)
       |ss| ss.subSurfaces.map{
         |w|
           if ["FixedWindow", "OperableWindow", "GlassDoor", "Door"].include?(w.subSurfaceType.to_s)
-            w.handle
+            w.handle.to_s
           else
             continue
           end
       }
     }
-  }
+  }.flatten
 end
 
 class CTE_CambiaUs_Test < MiniTest::Test
@@ -177,7 +177,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
     # Asserts de condiciones
     assert_equal("Success", result.value.valueName)
 
-    ELEMENTOS_R_N01_V23["ventanas"].each do |uuid|
+    find_windows(model).each do |uuid|
       g_final = get_solar_heat_gain_coefficient(model, uuid)
       assert_in_delta(args_hash["CTE_g_gl"], g_final, 0.001, "uuid -> #{uuid}")
     end
