@@ -1,3 +1,56 @@
+# Modifica la transmitancia de opacos
+def cte_cambia_u_opacos(model, runner, user_arguments)
+  runner.registerInfo('CTE: Cambiando la U de muros')
+  u_muros = runner.getDoubleArgumentValue('CTE_U_muros', user_arguments)
+  if u_muros.to_f > 0.001
+    # Muros (exteriores y enterrados)
+    cambia_transmitancia(model, runner, u_muros, condicion: 'Outdoors', tipo: 'Wall')
+    cambia_transmitancia(model, runner, u_muros, condicion: 'Ground', tipo: 'Wall')
+  else
+    runner.registerInfo('No se cambia la transmitancia de los muros.')
+  end
+
+  runner.registerInfo('CTE: Cambiando la U los suelos exteriores')
+  u_suelos = runner.getDoubleArgumentValue('CTE_U_suelos', user_arguments)
+  if u_suelos.to_f > 0.001
+    # Suelos (exteriores y enterrados)
+    cambia_transmitancia(model, runner, u_suelos, condicion: 'Outdoors', tipo: 'Floor')
+    cambia_transmitancia(model, runner, u_suelos, condicion: 'Ground', tipo: 'Floor')
+  else
+    runner.registerInfo('No se cambia la transmitancia de los suelos.')
+  end
+
+  runner.registerInfo('CTE: Cambiando la U de cubiertas')
+  u_cubiertas = runner.getDoubleArgumentValue('CTE_U_cubiertas', user_arguments)
+  if u_cubiertas.to_f > 0.001
+    cambia_transmitancia(model, runner, u_cubiertas, condicion: 'Outdoors', tipo: 'RoofCeiling')
+  else
+    runner.registerInfo('No se cambia la transmitancia de las cubiertas')
+  end
+
+  runner.registerFinalCondition('Finalizado el cambio de transmitancias.')
+
+  true
+end
+
+# Cambia la transmitancia a U para los elementos con la condición de contorno y tipo indicados
+def cambia_transmitancia(model, runner, u_deseada, condicion:, tipo:)
+  # Superficies del tipo y condición de contorno deseadas y que no son puentes térmicos
+  surfaces = model.getSurfaces.select do |s|
+    !s.name.to_s.upcase.include?('PT_') &&
+      !s.name.to_s.upcase.include?('_PT') &&
+      (s.outsideBoundaryCondition == condicion) &&
+      (s.surfaceType == tipo)
+  end
+
+  # R = 0.5 de capa de "terreno" de 1m de profundidad y lambda=2W/mk
+  resistencia_terreno = condicion == 'Ground' ? 0.5 : 0.0
+
+  constructions_hash_old_new = construye_hashes(model, runner, surfaces, u_deseada, resistencia_terreno)
+  modify_construction_sets(model, runner, constructions_hash_old_new, condicion: condicion, tipo: tipo)
+  replace_edited_constructions(surfaces, constructions_hash_old_new)
+end
+
 # Localiza construcciones distintas en superficies y devuelve mapping entre nombre antiguo de construcción y construcción nueva con u deseada
 def construye_hashes(model, runner, target_surfaces, u_deseada, resistencia_tierra)
   # Recorre construcciones, clona y cambia por otro con la u_deseada
@@ -15,9 +68,7 @@ def construye_hashes(model, runner, target_surfaces, u_deseada, resistencia_tier
     .uniq { |s| s.construction.get.name }
     .map { |s| s.construction.get.to_Construction.get }
     .each do |target_cons|
-    construction_layers = target_cons.layers
-
-    materials_in_construction = construction_layers.map.with_index do |layer, i|
+    materials_in_construction = target_cons.layers.map.with_index do |layer, i|
       {
         'name' => layer.name.to_s,
         'index' => i,
@@ -209,56 +260,4 @@ def replace_edited_constructions(surfaces, constructions_hash_old_new)
     new_construction = constructions_hash_old_new[target_const]
     surf.setConstruction(new_construction) if new_construction
   end
-end
-
-def cambia_transmitancia(model, runner, u_deseada, condicion:, tipo:)
-  # Superficies del tipo y condición de contorno deseadas y que no son puentes térmicos
-  surfaces = model.getSurfaces.select do |s|
-    !s.name.to_s.upcase.include?('PT_') &&
-      !s.name.to_s.upcase.include?('_PT') &&
-      (s.outsideBoundaryCondition == condicion) &&
-      (s.surfaceType == tipo)
-  end
-
-  # R = 0.5 de capa de "terreno" de 1m de profundidad y lambda=2W/mk
-  resistencia_terreno = condicion == 'Ground' ? 0.5 : 0.0
-
-  constructions_hash_old_new = construye_hashes(model, runner, surfaces, u_deseada, resistencia_terreno)
-  modify_construction_sets(model, runner, constructions_hash_old_new, condicion: condicion, tipo: tipo)
-  replace_edited_constructions(surfaces, constructions_hash_old_new)
-end
-
-# Modifica la transmitancia de opacos
-def cte_cambia_u_opacos(model, runner, user_arguments)
-  runner.registerInfo('CTE: Cambiando la U de muros')
-  u_muros = runner.getDoubleArgumentValue('CTE_U_muros', user_arguments)
-  if u_muros.to_f > 0.001
-    # Muros (exteriores y enterrados)
-    cambia_transmitancia(model, runner, u_muros, condicion: 'Outdoors', tipo: 'Wall')
-    cambia_transmitancia(model, runner, u_muros, condicion: 'Ground', tipo: 'Wall')
-  else
-    runner.registerInfo('No se cambia la transmitancia de los muros.')
-  end
-
-  runner.registerInfo('CTE: Cambiando la U los suelos exteriores')
-  u_suelos = runner.getDoubleArgumentValue('CTE_U_suelos', user_arguments)
-  if u_suelos.to_f > 0.001
-    # Suelos (exteriores y enterrados)
-    cambia_transmitancia(model, runner, u_suelos, condicion: 'Outdoors', tipo: 'Floor')
-    cambia_transmitancia(model, runner, u_suelos, condicion: 'Ground', tipo: 'Floor')
-  else
-    runner.registerInfo('No se cambia la transmitancia de los suelos.')
-  end
-
-  runner.registerInfo('CTE: Cambiando la U de cubiertas')
-  u_cubiertas = runner.getDoubleArgumentValue('CTE_U_cubiertas', user_arguments)
-  if u_cubiertas.to_f > 0.001
-    cambia_transmitancia(model, runner, u_cubiertas, condicion: 'Outdoors', tipo: 'RoofCeiling')
-  else
-    runner.registerInfo('No se cambia la transmitancia de las cubiertas')
-  end
-
-  runner.registerFinalCondition('Finalizado el cambio de transmitancia de elementos.')
-
-  true
 end
