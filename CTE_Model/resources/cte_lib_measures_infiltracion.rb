@@ -102,16 +102,16 @@ def cte_infiltracion(model, runner, user_arguments) # copiado del residencial
     area_puertas = 0
     # TODO: filtrar superficies NoMass, que son superficies auxiliares
     space.surfaces.each do |surface|
-      if surface.outsideBoundaryCondition == "Outdoors" && surface.windExposure == "WindExposed"
-        area_opacos += surface.netArea
-        surface.subSurfaces.each do |subsur|
-          if ["FixedWindow", "OperableWindow", "GlassDoor", "SkyLight"].include?(subsur.subSurfaceType)
-            area_ventanas += subsur.grossArea
-          elsif ["Door", "GlassDoor", "OverheadDoor"].include?(subsur.subSurfaceType)
-            area_puertas += subsur.grossArea
-          else
-            runner.registerWarning("Subsuperficie '#{subsur.name}' con tipo desconocido '#{subsur.subSurfaceType}' en superficie '#{surface.name}' del espacio '#{space.name}'")
-          end
+      next unless surface.outsideBoundaryCondition == 'Outdoors' && surface.windExposure == 'WindExposed'
+
+      area_opacos += surface.netArea
+      surface.subSurfaces.each do |subsur|
+        if %w[FixedWindow OperableWindow GlassDoor SkyLight Skylight].include?(subsur.subSurfaceType)
+          area_ventanas += subsur.grossArea
+        elsif %w[Door GlassDoor OverheadDoor].include?(subsur.subSurfaceType)
+          area_puertas += subsur.grossArea
+        else
+          runner.registerWarning("Subsuperficie '#{subsur.name}' con tipo desconocido '#{subsur.subSurfaceType}' en superficie '#{surface.name}' del espacio '#{space.name}'")
         end
       end
     end
