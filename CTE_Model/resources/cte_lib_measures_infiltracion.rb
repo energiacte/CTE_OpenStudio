@@ -51,10 +51,10 @@ CTE_COEF_WIND = 0.000231 # Valor para dos plantas y entorno urbano
 TO4PA = 0.11571248 # pow(4/100., 0.67), de 100 a 4 Pa
 C_WINDOWS_CLASS1 = 50 * TO4PA
 
-def cte_horario_de_infiltracion(runner, space, horario_always_on)
+def cte_horario_de_infiltracion(_runner, space, horario_always_on)
   # XXX: La detección de si el espacio es habitable o no depende de que los no habitables
   # tengan su space_type empezando por CTE_N
-  no_habitable = space.spaceType.get.name.get.start_with?("CTE_N")
+  no_habitable = space.spaceType.get.name.get.start_with?('CTE_N')
 
   # Sin equipos = no ideales y lista vacía de equipos
   no_equipment = (
@@ -67,9 +67,11 @@ def cte_horario_de_infiltracion(runner, space, horario_always_on)
     horario_infiltracion = horario_always_on
   else
     # Con equipos + habitable acondicionado
-    horarios = space.defaultScheduleSet.empty? ?
-      space.spaceType.get.defaultScheduleSet.get :
-      space.defaultScheduleSet.get
+    horarios = if space.defaultScheduleSet.empty?
+                 space.spaceType.get.defaultScheduleSet.get
+               else
+                 space.defaultScheduleSet.get
+               end
     horario_infiltracion = horarios.infiltrationSchedule.get
   end
 
@@ -80,17 +82,17 @@ end
 # y parámetros del documento de condic. técnicas
 def cte_infiltracion(model, runner, user_arguments) # copiado del residencial
   # busca el horario para hacer always_on
-  horario_always_on = model.getScheduleRulesets.find { |h| h.name.get == "CTER24B_HINF" } || false
+  horario_always_on = model.getScheduleRulesets.find { |h| h.name.get == 'CTER24B_HINF' } || false
 
-  c_opaques = runner.getDoubleArgumentValue("CTE_C_opacos_m3hm2", user_arguments) * TO4PA
-  c_windows = runner.getDoubleArgumentValue("CTE_C_huecos_m3hm2", user_arguments) * TO4PA
-  c_doors = runner.getDoubleArgumentValue("CTE_C_puertas_m3hm2", user_arguments) * TO4PA
+  c_opaques = runner.getDoubleArgumentValue('CTE_C_opacos_m3hm2', user_arguments) * TO4PA
+  c_windows = runner.getDoubleArgumentValue('CTE_C_huecos_m3hm2', user_arguments) * TO4PA
+  c_doors = runner.getDoubleArgumentValue('CTE_C_puertas_m3hm2', user_arguments) * TO4PA
 
-  runner.registerValue("CTE Coeficientes de fugas de opacos a 4Pa, C_op", c_opaques.round(4))
-  runner.registerValue("CTE Coeficientes de fugas de huecos a 4Pa, C_w", c_windows.round(4))
-  runner.registerValue("CTE Coeficientes de fugas de puertas a 4Pa, C_w", c_doors.round(4))
+  runner.registerValue('CTE Coeficientes de fugas de opacos a 4Pa, C_op', c_opaques.round(4))
+  runner.registerValue('CTE Coeficientes de fugas de huecos a 4Pa, C_w', c_windows.round(4))
+  runner.registerValue('CTE Coeficientes de fugas de puertas a 4Pa, C_w', c_doors.round(4))
 
-  runner.registerInfo("** Superficies para ELA **")
+  runner.registerInfo('** Superficies para ELA **')
 
   # XXX: pensar como interactúa con los espacios distintos a los acondicionados
   # ELA_total para comprobaciones
@@ -116,7 +118,7 @@ def cte_infiltracion(model, runner, user_arguments) # copiado del residencial
       end
     end
 
-    uso_edificio = runner.getStringArgumentValue("CTE_Uso_edificio", user_arguments)
+    uso_edificio = runner.getStringArgumentValue('CTE_Uso_edificio', user_arguments)
     # En residencial, suponemos que la microventilación (n=0.5 rendija turbulenta)
     # daría el caudal de los aireadores necesarios, suponiendo que estos equivalen a un
     # 50% de huecos expuestosa barlovento (con infiltración)
@@ -128,11 +130,11 @@ def cte_infiltracion(model, runner, user_arguments) # copiado del residencial
     #            = C_air · A_air · 4^0.5
     #
     #   C_air · A_air = Q / 4^0.5
-    ca_air = if uso_edificio == "Residencial"
-      (C_WINDOWS_CLASS1 - c_windows) * (0.5 * area_ventanas) / (4.0**0.5)
-    else
-      0.0
-    end
+    ca_air = if uso_edificio == 'Residencial'
+               (C_WINDOWS_CLASS1 - c_windows) * (0.5 * area_ventanas) / (4.0**0.5)
+             else
+               0.0
+             end
 
     # q_total en m3/h a 4 Pa
     # q_tot = sum(C·A·delta_p^n) para opacos, huecos, puertas y aireadores
@@ -145,7 +147,7 @@ def cte_infiltracion(model, runner, user_arguments) # copiado del residencial
     # area_equivalente = 0.50 · 3913 / 3600 · q_total
     # ELA [cm2] con el 50% del área expuesta
     area_equivalente = 0.50 * 3913 / 3600 * q_total
-    runner.registerValue("CTE ELA ('#{space.name}')", area_equivalente.round(2), "cm2 a 4Pa")
+    runner.registerValue("CTE ELA ('#{space.name}')", area_equivalente.round(2), 'cm2 a 4Pa')
 
     # Elimina todos los objetos ELA que pueda haber
     space.spaceInfiltrationEffectiveLeakageAreas.each { |ela| ela.remove }
@@ -161,7 +163,7 @@ def cte_infiltracion(model, runner, user_arguments) # copiado del residencial
 
     ela_total += area_equivalente
   end
-  runner.registerValue("cte_ela_total_espacios", ela_total, "cm2 a 4 Pa")
+  runner.registerValue('cte_ela_total_espacios', ela_total, 'cm2 a 4 Pa')
 
   true # OS necesita saber que todo acaba bien
 end
