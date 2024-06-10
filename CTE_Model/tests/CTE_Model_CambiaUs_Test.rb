@@ -30,11 +30,11 @@ require "fileutils"
 require "json"
 require "pathname"
 
-# tenemos que testear:
-# que la medida se aplica pero no queremos cambiar la U
-# cómo añade una capa aislante o cámara de aire si ya existe una
-# cómo aborta si no hay capa aislante o cámara de aire
-# cómo reacciona a que los elementos esté definidos en distintos niveles y de distintas maneras
+# TODO: tendríamos que testear en cambia U opacos:
+# - que la medida se aplica pero no queremos cambiar la U
+# - cómo añade una capa aislante o cámara de aire si ya existe una
+# - cómo aborta si no hay capa aislante o cámara de aire
+# - cómo reacciona a que los elementos esté definidos en distintos niveles y de distintas maneras
 
 # Carga modelo y obtén runner
 def get_runner_model(file_path)

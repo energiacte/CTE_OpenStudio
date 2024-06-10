@@ -55,8 +55,7 @@ def construye_hashes(model, runner, target_surfaces, u_deseada, resistencia_tier
       resistencia_termica_sin_aislante += resistencia_termica_material unless indice == max_mat_hash['index']
     end
 
-    # Siempre que sea positiva, claro, resistencia_tierra = 0.5 para muro terremo
-    # La resistencia de 0.5 corresponde a una capa de material "terreno" de conductividad (lambda) 2 W/mk de 1 m de profundidad
+    # Para elementos contra el terreno restamos la resistencia del terreno
     resistencia_capa = 1 / u_deseada - resistencia_termica_sin_aislante - resistencia_tierra
 
     if resistencia_capa <= 0
@@ -105,17 +104,26 @@ def construye_hashes(model, runner, target_surfaces, u_deseada, resistencia_tier
 end
 
 # Cambia construcciones modificadas en default construction sets
-def modify_construction_sets(model, _runner, constructions_hash_old_new, condicion:, tipo:)
+def modify_construction_sets(model, runner, constructions_hash_old_new, condicion:, tipo:)
   model.getDefaultConstructionSets.each do |default_construction_set|
     next if default_construction_set.directUseCount.zero?
+
+    unless %w[Ground Outdoors].include?(condicion)
+      # "Adiabatic", "Surface", "GroundSlab...", "GroundBasement..."
+      runner.registerError("Condicion de contorno de superficie no reconocida al modificar el construction set: #{condicion}")
+      return false
+    end
+
+    unless %w[Wall Floor RoofCeiling].include?(tipo)
+      # ??
+      runner.registerError("Tipo de superficie no reconocida al modificar el construction set: #{condicion}")
+      return false
+    end
 
     if condicion == 'Ground'
       default_surface_const_set = default_construction_set.defaultGroundContactSurfaceConstructions
     elsif condicion == 'Outdoors'
       default_surface_const_set = default_construction_set.defaultExteriorSurfaceConstructions
-    else
-      # "Adiabatic", "Surface", "GroundSlab...", "GroundBasement..."
-      puts("XX--->>> error, condicion no reconocida #{condicion}")
     end
 
     # Construcciones por defecto
@@ -133,8 +141,6 @@ def modify_construction_sets(model, _runner, constructions_hash_old_new, condici
       new_default_construction_set.setDefaultGroundContactSurfaceConstructions(new_default_surface_const_set)
     elsif condicion == 'Outdoors'
       new_default_construction_set.setDefaultExteriorSurfaceConstructions(new_default_surface_const_set)
-    else
-      puts("XX--->>> condicion no reconocida #{condicion}")
     end
 
     # use the hash to find the proper construction and link to new_default_surface_const_set
@@ -147,7 +153,7 @@ def modify_construction_sets(model, _runner, constructions_hash_old_new, condici
       target_const = new_default_surface_const_set.roofCeilingConstruction
     end
 
-    # ¿Esto no debería ser imposible ya que todos los elementos posibles tienen valor asignado?
+    # Por si está vacía la construcción
     next if target_const.empty?
 
     target_const_name = target_const.get.name.to_s
@@ -205,61 +211,54 @@ def replace_edited_constructions(surfaces, constructions_hash_old_new)
   end
 end
 
-def cambia_transmitancia(model, runner, u_deseada, resistencia_terreno, condicion:, tipo:)
+def cambia_transmitancia(model, runner, u_deseada, condicion:, tipo:)
   # Superficies del tipo y condición de contorno deseadas y que no son puentes térmicos
-  surfaces = model.getSurfaces.filter do |s|
+  surfaces = model.getSurfaces.select do |s|
     !s.name.to_s.upcase.include?('PT_') &&
       !s.name.to_s.upcase.include?('_PT') &&
       (s.outsideBoundaryCondition == condicion) &&
       (s.surfaceType == tipo)
   end
+
+  # R = 0.5 de capa de "terreno" de 1m de profundidad y lambda=2W/mk
+  resistencia_terreno = condicion == 'Ground' ? 0.5 : 0.0
+
   constructions_hash_old_new = construye_hashes(model, runner, surfaces, u_deseada, resistencia_terreno)
   modify_construction_sets(model, runner, constructions_hash_old_new, condicion: condicion, tipo: tipo)
   replace_edited_constructions(surfaces, constructions_hash_old_new)
-  runner.registerFinalCondition('The existing insulation for exterior walls was set.')
 end
 
+# Modifica la transmitancia de opacos
 def cte_cambia_u_opacos(model, runner, user_arguments)
-  # tenemos que testear:
-  # 1.- que la medida se aplica pero no queremos cambiar la U
-  # 2.- cómo añade una capa aislante o cámara de aire si ya existe una
-  # 3.- cómo aborta si no hay capa aislante o cámara de aire
-  # 4.- cómo reacciona a que los elementos esté definidos en distintos niveles y de distintas maneras
-
   runner.registerInfo('CTE: Cambiando la U de muros')
   u_muros = runner.getDoubleArgumentValue('CTE_U_muros', user_arguments)
   if u_muros.to_f > 0.001
-    # Muros exteriores:
-    cambia_transmitancia(model, runner, u_muros, 0, condicion: 'Outdoors', tipo: 'Wall')
-    runner.registerFinalCondition('The existing insulation for exterior walls was set.')
-    # Muros enterrados
-    cambia_transmitancia(model, runner, u_muros, 0.5, condicion: 'Ground', tipo: 'Wall')
-    runner.registerFinalCondition('The existing insulation for ground walls was set.')
+    # Muros (exteriores y enterrados)
+    cambia_transmitancia(model, runner, u_muros, condicion: 'Outdoors', tipo: 'Wall')
+    cambia_transmitancia(model, runner, u_muros, condicion: 'Ground', tipo: 'Wall')
   else
-    runner.registerFinalCondition('No se cambia la transmitancia de los muros (U=0)')
+    runner.registerInfo('No se cambia la transmitancia de los muros.')
   end
 
   runner.registerInfo('CTE: Cambiando la U los suelos exteriores')
   u_suelos = runner.getDoubleArgumentValue('CTE_U_suelos', user_arguments)
   if u_suelos.to_f > 0.001
-    # Suelos exteriores:
-    cambia_transmitancia(model, runner, u_suelos, 0, condicion: 'Outdoors', tipo: 'Floor')
-    runner.registerFinalCondition('The existing insulation for exterior floors was set.')
-    # Suelos enterrados:
-    cambia_transmitancia(model, runner, u_suelos, 0.5, condicion: 'Ground', tipo: 'Floor')
-    runner.registerFinalCondition('The existing insulation for ground floors was set.')
+    # Suelos (exteriores y enterrados)
+    cambia_transmitancia(model, runner, u_suelos, condicion: 'Outdoors', tipo: 'Floor')
+    cambia_transmitancia(model, runner, u_suelos, condicion: 'Ground', tipo: 'Floor')
   else
-    runner.registerFinalCondition('No se cambia la transmitancia de los suelos (U=0)')
+    runner.registerInfo('No se cambia la transmitancia de los suelos.')
   end
 
   runner.registerInfo('CTE: Cambiando la U de cubiertas')
   u_cubiertas = runner.getDoubleArgumentValue('CTE_U_cubiertas', user_arguments)
   if u_cubiertas.to_f > 0.001
-    cambia_transmitancia(model, runner, u_cubiertas, 0, condicion: 'Outdoors', tipo: 'RoofCeiling')
-    runner.registerFinalCondition('The existing insulation for exterior roof ceiling was set.')
+    cambia_transmitancia(model, runner, u_cubiertas, condicion: 'Outdoors', tipo: 'RoofCeiling')
   else
-    runner.registerFinalCondition('No se cambia la transmitancia de las cubiertas (U=0)')
+    runner.registerInfo('No se cambia la transmitancia de las cubiertas')
   end
+
+  runner.registerFinalCondition('Finalizado el cambio de transmitancia de elementos.')
 
   true
 end
