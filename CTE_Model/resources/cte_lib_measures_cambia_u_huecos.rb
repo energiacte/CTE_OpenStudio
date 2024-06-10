@@ -26,14 +26,14 @@
 # https://openstudio-sdk-documentation.s3.amazonaws.com/cpp/OpenStudio-3.5.1-doc/model/html/annotated.html
 
 def cte_cambia_u_huecos(model, runner, user_arguments)
-  runner.registerInfo("CTE: Cambiando la U de huecos")
+  runner.registerInfo('CTE: Cambiando la U de huecos')
 
   # toma el valor de la medida
-  u_huecos = runner.getDoubleArgumentValue("CTE_U_huecos", user_arguments)
+  u_huecos = runner.getDoubleArgumentValue('CTE_U_huecos', user_arguments)
 
   # Con valor cero no se cambia la U
   if u_huecos < 0.001
-    runner.registerFinalCondition("No se cambia la transmitancia de los huecos (U=0)")
+    runner.registerFinalCondition('No se cambia la transmitancia de los huecos (U=0)')
     return true
   end
 
@@ -41,33 +41,32 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
   windows = []
   window_constructions = []
   window_construction_names = []
-  model.getSpaces.each do |space|
-    space.surfaces.each do |surface|
-      next unless surface.outsideBoundaryCondition == "Outdoors" && surface.windExposure == "WindExposed"
+  model.getSurfaces.each do |surface|
+    next unless surface.outsideBoundaryCondition == 'Outdoors' && surface.windExposure == 'WindExposed'
 
-      surface.subSurfaces.each do |subsur|
-        # añade a lista de huecos
-        windows << subsur
+    surface.subSurfaces.each do |subsur|
+      # añade a lista de huecos
+      windows << subsur
 
-        window_construction = subsur.construction.get
-        # añade la construcción únicamente si no lo ha hecho antes
-        unless window_construction_names.include?(window_construction.name.to_s)
-          window_constructions << window_construction.to_Construction.get
-          window_construction_names << window_construction.name.to_s
-        end
+      window_construction = subsur.construction.get
+      # añade la construcción únicamente si no lo ha hecho antes
+      unless window_construction_names.include?(window_construction.name.to_s)
+        window_constructions << window_construction.to_Construction.get
+        window_construction_names << window_construction.name.to_s
+      end
 
-        # Informamos de tipos no manejados por la medida
-        # NO CONTEMPLADAS:
-        # TubularDaylightDomeConstruction, TubularDaylightDiffuserConstruction
-        unless ["FixedWindow", "OperableWindow", "GlassDoor", "Door", "OverheadDoor", "Skylight"].include?(subsur.subSurfaceType.to_s)
-          runner.registerWarning("Hueco #{subsur.name.get} con tipo no cubierto por esta medida #{subsur.subSurfaceType}")
-        end
+      # Informamos de tipos no manejados por la medida
+      # NO CONTEMPLADAS:
+      # TubularDaylightDomeConstruction, TubularDaylightDiffuserConstruction
+      unless %w[FixedWindow OperableWindow GlassDoor Door OverheadDoor
+                Skylight].include?(subsur.subSurfaceType.to_s)
+        runner.registerWarning("Hueco #{subsur.name.get} con tipo no cubierto por esta medida #{subsur.subSurfaceType}")
       end
     end
   end
 
   if windows.empty?
-    runner.registerWarning("El modelo no tiene ventanas.")
+    runner.registerWarning('El modelo no tiene ventanas.')
     return true
   end
 
@@ -82,11 +81,11 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
     # En estos huecos solo hay una única capa (¿?) pero usamos código de muros
     materials_in_construction = window_construction.layers.map.with_index do |layer, i|
       {
-        "name" => layer.name.to_s,
-        "index" => i,
-        "nomass" => !layer.to_MasslessOpaqueMaterial.empty?,
-        "u_value" => layer.to_SimpleGlazing.get.uFactor,
-        "mat" => layer
+        'name' => layer.name.to_s,
+        'index' => i,
+        'nomass' => !layer.to_MasslessOpaqueMaterial.empty?,
+        'u_value' => layer.to_SimpleGlazing.get.uFactor,
+        'mat' => layer
       }
     end
 
@@ -97,8 +96,8 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
       return false
     end
 
-    max_thermal_resistance_material = max_mat_hash["mat"] # objeto OS
-    max_thermal_resistance_material_index = max_mat_hash["index"] # indice de la capa
+    max_thermal_resistance_material = max_mat_hash['mat'] # objeto OS
+    max_thermal_resistance_material_index = max_mat_hash['index'] # indice de la capa
 
     # clona material, cambia nombre y u
     new_material = max_thermal_resistance_material.clone(model)
@@ -233,7 +232,7 @@ def cte_cambia_u_huecos(model, runner, user_arguments)
         window_frameanddividers << frame
         window_frameanddivider_names << frame.name.to_s
       end
-    elsif !["Door"].include?(window.subSurfaceType.to_s)
+    elsif !['Door'].include?(window.subSurfaceType.to_s)
       fad = OpenStudio::Model::WindowPropertyFrameAndDivider.new(model)
       fad.setFrameWidth(0.08)
       fad.setFrameOutsideProjection(0.03)
