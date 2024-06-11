@@ -153,14 +153,11 @@ FROM
 
     model.getSpaceTypes.each do |space_type| # array de espacios del mismo tipo
       if not space_type.spaces.empty? # se quedan solo los arrays con contenido
-        if space_type.nameString.start_with?("CTE_NO") # si el tipo empieza por ese nombre
-          space_type.spaces.each do |space|
-            zonas_por_tipos["no_habitable"] << space.thermalZone.get.nameString
-          end
-        else
-          space_type.spaces.each do |space|
-            zonas_por_tipos["habitable"] << space.thermalZone.get.nameString
-          end
+        # el tipo de espacio empieza por CTE_NO si es no habitable
+        kind = space_type.nameString.start_with?("CTE_NO")? "no_habitable": "habitable"
+        space_type.spaces.each do |space|
+          name = space.thermalZone.empty? ? space.name.get : space.thermalZone.get.nameString
+          zonas_por_tipos[kind] << name
         end
       end
     end
