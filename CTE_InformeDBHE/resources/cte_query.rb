@@ -50,29 +50,6 @@ WHERE
   WHERE
       ZoneName in "
 
-  #   ZONASHABITABLES ||= "
-  # SELECT
-  #     ZoneIndex, ZoneName, CeilingHeight, Volume, FloorArea, ZoneListIndex, Name
-  # FROM Zones
-  #     LEFT OUTER JOIN ZoneInfoZoneLists zizl USING (ZoneIndex)
-  #     LEFT OUTER JOIN ZoneLists zl USING (ZoneListIndex)
-  # WHERE
-  #     zl.Name NOT LIKE 'CTE_N%'
-  # "
-
-  #   ZONASNOHABITABLES ||= "
-  # SELECT
-  #     ZoneIndex, ZoneName, CeilingHeight, Volume, FloorArea, ZoneListIndex, Name
-  # FROM
-  #     Zones
-  #     LEFT OUTER JOIN ZoneInfoZoneLists zizl USING (ZoneIndex)
-  #     LEFT OUTER JOIN ZoneLists zl USING (ZoneListIndex)
-  # WHERE
-  #     zl.Name LIKE 'CTE_N%'
-  # "
-
-  #CTE_Query.listaZonasHabitables(model) POR CTE_Query::ZONASHABITABLES
-
   ZONASHABITABLES_SUPERFICIES ||= "
 WITH
     zonashabitables AS (#{CTE_Query::ZONASHABITABLES})
@@ -131,21 +108,6 @@ FROM
     superficiesexteriores
     LEFT OUTER JOIN Constructions cons USING(ConstructionIndex)
 "
-
-  #   def CTE_Query.envolvente_superficies_exteriores(model, sqlFile)
-
-  #   end
-
-  #   def CTE_Query.envolvente_exterior_construcciones(model, sqlFile)
-  #     ENVOLVENTE_EXTERIOR_CONSTRUCCIONES ||= "
-  # WITH superficiesexteriores AS ( #{CTE_Query::ENVOLVENTE_SUPERFICIES_EXTERIORES})
-  # SELECT
-  #     *
-  # FROM
-  #     superficiesexteriores
-  #     LEFT OUTER JOIN Constructions cons USING(ConstructionIndex)
-  # "
-  #   end
 
   def CTE_Query.tipos_zonas(model)
     zonas_por_tipos = { "habitable" => [], "no_habitable" => [] }
@@ -211,19 +173,6 @@ FROM
     return (if search.empty? then false else search.get end)
   end
 
-  # def CTE_Query.superficieHabitable(sqlFile)
-  #   result = getValueOrFalse(sqlFile.execAndReturnFirstDouble("SELECT SUM(FloorArea) FROM (#{CTE_Query::ZONASHABITABLES})"))
-  #   return (result != false) ? result : 0
-  # end
-
-  # sqlFile.execAndReturnFirstDouble("
-  #   # SELECT
-  #   #   SUM(FloorArea)
-  #   # FROM Zones
-  #   #   LEFT OUTER JOIN ZoneInfoZoneLists zizl USING (ZoneIndex)
-  #   #   LEFT OUTER JOIN ZoneLists zl USING (ZoneListIndex)
-  #   # WHERE zl.Name NOT LIKE 'CTE_N%' ").get
-
   def CTE_Query.superficieHabitable(model, sqlFile)
     zonasHabitables = CTE_Query.zonasHabitables(model) #Array para introducir en el WHERE IN de la búsqueda sql
     cadena_campos = ["%s"] * zonasHabitables.length
@@ -271,8 +220,6 @@ FROM
     sqlQuery = sqlQuery % zonasNoHabitables
     result = getValueOrFalse(sqlFile.execAndReturnFirstDouble("SELECT SUM(CeilingHeight * FloorArea) FROM (#{sqlQuery})"))
     return (result != false) ? result : 0
-    # result = getValueOrFalse(sqlFile.execAndReturnFirstDouble("SELECT SUM(CeilingHeight * FloorArea) FROM (#{CTE_Query::ZONASNOHABITABLES})"))
-    # return (result != false) ? result : 0
   end
 
   def CTE_Query.envolventeSuperficiesExteriores(model, sqlFile)
