@@ -57,7 +57,7 @@ def cte_horario_de_infiltracion(_runner, space, horario_always_on)
   no_habitable = space.spaceType.get.name.get.start_with?('CTE_N')
 
   # Sin equipos = no ideales y lista vacía de equipos
-  no_equipment = (
+  no_equipment = space.thermalZone.empty? || (
     !space.thermalZone.get.useIdealAirLoads &&
      space.thermalZone.get.zoneConditioningEquipmentListName.empty?
   )
