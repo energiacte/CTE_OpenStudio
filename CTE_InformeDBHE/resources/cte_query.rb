@@ -33,7 +33,7 @@ module CTE_Query
   ZONAS ||= "
 SELECT
     ZoneIndex, ZoneName, CeilingHeight, Volume, FloorArea
-FROM 
+FROM
     Zones
 WHERE
     ZoneName in "
@@ -45,7 +45,7 @@ WHERE
   INDICE_ZONAS ||= "
   SELECT
       ZoneIndex
-  FROM 
+  FROM
       Zones
   WHERE
       ZoneName in "
@@ -89,7 +89,7 @@ FROM
 WITH
     superficieshabitables AS (#{CTE_Query::ZONASHABITABLES_SUPERFICIES})
 SELECT
-    SurfaceIndex, SurfaceName, ConstructionIndex, ClassName, Area, Azimuth, 
+    SurfaceIndex, SurfaceName, ConstructionIndex, ClassName, Area, Azimuth,
     GrossArea, ExtBoundCond, ZoneIndex, ExtWind
 FROM
     superficieshabitables
@@ -123,7 +123,7 @@ FROM
     INNER JOIN zonasnohabitables AS znh USING (ZoneIndex)
 "
 
-ENVOLVENTE_EXTERIOR_CONSTRUCCIONES ||= "
+  ENVOLVENTE_EXTERIOR_CONSTRUCCIONES ||= "
 WITH superficiesexteriores AS ( #{CTE_Query::ENVOLVENTE_SUPERFICIES_EXTERIORES})
 SELECT
     *
@@ -132,21 +132,20 @@ FROM
     LEFT OUTER JOIN Constructions cons USING(ConstructionIndex)
 "
 
-  
-#   def CTE_Query.envolvente_superficies_exteriores(model, sqlFile)
+  #   def CTE_Query.envolvente_superficies_exteriores(model, sqlFile)
 
-#   end
+  #   end
 
-#   def CTE_Query.envolvente_exterior_construcciones(model, sqlFile)
-#     ENVOLVENTE_EXTERIOR_CONSTRUCCIONES ||= "
-# WITH superficiesexteriores AS ( #{CTE_Query::ENVOLVENTE_SUPERFICIES_EXTERIORES})
-# SELECT
-#     *
-# FROM
-#     superficiesexteriores
-#     LEFT OUTER JOIN Constructions cons USING(ConstructionIndex)
-# "
-#   end
+  #   def CTE_Query.envolvente_exterior_construcciones(model, sqlFile)
+  #     ENVOLVENTE_EXTERIOR_CONSTRUCCIONES ||= "
+  # WITH superficiesexteriores AS ( #{CTE_Query::ENVOLVENTE_SUPERFICIES_EXTERIORES})
+  # SELECT
+  #     *
+  # FROM
+  #     superficiesexteriores
+  #     LEFT OUTER JOIN Constructions cons USING(ConstructionIndex)
+  # "
+  #   end
 
   def CTE_Query.tipos_zonas(model)
     zonas_por_tipos = { "habitable" => [], "no_habitable" => [] }
@@ -154,7 +153,7 @@ FROM
     model.getSpaceTypes.each do |space_type| # array de espacios del mismo tipo
       if not space_type.spaces.empty? # se quedan solo los arrays con contenido
         # el tipo de espacio empieza por CTE_NO si es no habitable
-        kind = space_type.nameString.start_with?("CTE_NO")? "no_habitable": "habitable"
+        kind = space_type.nameString.start_with?("CTE_NO") ? "no_habitable" : "habitable"
         space_type.spaces.each do |space|
           name = space.thermalZone.empty? ? space.name.get : space.thermalZone.get.nameString
           zonas_por_tipos[kind] << name
@@ -225,8 +224,6 @@ FROM
   #   #   LEFT OUTER JOIN ZoneLists zl USING (ZoneListIndex)
   #   # WHERE zl.Name NOT LIKE 'CTE_N%' ").get
 
-  
-
   def CTE_Query.superficieHabitable(model, sqlFile)
     zonasHabitables = CTE_Query.zonasHabitables(model) #Array para introducir en el WHERE IN de la búsqueda sql
     cadena_campos = ["%s"] * zonasHabitables.length
@@ -283,7 +280,7 @@ FROM
     return (result != false) ? result : []
   end
 
-  def CTE_Query.envolventeSuperficiesInteriores(model, sqlFile)    
+  def CTE_Query.envolventeSuperficiesInteriores(model, sqlFile)
     result = getValueOrFalse(sqlFile.execAndReturnVectorOfString(CTE_Query::ENVOLVENTE_SUPERFICIES_INTERIORES % listaZonasHabitablesYNoHabitables(model)))
     return (result != false) ? result : []
   end
@@ -318,5 +315,4 @@ FROM
   def CTE_Query.query_envolvente_exterior_construcciones(model, sqlFile)
     return "#{CTE_Query::ENVOLVENTE_EXTERIOR_CONSTRUCCIONES % listaZonasHabitables(model)}"
   end
-
 end
