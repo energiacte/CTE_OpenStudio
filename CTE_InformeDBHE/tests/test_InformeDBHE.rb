@@ -1,11 +1,11 @@
 #! /usr/bin/ruby
 # coding: utf-8
-require 'openstudio'
-require 'openstudio/ruleset/ShowRunnerOutput'
-require 'minitest/autorun'
-require 'fileutils'
+require "openstudio"
+require "openstudio/ruleset/ShowRunnerOutput"
+require "minitest/autorun"
+require "fileutils"
 
-require_relative '../measure.rb'
+require_relative "../measure.rb"
 
 #require 'sqlite3'
 
@@ -14,61 +14,47 @@ require_relative '../measure.rb'
 # unicamente con las lecturas SQL
 
 class Cte_lib_Test < MiniTest::Unit::TestCase
+  def setup
+    #@cur = SQLite3::Database.open "eplusout.sql"
+  end
 
-    def setup
-        #@cur = SQLite3::Database.open "eplusout.sql"
-    end
+  def test_StandardReports
+    modelPath = "#{File.dirname(__FILE__)}/out.osm"
+    sqlPath = "#{File.dirname(__FILE__)}/eplusout.sql"
+    reportPath = "#{File.dirname(__FILE__)}/report.html"
 
-    def test_StandardReports
-      modelPath = "#{File.dirname(__FILE__)}/out.osm"
-      idfPath = "#{File.dirname(__FILE__)}/out.idf"
-      sqlPath = "#{File.dirname(__FILE__)}/eplusout.sql"
-      reportPath = "#{File.dirname(__FILE__)}/report.html"
+    assert(File.exist?(modelPath))
+    assert(File.exist?(sqlPath))
 
-      assert(File.exist?(modelPath))
-      assert(File.exist?(idfPath))
-      assert(File.exist?(sqlPath))
+    # create an instance of the measure
+    measure = CTE_InformeDBHE.new
 
-      # create an instance of the measure
-      measure = CTE_InformeDBHE.new
+    # create an instance of a runner
+    runner = OpenStudio::Ruleset::OSRunner.new
 
-      # create an instance of a runner
-      runner = OpenStudio::Ruleset::OSRunner.new
+    # set up runner, this will happen automatically when measure is run in PAT
+    runner.setLastOpenStudioModelPath(OpenStudio::Path.new(modelPath))
+    # runner.setLastEnergyPlusWorkspacePath(OpenStudio::Path.new(idfPath))
+    runner.setLastEnergyPlusSqlFilePath(OpenStudio::Path.new(sqlPath))
 
-      # set up runner, this will happen automatically when measure is run in PAT
-      runner.setLastOpenStudioModelPath(OpenStudio::Path.new(modelPath))
-      runner.setLastEnergyPlusWorkspacePath(OpenStudio::Path.new(idfPath))
-      runner.setLastEnergyPlusSqlFilePath(OpenStudio::Path.new(sqlPath))
+    # set argument values to good values and run the measure
+    #argument_map = OpenStudio::Ruleset::OSArgumentMap.new
 
-      #~ # get the last model
-      #~ model = runner.lastOpenStudioModel
-      #~ if model.empty?
-      #~ runner.registerError('Cannot find last model.')
-      #~ return false
-      #~ end
-      #~ model = model.get
+    translator = OpenStudio::OSVersion::VersionTranslator.new
+    model = translator.loadModel(modelPath)
+    model = model.get
+    sqlFile = model.setSqlFile(runner.lastEnergyPlusSqlFile.get)
 
-      # set argument values to good values and run the measure
-      #argument_map = OpenStudio::Ruleset::OSArgumentMap.new
+    # get arguments
+    #arguments = measure.arguments(model)
+    arguments = measure.arguments()
+    argument_map = OpenStudio::Ruleset.convertOSArgumentVectorToMap(arguments)
 
-      translator = OpenStudio::OSVersion::VersionTranslator.new
-      model = translator.loadModel(modelPath)
-      model = model.get
-      sqlFile = model.setSqlFile(runner.lastEnergyPlusSqlFile.get)
-      sqlFile = model.sqlFile.get
+    measure.run(runner, argument_map)
+    result = runner.result
+    show_output(result)
 
-      # get arguments
-      #arguments = measure.arguments(model)
-      arguments = measure.arguments()
-      argument_map = OpenStudio::Ruleset.convertOSArgumentVectorToMap(arguments)
-
-      measure.run(runner, argument_map)
-      result = runner.result
-      show_output(result)
-
-      assert(result.value.valueName == "Success")
-      assert(result.warnings.size == 0)
-      assert(File.exist?(reportPath))
-    end
+    assert(result.value.valueName == "Success")
+    assert(result.warnings.size == 0)
+  end
 end
-
