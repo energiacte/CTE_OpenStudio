@@ -1,18 +1,23 @@
 require 'openstudio'
-require 'openstudio/ruleset/ShowRunnerOutput'
+require 'openstudio/measure/ShowRunnerOutput'
 require 'minitest/autorun'
 require 'fileutils'
 
 require_relative '../measure'
 
-class CTE_Workspace_Test < MiniTest::Unit::TestCase
+class CTE_Workspace_Test < MiniTest::Test
   def test_Workspace
+    # create an instance of the measure
     measure = CTE_Workspace.new
-    runner = OpenStudio::Ruleset::OSRunner.new
+
+    puts('Iniciando test_Workspace')
+
+    # create an instance of a runner
+    runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
 
     # load the test model
-    path = OpenStudio::Path.new(File.dirname(__FILE__) + '/cubitoygarajenhideal.idf')
-    modelPath = "#{File.dirname(__FILE__)}/7_plurif_BLOQUE_4_ALTURAS.osm"
+    idf_path = "#{File.dirname(__FILE__)}/cubitoygarajenhideal.idf"
+    path = OpenStudio::Path.new(idf_path)
 
     workspace = OpenStudio::Workspace.load(path)
     if workspace.empty?
@@ -42,15 +47,17 @@ class CTE_Workspace_Test < MiniTest::Unit::TestCase
       argument_map[arg.name] = temp_arg_var
     end
 
-    runner.setLastOpenStudioModelPath(OpenStudio::Path.new(modelPath))
+    model_path = "#{File.dirname(__FILE__)}/7_plurif_BLOQUE_4_ALTURAS.osm"
+    runner.setLastOpenStudioModelPath(OpenStudio::Path.new(model_path))
 
     measure.run(workspace, runner, argument_map)
     result = runner.result
     show_output(result)
+
     assert(result.value.valueName == 'Success')
 
     # save the workspace to output directory
-    output_file_path = OpenStudio::Path.new(File.dirname(__FILE__) + '/output/test_output.idf')
-    workspace.save(output_file_path, true)
+    output_path = "#{File.dirname(__FILE__)}/output/test_output.idf"
+    workspace.save(OpenStudio::Path.new(output_path), true)
   end
 end
