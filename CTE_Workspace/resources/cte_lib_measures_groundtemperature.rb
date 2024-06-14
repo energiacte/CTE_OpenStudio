@@ -29,8 +29,8 @@ require 'csv'
 def parseweatherfilename(weatherfile)
   zc, peninsulaocanarias = weatherfile.split('_')
   zci = zc[0..-2]
-  zcv = zc[-1]
   zci = zci.include?('alpha') ? 'alfa' : zci
+  zcv = zc[-1]
   [zci, zcv, peninsulaocanarias]
 end
 
