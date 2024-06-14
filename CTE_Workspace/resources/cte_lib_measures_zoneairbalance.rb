@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # Copyright (c) 2016 Ministerio de Fomento
 #                    Instituto de Ciencias de la Construcción Eduardo Torroja (IETcc-CSIC)
@@ -34,15 +33,15 @@
 #  HVAC,Sum,Zone Combined Outdoor Air...
 
 def cte_addAirBalance(runner, workspace, string_objects)
-  runner.registerInfo(" Introducción de objetos ZoneAirBalance:OutdooAir")
-  idfZones = workspace.getObjectsByType("Zone".to_IddObjectType)
+  runner.registerInfo(' Introducción de objetos ZoneAirBalance:OutdooAir')
+  idfZones = workspace.getObjectsByType('Zone'.to_IddObjectType)
   if idfZones.empty?
-    runner.registerInfo("* No se han encontrado objetos Zone a los que añadir un objeto ZoneAirBalance:OutdoorAir")
+    runner.registerInfo('* No se han encontrado objetos Zone a los que añadir un objeto ZoneAirBalance:OutdoorAir')
   else
-    runner.registerInfo("* Encontrado(s) #{ idfZones.size } objeto(s) Zone")
-    idfZones.each do | idfZone |
+    runner.registerInfo("* Encontrado(s) #{idfZones.size} objeto(s) Zone")
+    idfZones.each do |idfZone|
       nombreZona = idfZone.getString(0)
-      runner.registerInfo("- Definido objeto ZoneAirBalance:OutdoorAir para la zona '#{ nombreZona }'")
+      runner.registerInfo("- Definido objeto ZoneAirBalance:OutdoorAir para la zona '#{nombreZona}'")
       string_objects << "
         ZoneAirBalance:OutdoorAir,
         #{nombreZona} OutdoorAir Balance, !- Name
@@ -52,7 +51,7 @@ def cte_addAirBalance(runner, workspace, string_objects)
         CTER24B_HINF;             !- Induced Outdoor Air Schedule Name
         "
     end
-    runner.registerInfo("* Cambiado(s) #{ idfZones.size } objeto(s) Zone")
+    runner.registerInfo("* Cambiado(s) #{idfZones.size} objeto(s) Zone")
   end
-  return true
+  true
 end

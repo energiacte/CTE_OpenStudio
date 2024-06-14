@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # Copyright (c) 2016 Ministerio de Fomento
 #                    Instituto de Ciencias de la Construcción Eduardo Torroja (IETcc-CSIC)
@@ -29,28 +28,28 @@ require 'csv'
 
 def parseweatherfilename(weatherfile)
   zc, peninsulaocanarias = weatherfile.filename.to_s.sub(/.epw$/, '').split('_')
-  zci, zcv = zc[0..-2], zc[-1]
-  zci = zci.include?('alpha')?  'alfa': zci
-  return zci, zcv, peninsulaocanarias
+  zci = zc[0..-2]
+  zcv = zc[-1]
+  zci = zci.include?('alpha') ? 'alfa' : zci
+  [zci, zcv, peninsulaocanarias]
 end
 
-def cte_groundTemperature(runner, workspace, string_objects)
-
+def cte_groundTemperature(runner, _workspace, string_objects)
   model = runner.lastOpenStudioModel
   if model.empty?
-    runner.registerError("Could not load last OpenStudio model, cannot apply measure.")
-  return false
+    runner.registerError('Could not load last OpenStudio model, cannot apply measure.')
+    return false
   end
 
   model = model.get
   weatherfile = model.weatherFile.get.path.get
   runner.registerInfo("weather file = #{weatherfile}")
   zonaClimaticaInvierno, zonaClimaticaVerano, canarias = parseweatherfilename(weatherfile)
-  runner.registerValue("ZCI", zonaClimaticaInvierno)
-  runner.registerValue("ZCV", zonaClimaticaVerano)
-  runner.registerValue("penisulaocanarias", canarias)
+  runner.registerValue('ZCI', zonaClimaticaInvierno)
+  runner.registerValue('ZCV', zonaClimaticaVerano)
+  runner.registerValue('penisulaocanarias', canarias)
   temperaturaSuelo = getTemperaturasSuelo(runner, zonaClimaticaInvierno, zonaClimaticaVerano, canarias)
-  if not temperaturaSuelo
+  unless temperaturaSuelo
     runner.registerError("No se ha encontrado la temperatura del suelo para la zona climática #{zonaClimaticaInvierno}#{zonaClimaticaVerano} en #{canarias}")
     return false
   end
@@ -61,34 +60,32 @@ def cte_groundTemperature(runner, workspace, string_objects)
     #{temperaturaSuelo},#{temperaturaSuelo},#{temperaturaSuelo},#{temperaturaSuelo},#{temperaturaSuelo},#{temperaturaSuelo},
     #{temperaturaSuelo},#{temperaturaSuelo},#{temperaturaSuelo},#{temperaturaSuelo},#{temperaturaSuelo},#{temperaturaSuelo};
     "
-  return true
+  true
 end
 
 def getTemperaturasSuelo(runner, zonaClimaticaInvierno, zonaClimaticaVerano, canarias)
-  clavecanarias = {'peninsula' => '', 'canarias' => 'c', 'ceutamelilla' => 'c', 'balears' => 'c'}
+  clavecanarias = { 'peninsula' => '', 'canarias' => 'c', 'ceutamelilla' => 'c', 'balears' => 'c' }
   clavedezona = zonaClimaticaInvierno.downcase + zonaClimaticaVerano + clavecanarias[canarias]
   runner.registerInfo("clave de zona --> #{clavedezona}\n")
 
-  filename =  "#{File.dirname(__FILE__)}/temp_suelo_resumen.csv"
-  temperaturasPorZona = Hash.new
+  filename = "#{File.dirname(__FILE__)}/temp_suelo_resumen.csv"
+  temperaturasPorZona = {}
   File.read(filename).each_line do |line|
-    begin
-      csv_line = CSV.parse_line(line.strip, {col_sep: ";", quote_char:"'"})
-      clave = csv_line[0].to_s
-      valor = csv_line[1].to_f
-      temperaturasPorZona[clave] = valor
-    rescue
-      runner.registerInfo("Error al leer datos de temperatura de suelo en línea: #{ line }\n")
-    end
+    csv_line = CSV.parse_line(line.strip, { col_sep: ';', quote_char: "'" })
+    clave = csv_line[0].to_s
+    valor = csv_line[1].to_f
+    temperaturasPorZona[clave] = valor
+  rescue StandardError
+    runner.registerInfo("Error al leer datos de temperatura de suelo en línea: #{line}\n")
   end
 
   if temperaturasPorZona.has_key?(clavedezona)
     temperaturasuelo = temperaturasPorZona[clavedezona]
   else
-    runner.registerInfo( "No se localizan las temperaturas para la clave de zona: #{ clavedezona }\n")
+    runner.registerInfo("No se localizan las temperaturas para la clave de zona: #{clavedezona}\n")
     return false
   end
 
   runner.registerInfo("Temperaturas del suelo: #{temperaturasuelo}")
-  return temperaturasuelo
+  temperaturasuelo
 end

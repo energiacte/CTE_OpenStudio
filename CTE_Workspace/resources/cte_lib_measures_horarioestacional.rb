@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # Copyright (c) 2016 Ministerio de Fomento
 #                    Instituto de Ciencias de la Construcción Eduardo Torroja (IETcc-CSIC)
@@ -26,19 +25,19 @@
 #            Marta Sorribes Gil <msorribes@ietcc.csic.es>
 
 def cte_horarioestacional(runner, workspace)
-  dayligthSavings = workspace.getObjectsByType("RunPeriodControl_DayLightSavingTime".to_IddObjectType)
-  if not dayligthSavings.empty?
-    dayligthSavings.each do | dayligthSaving |
-      runner.registerInfo("  Se ha localizado y modificado una definición de horario de verano")
-      dayligthSaving.setString(0, "Last Sunday in March")
-      dayligthSaving.setString(1, "Last Sunday in October")
+  dayligthSavings = workspace.getObjectsByType('RunPeriodControl_DayLightSavingTime'.to_IddObjectType)
+  if !dayligthSavings.empty?
+    dayligthSavings.each do |dayligthSaving|
+      runner.registerInfo('  Se ha localizado y modificado una definición de horario de verano')
+      dayligthSaving.setString(0, 'Last Sunday in March')
+      dayligthSaving.setString(1, 'Last Sunday in October')
     end
   else
-    dayligthSaving = OpenStudio::IdfObject.new("RunPeriodControl_DayLightSavingTime".to_IddObjectType)
-    runner.registerInfo("Se ha añadido una definición de horario de verano")
-    dayligthSaving.setString(0, "Last Sunday in March")
-    dayligthSaving.setString(1, "Last Sunday in October")
+    dayligthSaving = OpenStudio::IdfObject.new('RunPeriodControl_DayLightSavingTime'.to_IddObjectType)
+    runner.registerInfo('Se ha añadido una definición de horario de verano')
+    dayligthSaving.setString(0, 'Last Sunday in March')
+    dayligthSaving.setString(1, 'Last Sunday in October')
     workspace.addObject(dayligthSaving)
   end
-  return true
+  true
 end
