@@ -113,7 +113,8 @@ end
 
 # Obtén diferencia de altitud con la capital y
 # temperatura de agua de red de la capital para el clima dado
-def get_water_temps(runner, weather_file)
+def get_water_temps(model, runner)
+  weather_file = get_weather(model, runner)
   capital_prov, altitud_emplazamiento = get_site_prov_alt(weather_file)
 
   altitud_capital, temps_agua_red = CTE_TEMPS_MAP[capital_prov]
@@ -135,9 +136,8 @@ end
 
 MESES = %w[enero febrero marzo abril mayo junio julio agosto septiembre octubre noviembre diciembre]
 
-# Introduce perfiles mensuales de la temperatura de agua de red en funcion de la provincia y corregida con la altitud
-# TODO: Detectar caso en el que no está definida la demanda de ACS (no hay circuito) para evitar el fallo (¿Localizar WaterEquipment?).
-def cte_tempaguafria(model, runner, _user_arguments)
+# Devuelve el nombre del clima
+def get_weather(model, runner)
   # Obtenemos el nombre del archivo climático del runner o del modelo
   if runner.lastEpwFilePath.is_initialized
     weather_s = runner.lastEpwFilePath.get.to_s
@@ -154,9 +154,13 @@ def cte_tempaguafria(model, runner, _user_arguments)
   end
   # En algunos casos tenemos un path como: weather_s = file:file/D3_peninsula.epw
   _name, _match, weather_file = weather_s.rpartition('/')
-  weather_file = weather_file.gsub('.epw', '')
+  weather_file.gsub('.epw', '')
+end
 
-  water_temps = get_water_temps(runner, weather_file)
+# Introduce perfiles mensuales de la temperatura de agua de red en funcion de la provincia y corregida con la altitud
+# TODO: Detectar caso en el que no está definida la demanda de ACS (no hay circuito) para evitar el fallo (¿Localizar WaterEquipment?).
+def cte_tempaguafria(model, runner, _user_arguments)
+  water_temps = get_water_temps(model, runner)
   runner.registerValue('CTE Temperaturas de agua de red', '[' + water_temps.join(',') + ']')
 
   conjunto_reglas = model.getScheduleRulesets.find { |schedule_ruleset| schedule_ruleset.name.get == CTE_HORARIOSAGUA }
