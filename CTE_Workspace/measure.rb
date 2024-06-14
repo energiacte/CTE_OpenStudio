@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # Copyright (c) 2016 Ministerio de Fomento
 #                    Instituto de Ciencias de la Construcción Eduardo Torroja (IETcc-CSIC)
@@ -25,63 +24,59 @@
 #            Daniel Jiménez González <dani@ietcc.csic.es>
 #            Marta Sorribes Gil <msorribes@ietcc.csic.es>
 
-require_relative "resources/cte_lib_measures_zoneairbalance.rb"
-require_relative "resources/cte_lib_measures_groundtemperature.rb"
-require_relative "resources/cte_lib_measures_horarioestacional.rb"
+require_relative 'resources/cte_lib_measures_zoneairbalance'
+require_relative 'resources/cte_lib_measures_groundtemperature'
+require_relative 'resources/cte_lib_measures_horarioestacional'
 
 # Medida de OpenStudio (WorkspaceUserScript) que modifica el modelo de EnergyPlus para uso con el CTE
 # Esta medida se aplica a modelos transformados por medidas de modelo CTE
 # y generados a partir de una plantilla apropiada
 class CTE_Workspace < OpenStudio::Ruleset::WorkspaceUserScript
-
   def name
-    return "Aplica las medidas al Workspace"
+    'Aplica las medidas al Workspace'
   end
 
   def description
-    return "Modificaciones del IDF para calculo CTE DB-HE."
+    'Modificaciones del IDF para calculo CTE DB-HE.'
   end
 
   def modeler_description
-    return "Fija temperaturas del terreno, balance de aire exterior y horario de verano."
+    'Fija temperaturas del terreno, balance de aire exterior y horario de verano.'
   end
 
-  def arguments(workspace)
-    args = OpenStudio::Ruleset::OSArgumentVector.new
-
-    return args
+  def arguments(_workspace)
+    OpenStudio::Ruleset::OSArgumentVector.new
   end
 
   def run(workspace, runner, user_arguments)
     super(workspace, runner, user_arguments)
     puts("\nCTE_Workspace measure: Aplicando medida de Workspace.")
-    runner.registerInitialCondition("CTE: aplicando medidas de Workspace")
+    runner.registerInitialCondition('CTE: aplicando medidas de Workspace')
 
     # use the built-in error checking
-    if !runner.validateUserArguments(arguments(workspace), user_arguments)
-      runner.registerError("Parámetros incorrectos")
+    unless runner.validateUserArguments(arguments(workspace), user_arguments)
+      runner.registerError('Parámetros incorrectos')
       return false
     end
 
     string_objects = []
 
-    runner.registerInfo("[1/4] - Introducción de balance de aire exterior")
+    runner.registerInfo('[1/4] - Introducción de balance de aire exterior')
     result = cte_addAirBalance(runner, workspace, string_objects)
     return result unless result == true
 
-    runner.registerInfo("[2/4] - Fija la temperatura del terreno")
+    runner.registerInfo('[2/4] - Fija la temperatura del terreno')
     result = cte_groundTemperature(runner, workspace, string_objects)
     return result unless result == true
 
-
-    runner.registerInfo("[3/4] - Incorpora objetos definidos en cadenas al workspace")
+    runner.registerInfo('[3/4] - Incorpora objetos definidos en cadenas al workspace')
     string_objects.each do |string_object|
-      idfObject = OpenStudio::IdfObject::load(string_object)
+      idfObject = OpenStudio::IdfObject.load(string_object)
       object = idfObject.get
       workspace.addObject(object)
     end
 
-    runner.registerInfo("[4/4] - Introduce el cambio de hora los últimos domingos de marzo y octubre")
+    runner.registerInfo('[4/4] - Introduce el cambio de hora los últimos domingos de marzo y octubre')
     result = cte_horarioestacional(runner, workspace)
     return result unless result == true
 
@@ -89,14 +84,13 @@ class CTE_Workspace < OpenStudio::Ruleset::WorkspaceUserScript
     # SELECT * FROM TabularDataWithStrings WHERE ReportName = 'InitializationSummary' AND TableName = 'HeatTransfer Surface'
     # https://bigladdersoftware.com/epx/docs/23-2/input-output-reference/input-for-output.html#outputsurfaceslist
     # Object names must be in the E+ idd or the OS IDD (ProposedEnergy+.idd)
-    object = OpenStudio::IdfObject.new("Output:Surfaces:List".to_IddObjectType)
+    object = OpenStudio::IdfObject.new('Output:Surfaces:List'.to_IddObjectType)
     sf_list = workspace.addObject(object).get
-    sf_list.setString(0, "DetailsWithVertices")
+    sf_list.setString(0, 'DetailsWithVertices')
 
-    return true
+    true
   end
+end # end the measure
 
-end #end the measure
-
-#this allows the measure to be use by the application
+# this allows the measure to be use by the application
 CTE_Workspace.new.registerWithApplication
