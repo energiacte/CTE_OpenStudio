@@ -26,14 +26,14 @@
 # https://openstudio-sdk-documentation.s3.amazonaws.com/cpp/OpenStudio-3.5.1-doc/model/html/annotated.html
 
 def cte_cambia_g_vidrios(model, runner, user_arguments)
-  runner.registerInfo("CTE: Cambiando la g de huecos")
+  runner.registerInfo('CTE: Cambiando la g de huecos')
 
   # toma el valor de la medida
-  g_vidrios = runner.getDoubleArgumentValue("CTE_g_gl", user_arguments)
+  g_vidrios = runner.getDoubleArgumentValue('CTE_g_gl', user_arguments)
 
   # Con valor cero se dejan los valores que hay
   if g_vidrios < 0.001
-    runner.registerFinalCondition("No se cambia el coeficiente de transmisión térmica global del vidrio (g_gl=0)")
+    runner.registerFinalCondition('No se cambia el coeficiente de transmisión térmica global del vidrio (g_gl=0)')
     return true
   end
 
@@ -43,7 +43,7 @@ def cte_cambia_g_vidrios(model, runner, user_arguments)
   window_construction_names = []
   model.getSpaces.each do |space|
     space.surfaces.each do |surface|
-      next unless surface.outsideBoundaryCondition == "Outdoors" && surface.windExposure == "WindExposed"
+      next unless surface.outsideBoundaryCondition == 'Outdoors' && surface.windExposure == 'WindExposed'
 
       surface.subSurfaces.each do |subsur|
         # añade a lista de huecos
@@ -59,7 +59,8 @@ def cte_cambia_g_vidrios(model, runner, user_arguments)
         # Informamos de tipos no manejados por la medida:
         # NO CONTEMPLADAS:
         # TubularDaylightDomeConstruction, TubularDaylightDiffuserConstruction
-        unless ["FixedWindow", "OperableWindow", "GlassDoor", "Door", "OverheadDoor", "Skylight"].include?(subsur.subSurfaceType.to_s)
+        unless %w[FixedWindow OperableWindow GlassDoor Door OverheadDoor
+                  Skylight].include?(subsur.subSurfaceType.to_s)
           runner.registerWarning("Hueco #{subsur.name.get} con tipo no cubierto por esta medida #{subsur.subSurfaceType}")
         end
       end
@@ -67,7 +68,7 @@ def cte_cambia_g_vidrios(model, runner, user_arguments)
   end
 
   if windows.empty?
-    runner.registerWarning("El modelo no tiene ventanas.")
+    runner.registerWarning('El modelo no tiene ventanas.')
     return true
   end
 
@@ -82,11 +83,11 @@ def cte_cambia_g_vidrios(model, runner, user_arguments)
     # En estos huecos solo hay una única capa (¿?) pero usamos código de muros
     materials_in_construction = window_construction.layers.map.with_index do |layer, i|
       {
-        "name" => layer.name.to_s,
-        "index" => i,
-        "nomass" => !layer.to_MasslessOpaqueMaterial.empty?,
-        "g_value" => layer.to_SimpleGlazing.get.solarHeatGainCoefficient,
-        "mat" => layer
+        'name' => layer.name.to_s,
+        'index' => i,
+        'nomass' => !layer.to_MasslessOpaqueMaterial.empty?,
+        'g_value' => layer.to_SimpleGlazing.get.solarHeatGainCoefficient,
+        'mat' => layer
       }
     end
 
@@ -98,8 +99,8 @@ def cte_cambia_g_vidrios(model, runner, user_arguments)
       return false
     end
 
-    max_SHGC_material = max_mat_hash["mat"] # objeto OS
-    max_SHGC_material_index = max_mat_hash["index"] # indice de la capa
+    max_SHGC_material = max_mat_hash['mat'] # objeto OS
+    max_SHGC_material_index = max_mat_hash['index'] # indice de la capa
 
     # clona material, cambia nombre y g
     new_material = max_SHGC_material.clone(model)
@@ -217,10 +218,9 @@ def cte_cambia_g_vidrios(model, runner, user_arguments)
   # Cambia construcción de huecos a nueva construcción
   windows.each do |window|
     next if window.isConstructionDefaulted || window.construction.empty?
+
     final_construction = constructions_hash_old_new[window.construction.get.name.to_s]
-    if final_construction
-      window.setConstruction(final_construction)
-    end
+    window.setConstruction(final_construction) if final_construction
   end
 
   runner.registerFinalCondition("Modificadas las transmitancias de los huecos en #{final_constructions_array.length} construcciones")

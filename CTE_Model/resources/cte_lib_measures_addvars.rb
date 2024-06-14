@@ -23,7 +23,7 @@
 #            Daniel Jiménez González <dani@ietcc.csic.es>
 
 # Inyecta variables y meters para uso con el CTE
-def cte_addvars(model, runner, user_arguments)
+def cte_addvars(model, runner, _user_arguments)
   # Get initial conditions ==========================================
   meters = model.getOutputMeters
   output_variables = model.getOutputVariables
@@ -34,12 +34,12 @@ def cte_addvars(model, runner, user_arguments)
 
   new_meters = [
     # ["Propane:Facility", "RunPeriod"], # this meter exists in the exampleModel
-    ["DistrictHeating:Facility", "RunPeriod"],
-    ["DistrictCooling:Facility", "RunPeriod"],
-    ["Fans:Electricity", "Monthly", "*"],
-    ["InteriorLights:Electricity", "Monthly", "*"],
-    ["Heating:DistrictHeating", "Hourly", "*"],
-    ["Cooling:DistrictCooling", "Hourly", "*"]
+    ['DistrictHeating:Facility', 'RunPeriod'],
+    ['DistrictCooling:Facility', 'RunPeriod'],
+    ['Fans:Electricity', 'Monthly', '*'],
+    ['InteriorLights:Electricity', 'Monthly', '*'],
+    ['Heating:DistrictHeating', 'Hourly', '*'],
+    ['Cooling:DistrictCooling', 'Hourly', '*']
   ]
 
   existing_meters = Hash[meters.map { |meter| [meter.name, meter] }.compact]
@@ -65,44 +65,44 @@ def cte_addvars(model, runner, user_arguments)
 
   new_oputput_variables = [
     # Monthly variables
-    ["Site Outdoor Air Drybulb Temperature", "Monthly", "*"],
-    ["Surface Inside Face Conduction Heat Transfer Energy", "Monthly", "*"],
-    ["Surface Window Heat Gain Energy", "Monthly", "*"],
-    ["Surface Window Heat Loss Energy", "Monthly", "*"],
-    ["Surface Window Transmitted Solar Radiation Energy", "Monthly", "*"],
-    ["Zone Lights Electricity Energy", "Monthly", "*"],
-    ["Zone Total Internal Total Heating Energy", "Monthly", "*"],
-    ["Zone Ideal Loads Zone Total Heating Energy", "Monthly", "*"],
-    ["Zone Ideal Loads Zone Total Cooling Energy", "Monthly", "*"],
-    ["Zone Ideal Loads Heat Recovery Active Time", "Hourly", "*"],
-    ["Zone Ideal Loads Heat Recovery Active Time", "Daily", "*"],
-    ["Zone Ideal Loads Heat Recovery Active Time", "Monthly", "*"],
-    ["Zone Ideal Loads Economizer Active Time", "Hourly", "*"],
-    ["Zone Ideal Loads Economizer Active Time", "Daily", "*"],
-    ["Zone Ideal Loads Economizer Active Time", "Monthly", "*"],
-    ["Zone Ideal Loads Supply Air Standard Density Volume Flow Rate", "Hourly", "*"],
-    ["Zone Ideal Loads Outdoor Air Standard Density Volume Flow Rate", "Hourly", "*"],
-    ["Zone Mechanical Ventilation Current Density Volume", "Hourly", "*"],
-    ["Zone Mechanical Ventilation Air Changes per Hour", "Hourly", "*"],
-    ["Zone Infiltration Current Density Volume Flow Rate", "Monthly", "*"],
-    ["Zone Infiltration Total Heat Loss Energy", "Monthly", "*"],
-    ["Zone Infiltration Total Heat Gain Energy", "Monthly", "*"],
-    ["Zone Infiltration Air Change Rate", "Monthly", "*"],
-    ["Zone Combined Outdoor Air Sensible Heat Loss Energy", "Daily", "*"],
-    ["Zone Combined Outdoor Air Sensible Heat Loss Energy", "Monthly", "*"],
-    ["Zone Combined Outdoor Air Sensible Heat Gain Energy", "Monthly", "*"],
-    ["Zone Combined Outdoor Air Total Heat Loss Energy", "Hourly", "*"],
-    ["Zone Combined Outdoor Air Total Heat Loss Energy", "Monthly", "*"],
-    ["Zone Combined Outdoor Air Total Heat Gain Energy", "Hourly", "*"],
-    ["Zone Combined Outdoor Air Total Heat Gain Energy", "Monthly", "*"],
-    ["Zone Combined Outdoor Air Changes per Hour", "Hourly", "*"],
-    ["Zone Combined Outdoor Air Changes per Hour", "Daily", "*"],
-    ["Zone Combined Outdoor Air Changes per Hour", "Monthly", "*"],
-    ["Zone Combined Outdoor Air Fan Electric Energy", "Monthly", "*"],
+    ['Site Outdoor Air Drybulb Temperature', 'Monthly', '*'],
+    ['Surface Inside Face Conduction Heat Transfer Energy', 'Monthly', '*'],
+    ['Surface Window Heat Gain Energy', 'Monthly', '*'],
+    ['Surface Window Heat Loss Energy', 'Monthly', '*'],
+    ['Surface Window Transmitted Solar Radiation Energy', 'Monthly', '*'],
+    ['Zone Lights Electricity Energy', 'Monthly', '*'],
+    ['Zone Total Internal Total Heating Energy', 'Monthly', '*'],
+    ['Zone Ideal Loads Zone Total Heating Energy', 'Monthly', '*'],
+    ['Zone Ideal Loads Zone Total Cooling Energy', 'Monthly', '*'],
+    ['Zone Ideal Loads Heat Recovery Active Time', 'Hourly', '*'],
+    ['Zone Ideal Loads Heat Recovery Active Time', 'Daily', '*'],
+    ['Zone Ideal Loads Heat Recovery Active Time', 'Monthly', '*'],
+    ['Zone Ideal Loads Economizer Active Time', 'Hourly', '*'],
+    ['Zone Ideal Loads Economizer Active Time', 'Daily', '*'],
+    ['Zone Ideal Loads Economizer Active Time', 'Monthly', '*'],
+    ['Zone Ideal Loads Supply Air Standard Density Volume Flow Rate', 'Hourly', '*'],
+    ['Zone Ideal Loads Outdoor Air Standard Density Volume Flow Rate', 'Hourly', '*'],
+    ['Zone Mechanical Ventilation Current Density Volume', 'Hourly', '*'],
+    ['Zone Mechanical Ventilation Air Changes per Hour', 'Hourly', '*'],
+    ['Zone Infiltration Current Density Volume Flow Rate', 'Monthly', '*'],
+    ['Zone Infiltration Total Heat Loss Energy', 'Monthly', '*'],
+    ['Zone Infiltration Total Heat Gain Energy', 'Monthly', '*'],
+    ['Zone Infiltration Air Change Rate', 'Monthly', '*'],
+    ['Zone Combined Outdoor Air Sensible Heat Loss Energy', 'Daily', '*'],
+    ['Zone Combined Outdoor Air Sensible Heat Loss Energy', 'Monthly', '*'],
+    ['Zone Combined Outdoor Air Sensible Heat Gain Energy', 'Monthly', '*'],
+    ['Zone Combined Outdoor Air Total Heat Loss Energy', 'Hourly', '*'],
+    ['Zone Combined Outdoor Air Total Heat Loss Energy', 'Monthly', '*'],
+    ['Zone Combined Outdoor Air Total Heat Gain Energy', 'Hourly', '*'],
+    ['Zone Combined Outdoor Air Total Heat Gain Energy', 'Monthly', '*'],
+    ['Zone Combined Outdoor Air Changes per Hour', 'Hourly', '*'],
+    ['Zone Combined Outdoor Air Changes per Hour', 'Daily', '*'],
+    ['Zone Combined Outdoor Air Changes per Hour', 'Monthly', '*'],
+    ['Zone Combined Outdoor Air Fan Electric Energy', 'Monthly', '*'],
     # Esta variable no aparece en el rdd ya que se desactiva
     # al introducir el objeto ZoneAirBalance:OutdoorAir en CTE_Workspace
     # Ver https://bigladdersoftware.com/epx/docs/8-7/input-output-reference/group-airflow.html#outputs-1-002
-    ["Zone Ventilation Air Change Rate", "Monthly", "*"]
+    ['Zone Ventilation Air Change Rate', 'Monthly', '*']
   ]
 
   new_oputput_variables.each do |variable_name, reporting_frequency, key|

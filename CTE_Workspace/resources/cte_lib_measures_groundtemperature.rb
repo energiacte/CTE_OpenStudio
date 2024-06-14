@@ -79,7 +79,7 @@ def getTemperaturasSuelo(runner, zonaClimaticaInvierno, zonaClimaticaVerano, can
     runner.registerInfo("Error al leer datos de temperatura de suelo en línea: #{line}\n")
   end
 
-  if temperaturasPorZona.has_key?(clavedezona)
+  if temperaturasPorZona.key?(clavedezona)
     temperaturasuelo = temperaturasPorZona[clavedezona]
   else
     runner.registerInfo("No se localizan las temperaturas para la clave de zona: #{clavedezona}\n")

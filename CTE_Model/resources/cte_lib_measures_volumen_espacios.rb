@@ -23,10 +23,11 @@
 #            Daniel Jiménez González <dani@ietcc.csic.es>
 #
 
-def cte_volumen_espacios(model, runner)
+def cte_volumen_espacios(model, _runner)
   thermal_zones = model.getThermalZones
   thermal_zones.each do |zone|
     next unless zone.useIdealAirLoads
+
     volume = 0
     zone.spaces.each do |space|
       volume += space.volume
