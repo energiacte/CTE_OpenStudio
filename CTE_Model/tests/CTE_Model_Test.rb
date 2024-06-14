@@ -78,7 +78,7 @@ class CTE_Model_Test < MiniTest::Test
 
     # load the test model
     translator = OpenStudio::OSVersion::VersionTranslator.new
-    path = OpenStudio::Path.new(File.dirname(__FILE__) + '/terciario.osm')
+    path = OpenStudio::Path.new("#{File.dirname(__FILE__)}/terciario.osm")
     model = translator.loadModel(path)
     assert(!model.empty?)
     model = model.get
@@ -121,7 +121,7 @@ class CTE_Model_Test < MiniTest::Test
     assert_in_delta(6248.9, ela_total, 1.0)
 
     # save the model to test output directory
-    output_file_path = OpenStudio::Path.new(File.dirname(__FILE__) + '/output/test_output_terciario.osm')
+    output_file_path = OpenStudio::Path.new("#{File.dirname(__FILE__)}/output/test_output_terciario.osm")
     model.save(output_file_path, true)
   end
 
@@ -135,7 +135,7 @@ class CTE_Model_Test < MiniTest::Test
 
     # load the test model
     translator = OpenStudio::OSVersion::VersionTranslator.new
-    path = OpenStudio::Path.new(File.dirname(__FILE__) + '/residencial.osm')
+    path = OpenStudio::Path.new("#{File.dirname(__FILE__)}/residencial.osm")
     model = translator.loadModel(path).get
 
     # get arguments
@@ -169,7 +169,7 @@ class CTE_Model_Test < MiniTest::Test
     assert_in_delta(5624.88, get_attrb(result, 'cte_ela_total_espacios'), 0.1)
 
     # save the model to test output directory
-    output_file_path = OpenStudio::Path.new(File.dirname(__FILE__) + '/output/test_output_residencial.osm')
+    output_file_path = OpenStudio::Path.new("#{File.dirname(__FILE__)}/output/test_output_residencial.osm")
     model.save(output_file_path, true)
   end
 end
