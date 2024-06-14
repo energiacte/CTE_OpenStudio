@@ -62,7 +62,6 @@ def get_weather(runner)
   if runner.lastEpwFilePath.is_initialized
     weather_s = runner.lastEpwFilePath.get.to_s
     runner.registerValue('Clima obtenido del runner: ', weather_s)
-    puts('XXXX')
   else
     model = runner.lastOpenStudioModel
     if model.empty?
@@ -74,11 +73,9 @@ def get_weather(runner)
     if model.getWeatherFile.path.is_initialized
       weather_s = model.getWeatherFile.path.get.to_s
       runner.registerValue('Clima obtenido del modelo (WeatherFile):', weather_s)
-      puts('YYYY')
     elsif model.getSite.name.is_initialized
       weather_s = model.getSite.name.get.to_s
       runner.registerValue('Clima obtenido del Site:', weather_s)
-      puts('ZZZZ')
     else
       runner.registerError('No se ha localizado el clima')
       return false
