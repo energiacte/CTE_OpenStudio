@@ -24,13 +24,13 @@
 #
 # Usa con ruby CTE_Model_Test.rb --verbose para salida adicional
 
-require "openstudio"
-require "openstudio/measure/ShowRunnerOutput"
-require "minitest/autorun"
-require_relative "../measure"
-require "fileutils"
-require "json"
-require "pathname"
+require 'openstudio'
+require 'openstudio/measure/ShowRunnerOutput'
+require 'minitest/autorun'
+require_relative '../measure'
+require 'fileutils'
+require 'json'
+require 'pathname'
 
 # https://s3.amazonaws.com/openstudio-sdk-documentation/cpp/OpenStudio-3.6.1-doc/measure/html/classopenstudio_1_1measure_1_1_o_s_argument.html
 def get_attrb(result, nombre)
@@ -71,14 +71,14 @@ class CTE_Model_Test < MiniTest::Test
     # create an instance of the measure
     measure = CTE_Model.new
 
-    puts("Iniciando el test CTE_Model_Terciario")
+    puts('Iniciando el test CTE_Model_Terciario')
 
     # create an instance of a runner
     runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
 
     # load the test model
     translator = OpenStudio::OSVersion::VersionTranslator.new
-    path = OpenStudio::Path.new(File.dirname(__FILE__) + "/terciario.osm")
+    path = OpenStudio::Path.new(File.dirname(__FILE__) + '/terciario.osm')
     model = translator.loadModel(path)
     assert(!model.empty?)
     model = model.get
@@ -90,7 +90,7 @@ class CTE_Model_Test < MiniTest::Test
     # create hash of argument values.
     # If the argument has a default that you want to use, you don't need it in the hash
     args_hash = {}
-    args_hash["CTE_C_huecos_m3hm2"] = 50
+    args_hash['CTE_C_huecos_m3hm2'] = 50
     # args_hash["provincia"] = "Madrid"
     # args_hash["altitud"] = 650.0
     # using defaults values from measure.rb for other arguments
@@ -98,9 +98,7 @@ class CTE_Model_Test < MiniTest::Test
     # populate argument with specified hash value if specified
     arguments.each do |arg|
       temp_arg_var = arg.clone
-      if args_hash[arg.name]
-        assert(temp_arg_var.setValue(args_hash[arg.name]))
-      end
+      assert(temp_arg_var.setValue(args_hash[arg.name])) if args_hash[arg.name]
       argument_map[arg.name] = temp_arg_var
     end
 
@@ -112,32 +110,32 @@ class CTE_Model_Test < MiniTest::Test
     show_output(result) if @@verbose
 
     # Asserts de condiciones
-    assert_equal("Success", result.value.valueName)
+    assert_equal('Success', result.value.valueName)
 
     # attributes = JSON.parse(OpenStudio::to_json(result.attributes))
     # ela_total = attributes['attributes']['cte_ela_total_espacios']
 
-    ela_total = get_attrb(result, "cte_ela_total_espacios")
+    ela_total = get_attrb(result, 'cte_ela_total_espacios')
     # https://s3.amazonaws.com/openstudio-sdk-documentation/cpp/OpenStudio-3.6.1-doc/measure/html/classopenstudio_1_1measure_1_1_o_s_argument.html
     # result.attributes.find {|e| e.name == 'cte_ela_total_espacios'}.valueAsDouble
     assert_in_delta(6248.9, ela_total, 1.0)
 
     # save the model to test output directory
-    output_file_path = OpenStudio::Path.new(File.dirname(__FILE__) + "/output/test_output_terciario.osm")
+    output_file_path = OpenStudio::Path.new(File.dirname(__FILE__) + '/output/test_output_terciario.osm')
     model.save(output_file_path, true)
   end
 
   def test_CTE_Model_residencial
     # create an instance of the measure
     measure = CTE_Model.new
-    puts("Iniciando el test CTE_Model_residencial")
+    puts('Iniciando el test CTE_Model_residencial')
 
     # create an instance of a runner
     runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
 
     # load the test model
     translator = OpenStudio::OSVersion::VersionTranslator.new
-    path = OpenStudio::Path.new(File.dirname(__FILE__) + "/residencial.osm")
+    path = OpenStudio::Path.new(File.dirname(__FILE__) + '/residencial.osm')
     model = translator.loadModel(path).get
 
     # get arguments
@@ -147,16 +145,14 @@ class CTE_Model_Test < MiniTest::Test
     # create hash of argument values.
     # If the argument has a default that you want to use, you don't need it in the hash
     args_hash = {}
-    args_hash["CTE_Uso_edificio"] = "Residencial"
-    args_hash["CTE_C_huecos_m3hm2"] = 50
+    args_hash['CTE_Uso_edificio'] = 'Residencial'
+    args_hash['CTE_C_huecos_m3hm2'] = 50
     # using defaults values from measure.rb for other arguments
 
     # populate argument with specified hash value if specified
     arguments.each do |arg|
       temp_arg_var = arg.clone
-      if args_hash[arg.name]
-        assert(temp_arg_var.setValue(args_hash[arg.name]))
-      end
+      assert(temp_arg_var.setValue(args_hash[arg.name])) if args_hash[arg.name]
       argument_map[arg.name] = temp_arg_var
     end
 
@@ -167,13 +163,13 @@ class CTE_Model_Test < MiniTest::Test
     # Muestra resultados extra si se pasa --verbose
     show_output(result) if @@verbose
 
-    assert(result.value.valueName == "Success")
+    assert(result.value.valueName == 'Success')
 
-    assert_equal("D3_peninsula", get_attrb_str(result, "cte_weather_file"))
-    assert_in_delta(5624.88, get_attrb(result, "cte_ela_total_espacios"), 0.1)
+    assert_equal('D3_peninsula', get_attrb_str(result, 'cte_weather_file'))
+    assert_in_delta(5624.88, get_attrb(result, 'cte_ela_total_espacios'), 0.1)
 
     # save the model to test output directory
-    output_file_path = OpenStudio::Path.new(File.dirname(__FILE__) + "/output/test_output_residencial.osm")
+    output_file_path = OpenStudio::Path.new(File.dirname(__FILE__) + '/output/test_output_residencial.osm')
     model.save(output_file_path, true)
   end
 end

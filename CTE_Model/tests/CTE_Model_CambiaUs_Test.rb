@@ -22,13 +22,13 @@
 # Author(s): Rafael Villar Burke <pachi@ietcc.csic.es>,
 #            Daniel Jiménez González <dani@ietcc.csic.es>
 
-require "openstudio"
-require "openstudio/measure/ShowRunnerOutput"
-require_relative "../measure"
-require "minitest/autorun"
-require "fileutils"
-require "json"
-require "pathname"
+require 'openstudio'
+require 'openstudio/measure/ShowRunnerOutput'
+require_relative '../measure'
+require 'minitest/autorun'
+require 'fileutils'
+require 'json'
+require 'pathname'
 
 # TODO: tendríamos que testear en cambia U opacos:
 # - que la medida se aplica pero no queremos cambiar la U
@@ -50,7 +50,7 @@ end
 def get_surface_u(model, uuid)
   handle = OpenStudio.toUUID(uuid)
   objeto = model.getModelObject(handle).get
-  if objeto.iddObject.name == "OS:Surface"
+  if objeto.iddObject.name == 'OS:Surface'
     objeto.to_Surface.get.construction.get.thermalConductance.to_f
   else # objeto.iddObject.name == "OS:SubSurface"
     objeto.to_SubSurface.get.construction.get.uFactor.to_f
@@ -61,7 +61,7 @@ def get_solar_heat_gain_coefficient(model, uuid)
   handle = OpenStudio.toUUID(uuid)
   objeto = model.getModelObject(handle).get
 
-  return false if objeto.iddObject.name != "OS:SubSurface"
+  return false if objeto.iddObject.name != 'OS:SubSurface'
 
   construction = objeto.to_SubSurface.get.construction.get.to_Construction.get
   construction.layers[0].to_SimpleGlazing.get.solarHeatGainCoefficient
@@ -71,8 +71,13 @@ end
 def find_windows(model)
   model.getSpaces.flat_map do |space|
     space.surfaces.flat_map do |surface|
-      next unless surface.outsideBoundaryCondition == "Outdoors" && surface.windExposure == "WindExposed"
-      surface.subSurfaces.map { |window| window.handle.to_s if ["FixedWindow", "OperableWindow", "GlassDoor", "Door", "OverheadDoor", "Skylight"].include?(window.subSurfaceType.to_s) }
+      next unless surface.outsideBoundaryCondition == 'Outdoors' && surface.windExposure == 'WindExposed'
+
+      surface.subSurfaces.map do |window|
+        if %w[FixedWindow OperableWindow GlassDoor Door OverheadDoor Skylight].include?(window.subSurfaceType.to_s)
+          window.handle.to_s
+        end
+      end
     end
   end.compact
 end
@@ -83,7 +88,10 @@ end
 def find_opaques(model)
   model.getSpaces.flat_map do |space|
     space.surfaces.map do |surface|
-      [surface.handle.to_s, surface.surfaceType.to_s, surface.outsideBoundaryCondition.to_s] if ["Outdoors", "Ground"].include?(surface.outsideBoundaryCondition) && !surface.name.to_s.upcase.include?("PT_") && !surface.name.to_s.upcase.include?("_PT")
+      if %w[Outdoors Ground].include?(surface.outsideBoundaryCondition) &&
+         !surface.name.to_s.upcase.include?('PT_') && !surface.name.to_s.upcase.include?('_PT')
+        [surface.handle.to_s, surface.surfaceType.to_s, surface.outsideBoundaryCondition.to_s]
+      end
     end
   end.compact
 end
@@ -111,21 +119,19 @@ class CTE_CambiaUs_Test < MiniTest::Test
     # create an instance of the measure
     measure = CTE_Model.new
 
-    runner, model = get_runner_model(File.dirname(__FILE__) + "/test_N_R01_unif_adosada.osm")
+    runner, model = get_runner_model(File.dirname(__FILE__) + '/test_N_R01_unif_adosada.osm')
     arguments = measure.arguments(model)
     argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(arguments)
 
     # create hash of argument values. If the argument has a default that you want to use, you don't need it in the hash
     args_hash = {}
-    args_hash["CTE_U_huecos"] = 0.62
-    args_hash["CTE_g_gl"] = 0.65
+    args_hash['CTE_U_huecos'] = 0.62
+    args_hash['CTE_g_gl'] = 0.65
 
     # populate argument with specified hash value if specified
     arguments.each do |arg|
       temp_arg_var = arg.clone
-      if args_hash[arg.name]
-        assert(temp_arg_var.setValue(args_hash[arg.name]))
-      end
+      assert(temp_arg_var.setValue(args_hash[arg.name])) if args_hash[arg.name]
       argument_map[arg.name] = temp_arg_var
     end
 
@@ -137,13 +143,13 @@ class CTE_CambiaUs_Test < MiniTest::Test
     show_output(result) if @@verbose
 
     # Asserts de condiciones
-    assert_equal("Success", result.value.valueName)
+    assert_equal('Success', result.value.valueName)
 
     find_windows(model).each do |uuid|
       g_final = get_solar_heat_gain_coefficient(model, uuid)
-      assert_in_delta(args_hash["CTE_g_gl"], g_final, 0.001, "uuid -> #{uuid}")
+      assert_in_delta(args_hash['CTE_g_gl'], g_final, 0.001, "uuid -> #{uuid}")
       u_final = get_surface_u(model, uuid)
-      assert_in_delta(args_hash["CTE_U_huecos"], u_final, 0.001, "uuid -> #{uuid}")
+      assert_in_delta(args_hash['CTE_U_huecos'], u_final, 0.001, "uuid -> #{uuid}")
     end
   end
 
@@ -151,24 +157,22 @@ class CTE_CambiaUs_Test < MiniTest::Test
     # create an instance of the measure
     measure = CTE_Model.new
 
-    runner, model = get_runner_model(File.dirname(__FILE__) + "/test_N_R01_unif_adosada.osm")
+    runner, model = get_runner_model(File.dirname(__FILE__) + '/test_N_R01_unif_adosada.osm')
     arguments = measure.arguments(model)
     argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(arguments)
 
     # create hash of argument values.
     # If the argument has a default that you want to use, you don't need it in the hash
     args_hash = {}
-    args_hash["CTE_U_muros"] = 0.0
-    args_hash["CTE_U_cubiertas"] = 0
-    args_hash["CTE_U_suelos"] = "0"
-    args_hash["CTE_U_huecos"] = 0
+    args_hash['CTE_U_muros'] = 0.0
+    args_hash['CTE_U_cubiertas'] = 0
+    args_hash['CTE_U_suelos'] = '0'
+    args_hash['CTE_U_huecos'] = 0
 
     # populate argument with specified hash value if specified
     arguments.each do |arg|
       temp_arg_var = arg.clone
-      if args_hash[arg.name]
-        assert(temp_arg_var.setValue(args_hash[arg.name]))
-      end
+      assert(temp_arg_var.setValue(args_hash[arg.name])) if args_hash[arg.name]
       argument_map[arg.name] = temp_arg_var
     end
 
@@ -185,7 +189,7 @@ class CTE_CambiaUs_Test < MiniTest::Test
     show_output(result) if @@verbose
 
     # Asserts de condiciones
-    assert_equal("Success", result.value.valueName)
+    assert_equal('Success', result.value.valueName)
 
     initial_values.each do |uuid, u_inicial|
       u_final = get_surface_u(model, uuid)
@@ -197,41 +201,39 @@ class CTE_CambiaUs_Test < MiniTest::Test
     # create an instance of the measure
     measure = CTE_Model.new
 
-    runner, model = get_runner_model(File.dirname(__FILE__) + "/test_N_R01_unif_adosada.osm")
+    runner, model = get_runner_model(File.dirname(__FILE__) + '/test_N_R01_unif_adosada.osm')
     arguments = measure.arguments(model)
     argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(arguments)
 
     # create hash of argument values.
     # If the argument has a default that you want to use, you don't need it in the hash
     args_hash = {}
-    args_hash["CTE_U_muros"] = 0.2
-    args_hash["CTE_U_cubiertas"] = 0.3
-    args_hash["CTE_U_suelos"] = 0.40
-    args_hash["CTE_U_huecos"] = 0.62
-    args_hash["CTE_g_gl"] = 0.65
+    args_hash['CTE_U_muros'] = 0.2
+    args_hash['CTE_U_cubiertas'] = 0.3
+    args_hash['CTE_U_suelos'] = 0.40
+    args_hash['CTE_U_huecos'] = 0.62
+    args_hash['CTE_g_gl'] = 0.65
 
     # populate argument with specified hash value if specified
     arguments.each do |arg|
       temp_arg_var = arg.clone
-      if args_hash[arg.name]
-        assert(temp_arg_var.setValue(args_hash[arg.name]))
-      end
+      assert(temp_arg_var.setValue(args_hash[arg.name])) if args_hash[arg.name]
       argument_map[arg.name] = temp_arg_var
     end
 
     measure.run(model, runner, argument_map)
     result = runner.result
 
-    assert_equal("Success", result.value.valueName)
+    assert_equal('Success', result.value.valueName)
 
     # puts(find_opaques(model))
 
     transmitancias = {
-      ["Wall", "Outdoors"] => args_hash["CTE_U_muros"],
-      ["Wall", "Ground"] => 1 / (1 / args_hash["CTE_U_muros"] - 0.5),
-      ["RoofCeiling", "Outdoors"] => args_hash["CTE_U_cubiertas"],
-      ["Floor", "Ground"] => 1 / (1 / args_hash["CTE_U_suelos"] - 0.5),
-      ["Floor", "Outdoors"] => args_hash["CTE_U_suelos"],
+      %w[Wall Outdoors] => args_hash['CTE_U_muros'],
+      %w[Wall Ground] => 1 / (1 / args_hash['CTE_U_muros'] - 0.5),
+      %w[RoofCeiling Outdoors] => args_hash['CTE_U_cubiertas'],
+      %w[Floor Ground] => 1 / (1 / args_hash['CTE_U_suelos'] - 0.5),
+      %w[Floor Outdoors] => args_hash['CTE_U_suelos']
     }
 
     find_opaques(model).each do |uuid, type, boundary|
