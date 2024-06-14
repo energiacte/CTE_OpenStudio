@@ -71,15 +71,16 @@ class CTE_Workspace < OpenStudio::Ruleset::WorkspaceUserScript
 
     runner.registerInfo('[3/4] - Incorpora objetos definidos en cadenas al workspace')
     string_objects.each do |string_object|
-      idfObject = OpenStudio::IdfObject.load(string_object)
-      object = idfObject.get
+      object = OpenStudio::IdfObject.load(string_object).get
       workspace.addObject(object)
     end
 
     runner.registerInfo('[4/4] - Introduce el cambio de hora los últimos domingos de marzo y octubre')
     result = cte_horarioestacional(runner, workspace)
+
     return result unless result == true
 
+    # TODO: eliminar para reducir tamaño
     # Añade report con detalles de vértices en superficies
     # SELECT * FROM TabularDataWithStrings WHERE ReportName = 'InitializationSummary' AND TableName = 'HeatTransfer Surface'
     # https://bigladdersoftware.com/epx/docs/23-2/input-output-reference/input-for-output.html#outputsurfaceslist
@@ -90,7 +91,7 @@ class CTE_Workspace < OpenStudio::Ruleset::WorkspaceUserScript
 
     true
   end
-end # end the measure
+end
 
 # this allows the measure to be use by the application
 CTE_Workspace.new.registerWithApplication
