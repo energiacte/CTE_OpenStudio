@@ -31,7 +31,7 @@ require_relative 'resources/cte_lib_measures_horarioestacional'
 # Medida de OpenStudio (WorkspaceUserScript) que modifica el modelo de EnergyPlus para uso con el CTE
 # Esta medida se aplica a modelos transformados por medidas de modelo CTE
 # y generados a partir de una plantilla apropiada
-class CTE_Workspace < OpenStudio::Ruleset::WorkspaceUserScript
+class CTE_Workspace < OpenStudio::Measure::EnergyPlusMeasure
   def name
     'Aplica las medidas al Workspace'
   end
@@ -45,7 +45,7 @@ class CTE_Workspace < OpenStudio::Ruleset::WorkspaceUserScript
   end
 
   def arguments(_workspace)
-    OpenStudio::Ruleset::OSArgumentVector.new
+    OpenStudio::Measure::OSArgumentVector.new
   end
 
   def run(workspace, runner, user_arguments)

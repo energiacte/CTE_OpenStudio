@@ -35,7 +35,7 @@ class CTE_Workspace_Test < MiniTest::Test
     # ~ args_hash["some_integer_we_need"] = 10
     # ~ args_hash["some_double_we_need"] = 10.0
     # ~ args_hash["a_bool_argument"] = true
-    argument_map = OpenStudio::Ruleset.convertOSArgumentVectorToMap(arguments)
+    argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(arguments)
 
     # assert_equal(1, arguments.size)
     # assert_equal("space_name", arguments[0].name)
