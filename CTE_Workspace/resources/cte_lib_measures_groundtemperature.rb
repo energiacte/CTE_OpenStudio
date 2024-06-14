@@ -27,7 +27,7 @@
 require 'csv'
 
 def parseweatherfilename(weatherfile)
-  zc, peninsulaocanarias = weatherfile.filename.to_s.sub(/.epw$/, '').split('_')
+  zc, peninsulaocanarias = weatherfile.split('_')
   zci = zc[0..-2]
   zcv = zc[-1]
   zci = zci.include?('alpha') ? 'alfa' : zci
@@ -35,14 +35,7 @@ def parseweatherfilename(weatherfile)
 end
 
 def cte_groundTemperature(runner, _workspace, string_objects)
-  model = runner.lastOpenStudioModel
-  if model.empty?
-    runner.registerError('Could not load last OpenStudio model, cannot apply measure.')
-    return false
-  end
-
-  model = model.get
-  weatherfile = model.weatherFile.get.path.get
+  weatherfile = get_weather(runner)
   runner.registerInfo("weather file = #{weatherfile}")
   zonaClimaticaInvierno, zonaClimaticaVerano, canarias = parseweatherfilename(weatherfile)
   runner.registerValue('ZCI', zonaClimaticaInvierno)
@@ -61,6 +54,39 @@ def cte_groundTemperature(runner, _workspace, string_objects)
     #{temperaturaSuelo},#{temperaturaSuelo},#{temperaturaSuelo},#{temperaturaSuelo},#{temperaturaSuelo},#{temperaturaSuelo};
     "
   true
+end
+
+# Devuelve el nombre del clima
+def get_weather(runner)
+  # Obtenemos el nombre del archivo climático del runner o del modelo
+  if runner.lastEpwFilePath.is_initialized
+    weather_s = runner.lastEpwFilePath.get.to_s
+    runner.registerValue('Clima obtenido del runner: ', weather_s)
+    puts('XXXX')
+  else
+    model = runner.lastOpenStudioModel
+    if model.empty?
+      runner.registerError('Could not load last OpenStudio model, cannot find climate.')
+      return false
+    end
+
+    model = model.get
+    if model.getWeatherFile.path.is_initialized
+      weather_s = model.getWeatherFile.path.get.to_s
+      runner.registerValue('Clima obtenido del modelo (WeatherFile):', weather_s)
+      puts('YYYY')
+    elsif model.getSite.name.is_initialized
+      weather_s = model.getSite.name.get.to_s
+      runner.registerValue('Clima obtenido del Site:', weather_s)
+      puts('ZZZZ')
+    else
+      runner.registerError('No se ha localizado el clima')
+      return false
+    end
+  end
+  # En algunos casos tenemos un path como: weather_s = file:file/D3_peninsula.epw
+  _name, _match, weather_file = weather_s.rpartition('/')
+  weather_file.gsub('.epw', '')
 end
 
 def getTemperaturasSuelo(runner, zonaClimaticaInvierno, zonaClimaticaVerano, canarias)

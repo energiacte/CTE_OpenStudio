@@ -47,8 +47,9 @@ class CTE_Workspace_Test < MiniTest::Test
       argument_map[arg.name] = temp_arg_var
     end
 
-    model_path = "#{File.dirname(__FILE__)}/7_plurif_BLOQUE_4_ALTURAS.osm"
-    runner.setLastOpenStudioModelPath(OpenStudio::Path.new(model_path))
+    # Asignamos clima
+    epw_path = "#{File.dirname(__FILE__)}/D3_peninsula.epw"
+    runner.setLastEpwFilePath(OpenStudio::Path.new(epw_path))
 
     measure.run(workspace, runner, argument_map)
     result = runner.result
