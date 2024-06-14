@@ -6,6 +6,48 @@ require 'fileutils'
 require_relative '../measure'
 
 class CTE_Workspace_Test < MiniTest::Test
+  def test_Workspace_with_model
+    # create an instance of the measure
+    measure = CTE_Workspace.new
+
+    puts('Iniciando test_Workspace con modelo')
+
+    # create an instance of a runner
+    runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
+
+    # load the test model
+    translator = OpenStudio::OSVersion::VersionTranslator.new
+    path = OpenStudio::Path.new("#{File.dirname(__FILE__)}/RU04_P1.osm")
+    model = translator.loadModel(path)
+    assert(!model.empty?)
+    model = model.get
+
+    # forward translate OSM file to IDF file
+    ft = OpenStudio::EnergyPlus::ForwardTranslator.new
+    workspace = ft.translateModel(model)
+
+    # get arguments and test that they are what we are expecting
+    arguments = measure.arguments(workspace)
+    # create hash of argument values
+    argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(arguments)
+
+    # TODO: esto es lo que no hacemos igual en un osw
+    # TODO: pensar qué ocurre normalmente para ajustar el get_weather en la medida (y en CTE_Model)
+    # Asignamos clima
+    epw_path = "#{File.dirname(__FILE__)}/D3_peninsula.epw"
+    runner.setLastEpwFilePath(OpenStudio::Path.new(epw_path))
+
+    measure.run(workspace, runner, argument_map)
+    result = runner.result
+    show_output(result)
+
+    assert(result.value.valueName == 'Success')
+
+    # save the workspace to output directory
+    output_path = "#{File.dirname(__FILE__)}/output/RU04_P1_output.idf"
+    workspace.save(OpenStudio::Path.new(output_path), true)
+  end
+
   def test_Workspace
     # create an instance of the measure
     measure = CTE_Workspace.new
