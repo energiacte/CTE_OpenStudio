@@ -80,15 +80,6 @@ class CTE_Workspace < OpenStudio::Measure::EnergyPlusMeasure
 
     return result unless result == true
 
-    # TODO: eliminar para reducir tamaño
-    # Añade report con detalles de vértices en superficies
-    # SELECT * FROM TabularDataWithStrings WHERE ReportName = 'InitializationSummary' AND TableName = 'HeatTransfer Surface'
-    # https://bigladdersoftware.com/epx/docs/23-2/input-output-reference/input-for-output.html#outputsurfaceslist
-    # Object names must be in the E+ idd or the OS IDD (ProposedEnergy+.idd)
-    object = OpenStudio::IdfObject.new('Output:Surfaces:List'.to_IddObjectType)
-    sf_list = workspace.addObject(object).get
-    sf_list.setString(0, 'DetailsWithVertices')
-
     true
   end
 end
