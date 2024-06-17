@@ -26,21 +26,53 @@
 
 require 'csv'
 
-def parseweatherfilename(weatherfile)
+# Devuelve el nombre del clima
+def get_weather(runner)
+  # Obtenemos el nombre del archivo climático del modelo o del runner
+  model = runner.lastOpenStudioModel
+  if !model.empty?
+    model = model.get
+    if model.getWeatherFile.path.is_initialized
+      weather_s = model.getWeatherFile.path.get.to_s
+      runner.registerValue('Clima obtenido del modelo (WeatherFile):', weather_s)
+    elsif model.getSite.name.is_initialized
+      weather_s = model.getSite.name.get.to_s
+      runner.registerValue('Clima obtenido del Site:', weather_s)
+    else
+      runner.registerError('No se ha localizado el clima')
+      return false
+    end
+  elsif !runner.lastEpwFilePath.empty?
+    # En este caso, consultamos runner.lastEpwFilePath pero podría contener
+    # [directorio de datapoints]/run/in.epw
+    weather_s = runner.lastEpwFilePath.get.to_s
+  else
+    runner.registerError('No se ha localizado el clima')
+    return false
+  end
+  # En algunos casos tenemos un path como: weather_s = file:file/D3_peninsula.epw
+  _name, _match, weather_file = weather_s.rpartition('/')
+  weather_file.gsub('.epw', '')
+end
+
+def parse_weather_filename(weatherfile)
   zc, peninsulaocanarias = weatherfile.split('_')
   zci = zc[0..-2]
   zci = zci.include?('alpha') ? 'alfa' : zci
   zcv = zc[-1]
+
   [zci, zcv, peninsulaocanarias]
 end
 
 def cte_groundTemperature(runner, _workspace, string_objects)
   weatherfile = get_weather(runner)
+  zonaClimaticaInvierno, zonaClimaticaVerano, canarias = parse_weather_filename(weatherfile)
+
   runner.registerInfo("weather file = #{weatherfile}")
-  zonaClimaticaInvierno, zonaClimaticaVerano, canarias = parseweatherfilename(weatherfile)
   runner.registerValue('ZCI', zonaClimaticaInvierno)
   runner.registerValue('ZCV', zonaClimaticaVerano)
-  runner.registerValue('penisulaocanarias', canarias)
+  runner.registerValue('penisulaocanarias', canarias.to_s)
+
   temperaturaSuelo = getTemperaturasSuelo(runner, zonaClimaticaInvierno, zonaClimaticaVerano, canarias)
   unless temperaturaSuelo
     runner.registerError("No se ha encontrado la temperatura del suelo para la zona climática #{zonaClimaticaInvierno}#{zonaClimaticaVerano} en #{canarias}")
@@ -54,36 +86,6 @@ def cte_groundTemperature(runner, _workspace, string_objects)
     #{temperaturaSuelo},#{temperaturaSuelo},#{temperaturaSuelo},#{temperaturaSuelo},#{temperaturaSuelo},#{temperaturaSuelo};
     "
   true
-end
-
-# Devuelve el nombre del clima
-def get_weather(runner)
-  # Obtenemos el nombre del archivo climático del runner o del modelo
-  if runner.lastEpwFilePath.is_initialized
-    weather_s = runner.lastEpwFilePath.get.to_s
-    runner.registerValue('Clima obtenido del runner: ', weather_s)
-  else
-    model = runner.lastOpenStudioModel
-    if model.empty?
-      runner.registerError('Could not load last OpenStudio model, cannot find climate.')
-      return false
-    end
-
-    model = model.get
-    if model.getWeatherFile.path.is_initialized
-      weather_s = model.getWeatherFile.path.get.to_s
-      runner.registerValue('Clima obtenido del modelo (WeatherFile):', weather_s)
-    elsif model.getSite.name.is_initialized
-      weather_s = model.getSite.name.get.to_s
-      runner.registerValue('Clima obtenido del Site:', weather_s)
-    else
-      runner.registerError('No se ha localizado el clima')
-      return false
-    end
-  end
-  # En algunos casos tenemos un path como: weather_s = file:file/D3_peninsula.epw
-  _name, _match, weather_file = weather_s.rpartition('/')
-  weather_file.gsub('.epw', '')
 end
 
 def getTemperaturasSuelo(runner, zonaClimaticaInvierno, zonaClimaticaVerano, canarias)
