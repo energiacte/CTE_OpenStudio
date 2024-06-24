@@ -64,8 +64,10 @@ def cte_addvars(model, runner, _user_arguments)
   # Consultar en archivo **eplusout.rdd** variables disponibles
 
   new_oputput_variables = [
-    # Monthly variables
+    # Datos generales
     ['Site Outdoor Air Drybulb Temperature', 'Monthly', '*'],
+
+    # Para demandas en reporting
     ['Surface Inside Face Conduction Heat Transfer Energy', 'Monthly', '*'],
     ['Surface Window Heat Gain Energy', 'Monthly', '*'],
     ['Surface Window Heat Loss Energy', 'Monthly', '*'],
@@ -74,6 +76,8 @@ def cte_addvars(model, runner, _user_arguments)
     ['Zone Total Internal Total Heating Energy', 'Monthly', '*'],
     ['Zone Ideal Loads Zone Total Heating Energy', 'Monthly', '*'],
     ['Zone Ideal Loads Zone Total Cooling Energy', 'Monthly', '*'],
+
+    # Datos de intercambio de aire
     ['Zone Ideal Loads Heat Recovery Active Time', 'Hourly', '*'],
     ['Zone Ideal Loads Heat Recovery Active Time', 'Daily', '*'],
     ['Zone Ideal Loads Heat Recovery Active Time', 'Monthly', '*'],
@@ -82,19 +86,23 @@ def cte_addvars(model, runner, _user_arguments)
     ['Zone Ideal Loads Economizer Active Time', 'Monthly', '*'],
     ['Zone Ideal Loads Supply Air Standard Density Volume Flow Rate', 'Hourly', '*'],
     ['Zone Ideal Loads Outdoor Air Standard Density Volume Flow Rate', 'Hourly', '*'],
-    ['Zone Mechanical Ventilation Current Density Volume', 'Hourly', '*'],
-    ['Zone Mechanical Ventilation Air Changes per Hour', 'Hourly', '*'],
-    ['Zone Infiltration Current Density Volume Flow Rate', 'Monthly', '*'],
-    ['Zone Infiltration Total Heat Loss Energy', 'Monthly', '*'],
-    ['Zone Infiltration Total Heat Gain Energy', 'Monthly', '*'],
-    ['Zone Infiltration Air Change Rate', 'Monthly', '*'],
-    ['Zone Combined Outdoor Air Sensible Heat Loss Energy', 'Daily', '*'],
+    ['Zone Mechanical Ventilation Current Density Volume', 'Hourly', '*'], # no localizada
+    ['Zone Mechanical Ventilation Air Changes per Hour', 'Hourly', '*'], # no localizada
+
+    # Infiltraciones (no localizadas)
+    ['Zone Infiltration Current Density Volume Flow Rate', 'Monthly', '*'], # no localizado
+    ['Zone Infiltration Total Heat Loss Energy', 'Monthly', '*'], # no localizado
+    ['Zone Infiltration Total Heat Gain Energy', 'Monthly', '*'], # no localizado
+    ['Zone Infiltration Air Change Rate', 'Monthly', '*'], # no localizado
+
+    # Reporting
+    ['Zone Combined Outdoor Air Sensible Heat Loss Energy', 'Daily', '*'], # no localizada
     ['Zone Combined Outdoor Air Sensible Heat Loss Energy', 'Monthly', '*'],
     ['Zone Combined Outdoor Air Sensible Heat Gain Energy', 'Monthly', '*'],
-    ['Zone Combined Outdoor Air Total Heat Loss Energy', 'Hourly', '*'],
-    ['Zone Combined Outdoor Air Total Heat Loss Energy', 'Monthly', '*'],
-    ['Zone Combined Outdoor Air Total Heat Gain Energy', 'Hourly', '*'],
-    ['Zone Combined Outdoor Air Total Heat Gain Energy', 'Monthly', '*'],
+    ['Zone Combined Outdoor Air Total Heat Loss Energy', 'Hourly', '*'], # no localizada
+    ['Zone Combined Outdoor Air Total Heat Loss Energy', 'Monthly', '*'], # no localizada
+    ['Zone Combined Outdoor Air Total Heat Gain Energy', 'Hourly', '*'], # no localizada
+    ['Zone Combined Outdoor Air Total Heat Gain Energy', 'Monthly', '*'], # no localizada
     ['Zone Combined Outdoor Air Changes per Hour', 'Hourly', '*'],
     ['Zone Combined Outdoor Air Changes per Hour', 'Daily', '*'],
     ['Zone Combined Outdoor Air Changes per Hour', 'Monthly', '*'],
@@ -102,7 +110,7 @@ def cte_addvars(model, runner, _user_arguments)
     # Esta variable no aparece en el rdd ya que se desactiva
     # al introducir el objeto ZoneAirBalance:OutdoorAir en CTE_Workspace
     # Ver https://bigladdersoftware.com/epx/docs/8-7/input-output-reference/group-airflow.html#outputs-1-002
-    ['Zone Ventilation Air Change Rate', 'Monthly', '*']
+    ['Zone Ventilation Air Change Rate', 'Monthly', '*'] # no localizada
   ]
 
   new_oputput_variables.each do |variable_name, reporting_frequency, key|
