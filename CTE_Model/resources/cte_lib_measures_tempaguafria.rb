@@ -134,7 +134,6 @@ def get_water_temps(model, runner)
   temps_agua_red.zip(factores_correccion_mensual).map { |x, y| x - y }
 end
 
-MESES = %w[enero febrero marzo abril mayo junio julio agosto septiembre octubre noviembre diciembre]
 
 # Devuelve el nombre del clima
 def get_weather(model, runner)
@@ -156,6 +155,8 @@ def get_weather(model, runner)
   _name, _match, weather_file = weather_s.rpartition('/')
   weather_file.gsub('.epw', '')
 end
+
+MESES = %w[enero febrero marzo abril mayo junio julio agosto septiembre octubre noviembre diciembre]
 
 # Introduce perfiles mensuales de la temperatura de agua de red en funcion de la provincia y corregida con la altitud
 # TODO: Detectar caso en el que no está definida la demanda de ACS (no hay circuito) para evitar el fallo (¿Localizar WaterEquipment?).
