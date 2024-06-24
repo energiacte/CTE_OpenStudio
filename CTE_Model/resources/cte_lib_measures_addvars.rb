@@ -85,7 +85,10 @@ def cte_addvars(model, runner, _user_arguments)
     ['Zone Ideal Loads Economizer Active Time', 'Daily', '*'],
     ['Zone Ideal Loads Economizer Active Time', 'Monthly', '*'],
     ['Zone Ideal Loads Supply Air Standard Density Volume Flow Rate', 'Hourly', '*'],
+    ['Zone Ideal Loads Supply Air Standard Density Volume Flow Rate', 'Monthly', '*'],
     ['Zone Ideal Loads Outdoor Air Standard Density Volume Flow Rate', 'Hourly', '*'],
+    ['Zone Ideal Loads Outdoor Air Standard Density Volume Flow Rate', 'Monthly', '*'],
+
     ['Zone Mechanical Ventilation Current Density Volume', 'Hourly', '*'], # no localizada
     ['Zone Mechanical Ventilation Air Changes per Hour', 'Hourly', '*'], # no localizada
 
