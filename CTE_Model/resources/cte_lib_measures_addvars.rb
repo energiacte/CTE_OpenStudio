@@ -78,19 +78,21 @@ def cte_addvars(model, runner, _user_arguments)
     ['Zone Ideal Loads Zone Total Cooling Energy', 'Monthly', '*'],
 
     # Datos de intercambio de aire
-    ['Zone Ideal Loads Heat Recovery Active Time', 'Hourly', '*'],
-    ['Zone Ideal Loads Heat Recovery Active Time', 'Daily', '*'],
+    # ['Zone Ideal Loads Heat Recovery Active Time', 'Hourly', '*'],
+    # ['Zone Ideal Loads Heat Recovery Active Time', 'Daily', '*'],
     ['Zone Ideal Loads Heat Recovery Active Time', 'Monthly', '*'],
-    ['Zone Ideal Loads Economizer Active Time', 'Hourly', '*'],
-    ['Zone Ideal Loads Economizer Active Time', 'Daily', '*'],
+    # ['Zone Ideal Loads Economizer Active Time', 'Hourly', '*'],
+    # ['Zone Ideal Loads Economizer Active Time', 'Daily', '*'],
     ['Zone Ideal Loads Economizer Active Time', 'Monthly', '*'],
-    ['Zone Ideal Loads Supply Air Standard Density Volume Flow Rate', 'Hourly', '*'],
+    # ['Zone Ideal Loads Supply Air Standard Density Volume Flow Rate', 'Hourly', '*'],
+    # ['Zone Ideal Loads Supply Air Standard Density Volume Flow Rate', 'Daily', '*'],
     ['Zone Ideal Loads Supply Air Standard Density Volume Flow Rate', 'Monthly', '*'],
-    ['Zone Ideal Loads Outdoor Air Standard Density Volume Flow Rate', 'Hourly', '*'],
+    # ['Zone Ideal Loads Outdoor Air Standard Density Volume Flow Rate', 'Hourly', '*'],
+    # ['Zone Ideal Loads Outdoor Air Standard Density Volume Flow Rate', 'Dayly', '*'],
     ['Zone Ideal Loads Outdoor Air Standard Density Volume Flow Rate', 'Monthly', '*'],
 
-    ['Zone Mechanical Ventilation Current Density Volume', 'Hourly', '*'], # no localizada
-    ['Zone Mechanical Ventilation Air Changes per Hour', 'Hourly', '*'], # no localizada
+    # ['Zone Mechanical Ventilation Current Density Volume', 'Hourly', '*'], # no localizada
+    # ['Zone Mechanical Ventilation Air Changes per Hour', 'Hourly', '*'], # no localizada
 
     # Infiltraciones (no localizadas)
     ['Zone Infiltration Current Density Volume Flow Rate', 'Monthly', '*'], # no localizado
