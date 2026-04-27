@@ -115,6 +115,11 @@ class CTE_Model < OpenStudio::Measure::ModelMeasure
     c_puertas.setDefaultValue(60)
     args << c_puertas
 
+    c_microvent = OpenStudio::Measure::OSArgument.makeBoolArgument("CTE_add_microvent", false)
+    c_microvent.setDisplayName("Añadir microventilación?")
+    c_microvent.setDefaultValue(false)
+    args << c_microvent
+
     factor_sombras_moviles = OpenStudio::Measure::OSArgument.makeDoubleArgument("CTE_F_sombras_moviles", true)
     factor_sombras_moviles.setDisplayName("Factor de sombras móviles")
     factor_sombras_moviles.setDefaultValue(0.3)

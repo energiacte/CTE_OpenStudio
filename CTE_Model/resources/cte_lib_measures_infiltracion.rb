@@ -31,9 +31,9 @@
 #
 # En residencial se considera una infiltración adicional por los aireadores (50% infiltrando),
 # y consideramos que la podemos aproximar por ventanas en posición de microventilación.
-#
-# DUDA: Esta última superficie:
-# - ¿tiene sentido añadirla o es redundante con la ventilación? En terciario no la añadimos
+# Esta última superficie es redundante con la ventilación si se define una ventilación de diseño, y solamente
+# se debería usar cuando no se incluya un caudal de ventilación de diseño en el modelo.
+# En terciario no se añade esta superficie de aireadores, porque normalmente se modela la ventilación de diseño.
 
 # Coeficientes para el cálculo de infiltraciones - Modelo Sherman-Grimsrud
 # https://bigladdersoftware.com/epx/docs/8-0/engineering-reference/page-048.html
@@ -87,10 +87,12 @@ def cte_infiltracion(model, runner, user_arguments) # copiado del residencial
   c_opaques = runner.getDoubleArgumentValue('CTE_C_opacos_m3hm2', user_arguments) * TO4PA
   c_windows = runner.getDoubleArgumentValue('CTE_C_huecos_m3hm2', user_arguments) * TO4PA
   c_doors = runner.getDoubleArgumentValue('CTE_C_puertas_m3hm2', user_arguments) * TO4PA
+  c_add_microvent = runner.getBoolArgumentValue('CTE_add_microvent', user_arguments)
 
   runner.registerValue('CTE Coeficientes de fugas de opacos a 4Pa, C_op', c_opaques.round(4))
   runner.registerValue('CTE Coeficientes de fugas de huecos a 4Pa, C_w', c_windows.round(4))
   runner.registerValue('CTE Coeficientes de fugas de puertas a 4Pa, C_w', c_doors.round(4))
+  runner.registerValue('CTE Se añade microventilación?', c_add_microvent)
 
   runner.registerInfo('** Superficies para ELA **')
 
@@ -102,7 +104,8 @@ def cte_infiltracion(model, runner, user_arguments) # copiado del residencial
     area_opacos = 0
     area_ventanas = 0
     area_puertas = 0
-    # TODO: filtrar superficies NoMass, que son superficies auxiliares
+    # Las superficies superficies con materiales NoMass, que son superficies auxiliares para los puentes térmicos los tenemos
+    # con WindExposure NoWind, así que no los contamos en el área neta.
     space.surfaces.each do |surface|
       next unless surface.outsideBoundaryCondition == 'Outdoors' && surface.windExposure == 'WindExposed'
 
@@ -119,7 +122,11 @@ def cte_infiltracion(model, runner, user_arguments) # copiado del residencial
     end
 
     uso_edificio = runner.getStringArgumentValue('CTE_Uso_edificio', user_arguments)
-    # En residencial, suponemos que la microventilación (n=0.5 rendija turbulenta)
+
+    # Si se indica usar microventilación como fuente de ventilación, calculamos su efecto.
+    # No debería usarse en presencia de ventilación de diseño, porque entonces se estaría contando dos veces.
+    #
+    # Suponemos que la microventilación (n=0.5 rendija turbulenta)
     # daría el caudal de los aireadores necesarios, suponiendo que estos equivalen a un
     # 50% de huecos expuestosa barlovento (con infiltración)
     #
@@ -130,7 +137,7 @@ def cte_infiltracion(model, runner, user_arguments) # copiado del residencial
     #            = C_air · A_air · 4^0.5
     #
     #   C_air · A_air = Q / 4^0.5
-    ca_air = if uso_edificio == 'Residencial'
+    ca_air = if c_add_microvent && uso_edificio == 'Residencial'
                (C_WINDOWS_CLASS1 - c_windows) * (0.5 * area_ventanas) / (4.0**0.5)
              else
                0.0

@@ -3,14 +3,32 @@
   <schema_version>3.1</schema_version>
   <name>cte_model</name>
   <uid>1f30359f-b316-49d1-b799-73b16ff79478</uid>
-  <version_id>ddb15126-40a7-4c2d-a5d9-df78c71a094d</version_id>
-  <version_modified>2023-12-20T11:20:37Z</version_modified>
+  <version_id>82d2e93c-6ba6-4a10-a81d-bc15ace7391a</version_id>
+  <version_modified>2026-04-27T07:53:30Z</version_modified>
   <xml_checksum>7C017197</xml_checksum>
   <class_name>CTE_Model</class_name>
   <display_name>CTE Model</display_name>
   <description>Define parámetros y aplica medidas para la simulación en condiciones CTE.</description>
   <modeler_description>Introduce variables de salida y aplica medidas para cálculo CTE.</modeler_description>
   <arguments>
+    <argument>
+      <name>CTE_Uso_edificio</name>
+      <display_name>Uso del edificio</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>Terciario</default_value>
+      <choices>
+        <choice>
+          <value>Residencial</value>
+          <display_name>Residencial</display_name>
+        </choice>
+        <choice>
+          <value>Terciario</value>
+          <display_name>Terciario</display_name>
+        </choice>
+      </choices>
+    </argument>
     <argument>
       <name>CTE_U_muros</name>
       <display_name>U de muros</display_name>
@@ -39,73 +57,65 @@
       <default_value>0</default_value>
     </argument>
     <argument>
+      <name>CTE_C_opacos_m3hm2</name>
+      <display_name>C_o de opacos</display_name>
+      <type>Double</type>
+      <units>m3/h·m2</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>16</default_value>
+    </argument>
+    <argument>
       <name>CTE_U_huecos</name>
       <display_name>U de huecos</display_name>
       <type>Double</type>
       <units>W/m2·K</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>10</default_value>
+      <default_value>0</default_value>
     </argument>
     <argument>
-      <name>CTE_Uso_edificio</name>
-      <display_name>Uso del edificio</display_name>
-      <type>Choice</type>
+      <name>CTE_g_gl</name>
+      <display_name>g_gl de vidrios</display_name>
+      <type>Double</type>
+      <units>-</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>Terciario</default_value>
-      <choices>
-        <choice>
-          <value>Residencial</value>
-          <display_name>Residencial</display_name>
-        </choice>
-        <choice>
-          <value>Terciario</value>
-          <display_name>Terciario</display_name>
-        </choice>
-      </choices>
+      <default_value>0</default_value>
     </argument>
     <argument>
-      <name>CTE_Tipo_edificio</name>
-      <display_name>Edificio nuevo o existente</display_name>
-      <type>Choice</type>
+      <name>CTE_C_huecos_m3hm2</name>
+      <display_name>C_h de huecos</display_name>
+      <type>Double</type>
+      <units>m3/h·m2</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>Nuevo</default_value>
-      <choices>
-        <choice>
-          <value>Nuevo</value>
-          <display_name>Nuevo</display_name>
-        </choice>
-        <choice>
-          <value>Existente</value>
-          <display_name>Existente</display_name>
-        </choice>
-      </choices>
+      <default_value>27</default_value>
     </argument>
     <argument>
-      <name>CTE_Permeabilidad_ventanas</name>
-      <display_name>Permeabilidad de la carpintería.</display_name>
-      <type>Choice</type>
+      <name>CTE_C_puertas_m3hm2</name>
+      <display_name>C_d de puertas</display_name>
+      <type>Double</type>
+      <units>m3/h·m2</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>Clase 1</default_value>
+      <default_value>60</default_value>
+    </argument>
+    <argument>
+      <name>CTE_add_microvent</name>
+      <display_name>Añadir microventilación?</display_name>
+      <type>Boolean</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>false</default_value>
       <choices>
         <choice>
-          <value>Clase 1</value>
-          <display_name>Clase 1</display_name>
+          <value>true</value>
+          <display_name>true</display_name>
         </choice>
         <choice>
-          <value>Clase 2</value>
-          <display_name>Clase 2</display_name>
-        </choice>
-        <choice>
-          <value>Clase 3</value>
-          <display_name>Clase 3</display_name>
-        </choice>
-        <choice>
-          <value>Clase 4</value>
-          <display_name>Clase 4</display_name>
+          <value>false</value>
+          <display_name>false</display_name>
         </choice>
       </choices>
     </argument>
@@ -205,7 +215,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>824678CC</checksum>
+      <checksum>5E46459E</checksum>
     </file>
     <file>
       <filename>LICENSE-LGPL-2.1.txt</filename>
@@ -217,43 +227,49 @@
       <filename>cte_lib_measures_addvars.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>EACF2801</checksum>
+      <checksum>B59514F7</checksum>
+    </file>
+    <file>
+      <filename>cte_lib_measures_cambia_g_vidrios.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>35FB6E76</checksum>
     </file>
     <file>
       <filename>cte_lib_measures_cambia_u_huecos.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>A5AB8281</checksum>
+      <checksum>57787340</checksum>
     </file>
     <file>
       <filename>cte_lib_measures_cambia_u_opacos.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>401683EB</checksum>
+      <checksum>1A8BB081</checksum>
     </file>
     <file>
       <filename>cte_lib_measures_infiltracion.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>165D9375</checksum>
+      <checksum>3C3AA3CF</checksum>
     </file>
     <file>
       <filename>cte_lib_measures_puentestermicos.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>16823BEA</checksum>
+      <checksum>8C1B2F93</checksum>
     </file>
     <file>
       <filename>cte_lib_measures_tempaguafria.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>FEF0777A</checksum>
+      <checksum>2466B9D8</checksum>
     </file>
     <file>
       <filename>cte_lib_measures_volumen_espacios.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>33DF6264</checksum>
+      <checksum>24B112AD</checksum>
     </file>
     <file>
       <filename>epw.rb</filename>
@@ -265,19 +281,13 @@
       <filename>CTE_Model_CambiaUs_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>5E6631FD</checksum>
+      <checksum>E6CFCC64</checksum>
     </file>
     <file>
       <filename>CTE_Model_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>71B61097</checksum>
-    </file>
-    <file>
-      <filename>CTE_Model_Test_volumen.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>CFD5144F</checksum>
+      <checksum>1A9CD4C9</checksum>
     </file>
     <file>
       <filename>residencial.osm</filename>

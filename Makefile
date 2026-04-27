@@ -107,3 +107,10 @@ test_osreportsi:
 	cd ./OS_Report_SI/tests/ && ruby *.rb
 
 all_tests: test_model test_workspace test_informehe test_osreportsi
+
+update_measures:
+	$(info [INFO] Actualizando medidas en contenedor de OpenStudio)
+	openstudio measure -u ./CTE_Model
+	openstudio measure -u ./CTE_Workspace
+	openstudio measure -u ./CTE_InformeDBHE
+	openstudio measure -u ./OS_Report_SI
