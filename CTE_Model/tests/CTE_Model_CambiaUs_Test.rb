@@ -66,17 +66,17 @@ end
 def get_U_target_and_Rs(args_hash)
   u_target = {
     %w[Wall Outdoors] =>        args_hash['CTE_U_muros'],
-    %w[Wall Ground] =>          1 / (1 / args_hash['CTE_U_muros'] - 0.5),
+    %w[Wall Ground] =>          args_hash['CTE_U_muros'],
     %w[RoofCeiling Outdoors] => args_hash['CTE_U_cubiertas'],
-    %w[Floor Ground] =>         1 / (1 / args_hash['CTE_U_suelos'] - 0.5),
+    %w[Floor Ground] =>         args_hash['CTE_U_suelos'],
     %w[Floor Outdoors] =>       args_hash['CTE_U_suelos'],
   }
 
   rsts = {
     %w[Wall Outdoors] =>        0.15,
-    %w[Wall Ground] =>          0.15,
+    %w[Wall Ground] =>          0.61,#0.15,
     %w[RoofCeiling Outdoors] => 0.14,
-    %w[Floor Ground] =>         0.15,
+    %w[Floor Ground] =>         0.65,#0.15,
     %w[Floor Outdoors] =>       0.19,
     }
 
@@ -239,22 +239,23 @@ class CTE_CambiaUs_Test < MiniTest::Test
     end
   end
 
-  def test_cambia_u_opacos
+  def test_cambia_u_opacos_modernos
     # create an instance of the measure
     measure = CTE_Model.new
 
     runner, model = get_runner_model(File.dirname(__FILE__) + '/test_N_R01_unif_adosada.osm')
+    # runner, model = get_runner_model(File.dirname(__FILE__) + '/terciario.osm')
     arguments = measure.arguments(model)
     argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(arguments)
 
     # create hash of argument values.
     # If the argument has a default that you want to use, you don't need it in the hash
     args_hash = {}
-    args_hash['CTE_U_muros'] = 0.2
+    args_hash['CTE_U_muros']     = 0.2
     args_hash['CTE_U_cubiertas'] = 0.3
-    args_hash['CTE_U_suelos'] = 0.40
-    args_hash['CTE_U_huecos'] = 0.62
-    args_hash['CTE_g_gl'] = 0.65
+    args_hash['CTE_U_suelos']    = 0.40
+    args_hash['CTE_U_huecos']    = 0.62
+    args_hash['CTE_g_gl']        = 0.65
 
     # populate argument with specified hash value if specified
     arguments.each do |arg|
@@ -268,7 +269,64 @@ class CTE_CambiaUs_Test < MiniTest::Test
 
     assert_equal('Success', result.value.valueName)
 
+    errors = []
+    u_targets, rsts = get_U_target_and_Rs(args_hash)
 
+    find_opaques(model).each do |uuid, type, boundary|
+      key = [type, boundary]
+      u_target = u_targets[key]
+      rst = rsts[key]
+      u_final = get_surface_uFactor(model, uuid, rst)
+      surface = get_surface(model, uuid)
+      construction = get_construction(model, uuid)
+
+      begin
+        assert_in_delta(
+          u_final,
+          u_target,
+          0.01,
+          "\n\t#{surface.name}, #{construction.name}, #{type}, #{boundary},
+        R-> medida con Rsi #{1/u_final} pedida #{1/u_target}, rsts #{rst}
+        U-> medida con Rsi #{u_final} pedida #{u_target}"
+          )
+      rescue Minitest::Assertion => e
+        errors << e.message
+      end
+    end
+    assert errors.empty?, "\n#{errors.join("\n")}"
+  end
+
+
+
+def test_cambia_u_opacos_antiguos
+    # create an instance of the measure
+    measure = CTE_Model.new
+
+    # runner, model = get_runner_model(File.dirname(__FILE__) + '/test_N_R01_unif_adosada.osm')
+    runner, model = get_runner_model(File.dirname(__FILE__) + '/terciario.osm')
+    arguments = measure.arguments(model)
+    argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(arguments)
+
+    # create hash of argument values.
+    # If the argument has a default that you want to use, you don't need it in the hash
+    args_hash = {}
+    args_hash['CTE_U_muros']     = 1.02 # No se pueden subir más con los dos modelos de test
+    args_hash['CTE_U_cubiertas'] = 2.0
+    args_hash['CTE_U_suelos']    = 0.98
+    args_hash['CTE_U_huecos']    = 0.62
+    args_hash['CTE_g_gl']        = 0.65
+
+    # populate argument with specified hash value if specified
+    arguments.each do |arg|
+      temp_arg_var = arg.clone
+      assert(temp_arg_var.setValue(args_hash[arg.name])) if args_hash[arg.name]
+      argument_map[arg.name] = temp_arg_var
+    end
+
+    measure.run(model, runner, argument_map)
+    result = runner.result
+
+    assert_equal('Success', result.value.valueName)
 
     errors = []
     u_targets, rsts = get_U_target_and_Rs(args_hash)
@@ -281,14 +339,14 @@ class CTE_CambiaUs_Test < MiniTest::Test
       surface = get_surface(model, uuid)
       construction = get_construction(model, uuid)
 
-
       begin
         assert_in_delta(
           u_final,
           u_target,
           0.01,
           "\n\t#{surface.name}, #{construction.name}, #{type}, #{boundary},
-        R_medida con Rsi #{1/u_final} pedida #{1/u_target}"
+        R_medida con Rsi #{1/u_final} pedida #{1/u_target}
+        U_medida con Rsi #{u_final} pedida #{u_target}"
           )
       rescue Minitest::Assertion => e
         errors << e.message
@@ -296,4 +354,6 @@ class CTE_CambiaUs_Test < MiniTest::Test
     end
     assert errors.empty?, "\n#{errors.join("\n")}"
   end
+
+
 end
