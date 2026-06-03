@@ -110,46 +110,47 @@ def construye_hashes(model, runner, target_surfaces, u_deseada, resistencia_tier
     resistencia_capa = 1 / u_deseada - resistencia_termica_sin_aislante - resistencia_tierra
 
     if resistencia_capa <= 0
-      runner.registerInfo("La U requerida a '#{target_cons.name}' es mayor que la construcción sin aislamiento. No se modifica")
-    else
-      # Material aislante e índice
-      target_material = max_mat_hash['mat']
-      target_material_idx = max_mat_hash['index']
-
-      new_material = materials_hash[target_material.name.to_s]
-      unless new_material
-        # Material no modificado con anterioridad. Creamos material y sustituimos
-        new_material = target_material.clone(model).to_OpaqueMaterial.get
-        new_material.setName("#{target_material.name}_R-value #{resistencia_capa}")
-        # Cambiamos el material según su tipo
-        # Material
-        new_material_matt = new_material.to_Material
-        unless new_material_matt.empty?
-          starting_thickness = new_material_matt.get.thickness
-          target_thickness = starting_thickness / u_deseada / thermal_resistance_values.max
-          new_material_matt.get.setThickness(target_thickness)
-        end
-        # MasslessOpaqueMaterial
-        new_material_massless = new_material.to_MasslessOpaqueMaterial
-        new_material_massless.get.setThermalResistance(resistencia_capa) unless new_material_massless.empty?
-        # AirGap
-        new_material_airgap = new_material.to_AirGap
-        new_material_airgap.get.setThermalResistance(resistencia_capa) unless new_material_airgap.empty?
-
-        # Añadimos a materiales ya modificados
-        materials_hash[target_material.name.to_s] = new_material
-      end
-
-      # Clonamos la construcción existente y sustituimos el material aislante
-      final_construction = target_cons.clone(model).to_Construction.get
-      final_construction.setName("#{target_cons.name} con aislamiento corregido")
-      final_construction.eraseLayer(target_material_idx)
-      final_construction.insertLayer(target_material_idx, new_material)
-      # Mapea construcción nueva desde nombre existente
-      constructions_hash_old_new[target_cons.name.to_s] = final_construction
-      runner.registerInfo("For construction'#{final_construction.name}', material'#{new_material.name}' was altered.")
+      resistencia_capa = 0.01
+      runner.registerInfo("La U requerida a '#{target_cons.name}' es mayor que la construcción sin aislamiento. La dejamos sin aislamiento")
     end
+    # Material aislante e índice
+    target_material = max_mat_hash['mat']
+    target_material_idx = max_mat_hash['index']
+
+    new_material = materials_hash[target_material.name.to_s]
+    unless new_material
+      # Material no modificado con anterioridad. Creamos material y sustituimos
+      new_material = target_material.clone(model).to_OpaqueMaterial.get
+      new_material.setName("#{target_material.name}_R-value #{resistencia_capa}")
+      # Cambiamos el material según su tipo
+      # Material
+      new_material_matt = new_material.to_Material
+      unless new_material_matt.empty?
+        starting_thickness = new_material_matt.get.thickness
+        target_thickness = starting_thickness / u_deseada / thermal_resistance_values.max
+        new_material_matt.get.setThickness(target_thickness)
+      end
+      # MasslessOpaqueMaterial
+      new_material_massless = new_material.to_MasslessOpaqueMaterial
+      new_material_massless.get.setThermalResistance(resistencia_capa) unless new_material_massless.empty?
+      # AirGap
+      new_material_airgap = new_material.to_AirGap
+      new_material_airgap.get.setThermalResistance(resistencia_capa) unless new_material_airgap.empty?
+
+      # Añadimos a materiales ya modificados
+      materials_hash[target_material.name.to_s] = new_material
+    end
+
+    # Clonamos la construcción existente y sustituimos el material aislante
+    final_construction = target_cons.clone(model).to_Construction.get
+    final_construction.setName("#{target_cons.name} con aislamiento corregido")
+    final_construction.eraseLayer(target_material_idx)
+    final_construction.insertLayer(target_material_idx, new_material)
+    # Mapea construcción nueva desde nombre existente
+    constructions_hash_old_new[target_cons.name.to_s] = final_construction
+    runner.registerInfo("For construction'#{final_construction.name}', material'#{new_material.name}' was altered.")
   end
+
 
   constructions_hash_old_new
 end
