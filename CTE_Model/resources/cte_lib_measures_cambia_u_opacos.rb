@@ -44,19 +44,26 @@ def cambia_transmitancia(model, runner, u_deseada, condicion:, tipo:)
   end
 
   # R = 0.5 de capa de "terreno" de 1m de profundidad y lambda=2W/mk
-  resistencia_terreno = condicion == 'Ground' ? 0.5 : 0.0
+  rsi, rse = resistencias_superficiales(condicion, tipo)
+  rse = condicion == 'Ground' ? 0.5 : rse
 
-  constructions_hash_old_new = construye_hashes(model, runner, surfaces, u_deseada, resistencia_terreno)
+  constructions_hash_old_new = construye_hashes(model, runner, surfaces, u_deseada, rsi, rse)
   modify_construction_sets(model, runner, constructions_hash_old_new, condicion: condicion, tipo: tipo)
   replace_edited_constructions(surfaces, constructions_hash_old_new)
 end
 
 # Localiza construcciones distintas en superficies y devuelve mapping entre nombre antiguo de construcción y construcción nueva con u deseada
-def construye_hashes(model, runner, target_surfaces, u_deseada, resistencia_tierra)
+def construye_hashes(model, runner, target_surfaces, u_deseada, rsi, rse)
   # Recorre construcciones, clona y cambia por otro con la u_deseada
+  # Para cada construcción:
+  # - calcula la resistencia térmica del cerramiento excluyendo todas las capas sin masa pero con las Rs
+  # - determina la resistencia del aislamiento necesaria para alcanzar la U deseada.
   # La casuística para decidir como se procede a cambiar la transmitancia del muro es:
   # 1.- si hay una capa de material sin masa (aislamiento o cámara de aire) se modifica su R lo necesario
-  # 2.- si NO hay una capa de material sin masa se lanza un error y se interrumpe la ejecución.
+  # 2.- si el aislamiento debería ser negativo se deja en cero
+  # 3.- si NO hay una capa de material sin masa se lanza un error y se interrumpe la ejecución.
+
+
 
   # Construcciones diferentes
 
@@ -107,7 +114,7 @@ def construye_hashes(model, runner, target_surfaces, u_deseada, resistencia_tier
     end
 
     # Para elementos contra el terreno restamos la resistencia del terreno
-    resistencia_capa = 1 / u_deseada - resistencia_termica_sin_aislante - resistencia_tierra
+    resistencia_capa = 1 / u_deseada - resistencia_termica_sin_aislante - rse - rsi
 
     if resistencia_capa <= 0
       resistencia_capa = 0.01
@@ -261,4 +268,28 @@ def replace_edited_constructions(surfaces, constructions_hash_old_new)
     new_construction = constructions_hash_old_new[target_const]
     surf.setConstruction(new_construction) if new_construction
   end
+end
+
+
+# Resistencias superficiales
+def resistencias_superficiales(condicion, tipo)
+
+  rsi_valores = {
+    'Wall' => 0.11,
+    'RoofCeiling' => 0.10,
+    'Floor' => 0.15
+  }
+
+  rsi = rsi_valores.fetch(tipo, 0.11)
+
+  rse = case tipo
+        when 'Wall'
+          condicion == 'Adiabatic' ? 0.11 : 0.04
+        when 'Floor'
+          condicion == 'Outdoors' ? 0.04 : 0.0
+        else
+          0.04
+        end
+
+  [rsi, rse]
 end

@@ -47,6 +47,42 @@ def get_runner_model(file_path)
   [runner, model]
 end
 
+def get_surface(model, uuid)
+  handle = OpenStudio.toUUID(uuid)
+  objeto = model.getModelObject(handle).get
+  objeto.to_Surface.get
+end
+
+def get_construction(model, uuid)
+  handle = OpenStudio.toUUID(uuid)
+  objeto = model.getModelObject(handle).get
+  surface = objeto.to_Surface.get
+  construction = surface.construction.get #construction es de tipo ConstructionBase, asi que hay que castear:
+  construction = construction.to_Construction.get
+  # materials = construction.layers
+end
+
+
+def get_U_target_and_Rs(args_hash)
+  u_target = {
+    %w[Wall Outdoors] =>        args_hash['CTE_U_muros'],
+    %w[Wall Ground] =>          1 / (1 / args_hash['CTE_U_muros'] - 0.5),
+    %w[RoofCeiling Outdoors] => args_hash['CTE_U_cubiertas'],
+    %w[Floor Ground] =>         1 / (1 / args_hash['CTE_U_suelos'] - 0.5),
+    %w[Floor Outdoors] =>       args_hash['CTE_U_suelos'],
+  }
+
+  rsts = {
+    %w[Wall Outdoors] =>        0.15,
+    %w[Wall Ground] =>          0.15,
+    %w[RoofCeiling Outdoors] => 0.14,
+    %w[Floor Ground] =>         0.15,
+    %w[Floor Outdoors] =>       0.19,
+    }
+
+    [u_target, rsts]
+  end
+
 def get_surface_u(model, uuid)
   handle = OpenStudio.toUUID(uuid)
   objeto = model.getModelObject(handle).get
@@ -55,6 +91,12 @@ def get_surface_u(model, uuid)
   else # objeto.iddObject.name == "OS:SubSurface"
     objeto.to_SubSurface.get.construction.get.uFactor.to_f
   end
+end
+
+def get_surface_uFactor(model, uuid, rst)
+  handle = OpenStudio.toUUID(uuid)
+  objeto = model.getModelObject(handle).get
+  objeto.to_Surface.get.construction.get.uFactor(rst).to_f
 end
 
 def get_solar_heat_gain_coefficient(model, uuid)
@@ -226,19 +268,32 @@ class CTE_CambiaUs_Test < MiniTest::Test
 
     assert_equal('Success', result.value.valueName)
 
-    # puts(find_opaques(model))
 
-    transmitancias = {
-      %w[Wall Outdoors] => args_hash['CTE_U_muros'],
-      %w[Wall Ground] => 1 / (1 / args_hash['CTE_U_muros'] - 0.5),
-      %w[RoofCeiling Outdoors] => args_hash['CTE_U_cubiertas'],
-      %w[Floor Ground] => 1 / (1 / args_hash['CTE_U_suelos'] - 0.5),
-      %w[Floor Outdoors] => args_hash['CTE_U_suelos']
-    }
+
+    errors = []
+    u_targets, rsts = get_U_target_and_Rs(args_hash)
 
     find_opaques(model).each do |uuid, type, boundary|
-      u_final = get_surface_u(model, uuid)
-      assert_in_delta(u_final, transmitancias[[type, boundary]], 0.01, "uuid -> #{uuid}")
+      key = [type, boundary]
+      u_target = u_targets[key]
+      rst = rsts[key]
+      u_final = get_surface_uFactor(model, uuid, rst)
+      surface = get_surface(model, uuid)
+      construction = get_construction(model, uuid)
+
+
+      begin
+        assert_in_delta(
+          u_final,
+          u_target,
+          0.01,
+          "\n\t#{surface.name}, #{construction.name}, #{type}, #{boundary},
+        R_medida con Rsi #{1/u_final} pedida #{1/u_target}"
+          )
+      rescue Minitest::Assertion => e
+        errors << e.message
+      end
     end
+    assert errors.empty?, "\n#{errors.join("\n")}"
   end
 end
